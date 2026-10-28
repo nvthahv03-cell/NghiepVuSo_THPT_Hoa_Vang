@@ -1588,7 +1588,7 @@ if(!btn||!layer||!frame)return;
 function roleFold(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();}
 function isBGH(){let u={};try{u=JSON.parse(NVS_localStore.getItem('user')||NVS_sessionStore.getItem('user')||'{}')||{}}catch(_){}
 const role=roleFold(u.vaiTro||u.role),job=roleFold(u.chucVu||u.viTriViecLam||u['Vị trí việc làm']);
-return /hieu truong|pho hieu truong|ban giam hieu|/.test(job+" "+role)||/^(bgh|hieu_truong|pho_hieu_truong)$/.test(role);}
+return /hieu truong|pho hieu truong|ban giam hieu/.test(job+" "+role)||/^(bgh|hieu_truong|pho_hieu_truong)$/.test(role);}
 function hasSession(){const token=String(NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||'').trim();const expiry=Number(NVS_localStore.getItem('hvaSessionExpiresAt')||NVS_sessionStore.getItem('hvaSessionExpiresAt')||0);return !!token&&Number.isFinite(expiry)&&expiry>Date.now();}
 function syncVisibility(){const allowed=hasSession()&&isBGH();btn.hidden=!allowed;btn.style.setProperty('display',allowed?'flex':'none','important');btn.setAttribute('aria-hidden',allowed?'false':'true');if(!allowed&&layer.classList.contains('is-open'))close();return allowed;}
 function close(){layer.classList.remove('is-open');layer.setAttribute('aria-hidden','true');document.body.style.overflow='';if(!btn.hidden)btn.focus();}

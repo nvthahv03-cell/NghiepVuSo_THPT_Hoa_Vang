@@ -1,0 +1,88 @@
+{
+  "scope": "GitHub Pages project-prefix simulation, browser technical only; remote services intercepted; no integration/owner PASS",
+  "results": [
+    {
+      "function": "Catalog A11 entry and accordion anchor",
+      "status": "PASS technical"
+    },
+    {
+      "function": "task",
+      "status": "PASS technical select/input/specific-fields/preview/edit; save and submit blocked"
+    },
+    {
+      "function": "deployment",
+      "status": "PASS technical select/input/specific-fields/preview/edit; save and submit blocked"
+    },
+    {
+      "function": "training",
+      "status": "PASS technical select/input/specific-fields/preview/edit; save and submit blocked"
+    },
+    {
+      "function": "other",
+      "status": "PASS technical select/input/specific-fields/preview/edit; save and submit blocked"
+    },
+    {
+      "function": "team",
+      "status": "PASS technical select/input/specific-fields/preview/edit; save and submit blocked"
+    },
+    {
+      "function": "cluster",
+      "status": "PASS technical select/input/specific-fields/preview/edit; save and submit blocked"
+    },
+    {
+      "function": "existing personnel helper",
+      "status": "PASS contract with intercepted JSONP; integration unverified"
+    },
+    {
+      "function": "gifted",
+      "status": "PASS technical select/input/specific-fields/preview/edit; save and submit blocked"
+    },
+    {
+      "function": "support",
+      "status": "PASS technical select/input/specific-fields/preview/edit; save and submit blocked"
+    },
+    {
+      "function": "exam",
+      "status": "PASS technical select/input/specific-fields/preview/edit; save and submit blocked"
+    },
+    {
+      "function": "shared assistant",
+      "status": "PASS contract and failure handling; remote request intercepted"
+    },
+    {
+      "function": "invalid URL/date and expired session",
+      "status": "PASS technical; no remote report request"
+    },
+    {
+      "function": "account changes within open form",
+      "status": "PASS technical stop and require reload, no request"
+    },
+    {
+      "function": "A12 and protected legacy links",
+      "status": "PASS technical blocked-data catalog; CN/DTHT retained"
+    },
+    {
+      "function": "Pages subpath/menu/compatibility/no persistence",
+      "status": "PASS technical; only existing read/AI actions under explicit click; zero report-save/submit actions"
+    },
+    {
+      "function": "no existing session",
+      "status": "PASS technical return to existing login, no new login system"
+    }
+  ],
+  "role_checks": {
+    "cases": 4,
+    "passed": 4,
+    "scope": "predicate UI only; not backend authorization"
+  },
+  "protected_sources": {
+    "baseline": "921701cef57346dc46d3a05d2987109e7f2472fe",
+    "baseline_files": 42,
+    "unchanged": 39,
+    "changed": [
+      "index.html",
+      "NghiepVu.html",
+      "A.1.1. NhiemVu_BaoCao.html"
+    ]
+  }
+}

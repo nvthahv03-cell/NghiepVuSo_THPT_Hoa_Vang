@@ -1,0 +1,270 @@
+{
+  "task": {
+    "fields": [
+      [
+        "assignmentCode",
+        "Mã nhiệm vụ/văn bản giao việc",
+        "text"
+      ],
+      [
+        "assignedUnit",
+        "Người/đơn vị giao nhiệm vụ",
+        "text"
+      ],
+      [
+        "expectedOutput",
+        "Sản phẩm cần hoàn thành",
+        "textarea"
+      ],
+      [
+        "progress",
+        "Mức độ hoàn thành (%)",
+        "number"
+      ]
+    ]
+  },
+  "deployment": {
+    "fields": [
+      [
+        "decision",
+        "Số quyết định/văn bản điều động",
+        "text"
+      ],
+      [
+        "destination",
+        "Nơi công tác",
+        "text"
+      ],
+      [
+        "purpose",
+        "Nhiệm vụ công tác",
+        "textarea"
+      ],
+      [
+        "handover",
+        "Kết quả bàn giao/phối hợp",
+        "textarea"
+      ]
+    ]
+  },
+  "training": {
+    "fields": [
+      [
+        "topic",
+        "Tên chuyên đề/chương trình",
+        "text"
+      ],
+      [
+        "format",
+        "Hình thức tham gia",
+        "text"
+      ],
+      [
+        "hours",
+        "Thời lượng (giờ)",
+        "number"
+      ],
+      [
+        "application",
+        "Kế hoạch vận dụng/chia sẻ lại",
+        "textarea"
+      ],
+      [
+        "certificate",
+        "Liên kết tài liệu/chứng nhận (Drive/Docs)",
+        "url"
+      ]
+    ]
+  },
+  "other": {
+    "fields": [
+      [
+        "request",
+        "Yêu cầu/văn bản cần báo cáo",
+        "textarea"
+      ],
+      [
+        "recipientUnit",
+        "Đơn vị yêu cầu báo cáo",
+        "text"
+      ],
+      [
+        "scope",
+        "Phạm vi và căn cứ số liệu",
+        "textarea"
+      ]
+    ]
+  },
+  "team": {
+    "fields": [
+      [
+        "meetingUnit",
+        "Tổ/nhóm chuyên môn",
+        "text"
+      ],
+      [
+        "topic",
+        "Chủ đề sinh hoạt",
+        "text"
+      ],
+      [
+        "agenda",
+        "Nội dung/chương trình",
+        "textarea"
+      ],
+      [
+        "conclusions",
+        "Kết luận và việc cần thực hiện",
+        "textarea"
+      ],
+      [
+        "minutes",
+        "Liên kết biên bản (Drive/Docs)",
+        "url"
+      ],
+      [
+        "materials",
+        "Liên kết tài liệu (Drive/Docs)",
+        "url"
+      ]
+    ],
+    "participants": true
+  },
+  "cluster": {
+    "fields": [
+      [
+        "clusterName",
+        "Cụm chuyên môn",
+        "text"
+      ],
+      [
+        "hostUnit",
+        "Đơn vị đăng cai/phối hợp",
+        "text"
+      ],
+      [
+        "topic",
+        "Chuyên đề sinh hoạt cụm",
+        "text"
+      ],
+      [
+        "conclusions",
+        "Kết quả và kế hoạch triển khai lại",
+        "textarea"
+      ],
+      [
+        "minutes",
+        "Liên kết biên bản (Drive/Docs)",
+        "url"
+      ],
+      [
+        "materials",
+        "Liên kết tài liệu (Drive/Docs)",
+        "url"
+      ]
+    ],
+    "participants": true
+  },
+  "gifted": {
+    "fields": [
+      [
+        "subject",
+        "Môn bồi dưỡng",
+        "text"
+      ],
+      [
+        "grade",
+        "Khối/lớp (không ghi danh tính học sinh)",
+        "text"
+      ],
+      [
+        "learnerCount",
+        "Số học sinh (tổng hợp)",
+        "number"
+      ],
+      [
+        "sessions",
+        "Số buổi đã thực hiện",
+        "number"
+      ],
+      [
+        "plan",
+        "Kế hoạch/nội dung bồi dưỡng",
+        "textarea"
+      ],
+      [
+        "outcomes",
+        "Kết quả có căn cứ",
+        "textarea"
+      ]
+    ]
+  },
+  "support": {
+    "fields": [
+      [
+        "subject",
+        "Môn phụ đạo",
+        "text"
+      ],
+      [
+        "grade",
+        "Khối/lớp (không ghi danh tính học sinh)",
+        "text"
+      ],
+      [
+        "learnerCount",
+        "Số học sinh (tổng hợp)",
+        "number"
+      ],
+      [
+        "sessions",
+        "Số buổi đã thực hiện",
+        "number"
+      ],
+      [
+        "needs",
+        "Nhu cầu và mục tiêu hỗ trợ",
+        "textarea"
+      ],
+      [
+        "progressNotes",
+        "Tiến bộ và đề xuất hỗ trợ tiếp",
+        "textarea"
+      ]
+    ]
+  },
+  "exam": {
+    "fields": [
+      [
+        "examName",
+        "Kỳ thi/đợt ôn tập",
+        "text"
+      ],
+      [
+        "subject",
+        "Môn ôn thi",
+        "text"
+      ],
+      [
+        "grade",
+        "Khối/lớp (không ghi danh tính học sinh)",
+        "text"
+      ],
+      [
+        "sessions",
+        "Số buổi đã thực hiện",
+        "number"
+      ],
+      [
+        "plan",
+        "Kế hoạch và tiến độ ôn tập",
+        "textarea"
+      ],
+      [
+        "assessment",
+        "Kết quả đánh giá có nguồn",
+        "textarea"
+      ]
+    ]
+  }
+}
