@@ -4,13 +4,20 @@ const $=id=>document.getElementById(id);
 const ids=['2','3','4','5','6','7','CN'].flatMap(d=>['sang_','chieu_','ghichu_'].map(k=>k+d));
 let allowed=false,active=null,recognition=null;
 function role(){
- let o={};try{o=JSON.parse(localStorage.getItem('user')||'{}')}catch(_){}
- const raw=[o.workPosition,o.position,o.role,o.chucVu,o.vaiTro,o.jobTitle,o.positionName,o.tenChucVu].filter(Boolean).join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
- return {raw,authorized:/(hieu truong|pho hieu truong|ban giam hieu|^bgh$|to truong van phong|ttvp)/.test(raw)};
+ const sources=[];
+ for(const storage of [localStorage,sessionStorage]){
+   for(const k of ['user','hvaUser','hva_user','currentUser','nvsUser','HVA_USER']){
+     try{const o=JSON.parse(storage.getItem(k)||'null');if(o&&typeof o==='object')sources.push(o)}catch(_){}
+   }
+ }
+ const vals=[];
+ for(const o of sources)for(const k of ['workPosition','position','role','chucVu','vaiTro','jobTitle','positionName','tenChucVu','chuc_danh','chuc_vu','title','userRole','chucDanh'])if(typeof o[k]==='string')vals.push(o[k]);
+ const raw=vals.join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
+ return {raw,authorized:/(hieu truong|pho hieu truong|ban giam hieu|\bbgh\b|to truong van phong|ttvp)/.test(raw),hasRole:!!raw};
 }
 function status(t){const x=$('hvaCalendarAssistStatus');if(x)x.textContent=t}
 function showView(){
- const b=$('tab-view-lich-tuan');if(b)try{b.click()}catch(_){}
+ if(typeof window.switchViewTab==='function')window.switchViewTab('view-lich-tuan');const p=$('editorPage'),v=$('view-lich-tuan');if(p)p.classList.remove('hidden');if(v)v.classList.remove('hidden');
 }
 function secureUI(){
  const r=role();allowed=r.authorized;
@@ -85,7 +92,7 @@ function init(){
  const input=$('sang_2');const grid=input?.closest('section')||input?.closest('div[class*="card"]')||input?.closest('table')?.parentElement;
  if(grid)grid.parentElement.insertBefore(root,grid);else document.querySelector('main')?.prepend(root);
  $('hvaPhotoInput')?.addEventListener('change',e=>photo(e.target.files?.[0]));$('hvaFillDraft')?.addEventListener('click',fillDraft);
- secureUI();attachMics();
+ secureUI();attachMics();if(!allowed&&!role().hasRole)status('Hệ thống chưa đọc được vai trò từ phiên đăng nhập. Cần xác minh tài khoản; không tự cấp quyền tạo lịch.');
 }
 const css=document.createElement('style');css.textContent='.hva-calendar-assist{background:#fff;border:1px solid #bbd8f5;border-radius:18px;padding:18px;margin:16px 0;color:#153f67;box-shadow:0 8px 25px #0a4e8520}.hva-calendar-assist h3{font-weight:900;font-size:16px;margin-bottom:8px}.hva-calendar-assist p,.hva-photo-controls span{font-size:12px;color:#536d89;margin-bottom:12px}.hva-photo-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:10px 0}.hva-photo-controls label{cursor:pointer;font-weight:800}.hva-photo-controls input{font-size:11px;max-width:100%}.hva-calendar-assist textarea{width:100%;padding:10px;border:1px solid #c1d7ee;border-radius:10px;display:block;margin:10px 0;font-size:13px}.hva-calendar-assist button,.hva-mic-btn{background:#075b9c;color:#fff;border:0;border-radius:8px;padding:8px 11px;font-size:11px;font-weight:800;cursor:pointer}.hva-mic-btn{display:block;margin:5px 0;background:#e4f2ff;color:#075b9c;border:1px solid #bbd9f5}.hva-calendar-assist #hvaPhotoPreview{max-width:100%;max-height:250px;object-fit:contain;margin:12px 0;border-radius:8px}.hva-calendar-assist #hvaCalendarAssistStatus{margin-top:10px;font-size:12px;color:#24628f}';document.head.appendChild(css);
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
