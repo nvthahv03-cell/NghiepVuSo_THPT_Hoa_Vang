@@ -20,8 +20,9 @@ function showView(){
  if(typeof window.switchViewTab==='function')window.switchViewTab('view-lich-tuan');const p=$('editorPage'),v=$('view-lich-tuan');if(p)p.classList.remove('hidden');if(v)v.classList.remove('hidden');
 }
 function secureUI(){
- const r=role();allowed=r.authorized;
+ const r=role();allowed=r.authorized; document.documentElement.dataset.hvaCalendarPermission=allowed?'editor':'viewer';
  const create=$('btnDropdownTaoLich'),menu=$('dropdownMenuTaoLich'),view=$('tab-view-lich-tuan');
+ const head=$('headerUserRole');if(head&&r.raw==='')head.textContent='Chưa xác minh tài khoản';
  if(create){create.disabled=!allowed;create.setAttribute('aria-disabled',String(!allowed));create.title=allowed?'Tạo lịch công tác':'Chỉ Ban Giám hiệu và Tổ trưởng Văn phòng được tạo lịch';create.style.cssText+=allowed?';opacity:1':';opacity:.43;filter:grayscale(1);cursor:not-allowed;pointer-events:none';}
  if(!allowed){
    if(menu)menu.classList.add('hidden');
@@ -30,7 +31,7 @@ function secureUI(){
    for(const id of ids){const e=$(id);if(e){e.readOnly=true;e.setAttribute('aria-readonly','true')}}
    const add=$('hvaCalendarAssistant');if(add)add.hidden=true;
    showView();
- } else {if(view)view.style.cssText+=';background:#fbbf24!important;color:#0f3458!important;font-weight:900!important'}
+ } else {if(create){create.style.cssText+=';background:#fbbf24!important;color:#163b60!important;opacity:1!important;filter:none!important;pointer-events:auto!important';}if(view)view.style.cssText+=';background:#fbbf24!important;color:#0f3458!important;font-weight:900!important'}
  if(!allowed&&view)view.style.cssText+=';background:#fbbf24!important;color:#0f3458!important;font-weight:900!important';
 }
 function apply(id,txt){
@@ -88,12 +89,13 @@ function fillDraft(){
  rows.forEach(r=>apply(r.id,r.text));status('Đã điền '+rows.length+' mục vào lịch tuần. Chưa lưu hoặc phát hành.');
 }
 function init(){
+ const brand=document.querySelector('.hva-pro-header-inner');if(brand){const legacy=brand.querySelector('.hva-pro-version');if(legacy)legacy.hidden=true;}
  const root=document.createElement('section');root.id='hvaCalendarAssistant';root.className='hva-calendar-assist';root.innerHTML='<h3>🎙 TRỢ LÝ NHẬP LỊCH CÔNG TÁC</h3><p>Chọn nút micro ngay dưới ô Sáng, Chiều hoặc Ghi chú và đọc tiếng Việt. Có thể tải ảnh lịch viết tay để nhận dạng bản nháp.</p><div class="hva-photo-controls"><label>📷 Tải ảnh lịch viết tay <input id="hvaPhotoInput" type="file" accept="image/*" /></label><span>Ảnh chỉ dùng để tạo bản nháp, không tự phát hành.</span></div><img id="hvaPhotoPreview" alt="Ảnh lịch đã tải lên" hidden/><textarea id="hvaPhotoDraft" placeholder="Bản nháp nhận dạng. Mỗi dòng nên có dạng: Thứ Hai sáng: Họp BGH…" rows="5"></textarea><button type="button" id="hvaFillDraft">Điền bản nháp vào lịch tuần</button><div role="status" id="hvaCalendarAssistStatus" aria-live="polite">Chọn một ô lịch để đọc hoặc tải ảnh viết tay.</div>';
  const input=$('sang_2');const grid=input?.closest('section')||input?.closest('div[class*="card"]')||input?.closest('table')?.parentElement;
  if(grid)grid.parentElement.insertBefore(root,grid);else document.querySelector('main')?.prepend(root);
  $('hvaPhotoInput')?.addEventListener('change',e=>photo(e.target.files?.[0]));$('hvaFillDraft')?.addEventListener('click',fillDraft);
- secureUI();attachMics();if(!allowed&&!role().hasRole)status('Hệ thống chưa đọc được vai trò từ phiên đăng nhập. Cần xác minh tài khoản; không tự cấp quyền tạo lịch.');
+ secureUI();attachMics();showView();if(!allowed&&!role().hasRole)status('Hệ thống chưa đọc được vai trò từ phiên đăng nhập. Cần xác minh tài khoản; không tự cấp quyền tạo lịch.');
 }
-const css=document.createElement('style');css.textContent='.hva-calendar-assist{background:#fff;border:1px solid #bbd8f5;border-radius:18px;padding:18px;margin:16px 0;color:#153f67;box-shadow:0 8px 25px #0a4e8520}.hva-calendar-assist h3{font-weight:900;font-size:16px;margin-bottom:8px}.hva-calendar-assist p,.hva-photo-controls span{font-size:12px;color:#536d89;margin-bottom:12px}.hva-photo-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:10px 0}.hva-photo-controls label{cursor:pointer;font-weight:800}.hva-photo-controls input{font-size:11px;max-width:100%}.hva-calendar-assist textarea{width:100%;padding:10px;border:1px solid #c1d7ee;border-radius:10px;display:block;margin:10px 0;font-size:13px}.hva-calendar-assist button,.hva-mic-btn{background:#075b9c;color:#fff;border:0;border-radius:8px;padding:8px 11px;font-size:11px;font-weight:800;cursor:pointer}.hva-mic-btn{display:block;margin:5px 0;background:#e4f2ff;color:#075b9c;border:1px solid #bbd9f5}.hva-calendar-assist #hvaPhotoPreview{max-width:100%;max-height:250px;object-fit:contain;margin:12px 0;border-radius:8px}.hva-calendar-assist #hvaCalendarAssistStatus{margin-top:10px;font-size:12px;color:#24628f}';document.head.appendChild(css);
+const css=document.createElement('style');css.textContent='.hva-pro-version{display:none!important} .hva-mic-btn:active{transform:scale(.98)} .hva-mic-btn:focus-visible{outline:3px solid #fbbf24;outline-offset:2px} @media(max-width:700px){.hva-pro-header-inner{gap:8px!important}.hva-calendar-assist{padding:12px!important;margin:12px 0!important}.hva-calendar-assist h3{font-size:14px!important}#btnDropdownTaoLich{white-space:nowrap!important}.hva-photo-controls{display:block!important}.hva-photo-controls label{display:block!important;margin-bottom:12px}} '+'.hva-calendar-assist{background:#fff;border:1px solid #bbd8f5;border-radius:18px;padding:18px;margin:16px 0;color:#153f67;box-shadow:0 8px 25px #0a4e8520}.hva-calendar-assist h3{font-weight:900;font-size:16px;margin-bottom:8px}.hva-calendar-assist p,.hva-photo-controls span{font-size:12px;color:#536d89;margin-bottom:12px}.hva-photo-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:10px 0}.hva-photo-controls label{cursor:pointer;font-weight:800}.hva-photo-controls input{font-size:11px;max-width:100%}.hva-calendar-assist textarea{width:100%;padding:10px;border:1px solid #c1d7ee;border-radius:10px;display:block;margin:10px 0;font-size:13px}.hva-calendar-assist button,.hva-mic-btn{background:#075b9c;color:#fff;border:0;border-radius:8px;padding:8px 11px;font-size:11px;font-weight:800;cursor:pointer}.hva-mic-btn{display:block;margin:5px 0;background:#e4f2ff;color:#075b9c;border:1px solid #bbd9f5}.hva-calendar-assist #hvaPhotoPreview{max-width:100%;max-height:250px;object-fit:contain;margin:12px 0;border-radius:8px}.hva-calendar-assist #hvaCalendarAssistStatus{margin-top:10px;font-size:12px;color:#24628f}';document.head.appendChild(css);
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
