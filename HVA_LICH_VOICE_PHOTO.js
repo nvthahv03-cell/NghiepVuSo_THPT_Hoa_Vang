@@ -11,7 +11,7 @@ function role(){
    }
  }
  const vals=[];
- for(const o of sources)for(const k of ['workPosition','position','role','chucVu','vaiTro','jobTitle','positionName','tenChucVu','chuc_danh','chuc_vu','title','userRole','chucDanh'])if(typeof o[k]==='string')vals.push(o[k]);
+ for(const o of sources)for(const k of ['workPosition','position','role','chucVu','viTriViecLam','vaiTro','jobTitle','positionName','tenChucVu','chuc_danh','chuc_vu','title','userRole','chucDanh'])if(typeof o[k]==='string')vals.push(o[k]);
  const raw=vals.join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
  return {raw,authorized:/(hieu truong|pho hieu truong|ban giam hieu|\bbgh\b|to truong van phong|ttvp)/.test(raw),hasRole:!!raw};
 }
