@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Nghiệp vụ số THPT Hòa Vang - Cuộc họp</title>
+<title>Cuộc họp | HVA-EDOS – Trường THPT Hòa Vang</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -297,6 +297,26 @@
   .hva-qr-action{padding:5px 4px;font-size:8.5px}
 }
 
+
+/* EDOS-CH-HEAD: thừa kế mẫu EDOS đã PASS, chỉ thay trình bày */
+.hva-pro-header{margin:5px 6px 0;min-height:94px;border-radius:10px;background:radial-gradient(circle at 86% 22%,rgba(8,221,228,.34),transparent 26%),linear-gradient(105deg,#064482 0%,#0757a8 45%,#058bbd 75%,#06bccc 100%)}
+.hva-pro-header-inner{min-height:92px;max-width:1460px;grid-template-columns:54px minmax(0,1fr) minmax(110px,auto);gap:12px;padding:10px 18px}
+.hva-pro-brand{justify-content:center;min-width:0}
+.hva-pro-brand .hva-pro-divider{display:none}
+.hva-edos-identity{width:auto;max-width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.08}
+.hva-edos-logo{color:#fff;font-weight:900;font-size:clamp(22px,2.65vw,34px);letter-spacing:-.035em;text-shadow:0 2px 9px rgba(0,30,82,.30)}
+.hva-edos-logo span{color:#ffa129}
+.hva-edos-en{color:#f5fbff;font-weight:750;font-size:clamp(9px,.88vw,12px)}
+.hva-edos-school{color:#fff;font-weight:850;font-size:clamp(9px,.9vw,12px)}
+.hva-edos-motto{color:#e3f4ff;font-size:clamp(9px,.82vw,11px);font-style:italic;font-weight:650}
+.hva-pro-tools{justify-content:flex-end}
+.hva-pro-online{height:36px;padding:0 11px;font-size:10px}
+.hva-qr-hide{border:1px solid #d4d7e6;border-radius:8px;width:29px;height:29px;flex:0 0 29px;background:#fff;color:#64748b;display:grid;place-items:center;font-size:16px;cursor:pointer}
+.hva-qr-hide:hover{background:#fee2e2;color:#b91c1c;border-color:#fecaca}
+.hva-restore-meetings{display:inline-flex;align-items:center;gap:5px;margin-top:10px;border:1px solid #c4b5fd;border-radius:9px;background:#faf5ff;color:#6d28d9;padding:7px 10px;font-size:10px;font-weight:800;cursor:pointer}
+.hva-restore-meetings[hidden]{display:none!important}
+@media(max-width:720px){.hva-pro-header-inner{grid-template-columns:37px minmax(0,1fr) 95px;min-height:83px;padding:8px 8px;gap:5px}.hva-pro-back{width:35px;height:35px}.hva-edos-logo{font-size:20px}.hva-edos-en{font-size:7px}.hva-edos-school{font-size:7px;line-height:1.15}.hva-edos-motto{font-size:6.5px;line-height:1.15}.hva-pro-online{font-size:8px;padding:0 7px;height:29px}.hva-pro-online-dot{width:7px;height:7px}.hva-pro-version{font-size:7px}}
+@media(max-width:390px){.hva-pro-header-inner{grid-template-columns:33px minmax(0,1fr) 77px;gap:3px}.hva-edos-logo{font-size:18px}.hva-edos-school{font-size:6.4px}.hva-edos-en{font-size:6.5px}.hva-edos-motto{font-size:6px}.hva-pro-online{min-width:0;padding:0 4px;font-size:7px}}
 </style>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-800">
@@ -306,7 +326,7 @@
     <button type="button"
             class="hva-pro-back"
             onclick="location.href='./DieuHanh.html'"
-            aria-label="Quay lại trang Điều hành Nghiệp vụ số"
+            aria-label="Quay lại Điều hành HVA-EDOS"
             title="Quay lại">
       <i class="bi bi-arrow-left"></i>
     </button>
@@ -314,15 +334,16 @@
     <div class="hva-pro-brand">
 <span class="hva-pro-divider" aria-hidden="true"></span>
 
-      <div class="hva-pro-brandtext">
-        <div class="hva-pro-kicker">NGHIỆP VỤ SỐ THÔNG MINH</div>
-        <div class="hva-pro-school">Trường THPT Hòa Vang</div>
-        <div class="hva-pro-slogan">Quản trị thông minh <b>•</b> Giáo dục sáng tạo</div>
+      <div class="hva-pro-brandtext hva-edos-identity" aria-label="HVA-EDOS – Trường THPT Hòa Vang">
+        <div class="hva-edos-logo">HVA-<span>EDOS</span></div>
+        <div class="hva-edos-en">Hoa Vang Education Data &amp; Operations System</div>
+        <div class="hva-edos-school">HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</div>
+        <div class="hva-edos-motto">Dữ liệu tập trung – Quản trị thông minh – Giáo dục sáng tạo</div>
       </div>
     </div>
 
     <div class="hva-pro-tools">
-      <div class="hva-pro-online-wrap"><div class="hva-pro-online" title="Hệ thống đang trực tuyến">
+      <div class="hva-pro-online-wrap"><div class="hva-pro-online" title="Trạng thái kết nối giao diện; không thay thế xác minh máy chủ">
         <span class="hva-pro-online-dot"></span>
         <span>TRỰC TUYẾN</span><span class="hva-pro-version" id="hvaVersionLabel">HVA</span>
       </div></div>
@@ -382,6 +403,7 @@
       <div id="managedMeetings" class="hva-qr-meetings text-[12px] font-semibold text-violet-700">
         Điều hành QR sẽ hiển thị sau khi cuộc họp được phát hành.
       </div>
+      <button id="hvaRestoreMeetings" type="button" class="hva-restore-meetings" hidden onclick="restoreHiddenManagedMeetings()"><i class="bi bi-eye"></i> Hiện lại cuộc họp đã ẩn (<span id="hvaHiddenMeetingsCount">0</span>)</button>
     </section>
   </div>
 
@@ -1512,9 +1534,53 @@ function shouldKeepManagedMeeting(m) {
     return Date.now() <= endedAt.getTime() + FIFTEEN_MINUTES;
 }
 
+/* EDOS-CH-HIDE: Ẩn cục bộ theo tài khoản, không xóa/hủy/phát hành hay ghi Backend. */
+function hvaHiddenMeetingStorageKey(){
+  const username=String(getMeetingOperatorUsername()||'').trim().toLowerCase();
+  return username ? 'HVA_EDOS_HIDDEN_MEETINGS_V1_'+username : '';
+}
+function hvaReadHiddenMeetings(){
+  const key=hvaHiddenMeetingStorageKey();
+  if(!key)return new Set();
+  try{const arr=JSON.parse(localStorage.getItem(key)||'[]');return new Set(Array.isArray(arr)?arr.map(String):[])}catch(_){return new Set()}
+}
+function hvaSaveHiddenMeetings(ids){
+  const key=hvaHiddenMeetingStorageKey();
+  if(!key)return false;
+  try{localStorage.setItem(key,JSON.stringify([...ids]));return true}catch(_){alert('Trình duyệt không cho lưu trạng thái ẩn. Cuộc họp vẫn còn trong hệ thống.');return false}
+}
+function hideManagedMeeting(meetingId){
+  const id=String(meetingId||'');
+  const m=managedMeetingData.find(x=>String(x.meetingId||'')===id);
+  if(!m)return;
+  if(!confirm('Ẩn "'+(m.title||'Cuộc họp')+'" khỏi bảng Điều hành QR trên thiết bị này?\n\nCuộc họp không bị hủy hoặc xóa; vẫn còn trong Lịch sử cuộc họp.'))return;
+  const ids=hvaReadHiddenMeetings();ids.add(id);
+  if(hvaSaveHiddenMeetings(ids))renderManagedMeetings();
+}
+function restoreHiddenManagedMeetings(){
+  const ids=hvaReadHiddenMeetings();
+  if(!ids.size)return;
+  if(!confirm('Hiện lại các cuộc họp đã ẩn trên thiết bị này?'))return;
+  if(hvaSaveHiddenMeetings(new Set()))renderManagedMeetings();
+}
+function hvaUpdateHiddenRestoreButton(hidden){
+  const btn=$('hvaRestoreMeetings'),count=$('hvaHiddenMeetingsCount');
+  if(!btn)return;
+  const n=managedMeetingData.filter(m=>hidden.has(String(m.meetingId||''))).length;
+  btn.hidden=n===0;if(count)count.textContent=String(n);
+}
+/* Không đưa meetingId vào JavaScript inline: lắng nghe qua data-id an toàn. */
+document.addEventListener('click',event=>{
+  const btn=event.target.closest && event.target.closest('[data-edos-hide-meeting]');
+  if(btn)hideManagedMeeting(btn.getAttribute('data-edos-hide-meeting'));
+});
+
 function renderManagedMeetings() {
     const box = $('managedMeetings');
+    const hidden=hvaReadHiddenMeetings();
+    hvaUpdateHiddenRestoreButton(hidden);
     const visibleMeetings = managedMeetingData
+        .filter(m=>!hidden.has(String(m.meetingId||'')))
         .filter(shouldKeepManagedMeeting)
         .slice(0, 10);
 
@@ -1536,6 +1602,7 @@ function renderManagedMeetings() {
                 <span class="badge ${ended ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700'}">${esc(m.meetingStatus || 'ĐÃ PHÁT HÀNH')}</span>
               </div>
             </div>
+            <button type="button" class="hva-qr-hide" data-edos-hide-meeting="${esc(m.meetingId||'')}" aria-label="Ẩn cuộc họp ${esc(m.title||'')}" title="Ẩn khỏi bảng điều hành, không xóa dữ liệu">&times;</button>
           </div>
           <div class="hva-qr-actions">
             ${canQr && !ended
