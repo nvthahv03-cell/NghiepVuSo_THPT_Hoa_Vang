@@ -318,6 +318,23 @@
 @media(max-width:720px){.hva-pro-header-inner{grid-template-columns:37px minmax(0,1fr) 95px;min-height:83px;padding:8px 8px;gap:5px}.hva-pro-back{width:35px;height:35px}.hva-edos-logo{font-size:20px}.hva-edos-en{font-size:7px}.hva-edos-school{font-size:7px;line-height:1.15}.hva-edos-motto{font-size:6.5px;line-height:1.15}.hva-pro-online{font-size:8px;padding:0 7px;height:29px}.hva-pro-online-dot{width:7px;height:7px}.hva-pro-version{font-size:7px}}
 @media(max-width:390px){.hva-pro-header-inner{grid-template-columns:33px minmax(0,1fr) 77px;gap:3px}.hva-edos-logo{font-size:18px}.hva-edos-school{font-size:6.4px}.hva-edos-en{font-size:6.5px}.hva-edos-motto{font-size:6px}.hva-pro-online{min-width:0;padding:0 4px;font-size:7px}}
 </style>
+
+<style id="hva-meet-dialog-style">
+.hva-meet-overlay{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(8,29,57,.58);backdrop-filter:blur(4px)}
+.hva-meet-dialog{box-sizing:border-box;width:min(100%,450px);padding:29px;border-radius:22px;background:#fff;color:#163b60;text-align:left;box-shadow:0 24px 76px rgba(4,22,45,.26);font-family:Inter,'Segoe UI',Arial,sans-serif}
+.hva-meet-icon{display:grid;place-items:center;width:51px;height:51px;border-radius:15px;background:#e8f3ff;color:#075ca9;font-size:27px}
+.hva-meet-dialog h2{font-size:21px;font-weight:800;margin:18px 0 9px;line-height:1.35}
+.hva-meet-sub{font-size:14px;color:#64748b;line-height:1.6;margin:0 0 17px}
+.hva-meet-info{display:grid;gap:7px;background:#f1f7fe;border:1px solid #dceafd;border-radius:13px;padding:16px;margin-bottom:22px}
+.hva-meet-event{font-weight:800;font-size:16px;overflow-wrap:anywhere}
+.hva-meet-when{font-size:13px;color:#406b91;font-weight:600}
+.hva-meet-actions{display:flex;justify-content:flex-end;gap:10px}
+.hva-meet-actions button{padding:12px 16px;border-radius:11px;font-size:13px;font-weight:800;border:1px solid #dce6f2;cursor:pointer}
+.hva-meet-cancel{background:#fff;color:#406280}
+.hva-meet-approve{background:linear-gradient(115deg,#07528d,#1477bf);color:white;border-color:transparent!important}
+.hva-meet-actions button:focus-visible{outline:3px solid #7bb8ff;outline-offset:2px}
+@media(max-width:430px){.hva-meet-dialog{padding:21px}.hva-meet-actions{flex-direction:column-reverse}.hva-meet-actions button{width:100%}}
+</style>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-800">
 <header class="hva-pro-header">
@@ -816,6 +833,28 @@ async function generateMeetingDraftAI() {
   }
 }
 
+
+/* HVA Meet - hộp xác nhận riêng, không thay đổi nghiệp vụ */
+function hvaMeetConfirm(event) {
+  return new Promise(resolve => {
+    const cover=document.createElement('div');
+    cover.className='hva-meet-overlay';
+    cover.innerHTML='<div class="hva-meet-dialog" role="dialog" aria-modal="true" aria-labelledby="hvaMeetTitle"><div class="hva-meet-icon">▣</div><h2 id="hvaMeetTitle">Tạo cuộc họp trực tuyến?</h2><p class="hva-meet-sub">Google Calendar sẽ tạo sự kiện và cấp liên kết Google Meet cho cuộc họp này.</p><div class="hva-meet-info"><strong class="hva-meet-event"></strong><span class="hva-meet-when"></span></div><div class="hva-meet-actions"><button type="button" class="hva-meet-cancel">Hủy</button><button type="button" class="hva-meet-approve">Xác nhận tạo Meet</button></div></div>';
+    cover.querySelector('.hva-meet-event').textContent=event.title;
+    cover.querySelector('.hva-meet-when').textContent=event.date.split('-').reverse().join('/')+' · '+event.startTime+' – '+event.endTime;
+    const approve=cover.querySelector('.hva-meet-approve');
+    const cancel=cover.querySelector('.hva-meet-cancel');
+    const finish=decision=>{document.removeEventListener('keydown',onKey);cover.remove();resolve(decision);};
+    const onKey=e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}};
+    approve.addEventListener('click',()=>finish(true));
+    cancel.addEventListener('click',()=>finish(false));
+    cover.addEventListener('click',e=>{if(e.target===cover)finish(false)});
+    document.addEventListener('keydown',onKey);
+    document.body.appendChild(cover);
+    cancel.focus();
+  });
+}
+
 /* Google Meet: chỉ tạo khi người dùng chủ động nhấn; không tác động chức năng phát hành. */
 let hvaMeetCreatedEventId = '';
 async function hvaCreateRealGoogleMeet() {
@@ -858,7 +897,7 @@ async function hvaCreateRealGoogleMeet() {
     setStatus('Phiên HVA không hợp lệ. Vui lòng đăng nhập lại.', true);
     return;
   }
-  if (!confirm('Tạo một sự kiện THẬT trên Google Calendar và sinh Google Meet cho cuộc họp "'+event.title+'" vào '+event.date+' lúc '+event.startTime+'?')) return;
+  if (!await hvaMeetConfirm(event)) return;
   btn.disabled = true;
   setStatus('Đang yêu cầu Google Calendar tạo phòng họp...');
   try {
@@ -875,7 +914,7 @@ async function hvaCreateRealGoogleMeet() {
     $('meetingMeetUrl').value = result.meetUrl;
     setStatus('Đã tạo Google Meet thật. Vui lòng kiểm tra link và thông tin cuộc họp trước khi phát hành.');
   } catch (err) {
-    setStatus('Chưa hoàn tất: '+(err.message||String(err)), true);
+    setStatus(/Action POST không hợp lệ|createMeetingGoogleMeet/i.test(String(err.message||err)) ? 'Chức năng tạo Google Meet chưa được kích hoạt trên máy chủ. Vui lòng liên hệ quản trị hệ thống.' : 'Chưa thể tạo liên kết: '+(err.message||String(err)), true);
   } finally {
     if (!hvaMeetCreatedEventId) btn.disabled = false;
   }
