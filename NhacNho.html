@@ -222,6 +222,11 @@ $('scenario').innerHTML=scenarios.map(s=>'<option value="'+esc(s[0])+'">'+esc(s[
 try{state.session=await call('getSession');if(!state.session?.sessionToken)throw Error('Chưa có phiên đăng nhập hợp lệ.');
 $('authInfo').textContent=isBGH()?'Phiên đăng nhập: '+(state.session.hoTen||state.session.username)+' · BGH được phép soạn và gửi.':'Phiên đăng nhập: '+(state.session.hoTen||state.session.username)+' · Chỉ được xem và phản hồi nhắc nhở của mình.';
 if(!isBGH()){setTabs(true);$('tabSend').disabled=true;return;}
+const connected=typeof BRIDGE.sendReminder==='function';
+$('sendBtn').disabled=!connected;
+if(!connected)status('sendStatus','Đang ở chế độ chuẩn bị nội dung. Backend chưa có chức năng gửi và lưu nhắc nhở; nút Gửi được khóa để tránh ghi nhận sai.','error');
+$('geminiBtn').disabled=typeof BRIDGE.generateDraft!=='function';
+$('openaiBtn').disabled=typeof BRIDGE.generateDraft!=='function';
 const r=await call('getPersonnel',{sessionToken:state.session.sessionToken});state.people=Array.isArray(r)?r:Array.isArray(r?.people)?r.people:[];
 state.people=state.people.map(normalizePersonnel).filter(p=>p.username&&p.hoTen).filter((p,i,a)=>a.findIndex(x=>x.username===p.username)===i).sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
 if(Array.isArray(window.NVS_REMINDER_PERSONNEL_GROUPS))installGroups(window.NVS_REMINDER_PERSONNEL_GROUPS);
