@@ -1127,6 +1127,7 @@ async function dthtStandaloneLogin(){
 
     $('dthtAuth').classList.add('hidden');
     initPortal();
+    window.NVS_refreshRoleQuickSlot?.();
     window.NVS_refreshNotifications?.();
   } catch(e) {
     msg.style.color = '#be123c';
@@ -1570,7 +1571,7 @@ if(!btn||!layer||!frame)return;
 function roleFold(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();}
 function isBGH(){let u={};try{u=JSON.parse(NVS_localStore.getItem('user')||NVS_sessionStore.getItem('user')||'{}')||{}}catch(_){}
 const role=roleFold(u.vaiTro||u.role),job=roleFold(u.chucVu||u.viTriViecLam||u['Vị trí việc làm']);
-return /hieu truong|pho hieu truong|ban giam hieu|/.test(job+" "+role)||/^(bgh|hieu_truong|pho_hieu_truong)$/.test(role);}
+return /(?:^|\W)(?:hieu truong|pho hieu truong|ban giam hieu)(?:\W|$)/.test(job+" "+role)||/^(?:bgh|hieu_truong|pho_hieu_truong)$/.test(role);}
 function hasSession(){const token=String(NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||'').trim();const expiry=Number(NVS_localStore.getItem('hvaSessionExpiresAt')||NVS_sessionStore.getItem('hvaSessionExpiresAt')||0);return !!token&&Number.isFinite(expiry)&&expiry>Date.now();}
 function syncVisibility(){const allowed=hasSession()&&isBGH();btn.hidden=!allowed;btn.style.setProperty('display',allowed?'flex':'none','important');btn.setAttribute('aria-hidden',allowed?'false':'true');if(!allowed&&layer.classList.contains('is-open'))close();return allowed;}
 function close(){layer.classList.remove('is-open');layer.setAttribute('aria-hidden','true');document.body.style.overflow='';if(!btn.hidden)btn.focus();}
@@ -1608,8 +1609,8 @@ remind.innerHTML='<span class="nvs-quick-icon"><i class="bi bi-clipboard2-check-
 library.innerHTML='<span class="nvs-quick-icon"><svg class="edos-folder-icon" viewBox="0 0 24 24" width="27" height="27" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 10h18"/></svg></span><strong>Hồ sơ điện tử</strong>';
 function refresh(){
  const allowed=typeof window.NVS_syncRemindBGH==='function'?window.NVS_syncRemindBGH():false;
- work.hidden=allowed;work.style.setProperty('display',allowed?'none':'flex','important');
- remind.hidden=!allowed;remind.style.setProperty('display',allowed?'flex':'none','important');
+ work.hidden=allowed;work.setAttribute('aria-hidden',allowed?'true':'false');work.style.setProperty('display',allowed?'none':'flex','important');
+ remind.hidden=!allowed;remind.setAttribute('aria-hidden',allowed?'false':'true');remind.style.setProperty('display',allowed?'flex':'none','important');
  library.hidden=false;
 }
 refresh();window.NVS_refreshRoleQuickSlot=refresh;
@@ -2818,5 +2819,12 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 
 
 
+
+<style id="hva-role-slot-restore-20261104">
+/* Single role slot: BGH = Nhắc nhở công vụ, others = Việc của tôi. */
+.nvs-quick>#nvsQuickWork[hidden],.nvs-quick>#nvsOpenRemind[hidden]{display:none!important;visibility:hidden!important}
+.nvs-quick>#nvsQuickWork:not([hidden]),.nvs-quick>#nvsOpenRemind:not([hidden]){visibility:visible!important}
+.nvs-quick>#nvsOpenRemind:not([hidden]){display:flex!important}
+</style>
 </body>
 </html>
