@@ -2405,5 +2405,88 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
  .nvs-chooser .nvs-two-gates .nvs-gate strong{font-size:clamp(10px,3.15vw,13px)!important}
 }
 </style>
+
+<style id="hva-quick-icon-uniform">
+/* Đồng nhất hình học 4 biểu tượng; không thay đổi sự kiện và số thông báo. */
+.nvs-quick>.nvs-quick-card .nvs-quick-icon,
+.nvs-quick>#nvsOpenRemind .nvs-quick-icon,
+.nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary .nvs-quick-icon{
+  position:relative!important;box-sizing:border-box!important;
+  display:grid!important;place-items:center!important;
+  width:44px!important;height:44px!important;
+  min-width:44px!important;min-height:44px!important;
+  max-width:44px!important;max-height:44px!important;
+  flex:0 0 44px!important;
+  margin:0 auto!important;padding:0!important;
+  border-radius:12px!important;
+}
+.nvs-quick>.nvs-quick-card .nvs-quick-icon>i,
+.nvs-quick>#nvsOpenRemind .nvs-quick-icon>i{
+  box-sizing:border-box!important;display:grid!important;place-items:center!important;
+  width:44px!important;height:44px!important;
+  min-width:44px!important;min-height:44px!important;
+  max-width:44px!important;max-height:44px!important;
+  margin:0!important;padding:0!important;
+  font-size:23px!important;line-height:1!important;
+  border-radius:12px!important;
+}
+.nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary .nvs-quick-icon{
+  background:linear-gradient(140deg,#0960b9,#04b9d6)!important;
+  box-shadow:0 4px 10px rgba(7,94,157,.15)!important;
+}
+.nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary .nvs-quick-icon svg.edos-folder-icon{
+  position:static!important;
+  box-sizing:border-box!important;
+  display:block!important;
+  width:25px!important;height:25px!important;
+  min-width:25px!important;max-width:25px!important;
+  min-height:25px!important;max-height:25px!important;
+  margin:0!important;padding:0!important;
+  overflow:visible!important;
+  stroke:#fff!important;
+  fill:none!important;
+}
+.nvs-quick .nvs-quick-badge{
+  position:absolute!important;
+  top:-7px!important;right:-7px!important;
+  z-index:2!important;
+  width:auto!important;min-width:18px!important;height:18px!important;min-height:18px!important;
+  display:grid!important;place-items:center!important;
+  margin:0!important;padding:0 3px!important;
+  line-height:1!important;font-size:10px!important;
+}
+.nvs-quick .nvs-quick-badge[hidden]{display:none!important}
+.nvs-quick>.nvs-quick-card>strong,
+.nvs-quick>#nvsOpenRemind>strong,
+.nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary>strong{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-height:30px!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 1px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  line-height:1.2!important;text-align:center!important;
+}
+@media(max-width:720px){
+ .nvs-quick>.nvs-quick-card .nvs-quick-icon,
+ .nvs-quick>#nvsOpenRemind .nvs-quick-icon,
+ .nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary .nvs-quick-icon,
+ .nvs-quick>.nvs-quick-card .nvs-quick-icon>i,
+ .nvs-quick>#nvsOpenRemind .nvs-quick-icon>i{
+  width:39px!important;height:39px!important;
+  min-width:39px!important;min-height:39px!important;
+  max-width:39px!important;max-height:39px!important;
+  flex-basis:39px!important;
+ }
+ .nvs-quick>.nvs-quick-card .nvs-quick-icon>i,
+ .nvs-quick>#nvsOpenRemind .nvs-quick-icon>i{font-size:21px!important}
+ .nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary .nvs-quick-icon svg.edos-folder-icon{
+  width:23px!important;height:23px!important;
+  min-width:23px!important;min-height:23px!important;
+  max-width:23px!important;max-height:23px!important;
+ }
+}
+</style>
 </body>
 </html>
