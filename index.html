@@ -2655,33 +2655,163 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 @media(max-width:720px){
  .hva-chat-panel{top:auto;bottom:calc(94px + env(safe-area-inset-bottom,0px));right:7px;left:auto;width:min(390px,calc(100vw - 14px));max-height:calc(100dvh - 112px);overflow-y:auto}
 }
+
+.hva-chat-tools{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.hva-chat-tools button,.hva-chat-pin{border:1px solid #bfdcf1;border-radius:8px;background:#eff8ff;color:#07518a;padding:6px 9px;font-size:12px;font-weight:700;cursor:pointer}
+.hva-chat-stream{overflow-y:auto;max-height:38vh;min-height:135px;display:flex;flex-direction:column;gap:8px;padding:9px 3px}
+.hva-chat-bubble{max-width:90%;align-self:flex-start;background:#edf6ff;border:1px solid #d2e7f8;border-radius:11px;padding:8px 10px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.hva-chat-bubble.mine{align-self:flex-end;background:#d9f7eb;border-color:#a0dbcc}
+.hva-chat-sender{font-size:11px;font-weight:750;color:#376c93;margin-bottom:4px}
+.hva-chat-pin{display:block;margin-top:7px;font-size:11px}
+.hva-chat-compose{display:flex;gap:7px;padding-top:10px;border-top:1px solid #e2e8f0}
+.hva-chat-compose textarea{flex:1;min-width:0;resize:vertical;border:1px solid #b6d5ed;border-radius:9px;padding:9px;font:inherit}
+.hva-chat-compose button,.hva-chat-form>button,.hva-chat-action-btn{background:#087ac5;color:white;border:0;border-radius:10px;padding:10px 12px;font-weight:750;cursor:pointer}
+.hva-chat-form{display:flex;flex-direction:column;gap:10px}
+.hva-chat-field{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700}
+.hva-chat-field input{width:100%;box-sizing:border-box;padding:9px;border:1px solid #b6d5ed;border-radius:9px;font-size:14px}
+.hva-chat-roster{max-height:220px;overflow-y:auto;border:1px solid #d2e7f8;border-radius:10px;padding:7px}
+.hva-chat-roster label{display:flex;align-items:center;gap:8px;padding:7px;border-bottom:1px solid #edf4fa;font-size:12px}
+.hva-chat-roster input{width:17px;height:17px;flex:none}
+.hva-chat-group-row{display:flex;align-items:center;justify-content:space-between;text-align:left;width:100%;background:#fff;border:1px solid #d6e8f7;border-radius:10px;padding:12px;margin:7px 0;color:#10406f}
+.hva-chat-group-row small{display:block;font-size:11px;color:#69819c;margin-top:4px}
+.hva-chat-archive{background:#fff0f0;border:1px solid #fecaca;border-radius:8px;color:#b91c1c;padding:10px}
+.nvs-premium-nav [data-nvs-nav="chat"]{position:relative}
+.nvs-premium-nav .hva-chat-unread{position:absolute;top:1px;right:calc(50% - 30px);font-size:10px;padding:2px 5px;background:#dc2626;color:#fff;border-radius:20px}
+.nvs-premium-nav .hva-chat-unread[hidden]{display:none}
+.nvs-premium-nav .hva-chat-alert i{filter:drop-shadow(0 0 7px #ffba08)}
+@media(max-width:720px){.hva-chat-panel{width:calc(100vw - 18px);right:9px;bottom:calc(84px + env(safe-area-inset-bottom,0px));max-height:calc(100dvh - 108px);overflow-y:auto}.hva-chat-stream{max-height:32vh}}
 </style>
 <script id="hva-chat-header-interaction">
 (function(){
  'use strict';
- const get=id=>document.getElementById(id);
- const toggle=get('hvaChatToggle'),panel=get('hvaChatPanel'),close=get('hvaChatClose');
- const actions=get('hvaChatActions'),detail=get('hvaChatDetail'),back=get('hvaChatBack');
- if(!toggle||!panel)return;
+ const $=id=>document.getElementById(id);
+ const button=$('hvaChatToggle'),panel=$('hvaChatPanel'),close=$('hvaChatClose'),actions=$('hvaChatActions'),detail=$('hvaChatDetail'),back=$('hvaChatBack');
+ if(!button||!panel)return;
+ const content=$('hvaChatDetailContent'),title=$('hvaChatDetailTitle'),foot=panel.querySelector('.hva-chat-footnote');
+ const endpoint=()=>typeof DTHT_STANDALONE_BACKEND==='string'?DTHT_STANDALONE_BACKEND:'';
+ const session=()=>{try{return typeof authToken==='function'?authToken():String(localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'')}catch(_){return ''}};
+ const user=()=>{try{return typeof currentUser==='function'?currentUser():JSON.parse(localStorage.getItem('user')||'{}')}catch(_){return {}}};
+ const state={groups:[],group:null,messages:[],members:[],poll:null,unread:0};
+ const esc=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const stamp=x=>{if(!x)return '';const d=new Date(x);return isNaN(d)?String(x):d.toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})};
+ const status=(t,err)=>{let el=$('hvaChatStatus');if(!el){el=document.createElement('p');el.id='hvaChatStatus';el.setAttribute('role','status');panel.querySelector('.hva-chat-head').after(el)}el.textContent=t||'';el.style.cssText='margin:0;padding:'+(t?'9px 15px':'0')+';font-size:12px;line-height:1.5;background:'+(err?'#fff1f2':'#eff6ff')+';color:'+(err?'#9f1239':'#075985')+';display:'+(t?'block':'none')};
+ function visible(page,label){actions.hidden=true;detail.hidden=false;title.textContent=label||'';content.replaceChildren();status('');back.hidden=false;}
+ function node(tag,attrs={},text){const e=document.createElement(tag);Object.entries(attrs).forEach(([k,v])=>{if(k==='class')e.className=v;else if(k==='type')e.type=v;else e.setAttribute(k,v)});if(text!==undefined)e.textContent=text;return e}
+ function appendText(tag,text){let e=node(tag,{},text);content.append(e);return e}
+ async function api(action,data={},method='GET'){
+   const token=session(),url=endpoint();
+   if(!token)throw Error('Phiên EDOS hết hạn. Thầy/Cô vui lòng đăng nhập lại.');
+   if(!url||!/^https:\/\/script\.google\.com\/macros\/s\//.test(url))throw Error('Chưa cấu hình địa chỉ Backend HVA Chat.');
+   let response;
+   if(method==='GET'){
+     const u=new URL(url);Object.entries({action,sessionToken:token,...data}).forEach(([k,v])=>u.searchParams.set(k,v));
+     response=await fetch(u.toString(),{cache:'no-store',redirect:'follow'});
+   }else{
+     response=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,sessionToken:token,...data}),redirect:'follow'});
+   }
+   if(!response.ok)throw Error('Máy chủ Chat chưa phản hồi (HTTP '+response.status+').');
+   const json=await response.json().catch(()=>{throw Error('Web App chưa trả dữ liệu Chat hợp lệ. Hãy triển khai bản Backend mới.')});
+   if(!json||json.success!==true)throw Error(json?.message||'Web App chưa hỗ trợ '+action+'. Cần triển khai lại Backend Chat.');
+   return json;
+ }
+ async function loadGroups(){
+   visible('list','Nhóm trò chuyện');back.hidden=true;appendText('p','Đang đồng bộ các nhóm từ máy chủ...');
+   try{
+     const d=await api('chatGetGroups');state.groups=d.groups||[];content.replaceChildren();
+     const add=node('button',{type:'button',class:'hva-chat-action-btn'},'＋ Tạo nhóm công việc');add.onclick=showCreate;content.append(add);
+     if(!state.groups.length)appendText('p','Chưa có nhóm Chat được cấp quyền.');
+     state.groups.forEach(g=>{
+       const b=node('button',{type:'button',class:'hva-chat-group-row'});
+       b.innerHTML='<span><strong>'+esc(g.name)+'</strong><small>'+esc(g.status==='ACTIVE'?'Đang hoạt động':'Đã lưu trữ')+(g.endAt?' · Hạn: '+esc(stamp(g.endAt)):'')+'</small></span><i class="bi bi-chevron-right"></i>';
+       b.onclick=()=>openGroup(g);content.append(b);
+     });
+     foot.textContent='Tin nhắn được lưu trên hệ thống HVA. Thông báo đẩy điện thoại chưa kích hoạt.';
+     checkNotices();
+   }catch(e){content.replaceChildren();status(e.message,true);appendText('p','Chưa thể mở dữ liệu thật. Vui lòng kiểm tra bản triển khai Web App và đăng nhập EDOS.');}
+ }
+ async function openGroup(g){
+   state.group=g;visible('group',g.name);
+   const tools=node('div',{class:'hva-chat-tools'});
+   const home=node('button',{type:'button'},'↻ Tải lại'),members=node('button',{type:'button'},'Thành viên'),settings=node('button',{type:'button',title:'Cài đặt nhóm'},'⚙ Cài đặt');
+   home.onclick=()=>openGroup(g);members.onclick=showMembers;settings.onclick=showSettings;tools.append(home,members,settings);content.append(tools);
+   const stream=node('div',{class:'hva-chat-stream'});stream.id='hvaChatStream';content.append(stream);
+   const form=node('form',{class:'hva-chat-compose'}),input=node('textarea',{placeholder:'Nhập tin nhắn...',rows:'2',maxlength:'4000','aria-label':'Nội dung tin nhắn'});
+   const send=node('button',{type:'submit'},'Gửi');form.append(input,send);
+   if(g.status!=='ACTIVE'){input.disabled=true;send.disabled=true;input.placeholder='Nhóm đã lưu trữ';}
+   form.onsubmit=async e=>{e.preventDefault();const text=input.value.trim();if(!text)return;send.disabled=true;try{await api('chatSendMessage',{groupId:g.id,text},'POST');input.value='';await refreshMessages()}catch(err){status(err.message,true)}finally{send.disabled=g.status!=='ACTIVE'}};
+   content.append(form);
+   await refreshMessages();
+   if(state.poll)clearInterval(state.poll);
+   state.poll=setInterval(()=>{if(!panel.hidden&&state.group?.id===g.id&&!detail.hidden)refreshMessages(true)},15000);
+ }
+ async function refreshMessages(silent){
+   const box=$('hvaChatStream');if(!box||!state.group)return;
+   try{
+     const d=await api('chatGetMessages',{groupId:state.group.id,limit:60});
+     state.messages=d.messages||[];box.replaceChildren();
+     if(!state.messages.length)box.append(node('p',{class:'hva-chat-empty'},'Chưa có tin nhắn trong nhóm.'));
+     state.messages.forEach(m=>{
+       const line=node('div',{class:'hva-chat-bubble'});
+       const me=String(m.sender||'').toLowerCase()===String(user().username||user().tenDangNhap||'').toLowerCase();
+       if(me)line.classList.add('mine');
+       const h=node('div',{class:'hva-chat-sender'},(m.pinned?'📌 ':'')+(m.senderName||m.sender)+' · '+stamp(m.sentAt));line.append(h,node('div',{},m.text));
+       if((state.group.memberRole==='OWNER'||state.group.memberRole==='ADMIN')&&state.group.status==='ACTIVE'){
+         const pin=node('button',{type:'button',class:'hva-chat-pin'},m.pinned?'Bỏ ghim':'📌 Ghim');
+         pin.onclick=async()=>{try{await api('chatPinMessage',{groupId:state.group.id,messageId:m.id,pinned:!m.pinned},'POST');await refreshMessages()}catch(e){status(e.message,true)}};line.append(pin);
+       }
+       box.append(line);
+     });
+     if(!silent)box.scrollTop=box.scrollHeight;status('');
+   }catch(e){if(!silent)status(e.message,true);}
+ }
+ async function showMembers(){
+   if(!state.group)return;const g=state.group;visible('members','Thành viên · '+g.name);appendText('p','Đang tải danh sách...');
+   try{const d=await api('chatGetMembers',{groupId:g.id});state.members=d.members||[];content.replaceChildren();appendText('p',state.members.length+' thành viên');state.members.forEach(m=>appendText('div',(m.name||m.username)+' · '+(m.team||m.role||'')));}catch(e){status(e.message,true)}
+ }
+ function field(parent,label,type='text',value=''){const box=node('label',{class:'hva-chat-field'}),span=node('span',{},label),el=node('input',{type});el.value=value;box.append(span,el);parent.append(box);return el}
+ async function showCreate(){
+   state.group=null;visible('create','Tạo nhóm công việc');
+   const form=node('form',{class:'hva-chat-form'}),name=field(form,'Tên nhóm','text'),expiry=field(form,'Kết thúc lúc (có thể để trống)','datetime-local');
+   name.required=true;name.maxLength=120;
+   form.append(node('p',{},'Chọn người tham gia từ danh sách nhân sự EDOS:'));
+   const search=field(form,'Tìm theo họ tên hoặc tổ','search'),list=node('div',{class:'hva-chat-roster'});form.append(list);
+   const submit=node('button',{type:'submit'},'Tạo nhóm');submit.disabled=true;form.append(submit);content.append(form);
+   try{
+     const d=await api('chatGetMembers',{groupId:'COUNCIL:ALL'});const all=d.members||[];
+     function render(){const kw=search.value.toLocaleLowerCase('vi');list.replaceChildren();all.filter(p=>(p.name+' '+p.team).toLocaleLowerCase('vi').includes(kw)).slice(0,130).forEach(p=>{
+       const label=node('label',{}),check=node('input',{type:'checkbox',value:p.username,'data-chat-member':'1'});label.append(check,node('span',{},p.name+(p.team?' · '+p.team:'')));list.append(label);
+     });}render();search.oninput=render;submit.disabled=false;
+   }catch(e){status('Chưa tải được nhân sự: '+e.message,true);return}
+   form.onsubmit=async e=>{e.preventDefault();const members=[...list.querySelectorAll('input[data-chat-member]:checked')].map(x=>x.value);
+     if(!members.length){status('Vui lòng chọn ít nhất một thành viên.',true);return}
+     submit.disabled=true;try{const d=await api('chatCreateGroup',{name:name.value.trim(),members,endAt:expiry.value||''},'POST');status('Đã tạo nhóm trên máy chủ.');await loadGroups();const g=state.groups.find(x=>x.id===d.groupId);if(g)await openGroup(g)}catch(err){status(err.message,true)}finally{submit.disabled=false}
+   };
+ }
+ async function showSettings(){
+   if(!state.group)return;const g=state.group;visible('settings','Cài đặt · '+g.name);
+   if(g.type==='COUNCIL')return appendText('p','Nhóm Hội đồng thường trực, sử dụng nhân sự đang công tác và không có thời hạn giải thể.');
+   if(g.memberRole!=='ADMIN'&&g.memberRole!=='OWNER')return appendText('p','Chỉ trưởng nhóm và quản trị viên được thay đổi cài đặt.');
+   const f=node('form',{class:'hva-chat-form'}),name=field(f,'Tên nhóm','text',g.name),exp=field(f,'Kết thúc lúc (giờ Việt Nam)','datetime-local');
+   if(g.endAt){const dt=new Date(g.endAt);if(!isNaN(dt))exp.value=new Date(dt.getTime()+7*3600000).toISOString().slice(0,16)}
+   const save=node('button',{type:'submit'},'Lưu cấu hình');f.append(save);
+   f.onsubmit=async e=>{e.preventDefault();save.disabled=true;try{await api('chatSetGroup',{groupId:g.id,name:name.value,endAt:exp.value||''},'POST');await loadGroups();status('Đã lưu cấu hình nhóm.')}catch(err){status(err.message,true)}finally{save.disabled=false}};
+   const archive=node('button',{type:'button',class:'hva-chat-archive'},'Giải thể nhóm ngay');archive.onclick=async()=>{if(!confirm('Giải thể nhóm này? Thành viên sẽ không thể gửi tin mới.'))return;try{await api('chatArchiveGroup',{groupId:g.id},'POST');await loadGroups()}catch(err){status(err.message,true)}};content.append(f,archive);
+ }
+ async function checkNotices(){
+   try{const d=await api('chatGetNotifications');const badge=button.querySelector('.hva-chat-unread')||node('b',{class:'hva-chat-unread'});const n=Number(d.unreadCount)||0;badge.textContent=n>99?'99+':String(n);badge.hidden=n===0;button.append(badge);button.classList.toggle('hva-chat-alert',n>0);state.unread=n}catch(_){}
+ }
  function show(open){
-   panel.hidden=!open;toggle.setAttribute('aria-expanded',String(open));
-   if(open){actions.hidden=false;detail.hidden=true;close.focus();}
-   else toggle.focus();
+   panel.hidden=!open;button.setAttribute('aria-expanded',String(open));
+   if(state.poll){clearInterval(state.poll);state.poll=null}
+   if(open){loadGroups();close.focus()}else {state.group=null;button.focus()}
  }
- function page(title,content){
-   actions.hidden=true;detail.hidden=false;
-   get('hvaChatDetailTitle').textContent=title;
-   get('hvaChatDetailContent').textContent='';
-   const msg=document.createElement('div');msg.className='hva-chat-info';msg.textContent=content;
-   get('hvaChatDetailContent').appendChild(msg);back.focus();
- }
- toggle.addEventListener('click',()=>show(panel.hidden));
+ button.addEventListener('click',()=>show(panel.hidden));
  close.addEventListener('click',()=>show(false));
- back.addEventListener('click',()=>{detail.hidden=true;actions.hidden=false;get('hvaChatCouncil').focus()});
- get('hvaChatCouncil').addEventListener('click',()=>page('Hội đồng sư phạm','Đây là không gian nhóm Hội đồng dự kiến. Để gửi và nhận tin nhắn thật, EDOS cần kết nối máy chủ Chat và xác thực thành viên nhóm.'));
- get('hvaChatCreate').addEventListener('click',()=>page('Tạo nhóm mới','Chức năng tạo nhóm sẽ cho phép chọn thành viên từ danh sách nhân sự EDOS và phân quyền quản lý nhóm. Hiện chưa kích hoạt để tránh tạo nhóm giả.'));
+ back.addEventListener('click',()=>{if(state.group){state.group=null;loadGroups()}else loadGroups()});
+ $('hvaChatCouncil').addEventListener('click',async()=>{show(true);await openGroup({id:'COUNCIL:ALL',name:'Hội đồng sư phạm',type:'COUNCIL',status:'ACTIVE',memberRole:'MEMBER'})});
+ $('hvaChatCreate').addEventListener('click',()=>{show(true);showCreate()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)show(false)});
- document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&!toggle.contains(e.target))show(false)});
+ document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&!button.contains(e.target))show(false)});
 })();
 </script>
 
