@@ -940,8 +940,10 @@ body{padding-bottom:calc(115px + env(safe-area-inset-bottom,0px))!important}
 <!-- HEADER CHUẨN TRUNG TÂM QUẢN TRỊ SỐ HVA -->
 <header class="hva-pro-header">
   <div class="hva-pro-header-inner">
-    <button type="button" class="hva-pro-back" id="nvsMenuToggle" aria-label="Mở danh mục nghiệp vụ" aria-expanded="false"><i class="bi bi-list"></i></button>
-    <button type="button" class="hva-pro-back hva-chat-trigger" id="hvaChatToggle" aria-label="Mở HVA Chat" aria-haspopup="dialog" aria-controls="hvaChatPanel" aria-expanded="false" title="HVA Chat"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i></button>
+    <div class="hva-header-left">
+      <button type="button" class="hva-pro-back" id="nvsMenuToggle" aria-label="Mở danh mục nghiệp vụ" aria-expanded="false"><i class="bi bi-list"></i></button>
+      <button type="button" class="hva-pro-back hva-chat-trigger" id="hvaChatToggle" aria-label="Mở HVA Chat" aria-haspopup="dialog" aria-controls="hvaChatPanel" aria-expanded="false" title="HVA Chat"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i></button>
+    </div>
     <div class="hva-pro-brand"><div class="hva-pro-brandtext"><div class="hva-pro-school">HVA-<span>EDOS</span></div><div class="hva-pro-kicker">Hoa Vang Education Data &amp; Operations System</div><div class="hva-pro-vietnam">HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</div><div class="hva-pro-slogan">Dữ liệu tập trung – Quản trị thông minh – Giáo dục sáng tạo</div></div></div>
     <div class="hva-pro-tools"><a class="nvs-home-link" href="./index.html" aria-label="Trang chủ NVS" title="Trang chủ NVS"><i class="bi bi-house-door-fill"></i></a><div class="hva-pro-online"><span class="hva-pro-online-dot"></span><span>TRỰC TUYẾN</span><span class="hva-pro-version">PORTAL</span></div><button type="button" class="logout-btn nvs-header-logout" onclick="logoutHVA()"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button></div>
   </div>
@@ -2637,13 +2639,15 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 </section>
 <style id="hva-chat-header-ui">
 .hva-pro-header-inner{position:relative}
+.hva-pro-header-inner .hva-header-left{position:relative;grid-column:1;min-width:36px;width:36px;display:flex;align-items:center;justify-content:center}
+.hva-pro-header-inner .hva-header-left #nvsMenuToggle{position:relative;z-index:2;transform:none!important;margin:0!important}
 .hva-pro-header-inner .hva-chat-trigger{
   display:grid!important;place-items:center!important;
   width:36px!important;height:36px!important;min-width:36px!important;
   padding:0!important;margin:0!important;font-size:17px!important;
   border:1px solid rgba(160,235,255,.55)!important;border-radius:11px!important;
   background:rgba(12,125,194,.48)!important;color:white!important;
-  grid-column:1;grid-row:1;transform:translateX(44px);
+  position:absolute!important;left:44px!important;top:50%!important;transform:translateY(-50%)!important;
   z-index:5;
 }
 .hva-pro-header-inner .hva-chat-trigger:hover,
@@ -2666,10 +2670,11 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 .hva-chat-info{padding:13px;line-height:1.6;border:1px solid #c9e3f6;border-radius:12px;background:#f3f9ff;color:#365c7a;font-size:12px}
 .hva-chat-footnote{margin:0;padding:11px 15px;border-top:1px solid #d9ebf7;background:#f7fbff;color:#66809c;font-size:10px;line-height:1.5}
 @media(max-width:720px){
- .hva-pro-header-inner .hva-chat-trigger{width:30px!important;height:30px!important;min-width:30px!important;transform:translateX(37px);font-size:15px!important;border-radius:9px!important}
+ .hva-pro-header-inner .hva-header-left{width:30px;min-width:30px}
+ .hva-pro-header-inner .hva-chat-trigger{width:30px!important;height:30px!important;min-width:30px!important;left:37px!important;transform:translateY(-50%)!important;font-size:15px!important;border-radius:9px!important}
  .hva-chat-panel{top:80px;left:7px;width:min(390px,calc(100vw - 14px));max-height:calc(100dvh - 92px);overflow-y:auto}
 }
-@media(max-width:380px){.hva-pro-header-inner .hva-chat-trigger{transform:translateX(34px)}}
+@media(max-width:380px){.hva-pro-header-inner .hva-chat-trigger{left:34px!important}}
 </style>
 <script id="hva-chat-header-interaction">
 (function(){
