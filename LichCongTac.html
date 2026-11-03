@@ -36,7 +36,7 @@ function prepareSchool(source){
     .replace(/<div id="printUserPositionSignature"([^>]*)>Phó Hiệu trưởng<\/div>/g,'<div id="printUserPositionSignature"$1></div>')
     .replace(/<div id="printUserSignature"([^>]*)>Nguyễn Văn Thà<\/div>/g,'<div id="printUserSignature"$1></div>')
     .replace(/user\.fullName \|\| "Nguyễn Văn Thà"/g,"(user.hoTen || user.fullName || user.name || 'Chưa xác định')")
-    .replace(/user\.workPosition \|\| "Phó Hiệu trưởng"/g,"(user.chucVu || user.viTriViecLam || user.workPosition || user.position || 'Chưa xác định')")
+     .replace(/user\.workPosition \|\| "Phó Hiệu trưởng"/g,"(user.chucVu || user.viTriViecLam || user.workPosition || user.position || 'Chưa xác định')")
     .replace(/user\.fullName \|\| "Nguyễn Văn Thà"/g,"(user.hoTen || user.fullName || user.name || 'Chưa xác định')");
   // View mode never mounts the legacy creation assistant.
   if(manage)html=html.replace('</body>','<script src="./HVA_LICH_VOICE_PHOTO.js"></'+'script></body>');
@@ -52,7 +52,7 @@ function updateIdentity(doc){
     for(const e of doc.querySelectorAll('[onclick*="selectTaoLichTab"]'))e.remove();
     for(const el of doc.querySelectorAll('.form-tab-content'))el.classList.add('hidden');
     for(const el of doc.querySelectorAll('[id^="sang_"],[id^="chieu_"],[id^="ghichu_"]')){el.readOnly=true;el.disabled=true;}
-    if(typeof doc.defaultView.switchViewTab==='function')doc.defaultView.switchViewTab('view-lich-tuan');
+    if(!doc.documentElement.dataset.hvaViewerInitialized){if(typeof doc.defaultView.switchViewTab==='function')doc.defaultView.switchViewTab('view-lich-tuan');doc.documentElement.dataset.hvaViewerInitialized='1';}
     const preview=doc.getElementById('previewPage');if(preview)preview.classList.add('hidden');
   }
 }
