@@ -941,6 +941,7 @@ body{padding-bottom:calc(115px + env(safe-area-inset-bottom,0px))!important}
 <header class="hva-pro-header">
   <div class="hva-pro-header-inner">
     <button type="button" class="hva-pro-back" id="nvsMenuToggle" aria-label="Mở danh mục nghiệp vụ" aria-expanded="false"><i class="bi bi-list"></i></button>
+    <button type="button" class="hva-pro-back hva-chat-trigger" id="hvaChatToggle" aria-label="Mở HVA Chat" aria-haspopup="dialog" aria-controls="hvaChatPanel" aria-expanded="false" title="HVA Chat"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i></button>
     <div class="hva-pro-brand"><div class="hva-pro-brandtext"><div class="hva-pro-school">HVA-<span>EDOS</span></div><div class="hva-pro-kicker">Hoa Vang Education Data &amp; Operations System</div><div class="hva-pro-vietnam">HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</div><div class="hva-pro-slogan">Dữ liệu tập trung – Quản trị thông minh – Giáo dục sáng tạo</div></div></div>
     <div class="hva-pro-tools"><a class="nvs-home-link" href="./index.html" aria-label="Trang chủ NVS" title="Trang chủ NVS"><i class="bi bi-house-door-fill"></i></a><div class="hva-pro-online"><span class="hva-pro-online-dot"></span><span>TRỰC TUYẾN</span><span class="hva-pro-version">PORTAL</span></div><button type="button" class="logout-btn nvs-header-logout" onclick="logoutHVA()"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button></div>
   </div>
@@ -2616,5 +2617,88 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
  }
 }
 </style>
+
+<!-- HVA Chat: giao diện thử nghiệm, chưa có máy chủ nhắn tin -->
+<section id="hvaChatPanel" class="hva-chat-panel" role="dialog" aria-modal="false" aria-labelledby="hvaChatTitle" hidden>
+ <div class="hva-chat-head">
+  <div><strong id="hvaChatTitle"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i> HVA CHAT</strong><small>Trao đổi nội bộ Trường THPT Hòa Vang</small></div>
+  <button type="button" id="hvaChatClose" class="hva-chat-close" aria-label="Đóng HVA Chat"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+ </div>
+ <div class="hva-chat-actions" id="hvaChatActions">
+  <button type="button" id="hvaChatCouncil"><i class="bi bi-people-fill" aria-hidden="true"></i><span><strong>Chat Hội đồng</strong><small>Nhóm Hội đồng sư phạm</small></span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+  <button type="button" id="hvaChatCreate"><i class="bi bi-plus-circle-fill" aria-hidden="true"></i><span><strong>Tạo nhóm</strong><small>Trao đổi công việc theo nhóm</small></span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+ </div>
+ <div id="hvaChatDetail" class="hva-chat-detail" hidden>
+  <button type="button" id="hvaChatBack" class="hva-chat-back"><i class="bi bi-arrow-left"></i> Danh sách nhóm</button>
+  <h3 id="hvaChatDetailTitle"></h3>
+  <div id="hvaChatDetailContent"></div>
+ </div>
+ <p class="hva-chat-footnote">Giao diện thử nghiệm. Nhắn tin và tạo nhóm thực tế sẽ hoạt động sau khi kết nối hệ thống Chat bảo mật.</p>
+</section>
+<style id="hva-chat-header-ui">
+.hva-pro-header-inner{position:relative}
+.hva-pro-header-inner .hva-chat-trigger{
+  display:grid!important;place-items:center!important;
+  width:36px!important;height:36px!important;min-width:36px!important;
+  padding:0!important;margin:0!important;font-size:17px!important;
+  border:1px solid rgba(160,235,255,.55)!important;border-radius:11px!important;
+  background:rgba(12,125,194,.48)!important;color:white!important;
+  grid-column:1;grid-row:1;transform:translateX(44px);
+  z-index:5;
+}
+.hva-pro-header-inner .hva-chat-trigger:hover,
+.hva-pro-header-inner .hva-chat-trigger[aria-expanded="true"]{background:#09a4d7!important;box-shadow:0 0 0 2px #b4f4ff55!important}
+.hva-chat-panel{position:fixed;top:94px;left:12px;z-index:16000;width:min(390px,calc(100vw - 24px));border:1px solid #a1dafa;border-radius:18px;box-shadow:0 20px 52px #07305d55;background:#fff;color:#10406f;overflow:hidden;font-family:Inter,"Segoe UI",Arial,sans-serif}
+.hva-chat-panel[hidden],.hva-chat-detail[hidden],.hva-chat-actions[hidden]{display:none!important}
+.hva-chat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(110deg,#073f83,#067dbf);color:white;padding:16px 17px}
+.hva-chat-head strong{display:block;font-size:16px;letter-spacing:.03em}.hva-chat-head strong i{margin-right:7px}
+.hva-chat-head small{display:block;font-size:11px;color:#d7f6ff;margin-top:4px}
+.hva-chat-close{width:34px;height:34px;border:1px solid #ffffff66;border-radius:10px;color:white;background:#ffffff22;cursor:pointer}
+.hva-chat-actions{padding:12px;display:grid;gap:9px}
+.hva-chat-actions>button{display:flex;align-items:center;gap:12px;width:100%;min-height:70px;text-align:left;background:#f2f9ff;color:#0b4f88;border:1px solid #c5e4f9;border-radius:12px;padding:13px;cursor:pointer}
+.hva-chat-actions>button:hover,.hva-chat-actions>button:focus-visible{background:#e4f4ff;border-color:#56b8ee}
+.hva-chat-actions>button>i:first-child{display:grid;place-items:center;flex:0 0 43px;width:43px;height:43px;background:linear-gradient(145deg,#0776d1,#06b9c6);color:#fff;border-radius:12px;font-size:21px}
+.hva-chat-actions>button>span{display:grid;gap:3px;flex:1;min-width:0}
+.hva-chat-actions>button strong{font-size:14px}.hva-chat-actions>button small{font-size:11px;color:#567b9a}
+.hva-chat-actions>button>i:last-child{font-size:13px;color:#4c95c8}
+.hva-chat-detail{padding:14px 16px 17px}.hva-chat-detail h3{font-size:15px;margin:13px 0;color:#074c89}
+.hva-chat-back{background:transparent;border:0;color:#0769b0;font-weight:750;font-size:12px;cursor:pointer;padding:7px 0}
+.hva-chat-info{padding:13px;line-height:1.6;border:1px solid #c9e3f6;border-radius:12px;background:#f3f9ff;color:#365c7a;font-size:12px}
+.hva-chat-footnote{margin:0;padding:11px 15px;border-top:1px solid #d9ebf7;background:#f7fbff;color:#66809c;font-size:10px;line-height:1.5}
+@media(max-width:720px){
+ .hva-pro-header-inner .hva-chat-trigger{width:30px!important;height:30px!important;min-width:30px!important;transform:translateX(37px);font-size:15px!important;border-radius:9px!important}
+ .hva-chat-panel{top:80px;left:7px;width:min(390px,calc(100vw - 14px));max-height:calc(100dvh - 92px);overflow-y:auto}
+}
+@media(max-width:380px){.hva-pro-header-inner .hva-chat-trigger{transform:translateX(34px)}}
+</style>
+<script id="hva-chat-header-interaction">
+(function(){
+ 'use strict';
+ const get=id=>document.getElementById(id);
+ const toggle=get('hvaChatToggle'),panel=get('hvaChatPanel'),close=get('hvaChatClose');
+ const actions=get('hvaChatActions'),detail=get('hvaChatDetail'),back=get('hvaChatBack');
+ if(!toggle||!panel)return;
+ function show(open){
+   panel.hidden=!open;toggle.setAttribute('aria-expanded',String(open));
+   if(open){actions.hidden=false;detail.hidden=true;close.focus();}
+   else toggle.focus();
+ }
+ function page(title,content){
+   actions.hidden=true;detail.hidden=false;
+   get('hvaChatDetailTitle').textContent=title;
+   get('hvaChatDetailContent').textContent='';
+   const msg=document.createElement('div');msg.className='hva-chat-info';msg.textContent=content;
+   get('hvaChatDetailContent').appendChild(msg);back.focus();
+ }
+ toggle.addEventListener('click',()=>show(panel.hidden));
+ close.addEventListener('click',()=>show(false));
+ back.addEventListener('click',()=>{detail.hidden=true;actions.hidden=false;get('hvaChatCouncil').focus()});
+ get('hvaChatCouncil').addEventListener('click',()=>page('Hội đồng sư phạm','Đây là không gian nhóm Hội đồng dự kiến. Để gửi và nhận tin nhắn thật, EDOS cần kết nối máy chủ Chat và xác thực thành viên nhóm.'));
+ get('hvaChatCreate').addEventListener('click',()=>page('Tạo nhóm mới','Chức năng tạo nhóm sẽ cho phép chọn thành viên từ danh sách nhân sự EDOS và phân quyền quản lý nhóm. Hiện chưa kích hoạt để tránh tạo nhóm giả.'));
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)show(false)});
+ document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&!toggle.contains(e.target))show(false)});
+})();
+</script>
+
 </body>
 </html>
