@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NVS | Nhắc nhở công vụ V5</title>
+<title>Nhắc nhở công vụ | HVA-EDOS</title>
 <style>
 :root{--navy:#10365d;--blue:#1262a3;--cyan:#e8f7fc;--line:#dbe5ee;--text:#19334c;--muted:#60758a;--red:#b42332}
 *{box-sizing:border-box}body{margin:0;background:#f2f6fa;font:15px/1.5 "Segoe UI",Arial,sans-serif;color:var(--text)}
@@ -26,6 +26,12 @@ pre{white-space:pre-wrap;word-break:break-word;font:inherit;margin:0}.list-row{b
 .people{max-height:390px}.group-label{font-size:12px;font-weight:850;color:#416782;margin:12px 0 4px}
 .head{border-bottom:4px solid #f6c45b}
 </style>
+<style id="hva-remind-magnifier-tune">
+.search-wrap{isolation:isolate}.search-wrap input{font-size:14px;background:#f9fdff;border:1.5px solid #83b9d5}.search-wrap input:focus{background:#fff;border-color:#0877bb;box-shadow:0 0 0 4px rgba(16,130,185,.12)}
+.search-wrap svg{width:21px;height:21px;top:11px;stroke-width:2.4;color:#0878b4}.search-wrap .search-clear{top:6px}
+.group-card[open]{border-color:#92c7e0}.group-card summary{min-height:43px}
+@media(max-width:530px){.search-wrap input{font-size:16px}.selected-chips{max-height:110px;overflow-y:auto}.person-tools{gap:5px}.person-tools button{font-size:12px}}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -36,11 +42,11 @@ pre{white-space:pre-wrap;word-break:break-word;font:inherit;margin:0}.list-row{b
 <div id="sendView">
 <div class="note" id="authInfo">Đang kiểm tra phiên đăng nhập và quyền gửi…</div>
 <h2 style="margin-top:18px">01 · Người nhận</h2>
-<div class="two"><div class="field"><label for="team">Tổ / bộ phận</label><select id="team"><option value="">Tất cả tổ / bộ phận</option></select></div><div class="field"><label for="search">Kính lúp · Tìm nhanh nhân sự</label><div class="search-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search" type="search" autocomplete="off" placeholder="Nhập chữ đầu tiên để tìm ngay…" aria-label="Tìm nhanh họ tên hoặc username"><button class="search-clear" id="clearSearch" type="button" title="Xóa từ khóa" aria-label="Xóa từ khóa">×</button></div></div></div>
+<div class="two"><div class="field"><label for="team">Tổ / bộ phận</label><select id="team"><option value="">Tất cả tổ / bộ phận</option></select></div><div class="field"><label for="search">Kính lúp · Tìm nhanh nhân sự</label><div class="search-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search" type="search" autocomplete="off" placeholder="🔍 Tìm giáo viên, tổ, nhóm (gõ không dấu được)…" aria-label="Tìm giáo viên theo tên, tên đăng nhập, tổ hoặc nhóm"><button class="search-clear" id="clearSearch" type="button" title="Xóa từ khóa" aria-label="Xóa từ khóa">×</button></div></div></div>
 <div class="person-tools"><button type="button" id="selectVisible">Chọn tất cả kết quả lọc</button><button type="button" id="clearSelection">Bỏ chọn tất cả</button><span class="person-count" id="personCount">Chưa tải nhân sự</span></div><div class="people" id="people"><div class="muted" style="padding:12px">Chưa tải được danh sách nhân sự.</div></div><div class="hint" id="selectionCount">Đã chọn 0 người</div><div class="selected-chips" id="selectedChips"></div>
 <h2 style="margin-top:24px">02 · Nội dung và mức độ</h2>
 <div class="field"><label for="scenario">Tình huống nhắc nhở <span style="color:#b42332">*</span></label><select id="scenario"></select></div>
-<div class="two"><div class="field"><label for="level">Mức độ</label><select id="level"><option value="NHAC_NHO">Mức 1 · Nhắc nhở</option><option value="CANH_BAO">Mức 2 · Cảnh báo</option><option value="GIAI_TRINH">Mức 3 · Yêu cầu giải trình</option></select></div><div class="field"><label for="tone">Văn phong AI</label><select id="tone"><option value="LICH_SU_NGHIEM_KHAC">Lịch sự, nghiêm khắc</option><option value="CHUAN_HANH_CHINH">Chuẩn hành chính</option><option value="NGAN_GON">Ngắn gọn, dứt khoát</option></select></div></div>
+<div class="two"><div class="field"><label for="level">Mức độ</label><select id="level"><option value="NHAC_NHO">Mức 1 · Nhắc nhở</option><option value="CANH_BAO">Mức 2 · Cảnh báo</option><option value="GIAI_TRINH">Mức 3 · Yêu cầu giải trình</option></select></div><div class="field"><label for="tone">Văn phong dự thảo</label><select id="tone"><option value="LICH_SU_NGHIEM_KHAC">Lịch sự, nghiêm khắc</option><option value="CHUAN_HANH_CHINH">Chuẩn hành chính</option><option value="NGAN_GON">Ngắn gọn, dứt khoát</option></select></div></div>
 <div class="two"><div class="field"><label for="eventDate">Ngày ghi nhận sự việc</label><input type="date" id="eventDate"></div><div class="field"><label for="deadline">Hạn phản hồi (nếu có)</label><input type="datetime-local" id="deadline"></div></div>
 <div class="field"><label for="facts">Thông tin thực tế đã ghi nhận / yêu cầu cụ thể</label><textarea id="facts" placeholder="Ví dụ: Buổi chào cờ ngày…, theo lịch công tác; chưa nhận được thông tin xin phép. Chỉ nhập dữ kiện đã kiểm tra."></textarea><div class="hint">Không đưa nhận định chưa xác minh thành kết luận vi phạm.</div></div>
 <div class="three"><button class="btn outline" id="templateBtn" type="button">Dùng mẫu cơ bản</button><button class="btn outline" id="geminiBtn" type="button">✦ Gemini soạn</button><button class="btn outline" id="openaiBtn" type="button">✦ OpenAI soạn</button></div>
@@ -55,14 +61,38 @@ pre{white-space:pre-wrap;word-break:break-word;font:inherit;margin:0}.list-row{b
 </section>
 <aside class="panel">
 <h2>Hướng dẫn sử dụng</h2>
-<div class="note"><strong>Hai AI song song</strong><p style="margin:6px 0 0">Gemini và OpenAI chỉ hỗ trợ dự thảo. BGH duyệt và quyết định gửi. Nếu API chưa sẵn sàng, vẫn có thể dùng mẫu cơ bản.</p></div>
+<div class="note"><strong>Hỗ trợ soạn thảo</strong><p style="margin:6px 0 0">Gemini và OpenAI chỉ hỗ trợ dự thảo. BGH duyệt và quyết định gửi. Nếu API chưa sẵn sàng, vẫn có thể dùng mẫu cơ bản.</p></div>
 <h3>Nhóm tình huống</h3><div class="chips"><span class="chip">Chào cờ</span><span class="chip">Lễ / sự kiện</span><span class="chip">Họp</span><span class="chip">Giờ lên lớp</span><span class="chip">Báo cáo</span><span class="chip">Coi kiểm tra</span><span class="chip">Nền nếp công vụ</span><span class="chip">Nhiệm vụ</span><span class="chip">Khảo sát</span><span class="chip">Bình chọn</span><span class="chip">Đăng ký</span><span class="chip">Khác</span><span class="chip">Nhiệm vụ được giao</span><span class="chip">Khảo sát</span><span class="chip">Bình chọn</span><span class="chip">Đăng ký</span><span class="chip">Khác</span></div>
 <h3>Nguyên tắc bắt buộc</h3><div class="list-row">① Chỉ BGH đã xác thực được quyền gửi.</div><div class="list-row">② Ghi rõ dữ kiện, phân biệt vắng không phép với chưa xác minh việc xin phép.</div><div class="list-row">③ Người nhận được tiếp nhận, phản hồi, giải trình.</div><div class="list-row">④ Nhật ký gửi và phản hồi phải do Backend ghi nhận, không dựa vào dữ liệu trình duyệt.</div>
 <h3>Xem trước nội dung</h3><div class="list-row" id="previewBox"><span class="muted">Bấm “Xem trước” để kiểm tra nội dung trước khi gửi.</span></div>
-<div class="note warning"><strong>Trạng thái tích hợp</strong><p style="margin:6px 0 0">Trang này không tự tạo dữ liệu giả và không báo gửi thành công nếu Backend chưa xác nhận. Cần nối các phương thức NVS thực tế để chạy chính thức.</p></div>
+<div class="note warning"><strong>Trạng thái tích hợp</strong><p style="margin:6px 0 0">Cho phép tìm nhân sự và soạn dự thảo; chỉ gửi thực khi máy chủ EDOS cung cấp API lưu và xác nhận giao dịch. Không tạo thông báo giả.</p></div>
 </aside>
 </div></div>
 <script src="HVA_Personnel.js"></script>
+<script id="hva-remind-local-bridge">
+(function(){
+ "use strict";
+ const getStore=(k)=>{try{return localStorage.getItem(k)||sessionStorage.getItem(k)||""}catch(e){return ""}};
+ window.NVS_REMINDER_BRIDGE=Object.assign({
+   getSession:async function(){
+     const token=getStore("hvaSessionToken"),ex=Number(getStore("hvaSessionExpiresAt"));
+     if(!token||!Number.isFinite(ex)||ex<=Date.now())throw Error("Phiên đăng nhập EDOS đã hết hạn.");
+     const u=JSON.parse(getStore("user")||"{}");
+     const role=String(u.chucVu||u.viTriViecLam||"")+" "+String(u.vaiTro||u.role||"");
+     const folded=role.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/đ/gi,"d").toLowerCase();
+     return {username:u.username||u.tenDangNhap,hoTen:u.hoTen||u.hoten,role,sessionToken:token,isBGH:/hieu truong|pho hieu truong|ban giam hieu|\\bbgh\\b/.test(folded)};
+   },
+   getPersonnel:async function(){
+     if(!window.HVAPersonnel||typeof window.HVAPersonnel.buildGroups!=="function")throw Error("Chưa nạp danh sách nhân sự HVA.");
+     const groups=await window.HVAPersonnel.buildGroups();
+     window.NVS_REMINDER_PERSONNEL_GROUPS=groups;
+     const people=new Map();
+     groups.forEach(g=>(g.members||[]).forEach(p=>{const u=String(p.username||p.userName||"").trim();if(u&&!people.has(u))people.set(u,{username:u,hoTen:p.hoTen||p.name||u,to:p.tenTo||p.to||g.tenTo||"",chucVu:p.chucVu||p.vaiTro||""})}));
+     return [...people.values()];
+   }
+ },window.NVS_REMINDER_BRIDGE||{});
+})();
+</script>
 <script>
 (function(){
 'use strict';
@@ -89,8 +119,14 @@ const scenarios=[
 ['NN-CC04','Không tham gia hoạt động tập thể theo phân công'],
 ['NN-H01','Vắng cuộc họp theo triệu tập / lịch công tác'],
 ['NN-H02','Đến muộn hoặc rời cuộc họp trước khi kết thúc'],
-['NN-H03','Trao đổi riêng, làm việc riêng trong cuộc họp'],
+['NN-H03','Chưa tập trung theo dõi nội dung cuộc họp'],
 ['NN-G01','Vào lớp muộn so với thời khóa biểu'],
+['NN-G04','Học sinh sử dụng điện thoại trong giờ học chưa đúng quy định'],
+['NN-G05','Học sinh vi phạm nội quy trong giờ học'],
+['NN-G06','Chưa hoàn thiện việc ghi sổ đầu bài'],
+['NN-CN01','Học sinh lớp chủ nhiệm tập trung chào cờ chưa nghiêm túc'],
+['NN-CN02','Lớp chủ nhiệm chưa bàn giao sổ đầu bài theo quy định'],
+['NN-CN03','Nền nếp lớp chủ nhiệm còn nội dung cần chấn chỉnh'],
 ['NN-G02','Tự ý thay đổi hoặc bỏ tiết dạy'],
 ['NN-G03','Chưa thực hiện đúng yêu cầu về hồ sơ chuyên môn'],
 ['NN-B01','Nộp báo cáo, số liệu hoặc hồ sơ chậm hạn'],
@@ -126,7 +162,15 @@ function nvsReminderBGHGuard(){
 }
 const $=id=>document.getElementById(id), state={session:null,people:[],groups:[],selected:new Set(),inbox:[]};
 const fold=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase();
-function visiblePeople(){const q=fold($('search').value.trim()),t=$('team').value;return state.people.filter(p=>(!t||p.to===t)&&(!q||fold([p.hoTen,p.username,p.to,p.chucVu].join(' ')).includes(q)));}
+function visiblePeople(){
+ const q=fold($('search').value.trim()),t=$('team').value;
+ const matchingGroupUsers=new Set();
+ if(q)state.groups.forEach(g=>{
+   const label=fold([g.name,g.tenNhom,g.groupName,g.tenTo,g.groupKey].join(' '));
+   if(label.includes(q))(g.members||[]).forEach(m=>matchingGroupUsers.add(String(m.username||'')));
+ });
+ return state.people.filter(p=>(!t||p.to===t)&&(!q||fold([p.hoTen,p.username,p.to,p.chucVu].join(' ')).includes(q)||matchingGroupUsers.has(p.username)));
+}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const err=e=>String(e&&e.message||e||'Không xác định');
 function status(id,msg,type=''){const el=$(id);el.textContent=msg;el.className='status '+type;}
@@ -134,30 +178,33 @@ function call(method,arg){if(typeof BRIDGE[method]!=='function')return Promise.r
 function isBGH(){return !!(state.session&&state.session.isBGH);}
 function payload(){return {sessionToken:state.session?.sessionToken||'',scenarioCode:$('scenario').value,scenarioLabel:$('scenario').selectedOptions[0]?.textContent||'',level:$('level').value,tone:$('tone').value,eventDate:$('eventDate').value,deadline:$('deadline').value,facts:$('facts').value.trim()};}
 function renderPeople(){
-const q=fold($('search').value.trim()), team=$('team').value;
-const previous=new Set([...$('people').querySelectorAll('details[open]')].map(x=>x.dataset.key));
-const rows=(arr)=>arr.map(p=>'<label class="person"><input type="checkbox" data-user="'+esc(p.username)+'" '+(state.selected.has(p.username)?'checked':'')+'><span><strong>'+esc(p.hoTen)+'</strong><small>'+esc(p.to||'Chưa xác định tổ')+' · '+esc(p.chucVu||p.username)+'</small></span></label>').join('');
-const eligible=p=>(!team||p.to===team)&&(!q||fold([p.hoTen,p.username,p.to,p.chucVu].join(' ')).includes(q));
-const visible=state.people.filter(eligible);
-let groups=state.groups.length?state.groups:[{kind:'COUNCIL',name:'Hội đồng',members:state.people}];
-const section=[['COUNCIL','Hội đồng'],['CHIBO','Chi bộ'],['BGH','Ban Giám hiệu'],['TEAM','Tổ / Bộ phận'],['GVCN','Giáo viên chủ nhiệm'],['WORKGROUP','Nhóm công tác khác']];
-let out='';
-section.forEach(([kind,label])=>{
-const subset=groups.filter(g=>g.kind===kind||(kind==='CHIBO'&&g.groupKey==='CHIBO')||(kind==='BGH'&&g.groupKey==='BGH'));
-let inner='';
-subset.forEach((g,idx)=>{
-const members=(g.members||[]).map(m=>state.people.find(p=>p.username===m.username)).filter(Boolean).filter(eligible);
-if(!members.length)return;
-const key=String(g.groupKey||g.key||g.name||g.tenNhom||label)+'_'+kind+'_'+idx;
-const opened=q||previous.has(key)||(!previous.size&&kind==='COUNCIL');
-inner+='<details class="group-card" data-key="'+esc(key)+'" '+(opened?'open':'')+'><summary><span>'+esc(g.name||g.tenNhom||g.groupName||label)+'</span><span>'+members.length+' người</span></summary><div class="group-members"><label class="person"><input type="checkbox" data-group="'+esc(key)+'"><span><strong>Chọn toàn nhóm đang hiển thị</strong></span></label>'+rows(members)+'</div></details>';
-});
-if(inner)out+='<div class="group-label">'+esc(label)+'</div>'+inner;
-});
-$('people').innerHTML=out||'<div class="muted" style="padding:12px">Không có nhân sự phù hợp.</div>';
-$('selectionCount').textContent='Đã chọn '+state.selected.size+' / '+state.people.length+' người';
-$('personCount').textContent='Tìm thấy '+visible.length+' / '+state.people.length+' nhân sự';
-$('selectedChips').innerHTML=[...state.selected].map(u=>{const p=state.people.find(x=>x.username===u);return '<span class="selected-chip">'+esc(p?.hoTen||u)+'<button type="button" data-remove="'+esc(u)+'" aria-label="Bỏ chọn">×</button></span>';}).join('')||'<span class="muted">Chưa chọn người nhận.</span>';
+ const q=fold($('search').value.trim()),team=$('team').value;
+ const previous=new Set([...$('people').querySelectorAll('details[open]')].map(x=>x.dataset.key));
+ const visible=visiblePeople(),visUsers=new Set(visible.map(p=>p.username));
+ const rows=(arr)=>arr.map(p=>'<label class="person"><input type="checkbox" data-user="'+esc(p.username)+'" '+(state.selected.has(p.username)?'checked':'')+'><span><strong>'+esc(p.hoTen)+'</strong><small>'+esc(p.to||'Chưa xác định tổ')+' · '+esc(p.chucVu||p.username)+'</small></span></label>').join('');
+ const groups=state.groups.length?state.groups:[{kind:'COUNCIL',name:'Hội đồng',groupKey:'COUNCIL:ALL',members:state.people}];
+ const section=[['COUNCIL','Hội đồng'],['CHIBO','Chi bộ'],['BGH','Ban Giám hiệu'],['TEAM','Tổ / Bộ phận'],['GVCN','Giáo viên chủ nhiệm'],['WORKGROUP','Nhóm công tác khác']];
+ let out='',renderedUsers=new Set(),count=0;
+ section.forEach(([kind,label])=>{
+  const subset=groups.filter(g=>g.kind===kind||(kind==='CHIBO'&&g.groupKey==='CHIBO')||(kind==='BGH'&&g.groupKey==='BGH'));
+  let inner='';
+  subset.forEach((g,idx)=>{
+   const members=(g.members||[]).map(m=>state.people.find(p=>p.username===m.username)).filter(Boolean).filter(p=>visUsers.has(p.username));
+   if(!members.length)return;
+   members.forEach(p=>renderedUsers.add(p.username));
+   const key=String(g.groupKey||g.key||g.name||g.tenNhom||label)+'_'+kind+'_'+idx;
+   const opened=!!q||previous.has(key)||(!previous.size&&kind==='COUNCIL');
+   inner+='<details class="group-card" data-key="'+esc(key)+'" '+(opened?'open':'')+'><summary><span>'+esc(g.name||g.tenNhom||g.groupName||g.tenTo||label)+'</span><span>'+members.length+' người</span></summary><div class="group-members"><label class="person"><input type="checkbox" data-group="'+esc(key)+'"><span><strong>Chọn toàn nhóm đang hiển thị</strong></span></label>'+rows(members)+'</div></details>';
+   count++;
+  });
+  if(inner)out+='<div class="group-label">'+esc(label)+'</div>'+inner;
+ });
+ const others=visible.filter(p=>!renderedUsers.has(p.username));
+ if(others.length)out+='<div class="group-label">Nhân sự khác phù hợp ('+others.length+')</div>'+rows(others);
+ $('people').innerHTML=out||'<div class="muted" style="padding:12px">Không tìm thấy nhân sự, tổ hoặc nhóm phù hợp.</div>';
+ $('selectionCount').textContent='Đã chọn '+state.selected.size+' / '+state.people.length+' người';
+ $('personCount').textContent='Tìm thấy '+visible.length+' người'+(q?' · '+count+' nhóm phù hợp':'');
+ $('selectedChips').innerHTML=[...state.selected].map(u=>{const p=state.people.find(x=>x.username===u);return '<span class="selected-chip">'+esc(p?.hoTen||u)+'<button type="button" data-remove="'+esc(u)+'" aria-label="Bỏ chọn '+esc(p?.hoTen||u)+'">×</button></span>';}).join('')||'<span class="muted">Chưa chọn người nhận.</span>';
 }
 function normalizePersonnel(m){
 return {username:String(m.username||'').trim(),hoTen:String(m.hoTen||m.name||'').trim(),to:String(m.to||m.tenTo||m.toChuyenMon||'').trim(),chucVu:String(m.chucVu||m.vaiTro||'').trim()};
@@ -177,9 +224,10 @@ $('authInfo').textContent=isBGH()?'Phiên đăng nhập: '+(state.session.hoTen|
 if(!isBGH()){setTabs(true);$('tabSend').disabled=true;return;}
 const r=await call('getPersonnel',{sessionToken:state.session.sessionToken});state.people=Array.isArray(r)?r:Array.isArray(r?.people)?r.people:[];
 state.people=state.people.map(normalizePersonnel).filter(p=>p.username&&p.hoTen).filter((p,i,a)=>a.findIndex(x=>x.username===p.username)===i).sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
-if(window.HVAPersonnel&&typeof window.HVAPersonnel.buildGroups==='function'){
+if(Array.isArray(window.NVS_REMINDER_PERSONNEL_GROUPS))installGroups(window.NVS_REMINDER_PERSONNEL_GROUPS);
+else if(window.HVAPersonnel&&typeof window.HVAPersonnel.buildGroups==='function'){
 try{installGroups(await window.HVAPersonnel.buildGroups());}
-catch(ex){console.warn('HVA Personnel groups unavailable; use NVS personnel list',ex);}
+catch(ex){console.warn('Không tải được nhóm từ HVA Personnel',ex);}
 }
 const teams=[...new Set(state.people.map(p=>p.to).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));$('team').innerHTML='<option value="">Tất cả tổ / bộ phận</option>'+teams.map(t=>'<option value="'+esc(t)+'">'+esc(t)+'</option>').join('');renderPeople();
 }catch(e){$('authInfo').textContent='Chưa kết nối hoặc chưa xác thực được phiên NVS: '+err(e);$('tabSend').disabled=true;setTabs(true);}
