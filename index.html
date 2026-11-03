@@ -1011,7 +1011,7 @@ body{padding-bottom:calc(115px + env(safe-area-inset-bottom,0px))!important}
     <div class="nvs-choose-heading"><span class="nvs-emblem"><i class="bi bi-buildings"></i></span><h2 id="nvs-choose-title">CỔNG NGHIỆP VỤ SỐ</h2><p>Đăng nhập chung · Chọn không gian làm việc phù hợp</p></div>
     <div class="nvs-two-gates">
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-admin" id="nvsAdminGate" href="./DieuHanh.html" aria-label="Vào BGH – Điều hành"><span class="nvs-gate-icon"><i class="bi bi-bank"></i></span><strong>BAN GIÁM HIỆU<em>ĐIỀU HÀNH</em></strong><span>Thông báo – Phát hành · Lịch công tác · Cuộc họp · Theo dõi và xử lý</span><span class="nvs-gate-enter">Vào Điều hành <i class="bi bi-arrow-right"></i></span></a></div>
-      <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-work" id="nvsWorkGate" href="./NghiepVu.html" aria-label="Vào Tác nghiệp số"><span class="nvs-gate-icon"><i class="bi bi-pc-display-horizontal"></i></span><strong>TÁC NGHIỆP SỐ</strong><span>TTCM · TPCM · GV · NV<br>Nhận nhiệm vụ · Lập báo cáo · Nộp sản phẩm · Tra cứu công việc</span><span class="nvs-gate-enter">Vào Tác nghiệp <i class="bi bi-arrow-right"></i></span></a></div>
+      <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-work" id="nvsWorkGate" href="./NghiepVu.html" aria-label="Vào Giáo viên – Nhân viên – Tác nghiệp số"><span class="nvs-gate-icon"><i class="bi bi-pc-display-horizontal"></i></span><strong>GIÁO VIÊN – NHÂN VIÊN<em>TÁC NGHIỆP SỐ</em></strong><span>TTCM · TPCM · GV · NV<br>Nhận nhiệm vụ · Lập báo cáo · Nộp sản phẩm · Tra cứu công việc</span><span class="nvs-gate-enter">Vào Tác nghiệp <i class="bi bi-arrow-right"></i></span></a></div>
     </div>
     <div class="nvs-v4-actions" aria-label="Tiện ích công vụ">
       <button type="button" id="nvsOpenRemind" hidden style="display:none" class="nvs-v4-action nvs-v4-remind nvs-remind-trigger nvs-v7-circle nvs-v7-orange" aria-haspopup="dialog" aria-controls="nvsRemindOverlay" aria-label="Mở Nhắc nhở công vụ"><span>Nhắc nhở<br>công vụ</span></button>
@@ -2270,5 +2270,140 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 @media(prefers-reduced-motion:reduce){.nvs-premium-nav .edos-nav-bounce i{animation:none!important}}
 </style>
 
+
+<style id="hva-home-three-layout-corrections">
+/* Chỉ chỉnh bố cục trang chủ: 4 tiện ích và 2 cổng nghiệp vụ.
+   Giữ nguyên ID, sự kiện, phân quyền và dữ liệu. */
+.nvs-quick{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-auto-rows:1fr!important;
+  align-items:stretch!important;
+  gap:12px!important;
+}
+.nvs-quick #nvsQuickRoleSlot{
+  display:contents!important;
+}
+.nvs-quick #nvsQuickRoleSlot>[hidden]{display:none!important}
+.nvs-quick>.nvs-quick-card,
+.nvs-quick>#nvsOpenRemind,
+.nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary{
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:112px!important;
+  min-height:112px!important;
+  max-height:112px!important;
+  margin:0!important;
+  padding:12px 7px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:9px!important;
+  text-align:center!important;
+  border-radius:13px!important;
+  align-self:stretch!important;
+}
+.nvs-quick>.nvs-quick-card[hidden],
+.nvs-quick>#nvsOpenRemind[hidden],
+.nvs-quick #nvsOpenLibrary[hidden]{display:none!important}
+.nvs-quick .nvs-quick-icon{
+  width:49px!important;height:49px!important;min-width:49px!important;min-height:49px!important;
+  display:grid!important;place-items:center!important;flex:0 0 49px!important;
+  margin:0!important;padding:0!important;
+}
+.nvs-quick .nvs-quick-icon>i,
+.nvs-quick .nvs-quick-icon>svg,
+.nvs-quick #nvsOpenLibrary .nvs-quick-icon>svg{
+  max-width:100%!important;max-height:100%!important;
+}
+.nvs-quick>.nvs-quick-card>strong,
+.nvs-quick>#nvsOpenRemind>strong,
+.nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary>strong{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  min-height:30px!important;max-height:35px!important;
+  margin:0!important;padding:0 2px!important;
+  font-size:clamp(10px,1.15vw,13px)!important;
+  line-height:1.2!important;
+  text-align:center!important;overflow-wrap:normal!important;
+  word-break:normal!important;hyphens:none!important;
+}
+.nvs-chooser .nvs-two-gates{
+  align-items:stretch!important;
+  gap:12px!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate-wrap{
+  display:flex!important;min-width:0!important;padding-top:0!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate{
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:auto!important;min-height:162px!important;max-height:none!important;
+  overflow:visible!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;
+  gap:7px!important;
+  padding:16px 10px!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate-icon{
+  display:grid!important;place-items:center!important;
+  width:56px!important;height:56px!important;
+  min-height:56px!important;flex:0 0 56px!important;
+  margin:0!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate strong{
+  display:block!important;
+  margin:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  font-size:clamp(12px,1.5vw,17px)!important;
+  line-height:1.25!important;
+  text-align:center!important;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate strong em{
+  display:block!important;
+  color:#ffe074!important;
+  font-style:normal!important;
+  font-size:.88em!important;
+  margin-top:3px!important;
+  line-height:1.25!important;
+}
+@media(max-width:720px){
+ .nvs-quick{gap:7px!important}
+ .nvs-quick>.nvs-quick-card,
+ .nvs-quick>#nvsOpenRemind,
+ .nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary{
+   height:94px!important;min-height:94px!important;max-height:94px!important;
+   padding:8px 3px!important;gap:5px!important;
+ }
+ .nvs-quick .nvs-quick-icon{
+   width:41px!important;height:41px!important;
+   min-width:41px!important;min-height:41px!important;flex-basis:41px!important;
+ }
+ .nvs-quick>.nvs-quick-card>strong,
+ .nvs-quick>#nvsOpenRemind>strong,
+ .nvs-quick #nvsQuickRoleSlot>#nvsOpenLibrary>strong{
+   min-height:28px!important;max-height:35px!important;
+   font-size:clamp(9px,2.2vw,11px)!important;
+ }
+ .nvs-chooser .nvs-two-gates .nvs-gate{
+   min-height:142px!important;padding:12px 7px!important;gap:6px!important;
+ }
+ .nvs-chooser .nvs-two-gates .nvs-gate-icon{
+   width:45px!important;height:45px!important;min-height:45px!important;flex-basis:45px!important;
+ }
+ .nvs-chooser .nvs-two-gates .nvs-gate strong{
+   font-size:clamp(11px,2.6vw,15px)!important;
+ }
+}
+@media(max-width:420px){
+ .nvs-quick{gap:4px!important}
+ .nvs-chooser .nvs-two-gates{gap:7px!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate{min-height:142px!important;padding:10px 5px!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate strong{font-size:clamp(10px,3.15vw,13px)!important}
+}
+</style>
 </body>
 </html>
