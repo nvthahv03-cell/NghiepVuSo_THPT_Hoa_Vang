@@ -1527,7 +1527,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
     if(identity().username!==id.username||identity().token!==id.token)return;
     notices=data.notifications;loaded=true;noticeError='';setNoticeCount();
    }catch(e){noticeError='Không tải được thông báo: '+(e.message||'Lỗi kết nối.');loaded=false;}
-   finally{loading=null;if(!detail.hidden&&detail.dataset.current==='notice')renderNotice();}
+   finally{loading=null;if(!detail.hidden&&detail.dataset.current==='notice')renderNotice();if(!detail.hidden&&detail.dataset.current==='work')renderWork();}
   })();
   return loading;
  }
