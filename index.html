@@ -1311,6 +1311,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
  };
  let notices=[],loaded=false,loading=null,noticeError='';
  let myTasks=[],workLoaded=false,workLoading=null,workError='';
+ let myReminders=[],remindersLoaded=false,remindersLoading=null,remindersError='';
 
  let polls=[],pollLoaded=false,pollLoading=null,pollError='',activePoll=null,activePollId='';
  function renderPolls(){
@@ -1372,7 +1373,18 @@ document.addEventListener('DOMContentLoaded', initPortal);
   const complete=count('HOÀN THÀNH')+count('ĐÃ HOÀN THÀNH');
   const inProgress=count('ĐANG THỰC HIỆN');
   const overdue=count('QUÁ HẠN');
-  let html='<h3><i class="bi bi-person-check-fill"></i> VIỆC CỦA TÔI — KTĐG</h3>';
+  let html='<h3><i class="bi bi-person-check-fill"></i> VIỆC CỦA TÔI</h3>';
+  html+='<section class="nvs-reminder-in-work"><h4><i class="bi bi-clipboard-check"></i> NHẮC NHỞ TỪ BAN GIÁM HIỆU</h4>';
+  if(remindersError)html+='<p class="nvs-quick-note" role="status">'+esc(remindersError)+'</p>';
+  else if(!remindersLoaded)html+='<p class="nvs-quick-note">Đang kiểm tra nhắc nhở được gửi đến tài khoản...</p>';
+  else if(!myReminders.length)html+='<p class="nvs-quick-note">Chưa có nhắc nhở công vụ được gửi đến tài khoản.</p>';
+  else html+=myReminders.map(m=>'<article class="nvs-my-reminder"><strong>'+esc(m.title||m.tieuDe||'Nhắc nhở công vụ')+'</strong>'+
+      '<div class="nvs-quick-note">'+esc(m.createdAt||m.thoiGian||'')+' · '+esc(m.status||'Chưa tiếp nhận')+(m.deadline?' · Hạn: '+esc(m.deadline):'')+'</div>'+
+      '<p class="nvs-reminder-body">'+esc(m.content||m.noiDung||'')+'</p>'+
+      (String(m.status||'').toUpperCase().includes('TIẾP NHẬN')?'':'<button type="button" class="nvs-reminder-accept" data-nvs-remind-accept="'+esc(m.id)+'">Đã tiếp nhận</button>')+
+      '<div class="nvs-reminder-reply"><textarea rows="2" data-nvs-remind-text="'+esc(m.id)+'" placeholder="Phản hồi hoặc làm rõ thông tin..."></textarea><button type="button" data-nvs-remind-reply="'+esc(m.id)+'">Gửi phản hồi</button></div>'+
+      '</article>').join('');
+  html+='</section><h4 style="margin-top:16px">NHIỆM VỤ KIỂM TRA – ĐÁNH GIÁ</h4>';
   if(workError)html+='<p class="nvs-quick-note" role="alert" style="color:#b42332">'+esc(workError)+'</p>';
   else if(!workLoaded)html+='<p class="nvs-quick-note">Đang tải nhiệm vụ...</p>';
   else {
@@ -1387,11 +1399,57 @@ document.addEventListener('DOMContentLoaded', initPortal);
   }
   detail.innerHTML=html;
  }
+ async function reminderRequest(action,data,post){
+  const id=identity();
+  if(!id.username||!id.token)throw Error('Phiên đăng nhập không hợp lệ.');
+  const url=new URL(DTHT_STANDALONE_BACKEND);
+  let res;
+  if(post)res=await fetch(url.toString(),{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,sessionToken:id.token,...data})});
+  else{url.searchParams.set('action',action);url.searchParams.set('sessionToken',id.token);res=await fetch(url.toString(),{cache:'no-store'});}
+  if(!res.ok)throw Error('HTTP '+res.status);
+  const out=await res.json();
+  if(!out||out.success!==true)throw Error(out?.message||'Backend chưa hỗ trợ nghiệp vụ nhắc nhở.');
+  return out;
+ }
+ async function loadMyReminders(force){
+  const id=identity();
+  if(!id.username||!id.token)return;
+  if(remindersLoading)return remindersLoading;
+  if(remindersLoaded&&!force)return;
+  remindersLoading=(async()=>{
+   try{
+    const out=await reminderRequest('getMyReminders');
+    if(!Array.isArray(out.items))throw Error('Dữ liệu nhắc nhở không hợp lệ.');
+    if(identity().username!==id.username||identity().token!==id.token)return;
+    myReminders=out.items;remindersError='';remindersLoaded=true;
+   }catch(e){
+    remindersLoaded=false;remindersError='Chưa thể tải nhắc nhở từ BGH: '+(e.message||'Backend chưa kết nối.');
+   }finally{
+    remindersLoading=null;
+    if(!detail.hidden&&detail.dataset.current==='work')renderWork();
+   }
+  })();return remindersLoading;
+ }
+ detail.addEventListener('click',async e=>{
+  const accept=e.target.closest('[data-nvs-remind-accept]'),reply=e.target.closest('[data-nvs-remind-reply]');
+  if(!accept&&!reply)return;
+  const b=accept||reply,reminderId=b.getAttribute(accept?'data-nvs-remind-accept':'data-nvs-remind-reply');
+  if(!myReminders.some(m=>String(m.id)===reminderId))return;
+  const textarea=detail.querySelectorAll('[data-nvs-remind-text]');
+  const input=[...textarea].find(t=>t.getAttribute('data-nvs-remind-text')===reminderId);
+  const value=input?.value.trim()||'';
+  if(reply&&!value){alert('Vui lòng nhập nội dung phản hồi.');return}
+  b.disabled=true;
+  try{
+   await reminderRequest(accept?'acceptReminder':'replyReminder',accept?{id:reminderId}:{id:reminderId,content:value},true);
+   await loadMyReminders(true);
+  }catch(err){alert('Chưa ghi nhận thao tác: '+(err.message||'Lỗi kết nối'));b.disabled=false}
+ });
  async function loadWork(force){
   const id=identity();
   if(!id.username||!id.token){workError='Phiên đăng nhập không hợp lệ.';if(!detail.hidden&&detail.dataset.current==='work')renderWork();return;}
   if(workLoading)return workLoading;
-  if(workLoaded&&!force)return;
+  if(workLoaded&&!force){loadMyReminders(force);return;}
   workError='';
   workLoading=(async()=>{
    try{
@@ -1406,7 +1464,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
     window.NVS_setQuickCounts({work:myTasks.filter(t=>!['HOÀN THÀNH','ĐÃ HOÀN THÀNH'].includes(String(t.status||'').toUpperCase())).length});
    }catch(e){workError='Không tải được nhiệm vụ: '+(e.message||'Lỗi kết nối.');workLoaded=false;}
    finally{workLoading=null;if(!detail.hidden&&detail.dataset.current==='work')renderWork();}
-  })();return workLoading;
+  })();loadMyReminders(force);return workLoading;
  }
 
  function renderNotice(){
@@ -2825,6 +2883,18 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 .nvs-quick>#nvsQuickWork[hidden],.nvs-quick>#nvsOpenRemind[hidden]{display:none!important;visibility:hidden!important}
 .nvs-quick>#nvsQuickWork:not([hidden]),.nvs-quick>#nvsOpenRemind:not([hidden]){visibility:visible!important}
 .nvs-quick>#nvsOpenRemind:not([hidden]){display:flex!important}
+</style>
+<style id="hva-reminders-in-my-work">
+.nvs-reminder-in-work{padding:12px 13px;margin:12px 0;border:1px solid #c9e4f5;border-radius:12px;background:#f7fcff}
+.nvs-reminder-in-work h4{margin:0 0 10px;color:#095994;font-size:13px}
+.nvs-my-reminder{border-top:1px solid #d3e7f5;padding:12px 1px}
+.nvs-my-reminder strong{color:#074b88;font-size:13px}
+.nvs-reminder-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.6}
+.nvs-reminder-accept,.nvs-reminder-reply button{padding:8px 11px;border:1px solid #9bc9e6;border-radius:8px;background:#e1f4ff;color:#07558d;font-weight:750;cursor:pointer;font-size:12px}
+.nvs-reminder-reply{margin-top:8px;display:flex;align-items:center;gap:8px}
+.nvs-reminder-reply textarea{flex:1;min-width:0;border:1px solid #c3dbe9;border-radius:8px;padding:8px;font:inherit;font-size:12px}
+.nvs-reminder-reply button:disabled,.nvs-reminder-accept:disabled{opacity:.5}
+@media(max-width:560px){.nvs-reminder-reply{flex-direction:column;align-items:stretch}}
 </style>
 </body>
 </html>
