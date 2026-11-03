@@ -1374,6 +1374,12 @@ document.addEventListener('DOMContentLoaded', initPortal);
   const inProgress=count('ĐANG THỰC HIỆN');
   const overdue=count('QUÁ HẠN');
   let html='<h3><i class="bi bi-person-check-fill"></i> VIỆC CỦA TÔI</h3>';
+  html+='<section class="nvs-reminder-in-work"><h4>THÔNG TIN GỬI ĐÍCH DANH</h4>';
+  if(noticeError)html+='<p class="nvs-quick-note" role="status">'+esc(noticeError)+'</p>';
+  else if(!loaded)html+='<p class="nvs-quick-note">Đang tải thông tin cá nhân...</p>';
+  else if(!personalNotices().length)html+='<p class="nvs-quick-note">Chưa có thông tin cá nhân mới.</p>';
+  else html+=noticeCards(personalNotices());
+  html+='</section>';
   html+='<section class="nvs-reminder-in-work"><h4><i class="bi bi-clipboard-check"></i> NHẮC NHỞ TỪ BAN GIÁM HIỆU</h4>';
   if(remindersError)html+='<p class="nvs-quick-note" role="status">'+esc(remindersError)+'</p>';
   else if(!remindersLoaded)html+='<p class="nvs-quick-note">Đang kiểm tra nhắc nhở được gửi đến tài khoản...</p>';
@@ -1421,7 +1427,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
     const out=await reminderRequest('getMyReminders');
     if(!Array.isArray(out.items))throw Error('Dữ liệu nhắc nhở không hợp lệ.');
     if(identity().username!==id.username||identity().token!==id.token)return;
-    myReminders=out.items;remindersError='';remindersLoaded=true;
+    myReminders=out.items;remindersError='';remindersLoaded=true;updateWorkCount();
    }catch(e){
     remindersLoaded=false;remindersError='Chưa thể tải nhắc nhở từ BGH: '+(e.message||'Backend chưa kết nối.');
    }finally{
@@ -1461,30 +1467,46 @@ document.addEventListener('DOMContentLoaded', initPortal);
     if(!data||data.ok!==true||data.success!==true||!Array.isArray(data.tasks))throw new Error(data&&data.message||'Dữ liệu nhiệm vụ không hợp lệ.');
     if(identity().username!==id.username||identity().token!==id.token)return;
     myTasks=data.tasks;workLoaded=true;workError='';
-    window.NVS_setQuickCounts({work:myTasks.filter(t=>!['HOÀN THÀNH','ĐÃ HOÀN THÀNH'].includes(String(t.status||'').toUpperCase())).length});
+    updateWorkCount();
    }catch(e){workError='Không tải được nhiệm vụ: '+(e.message||'Lỗi kết nối.');workLoaded=false;}
    finally{workLoading=null;if(!detail.hidden&&detail.dataset.current==='work')renderWork();}
   })();loadMyReminders(force);return workLoading;
  }
 
+
+ function isGeneralNotice(n){
+   const raw=String(n.phamVi||n.scope||n.audienceScope||n.recipientScope||n.doiTuongNhan||'');
+   const scope=raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_|_$/g,'');
+   return ['ALL','EVERYONE','GENERAL','PUBLIC','BROADCAST','TOAN_TRUONG','TOAN_HOI_DONG','HOI_DONG','HOI_DONG_SU_PHAM','CHUNG'].includes(scope);
+ }
+ function generalNotices(){return notices.filter(isGeneralNotice);}
+ function personalNotices(){return notices.filter(n=>!isGeneralNotice(n));}
+ function noticeCards(list){
+   return list.map(n=>'<article style="padding:12px 2px;border-top:1px solid #e1ebf3">'+
+    '<strong style="color:#074b88;font-size:13px">'+esc(n.tieuDe||n.title||'Thông tin công vụ')+'</strong>'+
+    (n.daDoc?'':' <span style="color:#be123c;font-size:11px;font-weight:800">Chưa đọc</span>')+
+    '<div style="margin-top:6px;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere">'+esc(n.noiDung||n.content||'')+'</div>'+
+    '<div style="margin-top:6px;color:#526b81;font-size:11px">'+esc(n.thoiGian||n.createdAt||'')+'</div>'+
+    (n.daDoc?'':'<button type="button" data-nvs-read="'+esc(n.id)+'" style="margin-top:9px;padding:7px 11px;border-radius:8px;background:#e7f6ff;border:1px solid #a5d8f4;color:#07518d;cursor:pointer">Đánh dấu đã đọc</button>')+'</article>').join('');
+ }
+ function updateWorkCount(){
+   const taskCount=workLoaded?myTasks.filter(t=>!['HOÀN THÀNH','ĐÃ HOÀN THÀNH'].includes(String(t.status||'').toUpperCase())).length:0;
+   const privateCount=loaded?personalNotices().filter(n=>!n.daDoc).length:0;
+   const reminderCount=remindersLoaded?myReminders.filter(m=>!['HOÀN THÀNH','ĐÃ XỬ LÝ','DA_XU_LY','HOAN_THANH'].includes(String(m.status||'').toUpperCase())).length:0;
+   window.NVS_setQuickCounts({work:taskCount+privateCount+reminderCount});
+ }
  function renderNotice(){
-  let html='<h3><i class="bi bi-bell-fill"></i> THÔNG BÁO</h3>';
-  if(noticeError) html+='<p class="nvs-quick-note" role="alert" style="color:#b42332">'+esc(noticeError)+'</p>';
-  else if(!loaded) html+='<p class="nvs-quick-note">Đang tải thông báo...</p>';
-  else if(!notices.length) html+='<p class="nvs-quick-note">Chưa có thông báo.</p>';
-  else html+=notices.map(n=>'<article style="padding:12px 2px;border-top:1px solid #e1ebf3">'+
-    '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'+
-    '<strong style="color:#074b88;font-size:13px">'+esc(n.tieuDe||'Thông báo')+'</strong>'+
-    (n.daDoc?'':'<span style="color:#be123c;font-size:11px;font-weight:800">Chưa đọc</span>')+'</div>'+
-    '<div style="margin-top:6px;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere">'+esc(n.noiDung||'')+'</div>'+
-    '<div style="margin-top:6px;color:#526b81;font-size:11px">'+esc(n.thoiGian||'')+'</div>'+
-    (n.daDoc?'':'<button type="button" data-nvs-read="'+esc(n.id)+'" style="margin-top:9px;padding:7px 11px;border-radius:8px;background:#e7f6ff;border:1px solid #a5d8f4;color:#07518d;cursor:pointer">Đánh dấu đã đọc</button>')+
-    '</article>').join('');
+  let html='<h3><i class="bi bi-bell-fill"></i> THÔNG BÁO CHUNG</h3>';
+  const items=generalNotices();
+  if(noticeError) html+='<p class="nvs-quick-note" role="alert">'+esc(noticeError)+'</p>';
+  else if(!loaded) html+='<p class="nvs-quick-note">Đang tải thông tin chung...</p>';
+  else if(!items.length) html+='<p class="nvs-quick-note">Chưa có thông báo chung được xác định. Thông tin đích danh hoặc chưa phân loại sẽ ở Việc của tôi.</p>';
+  else html+=noticeCards(items);
   detail.innerHTML=html;
  }
  function setNoticeCount(){
   if(!loaded||noticeError)return;
-  window.NVS_setQuickCounts({notice:notices.filter(n=>!n.daDoc).length});
+  window.NVS_setQuickCounts({notice:generalNotices().filter(n=>!n.daDoc).length});updateWorkCount();
  }
  async function loadNotices(force){
   const id=identity();
@@ -1563,7 +1585,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
   if(same){detail.hidden=true;detail.dataset.current='';return}
   detail.dataset.current=key;detail.hidden=false;
   if(key==='notice'){renderNotice();loadNotices(true);}
-  else if(key==='work'){renderWork();loadWork(true);}
+  else if(key==='work'){renderWork();loadWork(true);loadNotices(true);}
   else detail.innerHTML=sections[key]||'';
  }
  window.NVS_setQuickCounts=function(counts){
