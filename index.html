@@ -940,10 +940,7 @@ body{padding-bottom:calc(115px + env(safe-area-inset-bottom,0px))!important}
 <!-- HEADER CHUẨN TRUNG TÂM QUẢN TRỊ SỐ HVA -->
 <header class="hva-pro-header">
   <div class="hva-pro-header-inner">
-    <div class="hva-header-left">
-      <button type="button" class="hva-pro-back" id="nvsMenuToggle" aria-label="Mở danh mục nghiệp vụ" aria-expanded="false"><i class="bi bi-list"></i></button>
-      <button type="button" class="hva-pro-back hva-chat-trigger" id="hvaChatToggle" aria-label="Mở HVA Chat" aria-haspopup="dialog" aria-controls="hvaChatPanel" aria-expanded="false" title="HVA Chat"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i></button>
-    </div>
+    <button type="button" class="hva-pro-back" id="nvsMenuToggle" aria-label="Mở danh mục nghiệp vụ" aria-expanded="false"><i class="bi bi-list"></i></button>
     <div class="hva-pro-brand"><div class="hva-pro-brandtext"><div class="hva-pro-school">HVA-<span>EDOS</span></div><div class="hva-pro-kicker">Hoa Vang Education Data &amp; Operations System</div><div class="hva-pro-vietnam">HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</div><div class="hva-pro-slogan">Dữ liệu tập trung – Quản trị thông minh – Giáo dục sáng tạo</div></div></div>
     <div class="hva-pro-tools"><a class="nvs-home-link" href="./index.html" aria-label="Trang chủ NVS" title="Trang chủ NVS"><i class="bi bi-house-door-fill"></i></a><div class="hva-pro-online"><span class="hva-pro-online-dot"></span><span>TRỰC TUYẾN</span><span class="hva-pro-version">PORTAL</span></div><button type="button" class="logout-btn nvs-header-logout" onclick="logoutHVA()"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button></div>
   </div>
@@ -1565,7 +1562,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
 <!-- NVS PWA: nút cài ứng dụng -->
 <script src="./nvs-pwa.js" defer></script>
 <div id="nvsV14RoleAction" hidden aria-hidden="true"></div>
-<nav class="nvs-premium-nav" aria-label="Điều hướng NVS"><button type="button" data-nvs-nav="calendar"><i class="bi bi-calendar2-week-fill" aria-hidden="true"></i><span>Lịch công tác</span></button><button type="button" data-nvs-nav="help"><i class="bi bi-book" aria-hidden="true"></i><span>Hướng dẫn sử dụng</span></button><button type="button" data-nvs-nav="connect"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i><span>Kết nối</span></button><button type="button" data-nvs-nav="person"><i class="bi bi-person-circle" aria-hidden="true"></i><span>Cá nhân</span></button></nav><div class="nvs-nav-dialog" id="nvsNavDialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="nvsNavDialogTitle"><div class="nvs-nav-dialog-box"><h2 id="nvsNavDialogTitle"></h2><p id="nvsNavDialogText"></p><button type="button" id="nvsNavDialogClose">Đóng</button></div></div><script id="nvs-premium-nav-script">(()=>{'use strict';const nav=document.querySelector('.nvs-premium-nav');if(!nav)return;const dialog=document.getElementById('nvsNavDialog'),close=document.getElementById('nvsNavDialogClose');let origin=null;const info={calendar:['Lịch công tác','Lịch nhà trường và Lịch của tôi sẽ được kết nối với lịch HVA hiện có sau khi xác nhận đường dẫn và quyền truy cập. Chưa có dữ liệu lịch trong NVS V2.'],help:['Hướng dẫn sử dụng','Tài liệu và video hướng dẫn sử dụng HVA-EDOS đang được hoàn thiện. Có thể mở các nghiệp vụ hiện có từ danh mục bên trái.'],connect:['Kết nối','Chức năng kết nối nội bộ HVA đang chờ xác nhận liên kết và quyền truy cập.'],person:['Cá nhân','Thông tin tài khoản đang được hiển thị trên Trang chủ NVS. Chức năng hồ sơ cá nhân chuyên biệt đang chờ kết nối.']};nav.querySelectorAll('button[data-nvs-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.nvsNav==='calendar'){location.href='./LichCongTac.html';return;}origin=b;const x=info[b.dataset.nvsNav];document.getElementById('nvsNavDialogTitle').textContent=x[0];document.getElementById('nvsNavDialogText').textContent=x[1];dialog.setAttribute('aria-hidden','false');close.focus()}));function hide(){dialog.setAttribute('aria-hidden','true');origin?.focus()}close.addEventListener('click',hide);dialog.addEventListener('click',e=>{if(e.target===dialog)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog.getAttribute('aria-hidden')==='false')hide()})})();</script><div id="nvsRemindOverlay" class="nvs-remind-overlay" aria-hidden="true"><iframe id="nvsRemindFrame" class="nvs-remind-frame" title="Nhắc nhở công vụ" data-src="./NhacNho.html" loading="lazy"></iframe></div>
+<nav class="nvs-premium-nav" aria-label="Điều hướng NVS"><button type="button" data-nvs-nav="calendar"><i class="bi bi-calendar2-week-fill" aria-hidden="true"></i><span>Lịch công tác</span></button><button type="button" data-nvs-nav="help"><i class="bi bi-book" aria-hidden="true"></i><span>Hướng dẫn sử dụng</span></button><button type="button" data-nvs-nav="connect"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i><span>Kết nối</span></button><button type="button" data-nvs-nav="chat" id="hvaChatToggle" aria-label="Mở HVA Chat" aria-haspopup="dialog" aria-controls="hvaChatPanel" aria-expanded="false"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i><span>HVA Chat</span></button></nav><div class="nvs-nav-dialog" id="nvsNavDialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="nvsNavDialogTitle"><div class="nvs-nav-dialog-box"><h2 id="nvsNavDialogTitle"></h2><p id="nvsNavDialogText"></p><button type="button" id="nvsNavDialogClose">Đóng</button></div></div><script id="nvs-premium-nav-script">(()=>{'use strict';const nav=document.querySelector('.nvs-premium-nav');if(!nav)return;const dialog=document.getElementById('nvsNavDialog'),close=document.getElementById('nvsNavDialogClose');let origin=null;const info={calendar:['Lịch công tác','Lịch nhà trường và Lịch của tôi sẽ được kết nối với lịch HVA hiện có sau khi xác nhận đường dẫn và quyền truy cập. Chưa có dữ liệu lịch trong NVS V2.'],help:['Hướng dẫn sử dụng','Tài liệu và video hướng dẫn sử dụng HVA-EDOS đang được hoàn thiện. Có thể mở các nghiệp vụ hiện có từ danh mục bên trái.'],connect:['Kết nối','Chức năng kết nối nội bộ HVA đang chờ xác nhận liên kết và quyền truy cập.'],person:['Cá nhân','Thông tin tài khoản đang được hiển thị trên Trang chủ NVS. Chức năng hồ sơ cá nhân chuyên biệt đang chờ kết nối.']};nav.querySelectorAll('button[data-nvs-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.nvsNav==='calendar'){location.href='./LichCongTac.html';return;}if(b.dataset.nvsNav==='chat')return;origin=b;const x=info[b.dataset.nvsNav];document.getElementById('nvsNavDialogTitle').textContent=x[0];document.getElementById('nvsNavDialogText').textContent=x[1];dialog.setAttribute('aria-hidden','false');close.focus()}));function hide(){dialog.setAttribute('aria-hidden','true');origin?.focus()}close.addEventListener('click',hide);dialog.addEventListener('click',e=>{if(e.target===dialog)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog.getAttribute('aria-hidden')==='false')hide()})})();</script><div id="nvsRemindOverlay" class="nvs-remind-overlay" aria-hidden="true"><iframe id="nvsRemindFrame" class="nvs-remind-frame" title="Nhắc nhở công vụ" data-src="./NhacNho.html" loading="lazy"></iframe></div>
 <style id="nvs-remind-v7-permission-fix">#nvsOpenRemind[hidden],#nvsOpenRemind[style*="display: none"]{display:none!important;visibility:hidden!important}#nvsOpenRemind:not([hidden]){visibility:visible}</style>
 <script id="nvs-remind-v6-script">(function(){'use strict';
 const btn=document.getElementById('nvsOpenRemind'),layer=document.getElementById('nvsRemindOverlay'),frame=document.getElementById('nvsRemindFrame');
@@ -2638,21 +2635,7 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
  <p class="hva-chat-footnote">Giao diện thử nghiệm. Nhắn tin và tạo nhóm thực tế sẽ hoạt động sau khi kết nối hệ thống Chat bảo mật.</p>
 </section>
 <style id="hva-chat-header-ui">
-.hva-pro-header-inner{position:relative}
-.hva-pro-header-inner .hva-header-left{position:relative;grid-column:1;min-width:36px;width:36px;display:flex;align-items:center;justify-content:center}
-.hva-pro-header-inner .hva-header-left #nvsMenuToggle{position:relative;z-index:2;transform:none!important;margin:0!important}
-.hva-pro-header-inner .hva-chat-trigger{
-  display:grid!important;place-items:center!important;
-  width:36px!important;height:36px!important;min-width:36px!important;
-  padding:0!important;margin:0!important;font-size:17px!important;
-  border:1px solid rgba(160,235,255,.55)!important;border-radius:11px!important;
-  background:rgba(12,125,194,.48)!important;color:white!important;
-  position:absolute!important;left:44px!important;top:50%!important;transform:translateY(-50%)!important;
-  z-index:5;
-}
-.hva-pro-header-inner .hva-chat-trigger:hover,
-.hva-pro-header-inner .hva-chat-trigger[aria-expanded="true"]{background:#09a4d7!important;box-shadow:0 0 0 2px #b4f4ff55!important}
-.hva-chat-panel{position:fixed;top:94px;left:12px;z-index:16000;width:min(390px,calc(100vw - 24px));border:1px solid #a1dafa;border-radius:18px;box-shadow:0 20px 52px #07305d55;background:#fff;color:#10406f;overflow:hidden;font-family:Inter,"Segoe UI",Arial,sans-serif}
+.hva-chat-panel{position:fixed;bottom:112px;right:18px;z-index:16000;width:min(390px,calc(100vw - 24px));border:1px solid #a1dafa;border-radius:18px;box-shadow:0 20px 52px #07305d55;background:#fff;color:#10406f;overflow:hidden;font-family:Inter,"Segoe UI",Arial,sans-serif}
 .hva-chat-panel[hidden],.hva-chat-detail[hidden],.hva-chat-actions[hidden]{display:none!important}
 .hva-chat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(110deg,#073f83,#067dbf);color:white;padding:16px 17px}
 .hva-chat-head strong{display:block;font-size:16px;letter-spacing:.03em}.hva-chat-head strong i{margin-right:7px}
@@ -2670,11 +2653,8 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 .hva-chat-info{padding:13px;line-height:1.6;border:1px solid #c9e3f6;border-radius:12px;background:#f3f9ff;color:#365c7a;font-size:12px}
 .hva-chat-footnote{margin:0;padding:11px 15px;border-top:1px solid #d9ebf7;background:#f7fbff;color:#66809c;font-size:10px;line-height:1.5}
 @media(max-width:720px){
- .hva-pro-header-inner .hva-header-left{width:30px;min-width:30px}
- .hva-pro-header-inner .hva-chat-trigger{width:30px!important;height:30px!important;min-width:30px!important;left:37px!important;transform:translateY(-50%)!important;font-size:15px!important;border-radius:9px!important}
- .hva-chat-panel{top:80px;left:7px;width:min(390px,calc(100vw - 14px));max-height:calc(100dvh - 92px);overflow-y:auto}
+ .hva-chat-panel{top:auto;bottom:calc(94px + env(safe-area-inset-bottom,0px));right:7px;left:auto;width:min(390px,calc(100vw - 14px));max-height:calc(100dvh - 112px);overflow-y:auto}
 }
-@media(max-width:380px){.hva-pro-header-inner .hva-chat-trigger{left:34px!important}}
 </style>
 <script id="hva-chat-header-interaction">
 (function(){
@@ -2706,89 +2686,7 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 </script>
 
 
-<!-- Gợi ý HVA Chat: giới thiệu nhẹ sau đăng nhập; không can thiệp chức năng Chat -->
-<div id="hvaChatWelcomeHint" class="hva-chat-welcome-hint" role="status" hidden>
- <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
- <span>Bấm vào đây để trò chuyện qua <strong>HVA Chat</strong></span>
- <button type="button" id="hvaChatHintDismiss" aria-label="Ẩn hướng dẫn HVA Chat"><i class="bi bi-x" aria-hidden="true"></i></button>
-</div>
-<style id="hva-chat-welcome-hint">
-.hva-chat-welcome-hint{
- position:fixed;z-index:15990;display:flex;align-items:center;gap:8px;
- box-sizing:border-box;max-width:min(330px,calc(100vw - 20px));
- padding:10px 9px 10px 13px;border:1px solid #9be9ff;border-radius:13px;
- color:#fff;background:linear-gradient(115deg,#064b99,#0789c8);
- box-shadow:0 8px 22px rgba(0,40,96,.3);font:700 12px/1.45 Inter,"Segoe UI",Arial,sans-serif;
- pointer-events:auto;animation:hva-chat-hint-soft-pulse 1.45s ease-in-out 3;
-}
-.hva-chat-welcome-hint[hidden]{display:none!important}
-.hva-chat-welcome-hint>i{font-size:18px;flex:none}
-.hva-chat-welcome-hint strong{color:#fce08a;white-space:nowrap}
-.hva-chat-welcome-hint button{
- border:0;background:transparent;color:#fff;cursor:pointer;padding:4px;
- font-size:17px;line-height:1;flex:none;align-self:center;
-}
-@keyframes hva-chat-hint-soft-pulse{
- 0%,100%{box-shadow:0 8px 22px rgba(0,40,96,.3);filter:brightness(1)}
- 50%{box-shadow:0 8px 24px rgba(0,101,211,.43),0 0 0 4px rgba(51,202,255,.18);filter:brightness(1.08)}
-}
-@media(max-width:720px){
- .hva-chat-welcome-hint{font-size:11px;max-width:min(280px,calc(100vw - 16px));padding:8px 7px 8px 10px;gap:6px}
-}
-@media(prefers-reduced-motion:reduce){.hva-chat-welcome-hint{animation:none!important}}
-</style>
-<script id="hva-chat-hint-interaction">
-(function(){
- 'use strict';
- const button=document.getElementById('hvaChatToggle');
- const bubble=document.getElementById('hvaChatWelcomeHint');
- const dismiss=document.getElementById('hvaChatHintDismiss');
- if(!button||!bubble||!dismiss)return;
- let timer=null,observer=null,done=false;
- const key='hva_chat_hint_seen_session';
- function seen(){try{return sessionStorage.getItem(key)==='1'}catch(_){return done}}
- function mark(){done=true;try{sessionStorage.setItem(key,'1')}catch(_){}}
- function hide(){
-  bubble.hidden=true;
-  if(timer!==null){clearTimeout(timer);timer=null}
-  mark();
-  if(observer){observer.disconnect();observer=null}
- }
- function position(){
-  if(bubble.hidden)return;
-  const rect=button.getBoundingClientRect();
-  const width=bubble.offsetWidth||290;
-  const x=Math.max(8,Math.min(window.innerWidth-width-8,rect.right+12));
-  const y=Math.min(window.innerHeight-bubble.offsetHeight-8,rect.top+Math.max(0,(rect.height-bubble.offsetHeight)/2));
-  bubble.style.left=x+'px';
-  bubble.style.top=Math.max(8,y)+'px';
- }
- function authenticated(){
-  const login=document.querySelector('.dtht-auth');
-  if(login&&!login.classList.contains('hidden')&&!login.hidden) return false;
-  return true;
- }
- function tryShow(){
-  if(done||seen()||!authenticated()||button.getAttribute('aria-expanded')==='true')return;
-  if(button.getClientRects().length===0)return;
-  bubble.hidden=false;position();
-  timer=setTimeout(hide,6500);
-  if(observer){observer.disconnect();observer=null}
- }
- dismiss.addEventListener('click',hide);
- button.addEventListener('click',hide);
- window.addEventListener('resize',position,{passive:true});
- window.addEventListener('scroll',position,{passive:true});
- if(seen())return;
- tryShow();
- if(!bubble.hidden)return;
- const login=document.querySelector('.dtht-auth');
- if(login){
-  observer=new MutationObserver(tryShow);
-  observer.observe(login,{attributes:true,attributeFilter:['class','hidden','style']});
- }
-})();
-</script>
+
 
 </body>
 </html>
