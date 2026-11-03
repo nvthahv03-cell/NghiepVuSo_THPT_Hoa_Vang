@@ -239,11 +239,29 @@ $('people').addEventListener('change',e=>{
 if(e.target.matches('input[data-group]')){const details=e.target.closest('details');details.querySelectorAll('input[data-user]').forEach(x=>{e.target.checked?state.selected.add(x.dataset.user):state.selected.delete(x.dataset.user);});renderPeople();return;}
 if(e.target.matches('input[data-user]')){const u=e.target.dataset.user;e.target.checked?state.selected.add(u):state.selected.delete(u);$('selectionCount').textContent='Đã chọn '+state.selected.size+' / '+state.people.length+' người';renderPeople();}});
 $('tabSend').onclick=()=>{if(isBGH())setTabs(false)};$('tabInbox').onclick=()=>setTabs(true);
-function basicDraft(){const p=payload();const s=scenarios.find(x=>x[0]===p.scenarioCode);const topic=s?.[1]||'việc thực hiện nhiệm vụ';
-$('subject').value='Nhắc nhở công vụ – '+topic;
-const fact=p.facts?'Thông tin ghi nhận: '+p.facts+'\n\n':'';
-const suffix=p.level==='GIAI_TRINH'?'Đề nghị thầy/cô phản hồi, làm rõ sự việc trong thời hạn được thông báo để nhà trường xem xét khách quan.':p.level==='CANH_BAO'?'Đề nghị thầy/cô nghiêm túc khắc phục, thực hiện đúng quy định và không để sự việc tái diễn.':'Đề nghị thầy/cô lưu ý, chủ động điều chỉnh và phối hợp thực hiện đúng lịch công tác, nhiệm vụ được giao.';
-$('content').value='Kính gửi thầy/cô,\n\n'+fact+'Nhà trường đề nghị thầy/cô lưu ý về nội dung: '+topic+'.\n\n'+suffix+'\n\nNếu có thông tin chưa được cập nhật hoặc lý do chính đáng, đề nghị thầy/cô phản hồi trên NVS để nhà trường đối chiếu.\n\nTrân trọng.';status('sendStatus','Đã tạo mẫu cơ bản. BGH cần rà soát và chỉnh sửa trước khi gửi.');
+function basicDraft(){
+ const p=payload(),entry=scenarios.find(x=>x[0]===p.scenarioCode);
+ const topic=entry?.[1]||'việc thực hiện nhiệm vụ',date=p.eventDate?p.eventDate.split('-').reverse().join('/'):'[ngày/tháng/năm]';
+ const observed=p.facts?'Thông tin cần đối chiếu: '+p.facts+'\n\n':'';
+ const special={
+  'NN-G01':'Qua theo dõi việc thực hiện thời khóa biểu ngày '+date+', nhà trường ghi nhận nội dung cần đối chiếu về thời gian vào lớp của Thầy/Cô. Đề nghị Thầy/Cô kiểm tra, phản hồi thông tin và thực hiện đúng giờ lên lớp, bảo đảm thời lượng tiết dạy.',
+  'NN-G04':'Qua theo dõi giờ học ngày '+date+', nhà trường ghi nhận tình trạng học sinh sử dụng điện thoại chưa đúng quy định. Đề nghị Thầy/Cô kiểm tra sự việc, hướng dẫn học sinh sử dụng thiết bị đúng quy định và phối hợp với giáo viên chủ nhiệm khi cần thiết.',
+  'NN-G05':'Qua theo dõi tiết học ngày '+date+', nhà trường ghi nhận nội dung cần kiểm tra liên quan đến việc chấp hành nội quy lớp học của học sinh. Đề nghị Thầy/Cô xác minh tình hình, thực hiện biện pháp giáo dục phù hợp và phối hợp với giáo viên chủ nhiệm.',
+  'NN-G06':'Qua rà soát sổ đầu bài, nhà trường ghi nhận một số nội dung thuộc trách nhiệm cập nhật của Thầy/Cô chưa được hoàn thiện. Đề nghị Thầy/Cô kiểm tra, bổ sung chính xác các thông tin còn thiếu theo quy định.',
+  'NN-CN01':'Qua theo dõi buổi chào cờ ngày '+date+', việc tập trung và giữ nền nếp của lớp chủ nhiệm còn nội dung cần chấn chỉnh. Đề nghị Thầy/Cô kiểm tra, phối hợp với Đoàn trường hướng dẫn học sinh ổn định đội hình, thực hiện nghiêm túc quy định.',
+  'NN-CN02':'Qua rà soát việc bàn giao sổ đầu bài, nhà trường chưa ghi nhận đầy đủ việc nộp sổ của lớp chủ nhiệm. Đề nghị Thầy/Cô phối hợp ban cán sự lớp kiểm tra, nhắc nhở học sinh được phân công bảo quản và bàn giao đúng quy định.',
+  'NN-CN03':'Qua theo dõi nền nếp lớp chủ nhiệm, nhà trường ghi nhận những nội dung cần được chấn chỉnh. Đề nghị Thầy/Cô xác định nguyên nhân, phối hợp các bộ phận liên quan triển khai biện pháp giáo dục phù hợp và báo cáo kết quả.',
+  'NN-H03':'Qua theo dõi cuộc họp ngày '+date+', nhà trường ghi nhận nội dung cần đối chiếu về mức độ tập trung tham dự. Đề nghị Thầy/Cô kiểm tra, phản hồi thông tin liên quan và chú ý theo dõi đầy đủ các nội dung họp.',
+  'NN-B01':'Theo kế hoạch hoặc thông báo có liên quan, đến thời điểm rà soát, nhà trường chưa ghi nhận đầy đủ báo cáo hoặc số liệu thuộc trách nhiệm Thầy/Cô. Đề nghị Thầy/Cô kiểm tra, hoàn thành việc gửi báo cáo và phản hồi nếu đã thực hiện.',
+  'NN-K01':'Qua theo dõi công tác coi kiểm tra, nhà trường ghi nhận nội dung cần đối chiếu về việc thực hiện nhiệm vụ tại ca, phòng được phân công. Đề nghị Thầy/Cô kiểm tra, phản hồi thông tin và thực hiện đầy đủ quy trình coi kiểm tra theo quy định.',
+  'NN-K02':'Qua theo dõi hoạt động công vụ ngày '+date+', nhà trường ghi nhận việc sử dụng thẻ viên chức có nội dung cần nhắc nhở. Đề nghị Thầy/Cô thực hiện đúng quy định về đeo thẻ trong thời gian làm việc.'
+ };
+ const general='Nhà trường đề nghị Thầy/Cô kiểm tra, rà soát nội dung: '+topic+'. Trường hợp thông tin ghi nhận là chính xác, đề nghị chủ động khắc phục và thực hiện đúng yêu cầu công vụ.';
+ const direction=p.level==='GIAI_TRINH'?'Đề nghị Thầy/Cô phản hồi và làm rõ thông tin để nhà trường có cơ sở xem xét khách quan.':p.level==='CANH_BAO'?'Đề nghị Thầy/Cô nghiêm túc lưu ý, khắc phục nội dung đã ghi nhận và tránh để tái diễn.':'Đề nghị Thầy/Cô quan tâm thực hiện và phối hợp với bộ phận phụ trách.';
+ const deadline=p.deadline?'\n\nThời hạn phản hồi: '+p.deadline.replace('T',' lúc ')+'.':'';
+ $('subject').value='Nhắc nhở công vụ – '+topic;
+ $('content').value='Kính gửi Thầy/Cô,\n\n'+observed+(special[p.scenarioCode]||general)+'\n\n'+direction+deadline+'\n\nNếu có nội dung chưa được cập nhật hoặc lý do cần làm rõ, đề nghị Thầy/Cô phản hồi để nhà trường đối chiếu.\n\nTrân trọng.';
+ status('sendStatus','Đã tạo dự thảo theo tình huống. Vui lòng bổ sung dữ kiện cụ thể, kiểm tra lại trước khi gửi.');
 }
 $('templateBtn').onclick=basicDraft;
 async function generate(provider){if(!isBGH())return status('sendStatus','Chỉ BGH có quyền soạn lời nhắc.','error');
