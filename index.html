@@ -2705,5 +2705,90 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 })();
 </script>
 
+
+<!-- Gợi ý HVA Chat: giới thiệu nhẹ sau đăng nhập; không can thiệp chức năng Chat -->
+<div id="hvaChatWelcomeHint" class="hva-chat-welcome-hint" role="status" hidden>
+ <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+ <span>Bấm vào đây để trò chuyện qua <strong>HVA Chat</strong></span>
+ <button type="button" id="hvaChatHintDismiss" aria-label="Ẩn hướng dẫn HVA Chat"><i class="bi bi-x" aria-hidden="true"></i></button>
+</div>
+<style id="hva-chat-welcome-hint">
+.hva-chat-welcome-hint{
+ position:fixed;z-index:15990;display:flex;align-items:center;gap:8px;
+ box-sizing:border-box;max-width:min(330px,calc(100vw - 20px));
+ padding:10px 9px 10px 13px;border:1px solid #9be9ff;border-radius:13px;
+ color:#fff;background:linear-gradient(115deg,#064b99,#0789c8);
+ box-shadow:0 8px 22px rgba(0,40,96,.3);font:700 12px/1.45 Inter,"Segoe UI",Arial,sans-serif;
+ pointer-events:auto;animation:hva-chat-hint-soft-pulse 1.45s ease-in-out 3;
+}
+.hva-chat-welcome-hint[hidden]{display:none!important}
+.hva-chat-welcome-hint>i{font-size:18px;flex:none}
+.hva-chat-welcome-hint strong{color:#fce08a;white-space:nowrap}
+.hva-chat-welcome-hint button{
+ border:0;background:transparent;color:#fff;cursor:pointer;padding:4px;
+ font-size:17px;line-height:1;flex:none;align-self:center;
+}
+@keyframes hva-chat-hint-soft-pulse{
+ 0%,100%{box-shadow:0 8px 22px rgba(0,40,96,.3);filter:brightness(1)}
+ 50%{box-shadow:0 8px 24px rgba(0,101,211,.43),0 0 0 4px rgba(51,202,255,.18);filter:brightness(1.08)}
+}
+@media(max-width:720px){
+ .hva-chat-welcome-hint{font-size:11px;max-width:min(280px,calc(100vw - 16px));padding:8px 7px 8px 10px;gap:6px}
+}
+@media(prefers-reduced-motion:reduce){.hva-chat-welcome-hint{animation:none!important}}
+</style>
+<script id="hva-chat-hint-interaction">
+(function(){
+ 'use strict';
+ const button=document.getElementById('hvaChatToggle');
+ const bubble=document.getElementById('hvaChatWelcomeHint');
+ const dismiss=document.getElementById('hvaChatHintDismiss');
+ if(!button||!bubble||!dismiss)return;
+ let timer=null,observer=null,done=false;
+ const key='hva_chat_hint_seen_session';
+ function seen(){try{return sessionStorage.getItem(key)==='1'}catch(_){return done}}
+ function mark(){done=true;try{sessionStorage.setItem(key,'1')}catch(_){}}
+ function hide(){
+  bubble.hidden=true;
+  if(timer!==null){clearTimeout(timer);timer=null}
+  mark();
+  if(observer){observer.disconnect();observer=null}
+ }
+ function position(){
+  if(bubble.hidden)return;
+  const rect=button.getBoundingClientRect();
+  const width=bubble.offsetWidth||290;
+  const x=Math.max(8,Math.min(window.innerWidth-width-8,rect.right+12));
+  const y=Math.min(window.innerHeight-bubble.offsetHeight-8,rect.top+Math.max(0,(rect.height-bubble.offsetHeight)/2));
+  bubble.style.left=x+'px';
+  bubble.style.top=Math.max(8,y)+'px';
+ }
+ function authenticated(){
+  const login=document.querySelector('.dtht-auth');
+  if(login&&!login.classList.contains('hidden')&&!login.hidden) return false;
+  return true;
+ }
+ function tryShow(){
+  if(done||seen()||!authenticated()||button.getAttribute('aria-expanded')==='true')return;
+  if(button.getClientRects().length===0)return;
+  bubble.hidden=false;position();
+  timer=setTimeout(hide,6500);
+  if(observer){observer.disconnect();observer=null}
+ }
+ dismiss.addEventListener('click',hide);
+ button.addEventListener('click',hide);
+ window.addEventListener('resize',position,{passive:true});
+ window.addEventListener('scroll',position,{passive:true});
+ if(seen())return;
+ tryShow();
+ if(!bubble.hidden)return;
+ const login=document.querySelector('.dtht-auth');
+ if(login){
+  observer=new MutationObserver(tryShow);
+  observer.observe(login,{attributes:true,attributeFilter:['class','hidden','style']});
+ }
+})();
+</script>
+
 </body>
 </html>
