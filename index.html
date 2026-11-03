@@ -2808,8 +2808,8 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
  button.addEventListener('click',()=>show(panel.hidden));
  close.addEventListener('click',()=>show(false));
  back.addEventListener('click',()=>{if(state.group){state.group=null;loadGroups()}else loadGroups()});
- $('hvaChatCouncil').addEventListener('click',async()=>{show(true);await openGroup({id:'COUNCIL:ALL',name:'Hội đồng sư phạm',type:'COUNCIL',status:'ACTIVE',memberRole:'MEMBER'})});
- $('hvaChatCreate').addEventListener('click',()=>{show(true);showCreate()});
+ $('hvaChatCouncil').addEventListener('click',()=>openGroup({id:'COUNCIL:ALL',name:'Hội đồng sư phạm',type:'COUNCIL',status:'ACTIVE',memberRole:'MEMBER'}));
+ $('hvaChatCreate').addEventListener('click',showCreate);
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)show(false)});
  document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&!button.contains(e.target))show(false)});
 })();
