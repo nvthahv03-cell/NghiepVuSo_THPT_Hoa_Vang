@@ -1,0 +1,28 @@
+/* HVA-EDOS — shared responsive navigation tap targets.
+   Scope limited to elements explicitly marked hva-nav-tap; preserve existing routes. */
+.hva-nav-tap{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:9px;min-width:48px;min-height:48px;padding:10px 15px;
+  border-radius:14px;box-sizing:border-box;text-decoration:none;
+  font-size:13px;font-weight:800;line-height:1.2;
+  cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:transform .13s cubic-bezier(.22,.68,0,1.35),box-shadow .13s ease,filter .13s ease!important;
+  user-select:none;
+}
+.hva-nav-tap svg,.hva-nav-tap i{flex-shrink:0;width:22px;height:22px;font-size:22px;line-height:1;vertical-align:middle}
+.hva-nav-tap:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.hva-nav-tap:active{transform:scale(.93)!important;filter:brightness(.96)}
+.hva-nav-tap:focus-visible{outline:3px solid #f6c764!important;outline-offset:3px}
+.hva-nav-tap.hva-nav-back{
+  color:#fff!important;background:linear-gradient(130deg,#0c579d,#1188b2)!important;
+  border:1px solid #6ec9ed!important;box-shadow:0 5px 14px #06426d2b!important;
+}
+.hva-nav-tap.hva-nav-home{
+  color:#fff!important;background:linear-gradient(135deg,#07518d,#0d8fa5)!important;
+  border:1px solid #80cddd!important;box-shadow:0 5px 15px #08486b25!important;
+}
+@media(max-width:600px){
+  .hva-nav-tap{min-width:44px;min-height:44px;padding:9px 12px;border-radius:12px}
+  .hva-nav-tap svg,.hva-nav-tap i{width:21px;height:21px;font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){.hva-nav-tap{transition:none!important}}
