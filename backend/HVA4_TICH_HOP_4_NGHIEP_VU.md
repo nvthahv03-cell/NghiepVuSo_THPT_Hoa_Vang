@@ -29,3 +29,9 @@
 - Kiểm tra sơ bộ 14 tình huống Backend bằng dịch vụ SpreadsheetApp/LockService giả lập: **14/14 đạt**, gồm phân quyền đọc hồ sơ cá nhân, GVCN nhập danh sách đúng lớp, chỉ BGH được nhận xét, chặn giáo viên tự ghi nhận xét Hiệu trưởng, chặn sửa bản NQ52 đã duyệt, không ghi đè dữ liệu sổ HSG 12.
 - Đã bổ sung giao diện BGH xác nhận/yêu cầu bổ sung và mã xử lý ghi nhật ký.
 - **Chưa có kết quả kiểm thử live Apps Script, Google Sheets, quyền trình duyệt hoặc bản in theo sổ giấy. Chưa đủ điều kiện tuyên bố PASS toàn bộ.**
+
+## Kiểm định bổ sung
+- Đã mở rộng bộ kiểm thử giả lập đến **16/16 đạt** sau khi sửa lỗi trong chính bộ mô phỏng thao tác ghi ô Google Sheets.
+- Đã chặn mã học sinh dạng công thức bảng tính và lớp/mã học sinh không hợp lệ.
+- Đã kiểm tra quyền BGH xem hồ sơ, chặn GV khác xem hồ sơ, chặn GV tự nhận xét thay Hiệu trưởng, chặn chỉnh sửa sau khi BGH xác nhận.
+- Đã có thao tác BGH xác nhận hoặc yêu cầu bổ sung với nhật ký; vẫn chờ gắn vào router Apps Script và kiểm tra trên Google Sheet thực tế.
