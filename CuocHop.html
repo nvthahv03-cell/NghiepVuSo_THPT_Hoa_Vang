@@ -1002,12 +1002,20 @@ async function hvaCreateRealGoogleMeet() {
     });
     if (!response.ok) throw Error('Backend HTTP '+response.status);
     const result = await response.json();
+    // A Calendar event may exist even while Google Meet is still being generated.
+    // Keep its ID to prevent a duplicate event on another click.
     if (result.eventId) hvaMeetCreatedEventId = String(result.eventId);
-    if (!result.success || !result.meetUrl) {
-      throw Error(result.message || 'Google chưa trả liên kết Meet.');
+    if (hvaMeetCreatedEventId && !result.meetUrl) {
+      setStatus('Google Calendar đã nhận sự kiện nhưng chưa trả liên kết Meet. Không bấm tạo lại để tránh trùng lịch. Kiểm tra sự kiện trên Google Calendar hoặc liên hệ quản trị.', true);
+      return;
     }
-    $('meetingMeetUrl').value = result.meetUrl;
-    setStatus('Đã tạo Google Meet thật. Vui lòng kiểm tra link và thông tin cuộc họp trước khi phát hành.');
+    if (!result.success || !result.meetUrl) {
+      throw Error(result.message || 'Máy chủ chưa cấp được liên kết Google Meet.');
+    }
+    const validMeetUrl = /^https:\/\/meet\.google\.com\/[a-z]{3}-[a-z]{4}-[a-z]{3}(?:[/?#].*)?$/i.test(String(result.meetUrl));
+    if (!validMeetUrl) throw Error('Máy chủ trả liên kết không đúng định dạng Google Meet. Chưa cập nhật vào cuộc họp.');
+    $('meetingMeetUrl').value = String(result.meetUrl);
+    setStatus('Đã nhận liên kết Google Meet từ máy chủ. Kiểm tra thông tin trước khi phát hành.');
   } catch (err) {
     setStatus(/Action POST không hợp lệ|createMeetingGoogleMeet/i.test(String(err.message||err)) ? 'Chức năng tạo Google Meet chưa được kích hoạt trên máy chủ. Vui lòng liên hệ quản trị hệ thống.' : 'Chưa thể tạo liên kết: '+(err.message||String(err)), true);
   } finally {
