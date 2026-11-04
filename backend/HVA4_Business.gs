@@ -21,7 +21,7 @@ function HVA4_guard_(module,u){if(!['homeroom','nq52','device'].includes(module)
 function HVA4_meta_(module,u){const meta={schoolYear:u.schoolYear};if(module==='homeroom'){meta.className=u.className;meta.canReview=HVA4_admin_(u);if(meta.canReview){const shx=HVA4_sheet_('roster'),allx=shx.getLastRow()<2?[]:shx.getRange(2,1,shx.getLastRow()-1,2).getValues();meta.classes=[...new Set(allx.filter(a=>String(a[1])===u.schoolYear).map(a=>String(a[0])))].sort();}if(u.className){const sh=HVA4_sheet_('roster'),list=sh.getLastRow()<2?[]:sh.getRange(2,1,sh.getLastRow()-1,5).getValues();meta.students=list.filter(x=>String(x[0])===u.className&&String(x[1])===u.schoolYear).map(x=>{try{return JSON.parse(String(x[3]||'{}'))}catch(e){return {studentId:String(x[2]),name:'(Bản ghi cần kiểm tra)'}}});meta.studentCount=meta.students.length}}if(module==='device'){meta.teachers=[];meta.reviews=[]}meta.canReview=HVA4_admin_(u);return meta}
 function HVA4_get_(module,u){
  HVA4_guard_(module,u);const rows=HVA4_rows_(HVA4_sheet_(module));
- const records=rows.filter(r=>HVA4_admin_(u)||r.owner===u.username).map(r=>({id:r.id,owner:r.owner,status:r.status,updatedAt:r.updated,submittedAt:r.submitted,reviewer:r.payload.__reviewer||'',reviewComment:r.payload.__reviewComment||'',reviewedAt:r.payload.__reviewedAt||'',data:r.payload}));
+ const records=rows.filter(r=>HVA4_admin_(u)||r.owner===u.username||(module==='homeroom'&&r.className===u.className&&r.period===u.schoolYear&&r.payload.sectionKey==='21')).map(r=>({id:r.id,owner:r.owner,status:r.status,updatedAt:r.updated,submittedAt:r.submitted,reviewer:r.payload.__reviewer||'',reviewComment:r.payload.__reviewComment||'',reviewedAt:r.payload.__reviewedAt||'',data:r.payload}));
  return {success:true,module,schemaVersion:'HVA4-1',records,meta:HVA4_meta_(module,u)}
 }
 function HVA4_validate_(module,x,draft){
@@ -63,6 +63,8 @@ function HVA4_save_(module,raw,draft,u){
     if(x.sectionKey){
       const num=Number(x.sectionKey);
       if(!Number.isInteger(num)||num<1||num>21)throw new Error('Mục sổ chủ nhiệm không hợp lệ.');
+      const titles=['Những văn bản quy định nhiệm vụ của học sinh','Nhiệm vụ và quyền hạn của người giáo viên','Danh sách giáo viên bộ môn','Sơ yếu lí lịch học sinh','Danh sách ban đại diện cha mẹ học sinh','Thống kê tình hình học sinh','Danh sách cán bộ lớp – Chi đoàn, Chi đội','Danh sách cán sự lớp','Sơ đồ tổ chức lớp','Sơ đồ vị trí học sinh đầu năm học','Thống kê chất lượng – khảo sát đầu năm','Thống kê kết quả đánh giá HKI, HKII và cả năm','Thống kê chất lượng cả năm học','Kế hoạch năm học','Kế hoạch từng tháng, từng tuần có đánh giá kết quả','Thành tích của tập thể và cá nhân học sinh','Phần theo dõi từng học sinh','Sơ đồ vị trí học sinh thay đổi','Phần theo dõi mượn sách và các khoản thu, nộp','Phần ghi chép khác của giáo viên chủ nhiệm','Kiểm tra – nhận xét của Hiệu trưởng'];
+      if(x.section!==titles[num-1])throw new Error('Tên mục sổ không khớp sổ giấy đã thống nhất.');
       if(num===21&&!HVA4_admin_(u))throw new Error('Chỉ Ban Giám hiệu được ghi nhận xét kiểm tra.');
       if(num!==21&&!u.className)throw new Error('Chưa có lớp chủ nhiệm được xác minh.');
       if(!Array.isArray(x.rows)||!x.rows.length||!x.rows.some(row=>Object.values(row).some(v=>!!v)))throw new Error('Chưa nhập dữ liệu của mục sổ.');
@@ -94,7 +96,7 @@ function HVA4_review_(module,id,decision,comment,u){
 }
 function HVA4_importRoster_(students,u){
  if(!u.className)throw new Error('Chưa được phân công chủ nhiệm lớp.');if(!/^\d{1,2}\/\d{1,2}$/.test(u.className))throw new Error('Mã lớp chủ nhiệm không hợp lệ.');if(!Array.isArray(students)||!students.length||students.length>80)throw new Error('Danh sách học sinh không hợp lệ.');
- const seen=new Set(),rows=students.map(a=>{const id=HVA4_str_(a.studentId,70),name=HVA4_str_(a.name,160);if(!id||!name||seen.has(id))throw new Error('Mã học sinh trống hoặc trùng.');if(!/^[A-Za-z0-9][A-Za-z0-9_.\/-]{0,69}$/.test(id))throw new Error('Mã học sinh không hợp lệ.');seen.add(id);return {studentId:id,name,dob:HVA4_str_(a.dob,30),gender:HVA4_str_(a.gender,15),parent:HVA4_str_(a.parent,160),phone:HVA4_str_(a.phone,30)}});
+ const seen=new Set(),rows=students.map(a=>{const id=HVA4_str_(a.studentId,70),name=HVA4_str_(a.name,160);if(!id||!name||seen.has(id))throw new Error('Mã học sinh trống hoặc trùng.');if(!/^[A-Za-z0-9][A-Za-z0-9_.\/-]{0,69}$/.test(id))throw new Error('Mã học sinh không hợp lệ.');seen.add(id);return {studentId:id,name,dob:HVA4_str_(a.dob,30),gender:HVA4_str_(a.gender,15),parent:HVA4_str_(a.parent,160),address:HVA4_str_(a.address,400),phone:HVA4_str_(a.phone,30)}});
  const lock=LockService.getScriptLock();lock.waitLock(30000);
  try{
   const sh=HVA4_sheet_('roster'),current=sh.getLastRow()<2?[]:sh.getRange(2,1,sh.getLastRow()-1,5).getValues();
