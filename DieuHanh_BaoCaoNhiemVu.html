@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Điều hành – Báo cáo công tác, nhiệm vụ | THPT Hòa Vang</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#173950;background:#f4f8fc;color-scheme:light}
+    *{box-sizing:border-box}body{margin:0;min-width:280px}button,input,textarea{font:inherit}button,a{touch-action:manipulation}
+    a{color:#0860a9}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.55}
+    :focus-visible{outline:3px solid #f2b530;outline-offset:3px}
+    .hva-pro-header{color:#fff;background:linear-gradient(110deg,#073d7e,#0867b6 63%,#079ac9);border-radius:0 0 18px 18px;box-shadow:0 8px 22px #124e8125}
+    .hva-pro-header-inner{max-width:1220px;margin:auto;display:grid;grid-template-columns:58px minmax(0,1fr) auto;align-items:center;gap:20px;padding:18px 22px;min-height:100px}
+    .hva-pro-back{display:grid;place-items:center;width:54px;height:54px;border:1px solid #84c4ed;border-radius:14px;background:#ffffff14;color:white;text-decoration:none;font-size:27px}
+    .hva-pro-brand{text-align:center;min-width:0}.hva-pro-kicker{font-size:12px;font-weight:750;letter-spacing:.14em;color:#d4ebfe}
+    .hva-pro-school{font-size:clamp(22px,2.9vw,29px);font-weight:850;line-height:1.25}.hva-pro-slogan{font-size:13px;color:#e1f4fd;margin-top:3px}
+    .hva-pro-online{border:1px solid #8fe1f1;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:800;white-space:nowrap}
+    main{max-width:1160px;margin:22px auto 75px;padding:0 18px}.hero,.panel{border:1px solid #d8e6f1;border-radius:18px;background:white;box-shadow:0 5px 18px #184b7610}
+    .hero{padding:23px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px}.eyebrow{font-size:11px;font-weight:850;letter-spacing:.09em;color:#076ab9;text-transform:uppercase}
+    h1{font-size:clamp(21px,2.5vw,27px);color:#084a83;margin:6px 0}h2{font-size:19px;color:#084a83;margin:0 0 11px}h3{font-size:16px;color:#0c528e;margin:0 0 8px}
+    .hero p,.muted{font-size:13px;color:#59738a;line-height:1.6;margin:5px 0}.header-links{display:flex;flex-wrap:wrap;gap:9px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #086bb6;border-radius:10px;background:#0a67b3;color:white;padding:10px 15px;text-decoration:none;font-weight:750;font-size:13px;line-height:1.3;min-height:40px}
+    .btn.secondary{background:#eff7fd;border-color:#c0ddf0;color:#155486}.btn.ghost{background:#fff;border-color:#cddfea;color:#22577c}.btn:hover:not(:disabled){filter:brightness(.97)}
+    .panel{margin-top:17px;padding:22px 24px}.panel-top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}.choice{text-align:left;border:1px solid #d4e3f0;border-radius:15px;padding:19px;background:#fff;display:flex;gap:15px;align-items:flex-start;color:#16446d;min-height:112px;transition:background .13s,border-color .13s;box-shadow:0 3px 10px #1d5a8310}
+    .choice:hover{border-color:#68afe1;background:#f8fcff}.choice[aria-pressed="true"]{border:2px solid #096ebf;background:#eaf6ff;padding:18px}
+    .choice-icon{width:39px;height:39px;flex:none;display:grid;place-items:center;background:#eaf4fd;border-radius:11px;color:#086cb7;font-size:22px}
+    .choice strong{display:block;font-size:15px;margin:0 0 6px;line-height:1.4}.choice small{font-size:12px;line-height:1.45;color:#5c7890}.choice .tag{font-size:11px;font-weight:750;display:block;margin-top:7px;color:#0e678b}
+    .status{padding:13px 16px;border-radius:11px;background:#e9f5ff;border:1px solid #c9e4f6;color:#174c77;font-size:13px;line-height:1.65;margin:16px 0 0}
+    .status[data-error="true"]{color:#8f2222;background:#fff2f0;border-color:#ecc0b6}.warning{background:#fff8e8;border:1px solid #ead69d;color:#79551b;border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.6}
+    .identity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:17px 0}.identity-cell{background:#f5fafe;border:1px solid #dbe9f2;border-radius:11px;padding:13px;min-width:0}
+    .identity-cell small{display:block;color:#5a7890;font-size:11px;font-weight:750;margin-bottom:7px}.identity-cell strong{font-size:13px;overflow-wrap:anywhere}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 20px}.field.full{grid-column:1/-1}label{font-size:13px;color:#2d536d;font-weight:750;display:block;margin-bottom:7px}
+    label em{color:#c34141;font-style:normal}.field input,.field textarea{width:100%;border:1.5px solid #bcd4e6;border-radius:10px;padding:12px 14px;color:#173c5a;background:#fff;min-height:45px;font-size:14px}
+    .field textarea{min-height:105px;resize:vertical;line-height:1.6}.field input:focus,.field textarea:focus{outline:none;border-color:#0772c5;box-shadow:0 0 0 3px #0871c420}
+    fieldset{border:0;padding:0;margin:0;min-width:0}.actions{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}.actions .btn{min-width:132px}
+    .preview{max-width:850px;margin:18px auto;background:white;padding:32px 38px;border:1px solid #c9d7e3;box-shadow:0 10px 30px #1d345023;color:#151515;font-family:"Times New Roman",serif;font-size:16px;line-height:1.42}
+    .official-head{display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:center;font-size:13px;margin-bottom:29px;align-items:start}
+    .official-head strong{display:block}.official-head .under{border-bottom:1px solid #111;display:inline-block;padding-bottom:4px}.report-title{text-align:center;text-transform:uppercase;font-size:20px;font-weight:800;margin:0 0 6px}
+    .report-subtitle{text-align:center;font-size:16px;font-weight:700;margin:0 0 21px}.preview p{margin:9px 0}.preview a{overflow-wrap:anywhere}.preview .report-line{white-space:pre-wrap;overflow-wrap:anywhere}
+    .sign{text-align:center;margin:30px 0 12px auto;width:42%;min-width:200px}.sign b{display:block}.sign p{margin:6px 0 45px}
+    .preview-stamp{margin-top:24px;padding:9px;border:1px dashed #b75f37;color:#a0462d;font:700 12px Inter,Arial,sans-serif;text-align:center}
+    .bottom-nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:15px;background:white;border-top:1px solid #e2eaf3;margin-top:45px}.bottom-nav a,.bottom-nav button{background:transparent;border:0;color:#205781;font-size:13px;font-weight:750;text-decoration:none}
+    [hidden]{display:none!important}
+    @media(max-width:720px){.hva-pro-header-inner{grid-template-columns:44px minmax(0,1fr);gap:8px;padding:12px}.hva-pro-back{width:42px;height:42px;font-size:20px}.hva-pro-online{display:none}.hva-pro-kicker{font-size:9px}.hva-pro-school{font-size:20px}.hva-pro-slogan{font-size:10px}
+      main{padding:0 12px}.hero{padding:18px;align-items:flex-start;flex-direction:column}.panel{padding:17px 15px}.grid,.choice-grid,.identity-grid{grid-template-columns:1fr}
+      .choice{min-height:85px}.actions .btn{flex:1;min-width:0}.preview{padding:17px 15px;font-size:14px}.official-head{gap:7px;font-size:10px}.sign{width:65%;font-size:12px}.report-subtitle{font-size:14px}}
+    @media print{@page{size:A4;margin:18mm 18mm 18mm 20mm}body{background:#fff;color:#000}.hva-pro-header,.hero,#choices,#editor,.bottom-nav,#printActions,#notice{display:none!important}main{max-width:none;padding:0;margin:0}.panel{box-shadow:none;border:0;padding:0;margin:0}#previewSection{display:block!important}#previewSection>h2{display:none}.preview{max-width:none;margin:0;padding:0;border:0;box-shadow:none;font-size:13pt;color:#000}.preview-stamp{font-size:9pt;break-inside:avoid}.official-head{font-size:10pt}.report-subtitle{font-size:12pt}.report-title{font-size:14pt}a{color:#000}}
+  </style>
+  <script src="./HVA_Assistant_Shared.js" defer></script>
+</head>
+<body>
+<header class="hva-pro-header"><div class="hva-pro-header-inner">
+  <a class="hva-pro-back" href="./DieuHanh.html" title="Về Điều hành số" aria-label="Về danh mục Nghiệp vụ số"><i class="bi bi-arrow-left" aria-hidden="true">←</i></a>
+  <div class="hva-pro-brand"><div class="hva-pro-kicker">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div><div class="hva-pro-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-pro-slogan">NGHIỆP VỤ SỐ THÔNG MINH</div></div>
+  <div class="hva-pro-online">ĐIỀU HÀNH · BÁO CÁO NHIỆM VỤ</div>
+</div></header>
+<main>
+  <section class="hero"><div><div class="eyebrow">Điều hành – Báo cáo công tác, nhiệm vụ</div><h1 id="heading">Báo cáo công tác, nhiệm vụ và điều động</h1><p>Chọn loại báo cáo để lập nội dung và xem trước theo thể thức hành chính.</p></div>
+  <div class="header-links"><a class="btn secondary" href="./DieuHanh.html">Danh mục Điều hành</a><button class="btn ghost" id="assistantTop" data-nvs-nav="ai" type="button">✦ Trợ lý</button></div></section>
+  <section class="panel" id="choices" aria-labelledby="choicesHeading"><div class="panel-top"><div><h2 id="choicesHeading">Chọn loại báo cáo</h2><p class="muted">Bốn nghiệp vụ thuộc A.1.1; không lặp menu A.1.2–A.1.4 trong trang này.</p></div></div>
+  <div class="choice-grid" id="choiceGrid">
+    <button type="button" class="choice" data-id="task" aria-pressed="false"><span class="choice-icon" aria-hidden="true">▤</span><span><strong>Báo cáo thực hiện nhiệm vụ được giao</strong><small>Kết quả thực hiện nhiệm vụ theo phân công.</small><span class="tag">Lập bản xem trước</span></span></button>
+    <button type="button" class="choice" data-id="deployment" aria-pressed="false"><span class="choice-icon" aria-hidden="true">▣</span><span><strong>Báo cáo công tác điều động</strong><small>Nội dung tham gia, kết quả và công việc tiếp theo.</small><span class="tag">Lập bản xem trước</span></span></button>
+    <button type="button" class="choice" data-id="training" aria-pressed="false"><span class="choice-icon" aria-hidden="true">◈</span><span><strong>Báo cáo tập huấn, bồi dưỡng, hội nghị, hội thảo</strong><small>Tiếp thu nội dung, khả năng vận dụng và đề xuất.</small><span class="tag">Lập bản xem trước</span></span></button>
+    <button type="button" class="choice" data-id="other" aria-pressed="false"><span class="choice-icon" aria-hidden="true">▧</span><span><strong>Báo cáo khác theo yêu cầu</strong><small>Khung dự thảo linh hoạt, hoàn thiện khi có yêu cầu cụ thể.</small><span class="tag">Khung tham khảo · chưa duyệt</span></span></button>
+  </div></section>
+  <p id="notice" class="status" data-error="false" role="status" aria-live="polite">Chọn một loại báo cáo để bắt đầu. Chưa có kết nối lưu, ký hoặc gửi báo cáo.</p>
+  <section class="panel" id="editor" hidden aria-labelledby="editorHeading">
+    <div class="panel-top"><div><div class="eyebrow">Chuẩn bị nội dung</div><h2 id="editorHeading"></h2></div><button type="button" class="btn ghost" id="backToChoices">← Chọn báo cáo khác</button></div>
+    <p class="warning" id="developmentNote">Bản xem trước dùng để kiểm tra nội dung; chưa lưu, chưa ký, chưa gửi đến BGH. Không nhập dữ liệu học sinh nhạy cảm.</p>
+    <div class="identity-grid" aria-label="Thông tin người lập">
+      <div class="identity-cell"><small>NGƯỜI BÁO CÁO</small><strong id="identityName">Chưa đăng nhập</strong></div>
+      <div class="identity-cell"><small>TỔ / BỘ PHẬN</small><strong id="identityTeam">Chưa xác định</strong></div>
+      <div class="identity-cell"><small>CHỨC VỤ</small><strong id="identityRole">Chưa xác định</strong></div>
+    </div>
+    <div id="loginWarning" class="warning" hidden>Phiên đăng nhập chưa hợp lệ. Vui lòng đăng nhập từ <a href="./index.html">Trang chủ NVS</a> để chuẩn bị báo cáo.</div>
+    <form id="reportForm" novalidate><fieldset id="formFields"><div id="fields" class="grid"></div>
+      <div class="field full" style="margin-top:17px"><label for="driveLink">Liên kết tài liệu, minh chứng Google Drive (nếu có)</label><input type="url" id="driveLink" name="driveLink" placeholder="https://drive.google.com/..." autocomplete="off"><p class="muted">Chỉ ghi nhận liên kết trong bản xem trước. Không tải tệp lên NVS; không kiểm chứng quyền Drive tại đây.</p></div>
+      <div class="actions"><button class="btn" type="submit" id="previewButton">Xem trước báo cáo</button><button class="btn secondary" type="button" id="clearButton">Làm mới</button><button class="btn secondary" type="button" data-nvs-nav="ai">✦ Trợ lý soạn báo cáo</button></div>
+    </fieldset></form>
+    <p class="muted" style="margin-top:16px"><strong>Nơi nhận dự kiến:</strong> Ban Giám hiệu; tổ trưởng chuyên môn được thông tin theo quyền được duyệt. Chưa có kết nối gửi và phản hồi hồ sơ trong trang này.</p>
+  </section>
+  <section class="panel" id="previewSection" hidden aria-labelledby="previewHeading"><h2 id="previewHeading">Bản xem trước báo cáo</h2>
+    <div class="preview" id="previewPaper" aria-live="polite"></div>
+    <div class="actions" id="printActions"><button type="button" class="btn secondary" id="editButton">← Quay lại chỉnh sửa</button><button type="button" class="btn" id="printButton">In / Lưu PDF bản xem trước</button><span class="muted">Không phải hồ sơ đã ký hoặc gửi.</span></div>
+  </section>
+</main>
+<nav class="bottom-nav" aria-label="Điều hướng NVS"><a href="./index.html">Trang chủ</a><a href="./DieuHanh.html">Nghiệp vụ số</a><button type="button" data-nvs-nav="ai">✦ Trợ lý</button></nav>
+<script>
+(() => {
+  'use strict';
+  // Độc lập với NVS_A1.js và schemas/sources.json; không tạo API ghi hoặc giả lập gửi.
+  const $ = (id) => document.getElementById(id);
+  const defs = {
+    task: { name:'Báo cáo thực hiện nhiệm vụ được giao', fields:[
+      ['year','Năm học','text',true], ['task','Nhiệm vụ được giao','text',true],
+      ['assignedBy','Người / đơn vị giao nhiệm vụ','text',true], ['from','Từ ngày','date',true], ['to','Đến ngày','date',true],
+      ['content','Nội dung thực hiện','textarea',true], ['results','Kết quả thực hiện','textarea',true],
+      ['difficulties','Khó khăn, vướng mắc','textarea',false], ['recommendations','Kiến nghị, đề xuất','textarea',false]
+    ]},
+    deployment: { name:'Báo cáo công tác điều động', fields:[
+      ['year','Năm học','text',true], ['deployment','Nội dung điều động','text',true], ['basis','Căn cứ điều động','text',true],
+      ['from','Từ ngày','date',true], ['to','Đến ngày','date',true], ['location','Địa điểm','text',true],
+      ['task','Nhiệm vụ tham gia','textarea',true], ['results','Kết quả thực hiện','textarea',true],
+      ['followup','Nội dung cần triển khai sau điều động','textarea',true], ['recommendations','Kiến nghị','textarea',false]
+    ]},
+    training: { name:'Báo cáo tập huấn, bồi dưỡng, hội nghị, hội thảo', fields:[
+      ['year','Năm học','text',true], ['activity','Tên hoạt động','text',true], ['organizer','Đơn vị tổ chức','text',true],
+      ['from','Từ ngày','date',true], ['to','Đến ngày','date',true], ['location','Địa điểm','text',true],
+      ['content','Nội dung chính','textarea',true], ['knowledge','Kiến thức, kỹ năng tiếp thu','textarea',true],
+      ['application','Khả năng vận dụng vào công việc','textarea',true], ['proposals','Đề xuất triển khai tại trường','textarea',false]
+    ]},
+    // Chức năng "khác" mới có khung chuẩn bị; chưa công nhận là biểu mẫu được duyệt.
+    other: { name:'Báo cáo khác theo yêu cầu', draft:true, fields:[
+      ['year','Năm học','text',true], ['subject','Tên báo cáo / nội dung được yêu cầu','text',true],
+      ['requestedBy','Đơn vị / người yêu cầu','text',true], ['dueDate','Thời hạn yêu cầu (nếu có)','date',false],
+      ['content','Nội dung báo cáo','textarea',true], ['results','Kết quả hoặc thông tin cần báo cáo','textarea',true],
+      ['recommendations','Kiến nghị, đề xuất','textarea',false]
+    ]}
+  };
+  let current = null, actorKey = '', dirty = false;
+  const safeRead = (key) => {
+    for (const storage of ['localStorage','sessionStorage']) {
+      try { const value=window[storage].getItem(key); if(value) return value; } catch (_) {}
+    }
+    return '';
+  };
+  function account(){
+    let u={};try{u=JSON.parse(safeRead('user')||'{}')||{}}catch(_){}
+    const username=String(u.tenDangNhap||u.username||u.userName||'').trim();
+    const expires=Number(safeRead('hvaSessionExpiresAt'));
+    const token=safeRead('hvaSessionToken');
+    if(!username||!token||!Number.isFinite(expires)||expires<=Date.now()) throw Error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn.');
+    if(actorKey&&actorKey!==username.toLowerCase()) throw Error('Tài khoản đã thay đổi. Vui lòng tải lại trang.');
+    return {username,name:String(u.hoTen||u.fullName||username),team:String(u.toBoPhan||u.tenTo||u.to||'Chưa xác định'),role:String(u.chucVu||u.viTriViecLam||u.role||'Chưa xác định')};
+  }
+  function announce(txt,error=false){$('notice').textContent=txt;$('notice').dataset.error=String(error);}
+  function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
+  function validDrive(value){
+    if(!value.trim())return true;
+    try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&['drive.google.com','docs.google.com'].includes(u.hostname)&&/^\/(file\/d\/|drive\/folders\/|document\/d\/|spreadsheets\/d\/|presentation\/d\/)[A-Za-z0-9_-]+(?:\/|$)/.test(u.pathname)}catch(_){return false;}
+  }
+  function field([id,label,type,required]){
+    const wrap=el('div',undefined,'field'+(type==='textarea'?' full':''));
+    const text=el('label',label);text.htmlFor='field-'+id;if(required)text.append(el('em',' *'));
+    const input=el(type==='textarea'?'textarea':'input');input.id='field-'+id;input.name=id;input.required=required;
+    if(type!=='textarea')input.type=type;input.maxLength=type==='textarea'?10000:1000;
+    if(id==='year')input.value='2026–2027';
+    wrap.append(text,input);return wrap;
+  }
+  function verifySession(){
+    try{const a=account();$('identityName').textContent=a.name;$('identityTeam').textContent=a.team;$('identityRole').textContent=a.role;
+      $('formFields').disabled=false;$('loginWarning').hidden=true;return a;
+    }catch(error){$('identityName').textContent='Chưa xác thực';$('identityTeam').textContent='Chưa xác định';$('identityRole').textContent='Chưa xác định';
+      $('formFields').disabled=true;$('loginWarning').hidden=false;announce(error.message+' Vui lòng đăng nhập từ Trang chủ.',true);return null;
+    }
+  }
+  function setChoice(id,focus=true){
+    if(!Object.hasOwn(defs,id))return;
+    if(dirty&&id!==current&&!window.confirm('Nội dung đang nhập chưa được lưu. Chuyển loại báo cáo và bỏ nội dung này?'))return;
+    current=id;dirty=false;
+    document.querySelectorAll('.choice').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));
+    const def=defs[id];$('editorHeading').textContent=def.name;
+    $('fields').replaceChildren(...def.fields.map(field));$('driveLink').value='';
+    $('editor').hidden=false;$('previewSection').hidden=true;
+    $('developmentNote').textContent=def.draft?'Khung Báo cáo khác chỉ để chuẩn bị và xem trước; chưa có mẫu theo yêu cầu được phê duyệt. Không được coi là báo cáo chính thức.':'Chỉ chuẩn bị và xem trước nội dung; chưa lưu, chưa ký, chưa gửi đến BGH. Không nhập dữ liệu học sinh nhạy cảm.';
+    try{history.replaceState(null,'',location.pathname+'?item='+encodeURIComponent(id));}catch(_){}
+    const a=verifySession();if(a)announce('Đang chuẩn bị: '+def.name+'. Có thể xem trước, chưa lưu / ký / gửi.');
+    if(focus)$('editor').scrollIntoView({block:'start',behavior:'smooth'});
+  }
+  function appendLine(paper,label,value,asLink=false){if(!String(value||'').trim())return;const p=el('p',undefined,'report-line');p.append(el('strong',label+': '));
+    if(asLink){const a=el('a',value);a.href=value;a.target='_blank';a.rel='noopener noreferrer';p.append(a)}else p.append(document.createTextNode(value));paper.append(p);
+  }
+  function renderPreview(event){
+    event?.preventDefault();const a=verifySession();if(!a)return;
+    if(!$('reportForm').reportValidity())return;
+    const def=defs[current],data=Object.fromEntries(def.fields.map(([id])=>[id,$('field-'+id).value.trim()]));
+    const drive=$('driveLink').value.trim();
+    if(data.year&&!/^\d{4}\s*(?:-|–|\/)\s*\d{4}$/.test(data.year)){announce('Năm học cần theo dạng 2026–2027.',true);return;}
+    if(data.from&&data.to&&data.to<data.from){announce('Ngày kết thúc không được trước ngày bắt đầu.',true);return;}
+    if(!validDrive(drive)){announce('Liên kết minh chứng phải là liên kết Google Drive/Docs hợp lệ.',true);return;}
+    const paper=$('previewPaper');paper.replaceChildren();
+    const head=el('div',undefined,'official-head');const left=el('div');left.append(el('div','SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG'),el('strong','TRƯỜNG THPT HÒA VANG'));
+    const right=el('div');right.append(el('strong','CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM'),el('strong','Độc lập - Tự do - Hạnh phúc','under'));
+    head.append(left,right);paper.append(head);
+    paper.append(el('div','BÁO CÁO','report-title'),el('div',def.name,'report-subtitle'));
+    paper.append(el('p','Kính gửi: Ban Giám hiệu Trường THPT Hòa Vang'));
+    appendLine(paper,'Người báo cáo',a.name);appendLine(paper,'Tổ / bộ phận',a.team);appendLine(paper,'Chức vụ',a.role);
+    def.fields.forEach(([id,label])=>appendLine(paper,label,data[id]));appendLine(paper,'Tài liệu, minh chứng',drive,true);
+    const sign=el('div',undefined,'sign');sign.append(el('b','NGƯỜI BÁO CÁO'),el('p','(Chưa ký)'),el('strong',a.name));paper.append(sign);
+    paper.append(el('div',def.draft?'BẢN XEM TRƯỚC – MẪU CHƯA ĐƯỢC PHÊ DUYỆT – CHƯA LƯU, CHƯA GỬI':'BẢN XEM TRƯỚC – CHƯA LƯU, CHƯA KÝ, CHƯA GỬI','preview-stamp'));
+    $('previewSection').hidden=false;
+    $('previewSection').scrollIntoView({block:'start',behavior:'smooth'});
+    announce('Đã tạo bản xem trước. Nội dung chỉ tồn tại trong trang hiện tại; chưa lưu, ký hoặc gửi.');
+  }
+  for(const btn of document.querySelectorAll('.choice'))btn.addEventListener('click',()=>setChoice(btn.dataset.id));
+  $('reportForm').addEventListener('submit',renderPreview);
+  $('reportForm').addEventListener('input',()=>{dirty=true;$('previewSection').hidden=true;});
+  $('backToChoices').addEventListener('click',()=>{$('choices').scrollIntoView({block:'start',behavior:'smooth'});});
+  $('editButton').addEventListener('click',()=>{$('editor').scrollIntoView({block:'start',behavior:'smooth'});});
+  $('clearButton').addEventListener('click',()=>{if(dirty&&!confirm('Xóa nội dung chưa lưu của báo cáo này?'))return;const id=current;dirty=false;setChoice(id,false);announce('Đã làm mới biểu mẫu. Không thay đổi dữ liệu thật.');});
+  $('printButton').addEventListener('click',()=>{if(!verifySession()){return;}if($('previewSection').hidden){announce('Cần xem trước báo cáo trước khi in.',true);return;}window.print();});
+  window.addEventListener('beforeunload',e=>{if(!dirty)return;e.preventDefault();e.returnValue='';});
+  const initial=new URL(location.href).searchParams.get('item');if(initial&&Object.hasOwn(defs,initial))setChoice(initial,false);
+  // Trợ lý dùng chung theo hệ thống NVS hiện hành; không tạo dịch vụ AI thứ hai.
+})();
+</script>
+<script src="./NVS_A1.assistant.js"></script>
+</body></html>
