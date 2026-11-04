@@ -38,7 +38,7 @@ function HVA4_save_(module,raw,draft,u){
  try{
   const sh=HVA4_sheet_(module),rows=HVA4_rows_(sh),period=module==='nq52'?x.month:module==='homeroom'?u.schoolYear:x.date;
   const found=module==='nq52'?rows.find(r=>r.owner===u.username&&r.period===period):null;
-  if(found&&found.status==='ĐÃ GỬI')throw new Error('Hồ sơ đã gửi, không thể tự ghi đè. Hãy đề nghị người có thẩm quyền xử lý.');
+  if(found&&!['NHÁP','YÊU CẦU BỔ SUNG'].includes(found.status))throw new Error('Hồ sơ đã gửi hoặc đã được xác nhận; không được tự ghi đè. Liên hệ người có thẩm quyền khi cần điều chỉnh.');
   if(module==='homeroom'){if(!u.className)throw new Error('Chưa có lớp chủ nhiệm được xác minh.');if(x.section==='Kiểm tra, nhận xét của Hiệu trưởng')throw new Error('Giáo viên không được tự ghi nhận xét của Hiệu trưởng.');x.schoolYear=u.schoolYear;x.className=u.className;}
   if(module==='device'){x.teacherUsername=u.username;}
   const id=found?found.id:Utilities.getUuid(),now=new Date(),status=draft?'NHÁP':'ĐÃ GỬI';
