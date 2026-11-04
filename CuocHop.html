@@ -583,7 +583,9 @@ window.hvaNotice=function(message){
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><label class="lbl">Hình thức tổ chức <b>*</b></label><select id="meetingMode" class="field" onchange="toggleMeetingMode()"><option value="OFFLINE">Trực tiếp</option><option value="ONLINE">Trực tuyến (Google Meet)</option></select></div>
         <div id="meetingOnlineLinkWrap" class="hidden"><label class="lbl">Liên kết Google Meet <b>*</b></label><input type="url" id="meetingMeetUrl" class="field" placeholder="https://meet.google.com/xxx-xxxx-xxx" inputmode="url"><div class="mt-2 flex flex-wrap items-center gap-2">
-  <button type="button" id="hvaCreateMeetBtn" onclick="hvaCreateRealGoogleMeet()" class="raised-btn raised-blue px-4" style="min-height:38px"><i class="bi bi-camera-video"></i> TẠO GOOGLE MEET</button>
+  <button type="button" id="hvaCreateMeetBtn" onclick="hvaCreateRealGoogleMeet()" class="raised-btn raised-blue px-4" style="min-height:44px"><i class="bi bi-camera-video"></i> TẠO GOOGLE MEET</button>
+  <button type="button" id="hvaConnectCalendarBtn" onclick="hvaConnectCalendar()" class="raised-btn raised-blue px-4" style="min-height:44px;display:none;background:#0e7490"><i class="bi bi-calendar2-check"></i> KẾT NỐI GOOGLE CALENDAR</button>
+  <button type="button" id="hvaMeetCheckBtn" onclick="hvaCheckPendingMeet()" class="raised-btn raised-blue px-4" style="min-height:44px;display:none;background:#0c7894"><i class="bi bi-arrow-repeat"></i> KIỂM TRA LINK MEET</button>
   <span id="hvaCreateMeetStatus" role="status" aria-live="polite" class="text-xs text-slate-600">Chỉ tạo khi thầy/cô nhấn nút. Cần kết nối Google Calendar.</span>
 </div></div>
       </div>
@@ -950,83 +952,179 @@ function hvaMeetConfirm(event) {
   });
 }
 
-/* Google Meet: chỉ tạo khi người dùng chủ động nhấn; không tác động chức năng phát hành. */
-let hvaMeetCreatedEventId = '';
-async function hvaCreateRealGoogleMeet() {
-  const status = $('hvaCreateMeetStatus');
-  const btn = $('hvaCreateMeetBtn');
-  const setStatus = (msg, isError) => {
-    status.textContent = msg;
-    status.className = 'text-xs ' + (isError ? 'text-red-700' : 'text-slate-600');
-  };
-  if (hvaMeetCreatedEventId) {
-    setStatus('Đã tạo sự kiện Google Calendar trong lần thao tác này. Không tạo lại để tránh trùng.', true);
-    return;
+/* Google Meet: session-bound OAuth, stable request ID, event recovery after pending creation. */
+let hvaMeetCreatedEventId='';
+let hvaMeetRequestKey='';
+let hvaMeetBusy=false;
+const HVA_MEET_PENDING_STORE='HVA_MEET_PENDING_EVENT_V2';
+function hvaMeetStatus(text,isError){
+ const el=$('hvaCreateMeetStatus');
+ if(!el)return;
+ el.textContent=String(text||'');
+ el.className='text-xs '+(isError?'text-red-700':'text-slate-600');
+}
+function hvaMeetShowButton(id,show){const b=$(id);if(b)b.style.display=show?'inline-flex':'none'}
+function hvaMeetFingerprint(){
+ return [getMeetingTitle(),$('meetingDate').value,$('meetingStart').value,$('meetingEnd').value].map(x=>String(x||'').trim()).join('|');
+}
+function hvaMeetReadPending(){
+ try{const d=JSON.parse(sessionStorage.getItem(HVA_MEET_PENDING_STORE)||'null');return d&&typeof d==='object'?d:null}catch(e){return null}
+}
+function hvaMeetStorePending(p){
+ try{sessionStorage.setItem(HVA_MEET_PENDING_STORE,JSON.stringify(p))}catch(e){}
+}
+function hvaMeetRestorePending(){
+ const pending=hvaMeetReadPending(),fingerprint=hvaMeetFingerprint();
+ if(pending&&pending.fingerprint===fingerprint&&pending.requestKey){
+  hvaMeetRequestKey=pending.requestKey;hvaMeetCreatedEventId=String(pending.eventId||'');
+  if(pending.meetUrl&&!$('meetingMeetUrl').value)$('meetingMeetUrl').value=pending.meetUrl;
+  hvaMeetShowButton('hvaMeetCheckBtn',!pending.meetUrl&&!!pending.eventId);
+  return pending;
+ }
+ hvaMeetRequestKey='';hvaMeetCreatedEventId='';
+ hvaMeetShowButton('hvaMeetCheckBtn',false);
+ return null;
+}
+function hvaMeetNewKey(){
+ if(window.crypto&&typeof window.crypto.randomUUID==='function')return window.crypto.randomUUID();
+ if(window.crypto&&typeof window.crypto.getRandomValues==='function'){
+  const a=new Uint8Array(24);crypto.getRandomValues(a);
+  return Array.from(a,b=>b.toString(16).padStart(2,'0')).join('');
+ }
+ throw Error('Trình duyệt chưa hỗ trợ tạo mã yêu cầu an toàn.');
+}
+async function hvaMeetCall(action,extra){
+ const token=getMeetingSessionToken();
+ if(!token)throw Error('Phiên HVA hết hạn. Vui lòng đăng nhập lại.');
+ const response=await fetch(WEB_APP_URL,{
+  method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+  body:JSON.stringify(Object.assign({action,sessionToken:token},extra||{}))
+ });
+ if(!response.ok)throw Error('Máy chủ không phản hồi (HTTP '+response.status+').');
+ const data=await response.json();
+ if(data&&data.ok===false&&/Action POST không hợp lệ/i.test(String(data.message||''))){
+  throw Error('Máy chủ EDOS chưa được triển khai chức năng Google Meet.');
+ }
+ return data||{};
+}
+async function hvaMeetRefreshConnection(){
+ if($('meetingMode').value!=='ONLINE')return;
+ try{
+  const r=await hvaMeetCall('googleCalendarStatus');
+  hvaMeetShowButton('hvaConnectCalendarBtn',!!r.success&&!r.connected);
+  if(r.success&&!r.connected)hvaMeetStatus('Chưa kết nối Google Calendar. Bấm KẾT NỐI GOOGLE CALENDAR để cấp quyền tạo Meet.',true);
+  else if(r.success&&r.connected)hvaMeetStatus('Đã kết nối Google Calendar. Có thể tạo Google Meet khi điền đủ thời gian họp.');
+  else hvaMeetStatus(r.message||'Chưa kiểm tra được tài khoản Google Calendar.',true);
+ }catch(e){hvaMeetStatus(e.message||'Chưa kết nối được máy chủ Google Calendar.',true)}
+}
+async function hvaConnectCalendar(){
+ if(hvaMeetBusy)return;
+ // Open immediately in the click handler: popup blockers do not prevent OAuth.
+ const popup=window.open('about:blank','hvaCalendarConnect','width=610,height=760');
+ if(popup){try{popup.document.title='Kết nối Google Calendar – HVA-EDOS';popup.document.body.textContent='Đang mở đăng nhập Google...'}catch(e){}}
+ hvaMeetStatus('Đang mở trang cấp quyền Google Calendar...');
+ try{
+  const data=await hvaMeetCall('startGoogleCalendarConnect');
+  if(!data.success||!/^https:\/\/accounts\.google\.com\//.test(String(data.authUrl||'')))throw Error(data.message||'Không thể khởi tạo kết nối Google.');
+  if(popup&&!popup.closed)popup.location.href=data.authUrl;
+  else window.location.assign(data.authUrl);
+  hvaMeetStatus('Đăng nhập tài khoản Google trong cửa sổ mới; sau khi cấp quyền, quay lại trang Cuộc họp.');
+ }catch(e){
+  if(popup&&!popup.closed)popup.close();
+  hvaMeetStatus(e.message||'Chưa mở được kết nối Google.',true);
+ }
+}
+window.addEventListener('message',e=>{
+ if(!e.data||e.data.type!=='HVA_MEET_OAUTH')return;
+ // Message is only a prompt to query server-side status, never trusted as proof.
+ hvaMeetRefreshConnection();
+});
+async function hvaCheckPendingMeet(){
+ if(hvaMeetBusy)return;
+ const pending=hvaMeetRestorePending();
+ if(!pending||!pending.requestKey){hvaMeetStatus('Không có sự kiện đang chờ để kiểm tra.',true);return}
+ hvaMeetBusy=true;
+ const button=$('hvaMeetCheckBtn');if(button)button.disabled=true;
+ try{
+  const result=await hvaMeetCall('getMeetingGoogleMeetStatus',{requestKey:pending.requestKey});
+  hvaMeetUseResult(result,pending);
+ }catch(e){hvaMeetStatus('Chưa kiểm tra được liên kết: '+(e.message||String(e)),true)}
+ finally{hvaMeetBusy=false;if(button)button.disabled=false}
+}
+function hvaMeetUseResult(result,pending){
+ const eventId=String(result.eventId||pending.eventId||'');
+ if(eventId)hvaMeetCreatedEventId=eventId;
+ const current={...pending,eventId};
+ if(result.success&&/^https:\/\/meet\.google\.com\/[a-z]{3}-[a-z]{4}-[a-z]{3}(?:[/?#].*)?$/i.test(String(result.meetUrl||''))){
+  $('meetingMeetUrl').value=String(result.meetUrl);
+  current.meetUrl=String(result.meetUrl);
+  hvaMeetStorePending(current);
+  hvaMeetShowButton('hvaMeetCheckBtn',false);
+  hvaMeetShowButton('hvaConnectCalendarBtn',false);
+  $('hvaCreateMeetBtn').disabled=true;
+  hvaMeetStatus('Đã tạo liên kết Google Meet thật. Kiểm tra thông tin và phát hành cuộc họp.');
+  return true;
+ }
+ hvaMeetStorePending(current);
+ if(result.code==='MEET_PENDING'){
+  hvaMeetShowButton('hvaMeetCheckBtn',true);
+  $('hvaCreateMeetBtn').disabled=true;
+  hvaMeetStatus('Google đã tạo lịch, đang cấp link Meet. Chọn KIỂM TRA LINK MEET, không tạo lại.',true);
+ }else if(result.code==='GOOGLE_NOT_CONNECTED'){
+  hvaMeetShowButton('hvaConnectCalendarBtn',true);
+  hvaMeetStatus(result.message||'Cần kết nối Google Calendar.',true);
+ }else if(result.code==='EVENT_NOT_FOUND'){
+  hvaMeetCreatedEventId='';
+  $('hvaCreateMeetBtn').disabled=false;
+  hvaMeetStatus(result.message||'Chưa tìm thấy sự kiện. Có thể tạo lại bằng cùng mã yêu cầu.',true);
+ }else {
+  if(eventId)$('hvaCreateMeetBtn').disabled=true;
+  hvaMeetStatus(result.message||'Google Calendar chưa trả liên kết Meet.',true);
+ }
+ return false;
+}
+async function hvaCreateRealGoogleMeet(){
+ if(hvaMeetBusy)return;
+ const btn=$('hvaCreateMeetBtn');
+ if($('meetingMode').value!=='ONLINE'){hvaMeetStatus('Chỉ tạo link Meet cho cuộc họp trực tuyến.',true);return}
+ if($('meetingMeetUrl').value.trim()){hvaMeetStatus('Cuộc họp đã có link Meet; không tạo lịch mới để tránh trùng.',true);return}
+ const event={title:getMeetingTitle(),date:$('meetingDate').value,startTime:$('meetingStart').value,endTime:$('meetingEnd').value,content:$('meetingContent').value.trim()};
+ if(!event.title||!event.date||!event.startTime||!event.endTime){hvaMeetStatus('Điền tên cuộc họp, ngày và thời gian bắt đầu, kết thúc trước.',true);return}
+ if(event.endTime<=event.startTime){hvaMeetStatus('Giờ kết thúc phải sau giờ bắt đầu.',true);return}
+ let pending=hvaMeetRestorePending();
+ if(pending&&pending.eventId){await hvaCheckPendingMeet();return}
+ // Connectivity is checked by backend; never assume Google auth from UI alone.
+ if(!await hvaMeetConfirm(event))return;
+ const fingerprint=hvaMeetFingerprint();
+ if(!pending){
+  try{hvaMeetRequestKey=hvaMeetNewKey()}catch(e){hvaMeetStatus(e.message,true);return}
+  pending={fingerprint,requestKey:hvaMeetRequestKey,eventId:'',meetUrl:''};
+  hvaMeetStorePending(pending);
+ }
+ hvaMeetBusy=true;btn.disabled=true;
+ hvaMeetStatus('Đang tạo sự kiện và yêu cầu Google cấp phòng Meet...');
+ try{
+  const result=await hvaMeetCall('createMeetingGoogleMeet',{event,requestKey:pending.requestKey});
+  hvaMeetUseResult(result,pending);
+  if(result.code==='GOOGLE_NOT_CONNECTED'||result.code==='EVENT_NOT_FOUND')btn.disabled=false;
+  if(result.code==='MEET_PENDING'){
+   for(let attempt=0;attempt<3;attempt++){
+    await new Promise(resolve=>setTimeout(resolve,1200));
+    const checked=await hvaMeetCall('getMeetingGoogleMeetStatus',{requestKey:pending.requestKey});
+    if(hvaMeetUseResult(checked,pending))break;
+    if(checked.code!=='MEET_PENDING')break;
+   }
   }
-  if ($('meetingMode').value !== 'ONLINE') {
-    setStatus('Chỉ tạo Google Meet cho cuộc họp trực tuyến.', true);
-    return;
-  }
-  const existing = $('meetingMeetUrl').value.trim();
-  if (existing) {
-    setStatus('Ô Google Meet đã có liên kết. Vui lòng kiểm tra trước khi tạo sự kiện mới.', true);
-    return;
-  }
-  const event = {
-    title:getMeetingTitle(),
-    date:$('meetingDate').value,
-    startTime:$('meetingStart').value,
-    endTime:$('meetingEnd').value,
-    content:$('meetingContent').value.trim()
-  };
-  if (!event.title || !event.date || !event.startTime || !event.endTime) {
-    setStatus('Vui lòng điền tiêu đề, ngày, giờ bắt đầu và giờ kết thúc.', true);
-    return;
-  }
-  if (event.endTime <= event.startTime) {
-    setStatus('Giờ kết thúc phải sau giờ bắt đầu.', true);
-    return;
-  }
-  const token = getMeetingSessionToken();
-  if (!token) {
-    setStatus('Phiên HVA không hợp lệ. Vui lòng đăng nhập lại.', true);
-    return;
-  }
-  if (!await hvaMeetConfirm(event)) return;
-  btn.disabled = true;
-  setStatus('Đang yêu cầu Google Calendar tạo phòng họp...');
-  try {
-    const response = await fetch(WEB_APP_URL,{
-      method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({action:'createMeetingGoogleMeet',sessionToken:token,event:event})
-    });
-    if (!response.ok) throw Error('Backend HTTP '+response.status);
-    const result = await response.json();
-    // A Calendar event may exist even while Google Meet is still being generated.
-    // Keep its ID to prevent a duplicate event on another click.
-    if (result.eventId) hvaMeetCreatedEventId = String(result.eventId);
-    if (hvaMeetCreatedEventId && !result.meetUrl) {
-      setStatus('Google Calendar đã nhận sự kiện nhưng chưa trả liên kết Meet. Không bấm tạo lại để tránh trùng lịch. Kiểm tra sự kiện trên Google Calendar hoặc liên hệ quản trị.', true);
-      return;
-    }
-    if (!result.success || !result.meetUrl) {
-      throw Error(result.message || 'Máy chủ chưa cấp được liên kết Google Meet.');
-    }
-    const validMeetUrl = /^https:\/\/meet\.google\.com\/[a-z]{3}-[a-z]{4}-[a-z]{3}(?:[/?#].*)?$/i.test(String(result.meetUrl));
-    if (!validMeetUrl) throw Error('Máy chủ trả liên kết không đúng định dạng Google Meet. Chưa cập nhật vào cuộc họp.');
-    $('meetingMeetUrl').value = String(result.meetUrl);
-    setStatus('Đã nhận liên kết Google Meet từ máy chủ. Kiểm tra thông tin trước khi phát hành.');
-  } catch (err) {
-    setStatus(/Action POST không hợp lệ|createMeetingGoogleMeet/i.test(String(err.message||err)) ? 'Chức năng tạo Google Meet chưa được kích hoạt trên máy chủ. Vui lòng liên hệ quản trị hệ thống.' : 'Chưa thể tạo liên kết: '+(err.message||String(err)), true);
-  } finally {
-    if (!hvaMeetCreatedEventId) btn.disabled = false;
-  }
+ }catch(e){
+  btn.disabled=false; // Repeated request uses the SAME deterministic key on the server.
+  hvaMeetStatus('Chưa xác nhận được kết quả từ Google. Có thể thử lại; hệ thống giữ cùng mã yêu cầu để tránh tạo trùng. '+(e.message||String(e)),true);
+ }finally{hvaMeetBusy=false}
 }
 
 function handleMeetingType(){}
 function handleMeetingTitle(){const isOther=$('meetingTitle').value==='Khác';$('customTitleWrap').classList.toggle('hidden',!isOther);if(!isOther)$('customMeetingTitle').value='';}
 function getMeetingTitle(){return $('meetingTitle').value==='Khác'?$('customMeetingTitle').value.trim():$('meetingTitle').value;}
-function toggleMeetingMode(){const online=$('meetingMode').value==='ONLINE';$('meetingOnlineLinkWrap').classList.toggle('hidden',!online);$('meetingPlaceWrap').classList.toggle('hidden',online);$('meetingPlace').required=!online;$('meetingMeetUrl').required=online;if(online)$('otherPlaceWrap').classList.add('hidden');else toggleOtherPlace();}
+function toggleMeetingMode(){const online=$('meetingMode').value==='ONLINE';$('meetingOnlineLinkWrap').classList.toggle('hidden',!online);$('meetingPlaceWrap').classList.toggle('hidden',online);$('meetingPlace').required=!online;$('meetingMeetUrl').required=online;if(online){$('otherPlaceWrap').classList.add('hidden');hvaMeetRestorePending();hvaMeetRefreshConnection();}else toggleOtherPlace();}
 function toggleOtherPlace(){$('otherPlaceWrap').classList.toggle('hidden',$('meetingPlace').value!=='Khác');}
 function toggleQrTimes(){$('qrTimes').classList.toggle('hidden',!$('enableQr').checked);}
 function collectMeeting(){const type=$('meetingType').value;return {sourceModule:'CuocHop',objectType:'MEETING',meetingType:type,customMeetingType:'',period:'',title:getMeetingTitle(),content:$('meetingContent').value.trim(),note:$('meetingNote').value.trim(),date:$('meetingDate').value,startTime:$('meetingStart').value,endTime:$('meetingEnd').value,place:$('meetingPlace').value==='Khác'?$('otherPlace').value.trim():$('meetingPlace').value,meetingMode:$('meetingMode').value,meetUrl:$('meetingMode').value==='ONLINE'?$('meetingMeetUrl').value.trim():'',chairperson:$('chairperson').value.trim(),secretary:$('secretary').value.trim(),recipients:selectedPeople(),documentUrl:$('meetingDocumentUrl').value.trim(),requireConfirmation:$('requireConfirm').checked,attendance:{enabled:$('enableQr').checked,method:'QR',openTime:$('qrOpen').value,closeTime:$('qrClose').value,approvalFlow:($('attendanceApprovalFlow')?$('attendanceApprovalFlow').value:'TEAM_TO_SECRETARY')},workflow:['CONFIRM_READ',...($('requireConfirm').checked?['CONFIRM_ATTENDANCE']:[]),...($('enableQr').checked?['QR_ATTENDANCE']:[])],createdAt:new Date().toISOString()};}
