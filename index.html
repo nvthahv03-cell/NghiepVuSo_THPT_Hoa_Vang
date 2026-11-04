@@ -920,7 +920,31 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
 #hvaAdminAccessNotice button{margin-top:21px;border:0;border-radius:10px;padding:11px 25px;background:#0966ad;color:#fff;font:700 14px "Segoe UI",Arial,sans-serif;cursor:pointer}
 #hvaAdminAccessNotice button:focus-visible{outline:3px solid #57baff;outline-offset:2px}
 </style>
-<link rel="stylesheet" href="./HVA_Navigation.css"></head>
+<link rel="stylesheet" href="./HVA_Navigation.css"><style id="hva-portal-learning-third-gate">
+/* Cổng thứ ba độc lập, bảo toàn cơ chế vào Điều hành và Tác nghiệp. */
+.nvs-chooser .nvs-two-gates .nvs-gate-learning{background:linear-gradient(145deg,#114f77,#157e84 65%,#23a68c)!important;border-color:#9be8d8!important}
+.nvs-chooser .nvs-two-gates .nvs-gate-learning .nvs-gate-icon{color:#d6fff1}
+.nvs-chooser .nvs-two-gates .nvs-gate-learning strong em{color:#ffde81}
+.nvs-chooser .nvs-two-gates>.nvs-gate-learning-wrap{min-width:0!important}
+@media(min-width:901px){
+ .nvs-chooser .nvs-two-gates{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:900px){
+ .nvs-chooser .nvs-two-gates{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .nvs-chooser .nvs-two-gates>.nvs-gate-learning-wrap{grid-column:1/-1}
+ .nvs-chooser .nvs-two-gates .nvs-gate-learning{min-height:116px!important;display:grid!important;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto;align-content:center;column-gap:16px;row-gap:3px;text-align:left!important;padding:14px 19px!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate-learning .nvs-gate-icon{grid-column:1;grid-row:1/4;margin:auto;width:57px!important;height:57px!important;font-size:28px!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate-learning strong,.nvs-chooser .nvs-two-gates .nvs-gate-learning>span:not(.nvs-gate-icon):not(.nvs-gate-enter),.nvs-chooser .nvs-two-gates .nvs-gate-learning .nvs-gate-enter{grid-column:2;margin:0}
+ .nvs-chooser .nvs-two-gates .nvs-gate-learning strong{font-size:16px!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate-learning .nvs-gate-enter{width:max-content}
+}
+@media(max-width:420px){
+ .nvs-chooser .nvs-two-gates{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate-learning{padding:11px 13px!important;column-gap:10px}
+ .nvs-chooser .nvs-two-gates .nvs-gate-learning .nvs-gate-icon{width:43px!important;height:43px!important;font-size:23px!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate-learning strong{font-size:14px!important}
+}
+</style></head>
 <body>
 
 <div id="hvaAdminAccessNotice" hidden role="dialog" aria-modal="true" aria-labelledby="hvaAdminAccessTitle" aria-describedby="hvaAdminAccessDescription"><div class="hva-admin-notice-panel"><div class="hva-admin-notice-icon" aria-hidden="true">🔒</div><h2 id="hvaAdminAccessTitle">Thông báo quyền truy cập</h2><p id="hvaAdminAccessDescription">Tài khoản của Thầy/Cô chưa được cấp quyền vào không gian Điều hành số. Vui lòng sử dụng Tác nghiệp số hoặc liên hệ Ban Giám hiệu khi cần hỗ trợ.</p><button id="hvaAdminAccessClose" type="button">Đã hiểu</button></div></div>
@@ -1050,6 +1074,7 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
     <div class="nvs-two-gates">
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-admin" id="nvsAdminGate" href="./DieuHanh.html" aria-label="Vào BGH – Điều hành"><span class="nvs-gate-icon"><i class="bi bi-bank"></i></span><strong>BAN GIÁM HIỆU<em>ĐIỀU HÀNH</em></strong><span>Thông báo – Phát hành · Lịch công tác · Cuộc họp · Theo dõi và xử lý</span><span class="nvs-gate-enter">Vào Điều hành <i class="bi bi-arrow-right"></i></span></a></div>
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-work" id="nvsWorkGate" href="./NghiepVu.html" aria-label="Vào Giáo viên – Nhân viên – Tác nghiệp số"><span class="nvs-gate-icon"><i class="bi bi-pc-display-horizontal"></i></span><strong>GIÁO VIÊN – NHÂN VIÊN<em>TÁC NGHIỆP SỐ</em></strong><span>TTCM · TPCM · GV · NV<br>Nhận nhiệm vụ · Lập báo cáo · Nộp sản phẩm · Tra cứu công việc</span><span class="nvs-gate-enter">Vào Tác nghiệp <i class="bi bi-arrow-right"></i></span></a></div>
+      <div class="nvs-gate-wrap nvs-gate-learning-wrap"><a class="nvs-gate nvs-gate-learning" id="nvsLearningGate" href="./KhoHocLieuSo.html" aria-label="Vào Kho học liệu số"><span class="nvs-gate-icon"><i class="bi bi-book-half" aria-hidden="true"></i></span><strong>KHO HỌC LIỆU<em>HỌC LIỆU SỐ</em></strong><span>Tra cứu · Khai thác · Chia sẻ tài nguyên giảng dạy</span><span class="nvs-gate-enter">Khám phá học liệu <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
     </div>
     <div class="nvs-v4-actions" aria-label="Tiện ích công vụ">
       <button type="button" id="nvsOpenRemind" hidden style="display:none" class="nvs-v4-action nvs-v4-remind nvs-remind-trigger nvs-v7-circle nvs-v7-orange" aria-haspopup="dialog" aria-controls="nvsRemindOverlay" aria-label="Mở Nhắc nhở công vụ"><span>Nhắc nhở<br>công vụ</span></button>
