@@ -64,3 +64,13 @@
 5. Trước triển khai, đối chiếu nhánh thử nghiệm với `main` mới nhất (nhánh chính có thay đổi riêng), kiểm thử hồi quy, không sửa các biểu mẫu DTHT/BC Chủ nhiệm đã PASS.
 6. Nghiệm thu bằng **2 tài khoản GV thuộc 2 lớp/tổ khác nhau và 1 tài khoản BGH**, lần lượt kiểm tra quyền, lưu nháp, gửi, trả bổ sung, duyệt, tải lại, in/xuất.
 7. Nghiệm thu UI **khác** nghiệm thu Backend. Tình trạng hiện nay: các trang HTML đã tạo, nhưng chưa đủ điều kiện công bố hoàn tất nghiệp vụ.
+
+## Giao diện bổ sung – gói hoàn thiện đợt kế tiếp (04/11/2026)
+
+- **Sổ chủ nhiệm – 21 mục:** thêm tìm theo mục, thống kê số mục có dữ liệu (không suy diễn đã hoàn thành nội dung), sơ đồ chỗ ngồi trực quan, bản in theo đúng cột của mục đang chọn và cảnh báo chuyển mục/lớp khi đang có nội dung chưa lưu. Đổi bộ nhập CSV từ tách dấu phẩy thủ công sang XLSX parser để đọc ô được đặt trong dấu nháy. Bản in được đánh dấu nếu có chỉnh sửa chưa gửi lên máy chủ.
+- **Kê khai NQ 52:** nhóm các trường theo quy trình, hiển thị ba điểm nhóm A (chỉ tính tổng tự khai), ba tỷ lệ kết quả theo đúng dữ liệu nhập, hồ sơ theo tháng và mở lại hồ sơ đã lưu. Có phiếu in riêng đầy đủ trường dữ liệu, hiển thị rõ trạng thái và cảnh báo chưa phải phê duyệt chính thức; không tự suy diễn công thức quy đổi nhóm B.
+- **Sổ thiết bị:** nhật ký theo mẫu giấy 12 cột, thống kê lượt sử dụng phòng bộ môn và CNTT; tạo riêng biểu mẫu BGH ghi nhận xét tháng và danh sách nhận xét. Action `hva4DeviceReviewGet` / `hva4DeviceReviewSave`, giao thức `HVA4-DEVREVIEW-1` cần Backend **chưa tồn tại**; nút lưu khóa nếu chưa được máy chủ xác thực.
+- **BD HSG:** Kế hoạch BD HSG có lịch sử xử lý, khóa nút theo trạng thái nộp – giáo viên ký – BGH duyệt, liên kết các phiên bản PDF. Đã có trang Danh sách đội tuyển và Báo cáo đội tuyển riêng; hai action mới `hva4HsgTeamGet/Save` và `hva4HsgReportGet/Save` vẫn **chờ Backend**. Không đụng dữ liệu ở Sổ đầu bài BD HSG 12 cũ.
+- **Xuất CSV:** đã xử lý giá trị bắt đầu bằng ký tự giống công thức khi tải CSV, giúp giảm rủi ro thực thi công thức trong ứng dụng bảng tính.
+
+Rà soát tĩnh cuối đợt: 10 tệp HTML/JS liên quan đều có cú pháp JS hợp lệ; tất cả ID DOM được gọi từ inline script đều có; 7 liên kết mục nghiệp vụ tồn tại. Chưa thực hiện thử giao diện bằng trình duyệt thực tế, chưa có tích hợp Apps Script production.
