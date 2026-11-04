@@ -116,3 +116,12 @@ Rà soát tĩnh cuối đợt: 10 tệp HTML/JS liên quan đều có cú pháp 
 - Quy trình chính thức cần backend xác minh giáo viên/phân công môn-lớp, lưu các phiên bản, chuyển đúng BGH và đồng gửi Tổ trưởng, ghi nhận nhật ký và chữ ký số thật khi có ký. Không chuyển hồ sơ thành "đã gửi" khi mới xem trước.
 - **38/38 kiểm tra tĩnh đạt**: 4 cấu hình, 4 liên kết menu, kiểm tra ID giao diện, cú pháp JS, PASS-LOCK của A1/A2 không bị chỉnh sửa.
 - Chưa kiểm thử tương tác trên trình duyệt hoặc kết nối Apps Script/Sheet thật. Không gộp nhánh thử nghiệm vào `main` trước đối chiếu thay đổi mới.
+
+## GIAO DIỆN A4 – SẢN PHẨM CHUYÊN MÔN (04/11/2026)
+- `A4_NghienCuu_SangKien.html`: A.4.1 nghiên cứu khoa học kỹ thuật và sáng kiến; thông tin đề tài, người thực hiện, tiến độ, sản phẩm, minh chứng, công nhận (17 trường).
+- `A4_HuongDan_CuocThi.html`: A.4.2 giáo viên tham gia/hướng dẫn cuộc thi; vai trò, đội nhóm, sản phẩm, kết quả, minh chứng giải thưởng (16 trường).
+- `A4_ChuyenDe_ThamLuan.html`: A.4.3 chuyên đề, tham luận và sản phẩm khác; nội dung, khả năng áp dụng, minh chứng, đề xuất (16 trường).
+- `A4_HocLieuSo.html`: A.4.4 học liệu số/tài nguyên dạy học; môn/khối, chủ đề, quyền sử dụng, đối tượng chia sẻ, phiên bản, tài liệu liên quan (16 trường).
+- Dùng `HVA_A4_FormEngine.js`: xem trước/in bản nháp, kiểm tra trường bắt buộc, URL Drive/Docs HTTPS, thời gian, lần cập nhật, cảnh báo dữ liệu chưa lưu, hiển thị hồ sơ chỉ từ máy chủ. Giao thức chờ Backend: `hvaA4List`, `hvaA4Save`, `HVA-A4-1`; chức năng lưu/gửi chỉ bật sau khi có phản hồi xác thực, quyền và mã hồ sơ.
+- Lưu ý quyền tác giả học liệu, bảo vệ thông tin học sinh và kết quả chưa công bố. Giao diện không tự cấp kết quả công nhận hoặc quyền công khai. Trạng thái A4 hiện chỉ là giao diện, **chưa nghiệm thu trên trình duyệt và chưa triển khai Backend**.
+- Kiểm tra tĩnh 46/46 đạt (cấu hình, các điều khiển, liên kết, cú pháp, giữ nguyên PASS-LOCK). Nhánh thử nghiệm chưa hợp nhất vào `main`.
