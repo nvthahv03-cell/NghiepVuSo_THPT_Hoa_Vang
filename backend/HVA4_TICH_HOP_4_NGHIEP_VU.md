@@ -24,3 +24,8 @@
 - [ ] Backend cùng các bảng Sheet đã sao lưu; không có nhân sự hoặc học sinh bị lộ dữ liệu.
 
 **Tình trạng hiện tại:** Đã tạo trang, nối danh mục và mã chuẩn bị Backend trên nhánh thử nghiệm. **CHƯA PASS** do chưa có quyền cập nhật/triển khai Apps Script hiện hành, thiếu URL Web App sổ đầu bài chính xác và chưa có kiểm thử dữ liệu thực tế.
+## Kết quả kiểm tra mã ngày 04/11/2026
+- Kiểm tra cú pháp JavaScript các trang và thư viện: **ĐẠT**.
+- Kiểm tra sơ bộ 14 tình huống Backend bằng dịch vụ SpreadsheetApp/LockService giả lập: **14/14 đạt**, gồm phân quyền đọc hồ sơ cá nhân, GVCN nhập danh sách đúng lớp, chỉ BGH được nhận xét, chặn giáo viên tự ghi nhận xét Hiệu trưởng, chặn sửa bản NQ52 đã duyệt, không ghi đè dữ liệu sổ HSG 12.
+- Đã bổ sung giao diện BGH xác nhận/yêu cầu bổ sung và mã xử lý ghi nhật ký.
+- **Chưa có kết quả kiểm thử live Apps Script, Google Sheets, quyền trình duyệt hoặc bản in theo sổ giấy. Chưa đủ điều kiện tuyên bố PASS toàn bộ.**
