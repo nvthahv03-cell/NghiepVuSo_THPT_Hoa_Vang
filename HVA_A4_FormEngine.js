@@ -27,12 +27,9 @@ function validate(strict){const v=values();for(const [id,field] of fieldMap){
  if(v[id]&&field.type==='url'){let link;try{link=new URL(v[id])}catch(e){throw Error('Liên kết không hợp lệ: '+field.label)}if(link.protocol!=='https:'||!['drive.google.com','docs.google.com'].includes(link.hostname))throw Error('Tài liệu phải dùng liên kết Drive/Docs HTTPS có phân quyền: '+field.label)}
 }
 if(v.fromDate&&v.toDate&&v.toDate<v.fromDate)throw Error('Ngày kết thúc không được trước ngày bắt đầu.');
-if(conf.code==='A.3.2'&&v.plannedLessons!==''&&v.deliveredLessons!==''){
- const planned=Number(v.plannedLessons),delivered=Number(v.deliveredLessons);
- if(!Number.isFinite(planned)||!Number.isFinite(delivered)||planned<0||delivered<0||!Number.isInteger(planned)||!Number.isInteger(delivered))throw Error('Số tiết phải là số nguyên không âm.');
- if(planned!==delivered&&!v.lagReason)throw Error('Tiến độ có chênh lệch, cần ghi rõ nguyên nhân.');
-}
-if(v.deadline&&v.requestDate&&v.deadline<v.requestDate)throw Error('Hạn nộp không được trước ngày yêu cầu.');
+if(v.startDate&&v.endDate&&v.endDate<v.startDate)throw Error('Ngày hoàn thành dự kiến không được trước ngày bắt đầu.');
+if(v.version&&(Number(v.version)<1||!Number.isInteger(Number(v.version))))throw Error('Lần cập nhật phải là số nguyên dương.');
+if(conf.code==='A.4.4'&&v.audience==='Công khai sau khi được duyệt'&&!v.license)throw Error('Phải ghi rõ quyền sử dụng học liệu trước khi đề nghị công khai.');
 return v}
 function paper(v){const area=$('paper');area.replaceChildren();const institution=make('p','SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG · TRƯỜNG THPT HÒA VANG');institution.style.textAlign='center';const title=make('h2',conf.title.toUpperCase());title.style.textAlign='center';const watermark=make('p','BẢN XEM TRƯỚC – CHƯA LƯU, CHƯA GỬI, CHƯA PHÊ DUYỆT');watermark.style.textAlign='center';area.append(institution,title,watermark);
 for(const [heading,fields] of conf.sections){area.append(make('h3',heading));const tab=make('table'),body=make('tbody');for(const [id,label]of fields){const tr=make('tr'),left=make('th',label),right=make('td',v[id]||'—');left.style.whiteSpace='normal';left.style.width='36%';tr.append(left,right);body.append(tr)}tab.append(body);area.append(tab)}
