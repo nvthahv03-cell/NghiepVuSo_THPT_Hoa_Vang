@@ -19,7 +19,7 @@ function HVA4_meta_(module,u){const meta={schoolYear:u.schoolYear};if(module==='
 function HVA4_get_(module,u){
  HVA4_guard_(module,u);const rows=HVA4_rows_(HVA4_sheet_(module));
  const records=rows.filter(r=>HVA4_admin_(u)||r.owner===u.username).map(r=>({id:r.id,owner:r.owner,status:r.status,updatedAt:r.updated,submittedAt:r.submitted,data:r.payload}));
- return {success:true,records,meta:HVA4_meta_(module,u)}
+ return {success:true,module,schemaVersion:'HVA4-1',records,meta:HVA4_meta_(module,u)}
 }
 function HVA4_validate_(module,x,draft){
  if(!x||typeof x!=='object'||Array.isArray(x))throw new Error('Nội dung gửi không hợp lệ.');
@@ -44,7 +44,7 @@ function HVA4_save_(module,raw,draft,u){
   HVA4_audit_(u.username,found?'CAP_NHAT':'TAO_MOI',id,module);
   const v=[id,found?found.created:now,now,u.username,module==='homeroom'?u.className:'',period,status,JSON.stringify(x),draft?'':now];
   if(found)sh.getRange(found.row,1,1,9).setValues([v]);else sh.appendRow(v);
-  return {success:true,id,status,message:draft?'Đã lưu bản nháp.':'Đã tiếp nhận hồ sơ để xử lý.'}
+  return {success:true,module,schemaVersion:'HVA4-1',id,status,message:draft?'Đã lưu bản nháp.':'Đã tiếp nhận hồ sơ để xử lý.'}
  }finally{lock.releaseLock()}
 }
 function HVA4_importRoster_(students,u){
@@ -56,6 +56,6 @@ function HVA4_importRoster_(students,u){
   const index=new Map(current.map((v,i)=>[String(v[0])+'|'+String(v[1])+'|'+String(v[2]),i+2]));const now=new Date();
   HVA4_audit_(u.username,'CAP_NHAT_DANH_SACH',u.className+'|'+u.schoolYear,String(rows.length));
   rows.forEach(x=>{const key=u.className+'|'+u.schoolYear+'|'+x.studentId,v=[u.className,u.schoolYear,x.studentId,JSON.stringify(x),now];const row=index.get(key);if(row)sh.getRange(row,1,1,5).setValues([v]);else sh.appendRow(v)});
-  return {success:true,message:'Đã nhập hoặc cập nhật '+rows.length+' học sinh; không xóa các hồ sơ khác.'}
+  return {success:true,module:'homeroom',schemaVersion:'HVA4-1',message:'Đã nhập hoặc cập nhật '+rows.length+' học sinh; không xóa các hồ sơ khác.'}
  }finally{lock.releaseLock()}
 }
