@@ -9,7 +9,7 @@
 ## Phương án ghép an toàn vào Backend NVS
 Backend nguồn đang sử dụng `HVA_EDOS_Backend_TichHop_Chat_20261103.gs`, có một `doPost(e)` chung. Giữ nguyên toàn bộ các module đã hoạt động.
 
-1. Thêm **nội dung** `backend/HVA_Meet_OAuth_Service.gs` thành file .gs mới trong **cùng dự án** GAS hiện hành. Không thêm doGet/doPost thứ hai.
+1. Thêm **hai file** `backend/HVA_Meet_OAuth_Service.gs` và `backend/HVA_Meet_ExistingCalendar_Adapter.gs` vào **cùng dự án** GAS hiện hành. Không thêm doGet/doPost thứ hai. Nếu `HVA_GOOGLE_CALENDAR_SERVICE` hiện hữu có `status()`, `calendarFetch_()` và `CALENDAR_API`, hệ thống **ưu tiên tái sử dụng kết nối OAuth hiện hành** và không sửa `createEvent()`. Chỉ khi không có dịch vụ cũ phù hợp mới dùng OAuth độc lập bên dưới.
 2. Trong `doPost(e)`, ngay trước tuyến `nvsIntegratedPost_` hoặc trước `return hvaJSON_({ ok: false, message: "Action POST không hợp lệ: " + action });`, bổ sung:
 
 ```javascript
@@ -21,10 +21,10 @@ if ([
 ].includes(action)) return hvaMeetRoutePost_(action, payload);
 ```
 
-3. Tại Google Cloud Console của dự án chứa Apps Script, bật Google Calendar API và tạo OAuth client loại **Web application**. Authorized redirect URI:
+3. **Nếu dịch vụ Calendar hiện tại đã có OAuth:** giữ nguyên client, quyền và thao tác kết nối đang hoạt động. Nếu không có dịch vụ hiện hành, mới cấu hình dự phòng: tại Google Cloud Console bật Google Calendar API và tạo OAuth client loại **Web application**. Authorized redirect URI:
    `https://script.google.com/macros/d/<SCRIPT_ID>/usercallback`
 
-4. Cấu hình Script Properties của **GAS, không đưa lên GitHub**:
+4. **Chỉ đối với nhánh OAuth dự phòng:** cấu hình Script Properties của **GAS, không đưa lên GitHub**:
    - `GOOGLE_CLIENT_ID`
    - `GOOGLE_CLIENT_SECRET`
 
@@ -45,3 +45,10 @@ if ([
 `TEST_HVA_MEET_NO_SIDE_EFFECT()` kiểm tra thời gian không hợp lệ bị từ chối trước khi gọi API.
 
 **Lưu ý:** Mọi thao tác tạo phòng họp thật trên Google Calendar cần có sự đồng ý của người dùng khi bấm TẠO GOOGLE MEET.
+
+
+## Đối chiếu module cũ thầy cung cấp (04/11/2026)
+- `HVA_MEETING_GOOGLE_MEET_V1.createMeetingWithMeet` dùng `HVA_GOOGLE_CALENDAR_SERVICE.status()` và `calendarFetch_()`, tạo sự kiện kèm `conferenceDataVersion=1` rồi kiểm tra lại link. Bộ adapter mới kế thừa hướng này, **không sửa hàm `createEvent()` đang chạy**.
+- Bộ adapter bổ sung mã sự kiện tất định theo phiên yêu cầu để tránh tạo trùng ngay cả khi mất kết nối sau khi Google đã tạo lịch.
+- `TEST_HVA_MEET_DOPOST_AUTH` trong module cũ mong đợi `AUTH_REQUIRED` hoặc `SESSION_INVALID`; tuyến backend nay trả hai mã này khi thiếu hoặc sai phiên.
+- Chưa thể nghiệm thu Google Meet thật nếu chưa xác minh `HVA_GOOGLE_CALENDAR_SERVICE` đang tồn tại trong cùng dự án GAS đã triển khai, và chưa thử Google Calendar qua quyền thực.
