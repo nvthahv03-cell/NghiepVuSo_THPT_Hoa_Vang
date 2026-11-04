@@ -43,3 +43,24 @@
 - Đã kiểm tra cú pháp các tệp JS/Backend, 21 nhãn mục, sự tồn tại của các điều khiển giao diện và không thay đổi `BC_ChuNhiem.html`, `BC_DayThemHocThem.html`. Bộ kiểm thử dữ liệu giả lập đã kiểm tra lưu độc lập 19 mục có nhập liệu (mục 4 lấy dữ liệu lớp, mục 21 dành BGH), cách ly lớp, khóa quyền và đọc nhận xét. Đây **không** phải kiểm thử trên Google Sheet thật.
 - Cần khi triển khai: kết nối router Apps Script đã xác thực token với `HVA4_dispatch_`; cài `HVA4_DATA_SPREADSHEET_ID`; chạy `HVA4_setupByAdmin_`; kiểm tra phân công GVCN thực trên server và đăng nhập thử GV/BGH trước khi nghiệm thu. Không đưa dữ liệu học sinh thật vào thử nghiệm công khai.
 - Nhánh `feature/hva-four-nghiep-vu-20261104` đang khác `main`; đối chiếu thay đổi mới trên `main` trước khi phát hành. Không gộp nhánh và không báo PASS vận hành khi chưa chạy thử thật.
+
+## Chốt hợp đồng giao diện cho kết nối Backend hàng loạt (04/11/2026)
+
+| Giao diện | Mục đích | Action phía giao diện | Trạng thái Backend |
+|---|---|---|---|
+| `SoDauBai_BDHSG12.html` / liên kết A1.4 | Mở đúng sổ hiện hành `https://tinyurl.com/hva-bdhsg12` | Không gọi action mới | **Đã có liên kết cũ, tuyệt đối không di chuyển dữ liệu** |
+| `SoChuNhiem_DienTu.html` | Sổ 21 nội dung theo sổ giấy; danh sách lớp dùng chung | `hva4Get`, `hva4Save`, `hva4ImportRoster`, `hva4Review` | Có code thử nghiệm; chưa tích hợp router chính thức |
+| `KeHoach_BDHSG.html` | Giáo viên nộp PDF, ký số ngoài ứng dụng, BGH duyệt/trả lại | `hva4PlanGet`, `hva4PlanSave` | Có code thử nghiệm; chưa tích hợp router chính thức |
+| `DoiTuyen_BDHSG.html` | Nhập/xem trước danh sách, gửi chốt đội tuyển, BGH duyệt | `hva4HsgTeamGet`, `hva4HsgTeamSave` | **Chỉ có giao diện; chưa có Backend** |
+| `BaoCao_BDHSG.html` | Báo cáo tiến độ/kết quả HSG theo đội tuyển, chuyển BGH/đồng gửi TTCM | `hva4HsgReportGet`, `hva4HsgReportSave` | **Chỉ có giao diện; chưa có Backend** |
+| `NQ52_KeKhai.html` | GV nhập công việc/tiêu chí theo tháng, BGH xét | `hva4Get`, `hva4Save`, `hva4Review` | Có code thử nghiệm; chưa tích hợp router chính thức |
+| `SoTheoDoi_ThietBi.html` | Ghi sổ 12 cột, thống kê sử dụng, BGH rà soát | `hva4Get`, `hva4Save`, `hva4Review` | Có code thử nghiệm; danh sách GV và nhận xét lãnh đạo chưa có nguồn riêng |
+
+**Điều kiện để bật chức năng khi kết nối một đợt**
+1. Máy chủ xác thực `sessionToken` và tạo `principal` đáng tin cậy (tài khoản, vai trò, phân công lớp/tổ). Tuyệt đối không lấy role hay username từ client.
+2. Dữ liệu học sinh chỉ gửi/đọc với quyền theo lớp; các bảng giữ nhật ký, không để thông tin nhạy cảm xuất hiện trong log công khai.
+3. Mọi action trả `success:true` cùng đúng `schemaVersion` mới được giao diện hiển thị trạng thái đã lưu; nếu chưa có Backend thì tất cả nút ghi phải khóa.
+4. Đối với ký số: chỉ lưu liên kết bản PDF đã **được ký bằng chứng thư số thật** qua công cụ được nhà trường sử dụng. Không giả mạo thao tác ký số trực tiếp trong EDOS.
+5. Trước triển khai, đối chiếu nhánh thử nghiệm với `main` mới nhất (nhánh chính có thay đổi riêng), kiểm thử hồi quy, không sửa các biểu mẫu DTHT/BC Chủ nhiệm đã PASS.
+6. Nghiệm thu bằng **2 tài khoản GV thuộc 2 lớp/tổ khác nhau và 1 tài khoản BGH**, lần lượt kiểm tra quyền, lưu nháp, gửi, trả bổ sung, duyệt, tải lại, in/xuất.
+7. Nghiệm thu UI **khác** nghiệm thu Backend. Tình trạng hiện nay: các trang HTML đã tạo, nhưng chưa đủ điều kiện công bố hoàn tất nghiệp vụ.
