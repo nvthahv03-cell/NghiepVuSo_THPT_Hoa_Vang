@@ -56,11 +56,21 @@ async function send(draft){
  try{const r=await h.api('hva4Save',{module:mod,draft,record:rec});if(r.module!==mod||r.schemaVersion!=='HVA4-1')throw Error('Máy chủ chưa xác nhận bản ghi theo giao thức nghiệp vụ.');$('entryForm').reset();if(mod==='nq52')$('month').value=rec.month;await load();if(mod==='nq52')showExisting();h.status(r.message||'Đã lưu và nhận xác nhận từ máy chủ.','ok')}
  catch(e){h.status(e.message,'error')}finally{updateInfo()}
 }
+function printRecord(){
+ if(mod!=='nq52'){w.print();return}
+ const paper=$('nq52PrintSheet');if(!paper)return;
+ paper.replaceChildren();const values=h.form($('entryForm')),matched=records.find(x=>x.owner===h.username()&&(x.data||{}).month===values.month);
+ const title=el('h2',{},'PHIẾU TỰ KÊ KHAI, ĐÁNH GIÁ KẾT QUẢ CÔNG VIỆC'),subtitle=el('p',{},'TRƯỜNG THPT HÒA VANG · Tháng '+(values.month||'chưa chọn')),identity=el('p',{},'Người kê khai: '+(h.user().hoTen||h.user().fullName||h.user().name||h.username()||'Chưa xác thực'));
+ const status=el('p',{},'Trạng thái: '+(matched?matched.status:'Bản đang nhập – chưa nộp'));status.style.fontWeight='700';
+ const warning=el('p',{},'Bản in theo nội dung đang hiển thị trên biểu mẫu. Không phải quyết định xếp loại hoặc phê duyệt thu nhập tăng thêm.');
+ const table=el('table'),body=el('tbody');for(const item of cfg.fields){const tr=el('tr'),a=el('th',{},item.label),b=el('td',{},values[item.key]||'—');a.style.width='39%';a.style.whiteSpace='normal';tr.append(a,b);body.append(tr)}table.append(body);
+ const sign=el('p',{},'Người kê khai\n(Ký, ghi rõ họ tên)');sign.style.whiteSpace='pre-line';sign.style.textAlign='right';sign.style.marginTop='35px';paper.append(title,subtitle,identity,status,warning,table,sign);w.print();
+}
 function init(){
  $('moduleTitle').textContent=cfg.title;$('moduleDesc').textContent=cfg.description;const user=h.user();$('userLabel').textContent='Tài khoản: '+(user.hoTen||user.fullName||user.name||h.username()||'Chưa đăng nhập');cfg.fields.forEach(addField);
  if(mod==='nq52'){$('month').value=new Date().toISOString().slice(0,7);$('month').addEventListener('change',showExisting)}
  if(w.HVA4_Extras&&typeof w.HVA4_Extras.init==='function')w.HVA4_Extras.init(mod,()=>meta,()=>ready);
- $('saveDraft').onclick=()=>send(true);$('submitForm').onclick=()=>send(false);$('refresh').onclick=async()=>{await load();if(mod==='nq52'&&ready)showExisting()};$('print').onclick=()=>window.print();$('exportCsv').onclick=()=>h.csv('HVA_'+mod+'.csv',cfg.headers,rows());load()
+ $('saveDraft').onclick=()=>send(true);$('submitForm').onclick=()=>send(false);$('refresh').onclick=async()=>{await load();if(mod==='nq52'&&ready)showExisting()};$('print').onclick=printRecord;$('exportCsv').onclick=()=>h.csv('HVA_'+mod+'.csv',cfg.headers,rows());load()
 }
 init();
 })();
