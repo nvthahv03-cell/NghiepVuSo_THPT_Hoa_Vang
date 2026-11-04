@@ -105,3 +105,14 @@ Rà soát tĩnh cuối đợt: 10 tệp HTML/JS liên quan đều có cú pháp 
 - **Bảo mật:** tuyệt đối không nhúng nội dung đề thi/đáp án vào trang tĩnh, không dùng liên kết công khai; sử dụng tài liệu Drive có phân quyền và xác minh theo người được giao nhiệm vụ; không cung cấp khả năng đọc dữ liệu bằng tên tài khoản người dùng phía client.
 - **Kiểm thử:** 33/33 phép kiểm tĩnh về cấu hình trang, tồn tại các điều khiển, liên kết danh mục và cú pháp engine đạt. Không sửa `PhanCong_DeKiemTra.html`, `BC_ChuNhiem.html`, `BC_DayThemHocThem.html`. **Chưa test bằng trình duyệt, chưa test Backend thật.**
 - Đợt nối Backend phải lấy phân công A.2.1 đã xác thực từ server làm căn cứ quyết định giáo viên có quyền nộp đề cho môn/khối/đợt hay không. Việc gắn chung phương thức mở trang theo mẫu Báo cáo chủ nhiệm cần kiểm tra hồi quy trên EDOS trước khi merge.
+
+## GIAO DIỆN A3 – HỒ SƠ DẠY HỌC (04/11/2026)
+
+- **A.3.1** `A3_KeHoachBaiDay.html`: nộp liên kết kế hoạch bài dạy, theo môn/khối/lớp/chủ đề, PDF và bản đã ký (16 trường).
+- **A.3.2** `A3_TienDoChuongTrinh.html`: tiến độ chương trình theo tháng, số tiết kế hoạch/thực hiện, nguyên nhân lệch, kế hoạch dạy bù, minh chứng (16 trường).
+- **A.3.3** `A3_MinhChungChuyenMon.html`: tiếp nhận yêu cầu minh chứng, loại/tên tài liệu, bản PDF, lần nộp, minh chứng phân quyền (14 trường).
+- **A.3.4** `A3_HoSoKhac.html`: nộp hồ sơ phát sinh theo yêu cầu/văn bản, phân loại, hạn nộp, đầu mối tiếp nhận (15 trường).
+- Cơ chế chung `HVA_A3_FormEngine.js`: nhập/kiểm tra/xem trước/in, cảnh báo thay đổi chưa lưu, khu vực hồ sơ đã được máy chủ xác thực; kiểm tra URL Drive HTTPS và ràng buộc thời gian, tiến độ. Chức năng lưu/gửi khóa cho đến khi có `hvaA3List`, `hvaA3Save` trả về `HVA-A3-1` và quyền hợp lệ.
+- Quy trình chính thức cần backend xác minh giáo viên/phân công môn-lớp, lưu các phiên bản, chuyển đúng BGH và đồng gửi Tổ trưởng, ghi nhận nhật ký và chữ ký số thật khi có ký. Không chuyển hồ sơ thành "đã gửi" khi mới xem trước.
+- **38/38 kiểm tra tĩnh đạt**: 4 cấu hình, 4 liên kết menu, kiểm tra ID giao diện, cú pháp JS, PASS-LOCK của A1/A2 không bị chỉnh sửa.
+- Chưa kiểm thử tương tác trên trình duyệt hoặc kết nối Apps Script/Sheet thật. Không gộp nhánh thử nghiệm vào `main` trước đối chiếu thay đổi mới.
