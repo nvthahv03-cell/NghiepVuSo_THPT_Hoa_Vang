@@ -168,7 +168,7 @@ return {connected,authorizationUrl,callback,create,check};
 function hvaMeetRoutePost_(action,p){
  try{
   const actor=nvsActor_(p||{});
-  if(!actor||!actor.username)return hvaJSON_({ok:false,success:false,message:'Phiên HVA hết hạn. Vui lòng đăng nhập lại.'});
+  if(!actor||!actor.username)return hvaJSON_({ok:false,success:false,code:String(p&&p.sessionToken||'').trim()?'SESSION_INVALID':'AUTH_REQUIRED',message:'Phiên HVA hết hạn hoặc chưa đăng nhập. Vui lòng đăng nhập lại.'});
   if(!nvsIsManager_(actor))return hvaJSON_({ok:false,success:false,message:'Tài khoản không có quyền tạo Google Meet.'});
   const username=String(actor.username).trim();
   let result;
