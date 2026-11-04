@@ -53,7 +53,7 @@ function HVA4_save_(module,raw,draft,u){
  try{
   const sh=HVA4_sheet_(module),rows=HVA4_rows_(sh),period=module==='nq52'?x.month:module==='homeroom'?u.schoolYear:x.date;
   const targetClass=module==='homeroom'&&HVA4_admin_(u)&&x.sectionKey==='21'&&x.targetClass?x.targetClass:u.className;
-  if(module==='homeroom'&&x.sectionKey==='21'&&!/^\\d{1,2}\\/\\d{1,2}$/.test(targetClass||''))throw new Error('BGH chưa chọn đúng lớp cần nhận xét.');
+  if(module==='homeroom'&&x.sectionKey==='21'&&!/^\d{1,2}\/\d{1,2}$/.test(targetClass||''))throw new Error('BGH chưa chọn đúng lớp cần nhận xét.');
   const found=module==='nq52'?rows.find(r=>r.owner===u.username&&r.period===period):module==='homeroom'&&x.sectionKey?rows.find(r=>r.className===targetClass&&r.period===u.schoolYear&&r.payload.sectionKey===x.sectionKey):null;
   if(module==='device'&&!/^\d{1,2}\/\d{1,2}$/.test(x.className||''))throw new Error('Lớp học không hợp lệ.');
   if(found&&!['NHÁP','YÊU CẦU BỔ SUNG'].includes(found.status))throw new Error('Hồ sơ đã gửi hoặc đã được xác nhận; không được tự ghi đè. Liên hệ người có thẩm quyền khi cần điều chỉnh.');
