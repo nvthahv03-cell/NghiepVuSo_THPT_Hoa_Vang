@@ -172,10 +172,33 @@ function hvaMeetRoutePost_(action,p){
   if(!nvsIsManager_(actor))return hvaJSON_({ok:false,success:false,message:'Tài khoản không có quyền tạo Google Meet.'});
   const username=String(actor.username).trim();
   let result;
-  if(action==='googleCalendarStatus')result={success:true,connected:HVA_MEET_GOOGLE.connected(username)};
-  else if(action==='startGoogleCalendarConnect')result={success:true,authUrl:HVA_MEET_GOOGLE.authorizationUrl(username)};
-  else if(action==='createMeetingGoogleMeet')result=HVA_MEET_GOOGLE.create(username,Object.assign({},p.event||{},{requestKey:p.requestKey}));
-  else if(action==='getMeetingGoogleMeetStatus')result=HVA_MEET_GOOGLE.check(username,p);
+  const legacy=typeof HVA_MEET_EXISTING_CALENDAR!=='undefined'
+    &&HVA_MEET_EXISTING_CALENDAR.ready();
+  if(action==='googleCalendarStatus')result={success:true,connected:legacy
+    ? HVA_MEET_EXISTING_CALENDAR.connected(username)
+    : HVA_MEET_GOOGLE.connected(username)};
+  else if(action==='startGoogleCalendarConnect'){
+    if(legacy){
+      // Preserve existing OAuth service; do not create a second, competing Google connection.
+      const svc=HVA_GOOGLE_CALENDAR_SERVICE;
+      if(HVA_MEET_EXISTING_CALENDAR.connected(username))result={success:true,connected:true,message:'Google Calendar đã được kết nối.'};
+      else{
+        // Only use an OAuth URL exposed by the established service. Never guess its API.
+        let url='';
+        if(typeof svc.getAuthorizationUrl==='function')url=String(svc.getAuthorizationUrl(username)||'');
+        else if(typeof svc.getAuthUrl==='function')url=String(svc.getAuthUrl(username)||'');
+        else if(typeof svc.authorizationUrl==='function')url=String(svc.authorizationUrl(username)||'');
+        if(/^https:\/\/accounts\.google\.com\//.test(url))result={success:true,authUrl:url};
+        else result={success:false,code:'GOOGLE_CONNECT_NOT_CONFIGURED',message:'Dịch vụ Google Calendar hiện hành chưa công bố thao tác kết nối OAuth. Quản trị viên cần kiểm tra cấu hình kết nối.'};
+      }
+    }else result={success:true,authUrl:HVA_MEET_GOOGLE.authorizationUrl(username)};
+  }
+  else if(action==='createMeetingGoogleMeet')result=legacy
+    ? HVA_MEET_EXISTING_CALENDAR.create(username,Object.assign({},p.event||{},{requestKey:p.requestKey}))
+    : HVA_MEET_GOOGLE.create(username,Object.assign({},p.event||{},{requestKey:p.requestKey}));
+  else if(action==='getMeetingGoogleMeetStatus')result=legacy
+    ? HVA_MEET_EXISTING_CALENDAR.check(username,p)
+    : HVA_MEET_GOOGLE.check(username,p);
   else result={success:false,message:'Action Google Meet không hỗ trợ.'};
   return hvaJSON_(Object.assign({ok:!!result.success},result));
  }catch(e){return hvaJSON_({ok:false,success:false,message:String(e.message||e)})}
