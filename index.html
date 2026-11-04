@@ -938,6 +938,11 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
  .nvs-chooser .nvs-two-gates .nvs-gate-learning,.nvs-chooser .nvs-two-gates .nvs-gate-documents{padding:12px 7px!important;min-height:128px!important}
  .nvs-chooser .nvs-two-gates .nvs-gate-learning strong,.nvs-chooser .nvs-two-gates .nvs-gate-documents strong{font-size:13px!important}
 }
+</style><style id="hva-home-three-actions-keep-digital">
+/* Chỉ thay số cột hàng tiện ích; nền Digital gốc của .nvs-chooser không đổi. */
+.nvs-quick{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.nvs-quick #nvsQuickRoleSlot,.nvs-quick #nvsQuickRoleSlot #nvsOpenLibrary{display:none!important}
+@media(max-width:720px){.nvs-quick{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}}
 </style></head>
 <body>
 
@@ -1750,7 +1755,9 @@ function refresh(){
  const allowed=typeof window.NVS_syncRemindBGH==='function'?window.NVS_syncRemindBGH():false;
  work.hidden=allowed;work.setAttribute('aria-hidden',allowed?'true':'false');work.style.setProperty('display',allowed?'none':'flex','important');
  remind.hidden=!allowed;remind.setAttribute('aria-hidden',allowed?'false':'true');remind.style.setProperty('display',allowed?'flex':'none','important');
- library.hidden=false;
+ library.hidden=true;library.setAttribute('aria-hidden','true');library.tabIndex=-1;
+ library.style.setProperty('display','none','important');
+ slot.hidden=true;slot.setAttribute('aria-hidden','true');
 }
 refresh();window.NVS_refreshRoleQuickSlot=refresh;
 window.addEventListener('storage',refresh);
