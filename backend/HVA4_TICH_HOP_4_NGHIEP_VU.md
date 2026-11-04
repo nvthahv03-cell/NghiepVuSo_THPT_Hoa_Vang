@@ -93,3 +93,15 @@ Rà soát tĩnh cuối đợt: 10 tệp HTML/JS liên quan đều có cú pháp 
 - Trạng thái A1: **hoàn thành cấu trúc màn hình HTML**, chưa kiểm thử click và in bằng trình duyệt thật; chưa có Backend cho bảy mẫu mới; còn việc xác nhận nội dung biểu mẫu hòa nhập bám đúng mẫu do trường phê duyệt.
 - Cần kiểm tra lại phân quyền ký số, thông báo BGH/đồng gửi TTCM, hồ sơ và mẫu in trước khi nghiệm thu nghiệp vụ. Chỉ kết nối Backend hàng loạt sau khi tất cả giao diện A1–A6 thống nhất.
 - Nhánh thử nghiệm khác `main` (main có thay đổi riêng). Không tự ý merge; phải so sánh và thử hồi quy trước khi phát hành.
+
+## GIAO DIỆN A2 – KIỂM TRA, ĐÁNH GIÁ (04/11/2026)
+
+- **A.2.1** `PhanCong_DeKiemTra.html`: trang hiện hành đã kết nối, giữ nguyên tuyệt đối.
+- **A.2.2** `A2_NopMaTran_DeKiemTra.html`: 15 trường, các nhóm nhiệm vụ, ma trận, bản đặc tả, đề, đáp án, lần nộp; bắt buộc link Drive/Docs HTTPS.
+- **A.2.3** `A2_NopDeBoSung.html`: 14 trường, kiểm tra bổ sung, kiểm tra lại hoặc đề thay thế; lý do và link đề/đáp án có phân quyền.
+- **A.2.4** `A2_BaoCao_DeNghi.html`: 14 trường, báo cáo tiến độ, điều chỉnh lịch/phân công, sự cố, kết quả và kiến nghị.
+- **Bộ máy UI chung:** `HVA_A2_FormEngine.js` có xác thực điều kiện nhập, xem trước và in bản chưa ký; bảo vệ điều kiện trường bắt buộc và link Drive. `hvaA2List`, `hvaA2Save` yêu cầu giao thức `HVA-A2-1`; hai hành động này **chưa có Backend** nên các nút lưu/gửi luôn khóa trừ khi router xác nhận đúng phiên, mã module và quyền.
+- **Tiếp nhận BGH/Tổ trưởng:** hiển thị nút gửi theo quy trình dự kiến, nhưng cần Backend thực hiện lưu, phân luồng BGH/đồng gửi TTCM và nhật ký đúng quyền, không tự coi đã gửi khi chỉ xem trước.
+- **Bảo mật:** tuyệt đối không nhúng nội dung đề thi/đáp án vào trang tĩnh, không dùng liên kết công khai; sử dụng tài liệu Drive có phân quyền và xác minh theo người được giao nhiệm vụ; không cung cấp khả năng đọc dữ liệu bằng tên tài khoản người dùng phía client.
+- **Kiểm thử:** 33/33 phép kiểm tĩnh về cấu hình trang, tồn tại các điều khiển, liên kết danh mục và cú pháp engine đạt. Không sửa `PhanCong_DeKiemTra.html`, `BC_ChuNhiem.html`, `BC_DayThemHocThem.html`. **Chưa test bằng trình duyệt, chưa test Backend thật.**
+- Đợt nối Backend phải lấy phân công A.2.1 đã xác thực từ server làm căn cứ quyết định giáo viên có quyền nộp đề cho môn/khối/đợt hay không. Việc gắn chung phương thức mở trang theo mẫu Báo cáo chủ nhiệm cần kiểm tra hồi quy trên EDOS trước khi merge.
