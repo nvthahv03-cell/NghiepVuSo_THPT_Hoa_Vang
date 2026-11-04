@@ -25,7 +25,7 @@ function HVA4_validate_(module,x,draft){
  if(!x||typeof x!=='object'||Array.isArray(x))throw new Error('Nội dung gửi không hợp lệ.');
  const item={};Object.keys(x).forEach(k=>{if(!/^[a-zA-Z][a-zA-Z0-9]{0,36}$/.test(k))return;item[k]=HVA4_str_(x[k],3000)});
  if(!draft){
-  const needed=module==='homeroom'?['schoolYear','section','content']:module==='nq52'?['month','duties','done','a1','a2','a3','quantity','quality','progress','strength','weakness','solution','selfClass']:['date','period','lesson','equipment','className','mode','it'];
+  const needed=module==='homeroom'?['schoolYear','section','content']:module==='nq52'?['month','duties','done','a1','a2','a3','quantity','quality','progress','strength','weakness','solution','selfClass']:['date','period','lesson','equipment','className','phbmTH','phbmLT','onClass','it'];
   if(needed.some(k=>!item[k]))throw new Error('Chưa nhập đủ các trường bắt buộc.');
  }
  if(module==='nq52'){['a1','a2','a3','quantity','quality','progress'].forEach(k=>{if(item[k]==='')return;const n=Number(item[k]);const max=k[0]==='a'?10:100;if(!Number.isFinite(n)||n<0||n>max)throw new Error('Điểm / tỷ lệ không hợp lệ: '+k)});if(item.month&&!/^\d{4}-(0[1-9]|1[0-2])$/.test(item.month))throw new Error('Tháng không hợp lệ.')}
