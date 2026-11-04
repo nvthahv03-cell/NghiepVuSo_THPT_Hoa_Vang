@@ -38,6 +38,7 @@ function HVA4_save_(module,raw,draft,u){
  try{
   const sh=HVA4_sheet_(module),rows=HVA4_rows_(sh),period=module==='nq52'?x.month:module==='homeroom'?u.schoolYear:x.date;
   const found=module==='nq52'?rows.find(r=>r.owner===u.username&&r.period===period):null;
+  if(module==='device'&&!/^\d{1,2}\/\d{1,2}$/.test(x.className||''))throw new Error('Lớp học không hợp lệ.');
   if(found&&!['NHÁP','YÊU CẦU BỔ SUNG'].includes(found.status))throw new Error('Hồ sơ đã gửi hoặc đã được xác nhận; không được tự ghi đè. Liên hệ người có thẩm quyền khi cần điều chỉnh.');
   if(module==='homeroom'){if(!u.className)throw new Error('Chưa có lớp chủ nhiệm được xác minh.');if(x.section==='Kiểm tra, nhận xét của Hiệu trưởng')throw new Error('Giáo viên không được tự ghi nhận xét của Hiệu trưởng.');x.schoolYear=u.schoolYear;x.className=u.className;}
   if(module==='device'){x.teacherUsername=u.username;}
@@ -62,8 +63,8 @@ function HVA4_review_(module,id,decision,comment,u){
  }finally{lock.releaseLock()}
 }
 function HVA4_importRoster_(students,u){
- if(!u.className)throw new Error('Chưa được phân công chủ nhiệm lớp.');if(!Array.isArray(students)||!students.length||students.length>80)throw new Error('Danh sách học sinh không hợp lệ.');
- const seen=new Set(),rows=students.map(a=>{const id=HVA4_str_(a.studentId,70),name=HVA4_str_(a.name,160);if(!id||!name||seen.has(id))throw new Error('Mã học sinh trống hoặc trùng.');seen.add(id);return {studentId:id,name,dob:HVA4_str_(a.dob,30),gender:HVA4_str_(a.gender,15),parent:HVA4_str_(a.parent,160),phone:HVA4_str_(a.phone,30)}});
+ if(!u.className)throw new Error('Chưa được phân công chủ nhiệm lớp.');if(!/^\d{1,2}\/\d{1,2}$/.test(u.className))throw new Error('Mã lớp chủ nhiệm không hợp lệ.');if(!Array.isArray(students)||!students.length||students.length>80)throw new Error('Danh sách học sinh không hợp lệ.');
+ const seen=new Set(),rows=students.map(a=>{const id=HVA4_str_(a.studentId,70),name=HVA4_str_(a.name,160);if(!id||!name||seen.has(id))throw new Error('Mã học sinh trống hoặc trùng.');if(!/^[A-Za-z0-9][A-Za-z0-9_.\/-]{0,69}$/.test(id))throw new Error('Mã học sinh không hợp lệ.');seen.add(id);return {studentId:id,name,dob:HVA4_str_(a.dob,30),gender:HVA4_str_(a.gender,15),parent:HVA4_str_(a.parent,160),phone:HVA4_str_(a.phone,30)}});
  const lock=LockService.getScriptLock();lock.waitLock(30000);
  try{
   const sh=HVA4_sheet_('roster'),current=sh.getLastRow()<2?[]:sh.getRange(2,1,sh.getLastRow()-1,5).getValues();
