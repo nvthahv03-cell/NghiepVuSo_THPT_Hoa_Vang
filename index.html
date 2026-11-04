@@ -883,6 +883,32 @@ body{padding-bottom:calc(115px + env(safe-area-inset-bottom,0px))!important}
 @media(prefers-reduced-motion:reduce){.nvs-premium-nav .edos-nav-bounce i{animation:none!important}.nvs-premium-nav button i{transition:none!important}}
 </style>
 
+<script id="hva-dieu-hanh-access">
+(function(){
+'use strict';
+function store(k){try{return localStorage.getItem(k)||sessionStorage.getItem(k)||''}catch(e){return ''}}
+function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().replace(/\s+/g,' ').trim()}
+function valid(){
+ const token=store('hvaSessionToken'), raw=store('hvaSessionExpiresAt'), number=Number(raw);
+ const expiration=Number.isFinite(number)&&number>0?(number<1e12?number*1000:number):Date.parse(raw);
+ return !!token&&Number.isFinite(expiration)&&expiration>Date.now();
+}
+function allowed(){
+ if(!valid())return false;
+ let u={};try{u=JSON.parse(store('user')||'{}')||{}}catch(e){return false}
+ const name=norm(u.hoTen||u.fullName||u.name||u.hoVaTen);
+ const role=norm([u.chucVu,u.viTriViecLam,u.vaiTro,u.role,u.chucDanh].filter(Boolean).join(' '));
+ const profile=norm([u.chucVu,u.viTriViecLam,u.chucDanh].filter(Boolean).join(' '));
+ const roleCodes=String(u.vaiTro||u.role||'').trim().toUpperCase().split(/[^A-Z0-9]+/);
+ const isBGH=role.includes('hieu truong')||role.includes('ban giam hieu')||roleCodes.includes('BGH');
+ const isChief=role.includes('to truong')||role.includes('truong to')||role.includes('ttcm')||role.includes('ttvp')||roleCodes.includes('TTCM')||roleCodes.includes('TTVP');
+ const isYouthSecretary=name==='hoang xuan sy'&&(role.includes('bi thu')||role.includes('doan')||roleCodes.includes('BTD')||roleCodes.includes('BTDOAN'));
+ return isBGH||isChief||isYouthSecretary;
+}
+window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
+})();
+</script>
+<style id="hva-dieu-hanh-gate-policy">#nvsAdminGate[hidden],#nvsAdminGate[aria-hidden="true"]{display:none!important}#nvsMenuPanel details[data-dieu-hanh][hidden]{display:none!important}</style>
 </head>
 <body>
 
@@ -1128,6 +1154,7 @@ async function dthtStandaloneLogin(){
     $('dthtAuth').classList.add('hidden');
     initPortal();
     window.NVS_refreshRoleQuickSlot?.();
+    window.HVA_refreshDieuHanhGate?.();
     window.NVS_refreshNotifications?.();
   } catch(e) {
     msg.style.color = '#be123c';
@@ -1626,7 +1653,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
  input.addEventListener('input',()=>{
   const q=norm(input.value.trim());panel.replaceChildren();
   if(!q){close();return}
-  const matches=entries.filter(e=>norm(e.name).includes(q));
+  const matches=entries.filter(e=>norm(e.name).includes(q)&&(!/DieuHanh\.html/i.test(e.url||'')||window.HVA_DIEUHANH_ACCESS?.allowed()));
   if(!matches.length){const p=document.createElement('div');p.className='nvs-search-result';p.textContent='Không tìm thấy chức năng phù hợp';panel.appendChild(p)}
   matches.forEach(e=>{
    const b=document.createElement('button');b.type='button';b.className='nvs-search-result';
@@ -2918,5 +2945,27 @@ button.addEventListener('animationend',()=>button.classList.remove('edos-nav-bou
 .nvs-reminder-reply button:disabled,.nvs-reminder-accept:disabled{opacity:.5}
 @media(max-width:560px){.nvs-reminder-reply{flex-direction:column;align-items:stretch}}
 </style>
+<script id="hva-dieu-hanh-visibility">
+(function(){
+'use strict';
+const admin=document.getElementById('nvsAdminGate');
+const menu=document.getElementById('nvsMenuPanel');
+const section=menu&&[...menu.querySelectorAll('details')].find(d=>d.querySelector('a[href="./DieuHanh.html"]'));
+if(section)section.dataset.dieuHanh='true';
+function refresh(){
+ const ok=!!window.HVA_DIEUHANH_ACCESS?.allowed();
+ if(admin){admin.hidden=!ok;admin.setAttribute('aria-hidden',String(!ok));admin.tabIndex=ok?0:-1;}
+ if(section)section.hidden=!ok;
+}
+function prevent(e){const link=e.target.closest('a[href]');if(!link)return;
+ const href=link.getAttribute('href')||'';if(!/^(?:\.\/)?DieuHanh\.html(?:[?#]|$)/i.test(href))return;
+ if(!window.HVA_DIEUHANH_ACCESS?.allowed()){e.preventDefault();e.stopImmediatePropagation();refresh();}
+}
+document.addEventListener('click',prevent,true);
+refresh();window.HVA_refreshDieuHanhGate=refresh;
+window.addEventListener('storage',refresh);document.addEventListener('visibilitychange',refresh);
+const login=document.getElementById('dthtAuthModal');if(login)new MutationObserver(refresh).observe(login,{attributes:true,attributeFilter:['class','hidden']});
+})();
+</script>
 </body>
 </html>
