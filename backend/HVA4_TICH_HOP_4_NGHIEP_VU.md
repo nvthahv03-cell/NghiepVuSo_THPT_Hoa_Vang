@@ -74,3 +74,22 @@
 - **Xuất CSV:** đã xử lý giá trị bắt đầu bằng ký tự giống công thức khi tải CSV, giúp giảm rủi ro thực thi công thức trong ứng dụng bảng tính.
 
 Rà soát tĩnh cuối đợt: 10 tệp HTML/JS liên quan đều có cú pháp JS hợp lệ; tất cả ID DOM được gọi từ inline script đều có; 7 liên kết mục nghiệp vụ tồn tại. Chưa thực hiện thử giao diện bằng trình duyệt thực tế, chưa có tích hợp Apps Script production.
+
+## CHỐT GIAO DIỆN A1 – BÁO CÁO CHUYÊN MÔN (04/11/2026)
+
+### Các màn hình thuộc A1 đã có đường dẫn
+- **A.1.1** `A.1.1. NhiemVu_BaoCao.html`: KẾ THỪA nguyên trang đang dùng (4 loại báo cáo: nhiệm vụ, điều động, tập huấn–hội nghị, báo cáo khác). Đã có tạo bản xem trước, in PDF; lưu/gửi còn chờ Backend.
+- **A.1.2** `SoChuNhiem_DienTu.html`: Sổ CN 21 nội dung, giao diện thử nghiệm có cấu trúc.
+- **A.1.2** `BC_ChuNhiem.html`: **PASS–LOCK** hiện hành, không chỉnh sửa.
+- **A.1.2** `A1_HoSo_HoaNhap.html`, `A1_KeHoach_GDCN.html`, `A1_TheoDoi_HoaNhap.html`, `A1_BaoCao_HoaNhap.html`: 4 biểu mẫu theo hướng hồ sơ, kế hoạch GD cá nhân, theo dõi và báo cáo GD hòa nhập. **KHÓA nhập nội dung nhạy cảm** nếu `hva4A1DraftAccess` chưa xác thực quyền server. Không lưu trên browser và không ghi dữ liệu học sinh vào hệ thống khác.
+- **A.1.3** `A1_SinhHoat_ChuyenMon.html`, `A1_SinhHoat_Cum.html`: 2 màn hình chuyên môn, có nhóm trường dữ liệu, xem trước/in PDF bản chưa ký.
+- **A.1.4** `BC_DayThemHocThem.html`: **PASS–LOCK** hiện hành, không chỉnh sửa.
+- **A.1.4** `KeHoach_BDHSG.html`, `DoiTuyen_BDHSG.html`, `BaoCao_BDHSG.html`, `A1_PhuDao_OnThi.html`: hồ sơ kế hoạch, đội tuyển, báo cáo HSG, phụ đạo/ôn thi.
+- **A.1.4** sổ ghi đầu bài BD HSG 12: giữ đúng URL `https://tinyurl.com/hva-bdhsg12`, không đụng Google Sheet.
+
+### Kiểm toán A1
+- Thêm **7/7 giao diện còn thiếu** (4 hòa nhập, 2 sinh hoạt, 1 phụ đạo–ôn thi), nối đúng 7/7 liên kết ở `NghiepVu.html`. Kiểm tra cấu trúc cấu hình từng trang (11–16 trường) và cú pháp JavaScript bộ máy dùng chung đều đạt.
+- KHÔNG sửa `A.1.1. NhiemVu_BaoCao.html`, `BC_ChuNhiem.html`, `BC_DayThemHocThem.html`.
+- Trạng thái A1: **hoàn thành cấu trúc màn hình HTML**, chưa kiểm thử click và in bằng trình duyệt thật; chưa có Backend cho bảy mẫu mới; còn việc xác nhận nội dung biểu mẫu hòa nhập bám đúng mẫu do trường phê duyệt.
+- Cần kiểm tra lại phân quyền ký số, thông báo BGH/đồng gửi TTCM, hồ sơ và mẫu in trước khi nghiệm thu nghiệp vụ. Chỉ kết nối Backend hàng loạt sau khi tất cả giao diện A1–A6 thống nhất.
+- Nhánh thử nghiệm khác `main` (main có thay đổi riêng). Không tự ý merge; phải so sánh và thử hồi quy trước khi phát hành.
