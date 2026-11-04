@@ -1066,10 +1066,11 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
   width:43px!important;height:43px!important;flex:0 0 43px!important;font-size:22px!important;
  }
  .nvs-chooser .nvs-two-gates .nvs-gate strong{font-size:clamp(12px,3.3vw,15px)!important}
+ /* Ẩn mô tả dài trên điện thoại để bốn cổng thoáng và cùng nhịp. */
  .nvs-chooser .nvs-two-gates .nvs-gate>span:not(.nvs-gate-icon):not(.nvs-gate-enter){
-  font-size:11px!important;
-  line-height:1.32!important;
+  display:none!important;
  }
+
  .nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-enter{
   font-size:10.5px!important;padding:6px 8px!important;
  }
@@ -1214,7 +1215,7 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
     <div class="nvs-two-gates">
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-admin" id="nvsAdminGate" href="./DieuHanh.html" aria-label="Vào BGH – Điều hành"><span class="nvs-gate-icon"><i class="bi bi-bank"></i></span><strong>BAN GIÁM HIỆU<em>ĐIỀU HÀNH</em></strong><span>Thông báo – Phát hành · Lịch công tác · Cuộc họp · Theo dõi và xử lý</span><span class="nvs-gate-enter">Vào Điều hành <i class="bi bi-arrow-right"></i></span></a></div>
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-work" id="nvsWorkGate" href="./NghiepVu.html" aria-label="Vào Giáo viên – Nhân viên – Tác nghiệp số"><span class="nvs-gate-icon"><i class="bi bi-pc-display-horizontal"></i></span><strong>GIÁO VIÊN – NHÂN VIÊN<em>TÁC NGHIỆP SỐ</em></strong><span>TTCM · TPCM · GV · NV<br>Nhận nhiệm vụ · Lập báo cáo · Nộp sản phẩm · Tra cứu công việc</span><span class="nvs-gate-enter">Vào Tác nghiệp <i class="bi bi-arrow-right"></i></span></a></div>
-      <div class="nvs-gate-wrap nvs-gate-learning-wrap"><a class="nvs-gate nvs-gate-learning" id="nvsLearningGate" href="./KhoHocLieuSo.html" aria-label="Vào Kho học liệu số"><span class="nvs-gate-icon"><i class="bi bi-book-half" aria-hidden="true"></i></span><strong>KHO HỌC LIỆU<em>HỌC LIỆU SỐ</em></strong><span>Tra cứu · Khai thác · Chia sẻ tài nguyên giảng dạy</span><span class="nvs-gate-enter">Khám phá học liệu <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
+      <div class="nvs-gate-wrap nvs-gate-learning-wrap"><a class="nvs-gate nvs-gate-learning" id="nvsLearningGate" href="./KhoHocLieuSo.html" aria-label="Vào Kho học liệu số"><span class="nvs-gate-icon"><i class="bi bi-book-half" aria-hidden="true"></i></span><strong>KHO TÀI NGUYÊN<em>HỌC LIỆU SỐ</em></strong><span>Tra cứu · Khai thác · Chia sẻ tài nguyên giảng dạy</span><span class="nvs-gate-enter">Khám phá học liệu <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
       <div class="nvs-gate-wrap nvs-gate-documents-wrap"><a class="nvs-gate nvs-gate-documents" id="nvsDocumentGate" href="./VanBan_QuyDinh.html" aria-label="Vào Kho văn bản và biểu mẫu"><span class="nvs-gate-icon"><i class="bi bi-folder2-open" aria-hidden="true"></i></span><strong>VĂN BẢN<em>BIỂU MẪU</em></strong><span>Tra cứu văn bản · Biểu mẫu · Tài liệu hướng dẫn</span><span class="nvs-gate-enter">Mở kho văn bản <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
     </div>
     <div class="nvs-v4-actions" aria-label="Tiện ích công vụ">
