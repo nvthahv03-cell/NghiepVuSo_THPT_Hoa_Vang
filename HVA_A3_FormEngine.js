@@ -10,7 +10,7 @@ function build(){
  const cell=block(type==='textarea'),lab=make('label',label+(required?' *':''));lab.htmlFor=id;cell.append(lab);let inp;
  if(type==='textarea'){inp=make('textarea');inp.rows=3;inp.maxLength=3000}
  else if(type==='select'){inp=make('select');const first=make('option','-- Chọn --');first.value='';inp.append(first);for(const item of options){const opt=make('option',item);opt.value=item;inp.append(opt)}}
- else{inp=make('input');inp.type=type;inp.maxLength=type==='url'?1200:180;if(type==='number'){inp.min='1';inp.max='99'}}
+ else{inp=make('input');inp.type=type;inp.maxLength=type==='url'?1200:180;if(type==='number'){inp.min=id==='version'?'1':'0';inp.max='9999';inp.step='1'}}
  inp.id=id;inp.name=id;inp.required=!!required;inp.setAttribute('aria-label',label);
  if(id==='year')inp.value='2026–2027';inp.addEventListener('input',()=>{dirty=true;shown=false;$('previewSection').hidden=true;$('unsaved').textContent='Có thay đổi chưa lưu.'});fieldMap.set(id,{input:inp,label,type,required});cell.append(inp);grid.append(cell)}
  $('formFields').append(grid)}
@@ -26,7 +26,13 @@ function validate(strict){const v=values();for(const [id,field] of fieldMap){
  if(strict&&field.required&&!v[id]){field.input.focus();throw Error('Vui lòng nhập '+field.label)}
  if(v[id]&&field.type==='url'){let link;try{link=new URL(v[id])}catch(e){throw Error('Liên kết không hợp lệ: '+field.label)}if(link.protocol!=='https:'||!['drive.google.com','docs.google.com'].includes(link.hostname))throw Error('Tài liệu phải dùng liên kết Drive/Docs HTTPS có phân quyền: '+field.label)}
 }
-if(v.examDate&&v.testDate&&v.examDate<v.testDate)throw Error('Ngày kiểm tra không phù hợp');
+if(v.fromDate&&v.toDate&&v.toDate<v.fromDate)throw Error('Ngày kết thúc không được trước ngày bắt đầu.');
+if(conf.code==='A.3.2'&&v.plannedLessons!==''&&v.deliveredLessons!==''){
+ const planned=Number(v.plannedLessons),delivered=Number(v.deliveredLessons);
+ if(!Number.isFinite(planned)||!Number.isFinite(delivered)||planned<0||delivered<0||!Number.isInteger(planned)||!Number.isInteger(delivered))throw Error('Số tiết phải là số nguyên không âm.');
+ if(planned!==delivered&&!v.lagReason)throw Error('Tiến độ có chênh lệch, cần ghi rõ nguyên nhân.');
+}
+if(v.deadline&&v.requestDate&&v.deadline<v.requestDate)throw Error('Hạn nộp không được trước ngày yêu cầu.');
 return v}
 function paper(v){const area=$('paper');area.replaceChildren();const institution=make('p','SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG · TRƯỜNG THPT HÒA VANG');institution.style.textAlign='center';const title=make('h2',conf.title.toUpperCase());title.style.textAlign='center';const watermark=make('p','BẢN XEM TRƯỚC – CHƯA LƯU, CHƯA GỬI, CHƯA PHÊ DUYỆT');watermark.style.textAlign='center';area.append(institution,title,watermark);
 for(const [heading,fields] of conf.sections){area.append(make('h3',heading));const tab=make('table'),body=make('tbody');for(const [id,label]of fields){const tr=make('tr'),left=make('th',label),right=make('td',v[id]||'—');left.style.whiteSpace='normal';left.style.width='36%';tr.append(left,right);body.append(tr)}tab.append(body);area.append(tab)}
