@@ -184,12 +184,15 @@ function hvaMeetRoutePost_(action,p){
       if(HVA_MEET_EXISTING_CALENDAR.connected(username))result={success:true,connected:true,message:'Google Calendar đã được kết nối.'};
       else{
         // Only use an OAuth URL exposed by the established service. Never guess its API.
-        let url='';
-        if(typeof svc.getAuthorizationUrl==='function')url=String(svc.getAuthorizationUrl(username)||'');
-        else if(typeof svc.getAuthUrl==='function')url=String(svc.getAuthUrl(username)||'');
-        else if(typeof svc.authorizationUrl==='function')url=String(svc.authorizationUrl(username)||'');
-        if(/^https:\/\/accounts\.google\.com\//.test(url))result={success:true,authUrl:url};
-        else result={success:false,code:'GOOGLE_CONNECT_NOT_CONFIGURED',message:'Dịch vụ Google Calendar hiện hành chưa công bố thao tác kết nối OAuth. Quản trị viên cần kiểm tra cấu hình kết nối.'};
+        let prepared=null;
+        if(typeof svc.prepareOAuth==='function')prepared=svc.prepareOAuth(username);
+        else if(typeof svc.getAuthorizationUrl==='function')prepared=svc.getAuthorizationUrl(username);
+        else if(typeof svc.getAuthUrl==='function')prepared=svc.getAuthUrl(username);
+        else if(typeof svc.authorizationUrl==='function')prepared=svc.authorizationUrl(username);
+        const url=typeof prepared==='string'?prepared:String(prepared&&(prepared.authUrl||prepared.authorizationUrl||prepared.url)||'');
+        if(prepared&&prepared.success===false)result={success:false,code:'GOOGLE_CONNECT_FAILED',message:String(prepared.message||'Google Calendar chưa cấp quyền.')};
+        else if(/^https:\/\/accounts\.google\.com\//.test(url))result={success:true,authUrl:url};
+        else result={success:false,code:'GOOGLE_CONNECT_NOT_CONFIGURED',message:'Google Calendar chưa trả liên kết cấp quyền. Kiểm tra cấu hình OAuth trên máy chủ.'};
       }
     }else result={success:true,authUrl:HVA_MEET_GOOGLE.authorizationUrl(username)};
   }
