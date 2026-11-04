@@ -36,8 +36,17 @@ async function checkConnection(){connected=false;for(const btn of document.query
  if(!window.HVA4)throw Error('Chưa có thư viện kết nối.');
  const r=await window.HVA4.api('hvaA2List',{module:conf.code});
  if(r.schemaVersion!=='HVA-A2-1'||r.module!==conf.code||!Array.isArray(r.records)||r.meta?.canSubmit!==true)throw Error('Backend chưa kích hoạt hoặc chưa cấp quyền cho biểu mẫu '+conf.code);
- records=r.records;connected=true;for(const btn of document.querySelectorAll('[data-server]'))btn.disabled=false;status('Máy chủ đã xác thực quyền. Có thể nộp hồ sơ.','ok')
- }catch(e){status('Giao diện đã sẵn sàng để xem trước/in. Chức năng lưu–gửi đang chờ Backend: '+e.message,'error')}}
+ records=r.records;renderHistory();connected=true;for(const btn of document.querySelectorAll('[data-server]'))btn.disabled=false;status('Máy chủ đã xác thực quyền. Có thể nộp hồ sơ.','ok')
+ }catch(e){records=[];renderHistory();status('Giao diện đã sẵn sàng để xem trước/in. Chức năng lưu–gửi đang chờ Backend: '+e.message,'error')}}
+function renderHistory(){
+ const count=$('savedCount'),box=$('savedRecords');if(!count||!box)return;
+ count.textContent=records.length+' hồ sơ do máy chủ trả về theo quyền truy cập.';
+ box.replaceChildren();const table=make('table'),head=make('thead'),tr=make('tr');
+ for(const name of ['Mã hồ sơ','Ngày gửi','Người nộp','Trạng thái','Ghi chú xử lý'])tr.append(make('th',name));
+ head.append(tr);table.append(head);const tbody=make('tbody');
+ records.forEach(item=>{const line=make('tr');[item.id||'',item.submittedAt||item.updatedAt||'',item.owner||'',item.status||'',item.reviewComment||''].forEach(v=>line.append(make('td',v)));tbody.append(line)});
+ table.append(tbody);box.append(table);
+}
 async function send(mode){if(!connected){status('Backend chưa xác nhận quyền gửi. Không có dữ liệu nào được lưu.','error');return}let data;try{data=validate(mode==='submit')}catch(e){status(e.message,'error');return}
  for(const btn of document.querySelectorAll('[data-server]'))btn.disabled=true;
  try{const r=await window.HVA4.api('hvaA2Save',{module:conf.code,mode,record:data});if(r.schemaVersion!=='HVA-A2-1'||r.module!==conf.code||!r.id)throw Error('Máy chủ chưa xác nhận mã hồ sơ.');dirty=false;$('unsaved').textContent='Máy chủ đã ghi nhận hồ sơ.';await checkConnection();status(r.message||'Đã lưu hồ sơ trên máy chủ.','ok')}
