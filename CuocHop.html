@@ -522,7 +522,7 @@ window.hvaNotice=function(message){
   <form id="meetingForm" class="space-y-4" onsubmit="saveDraft(event)">
     <!-- HVA MEETING AI V1: chỉ soạn dự thảo, không phát hành -->
     <section class="panel-card p-4 sm:p-5 space-y-3" id="hvaMeetingAIBox">
-      <div class="section-title"><i class="bi bi-stars"></i><span>TRỢ LÝ AI TẠO DỰ THẢO CUỘC HỌP</span></div>
+      <div class="section-title"><i class="bi bi-stars"></i><span>TRỢ LÝ EDOS – SOẠN DỰ THẢO CUỘC HỌP</span></div>
       <label class="lbl" for="hvaMeetingAIPrompt">Yêu cầu tạo cuộc họp</label>
       <textarea id="hvaMeetingAIPrompt" maxlength="3000" rows="3" class="field textarea-field"
         style="display:block;box-sizing:border-box;width:100%;height:110px;min-height:110px;padding:14px 16px;line-height:1.6;resize:vertical;overflow-y:auto"
@@ -531,8 +531,8 @@ window.hvaNotice=function(message){
       <div class="flex flex-wrap items-center gap-3">
         <button id="nvsVoiceBtn" type="button" onclick="nvsToggleVoice()" class="raised-btn raised-blue px-4" aria-pressed="false" title="Nhập yêu cầu bằng giọng nói tiếng Việt"><i class="bi bi-mic-fill"></i> NHẬP BẰNG GIỌNG NÓI</button>
         <button id="hvaMeetingAIBtn" type="button" onclick="generateMeetingDraftAI()"
-          class="raised-btn raised-blue px-5"><i class="bi bi-stars"></i> TẠO DỰ THẢO BẰNG AI</button>
-        <span class="text-xs text-slate-500">AI chỉ điền dự thảo; thầy/cô kiểm tra trước khi lưu hoặc phát hành.</span>
+          class="raised-btn raised-blue px-5"><i class="bi bi-stars"></i> TRỢ LÝ EDOS SOẠN DỰ THẢO</button>
+        <span class="text-xs text-slate-500">Trợ lý EDOS chỉ hỗ trợ lập dự thảo; thầy/cô kiểm tra trước khi lưu hoặc phát hành.</span>
       </div>
       <div id="nvsVoiceStatus" role="status" aria-live="polite" class="text-xs font-semibold text-slate-600"></div>
       <div id="nvsAIMissingFields" class="hidden rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs text-sky-900" aria-live="polite"></div>
@@ -717,7 +717,7 @@ function nvsVoiceStop(message, error) {
   const rec = nvsVoiceRecognition;
   nvsVoiceRecognition = null;
   if (rec) { try { rec.stop(); } catch (_) {} }
-  nvsVoiceStatus(message || 'Đã dừng nhập giọng nói. Kiểm tra nội dung rồi nhấn TẠO DỰ THẢO BẰNG AI.', !!error);
+  nvsVoiceStatus(message || 'Đã dừng nhập giọng nói. Kiểm tra nội dung rồi nhấn TRỢ LÝ EDOS SOẠN DỰ THẢO.', !!error);
 }
 function nvsVoiceAppend(text) {
   const field = $('hvaMeetingAIPrompt');
@@ -836,7 +836,7 @@ function hvaMeetingAISetStatus(message, error) {
   }
 }
 function hvaMeetingAIApply(d) {
-  if (!d || typeof d !== 'object') throw Error('Dự thảo AI không hợp lệ.');
+  if (!d || typeof d !== 'object') throw Error('Dự thảo từ Trợ lý EDOS không hợp lệ.');
   // Chỉ cập nhật các trường có dữ liệu; không xóa nội dung người dùng đã nhập.
   if (d.title) {
     const options = Array.from($('meetingTitle').options);
@@ -872,8 +872,8 @@ function hvaMeetingAIApply(d) {
     const suggestedGroup = nvsMeetingGroupSuggestion(d);
     attendeeBox.classList.toggle('hidden', !attendee && !suggestedGroup);
     attendeeBox.textContent = attendee
-      ? 'Thành phần AI ghi nhận: ' + attendee + (suggestedGroup ? '. Gợi ý nhóm nhân sự: ' + suggestedGroup : '') + '. Thầy/cô xác nhận và chọn nhóm/người ở mục Thành phần tham dự; AI không tự chọn.'
-      : (suggestedGroup ? 'Gợi ý nhóm nhân sự: ' + suggestedGroup + '. Thầy/cô xác nhận và chọn thủ công; AI không tự chọn.' : '');
+      ? 'Thành phần AI ghi nhận: ' + attendee + (suggestedGroup ? '. Gợi ý nhóm nhân sự: ' + suggestedGroup : '') + '. Thầy/cô xác nhận và chọn nhóm/người ở mục Thành phần tham dự; Trợ lý EDOS không tự chọn.'
+      : (suggestedGroup ? 'Gợi ý nhóm nhân sự: ' + suggestedGroup + '. Thầy/cô xác nhận và chọn thủ công; Trợ lý EDOS không tự chọn.' : '');
   }
   const warningsBox = $('hvaMeetingAIWarnings');
   if (warningsBox) {
@@ -899,7 +899,7 @@ async function generateMeetingDraftAI() {
   if (btn.disabled) return;
   btn.disabled = true;
   btn.classList.add('opacity-60');
-  hvaMeetingAISetStatus('Gemini đang soạn dự thảo cuộc họp...');
+  hvaMeetingAISetStatus('Trợ lý EDOS đang soạn dự thảo cuộc họp...');
   try {
     const res = await fetch(WEB_APP_URL, {
       method: 'POST',
@@ -916,7 +916,7 @@ async function generateMeetingDraftAI() {
       if (data && /POST action không hợp lệ: generateMeetingAIDraft/.test(String(data.message || ''))) {
         throw Error('Backend Web App đang dùng chưa có action AI. Cần cập nhật bản triển khai Backend tổng (giữ nguyên URL /exec).');
       }
-      throw Error((data && data.message) || 'Backend chưa trả về dự thảo AI.');
+      throw Error((data && data.message) || 'Máy chủ chưa trả về nội dung dự thảo.');
     }
     hvaMeetingAIApply(data.draft);
     hvaMeetingAISetStatus('Đã điền dự thảo. Vui lòng rà lại thông tin, chọn người tham dự và bổ sung Google Meet thật (nếu họp trực tuyến).');
