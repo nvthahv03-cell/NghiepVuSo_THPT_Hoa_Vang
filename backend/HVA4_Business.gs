@@ -8,6 +8,8 @@
 function HVA4_dispatch_(req, principal){
  try{
   const u=HVA4_actor_(principal),a=String(req&&req.action||''),module=String(req&&req.module||'');
+  if(a==='hva4PlanGet')return HVA4_planGet_(u);
+  if(a==='hva4PlanSave')return HVA4_planSave_(req,u);
   if(a==='hva4Get')return HVA4_get_(module,u);
   if(a==='hva4Save')return HVA4_save_(module,req.record,!!req.draft,u);
   if(a==='hva4ImportRoster')return HVA4_importRoster_(req.students,u);
