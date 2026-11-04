@@ -32,25 +32,56 @@ pre{white-space:pre-wrap;word-break:break-word;font:inherit;margin:0}.list-row{b
 .group-card[open]{border-color:#92c7e0}.group-card summary{min-height:43px}
 @media(max-width:530px){.search-wrap input{font-size:16px}.selected-chips{max-height:110px;overflow-y:auto}.person-tools{gap:5px}.person-tools button{font-size:12px}}
 </style>
+
+<style id="hva-remind-compact-workflow">
+:root{--navy:#12355d;--gold:#eab95b}
+body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 16px}
+.head{border:1px solid #d9ac5a;border-bottom:0;background:linear-gradient(117deg,#081f3b 0%,#11385d 62%,#16637a 100%);padding:17px 22px;border-radius:15px;box-shadow:0 9px 23px #183e6318;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.head:after{width:110px;height:110px;top:-50px;right:100px;opacity:.35}
+.head-main{display:flex;gap:12px;align-items:center;min-width:0}.head-icon{display:grid;place-items:center;width:49px;height:49px;flex:none;border-radius:14px;background:linear-gradient(135deg,#ffe7af,#d69c3f);color:#14385b;font-size:27px;box-shadow:0 5px 12px #0b193b4a}
+.head-titles{min-width:0}.head .eyebrow{font-size:10px;letter-spacing:.13em;color:#e9c98a;font-weight:750}.head h1{font-size:22px;line-height:1.18;margin:4px 0 2px;letter-spacing:.018em}.head p{font-size:11px;margin:0;color:#cee2f3}
+.head-user{position:relative;z-index:1;max-width:40%;border:1px solid #ffffff45;background:#ffffff16;border-radius:12px;padding:10px 12px;color:#fff;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650;line-height:1.45}
+.head-user-dot{height:9px;width:9px;flex:none;border-radius:50%;background:#eab95b}.head-user.authenticated .head-user-dot{background:#4adea1}
+.layout{grid-template-columns:minmax(0,1.65fr) minmax(230px,.62fr);gap:12px;margin-top:12px}.panel{padding:17px 19px;border-radius:13px;box-shadow:0 3px 15px #1341690a}
+.workflow-steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.workflow-steps span{background:#eff6fd;color:#174d77;border-radius:7px;padding:6px 10px;font-size:11px;font-weight:700}.workflow-steps b{background:#146da1;color:white;border-radius:50%;padding:2px 6px;margin-right:3px}
+.auth-compact{margin:0 0 9px;border-left:3px solid #31a77e;padding:2px 8px}.step-heading{display:flex;align-items:center;gap:9px;font-size:15px;margin:14px 0 10px}.step-heading>span{display:grid;place-items:center;background:#0d639a;color:white;border-radius:8px;padding:5px;font-size:11px;min-width:28px}.step-heading small{font-weight:450;color:#647e92;font-size:11px}
+.people{max-height:245px;padding:4px 8px}.group-card{margin:5px 0}.group-card summary{min-height:38px;padding:7px 10px}.person{padding:5px 2px}.selected-chips{max-height:82px;overflow-y:auto}
+.template-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-bottom:8px}.template-count{font-size:12px;color:#396780;font-weight:700}.btn-link{border:0;background:transparent;color:#a84625;font-size:12px;cursor:pointer}
+.template-picker{border:1px solid #a4d0e7;background:#f7fbff;padding:10px;border-radius:11px;margin:8px 0 10px}.template-picker[hidden]{display:none!important}
+.template-results{max-height:270px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.template-item{display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid #d9e7f1;border-radius:9px;padding:9px;font-weight:500;margin:0;cursor:pointer;min-width:0}
+.template-item:has(input:checked){border-color:#1590ba;background:#eaf9ff}.template-item input{width:17px;height:17px;flex:none;margin:2px 0 0}.template-item span{min-width:0}.template-item strong{display:block;font-size:12px;line-height:1.35}.template-item small{color:#7591a2;font-size:10px}
+.template-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;font-size:11px;color:#597a90}.template-count{border-radius:20px;background:#e7f3fc;padding:5px 9px}
+.draft-actions{display:flex;gap:10px;flex-wrap:wrap}.draft-actions button{flex:1;min-width:155px}.assistant-btn{background:linear-gradient(110deg,#0b587b,#14749d);color:#fff}
+.guidance-panel h2{margin-bottom:12px}.guide-line{border-bottom:1px solid #e8eef4;padding:9px 0;display:flex;flex-direction:column;gap:3px;font-size:12px;color:#5c7185}.guide-line strong{font-size:12px;color:#153d61}.guidance-panel .note{padding:10px;margin-top:10px}.guidance-panel .list-row{max-height:300px;overflow-y:auto}
+@media(max-width:850px){.layout{grid-template-columns:minmax(0,1fr)}.guidance-panel{display:none}.head-user{max-width:48%}}
+@media(max-width:540px){.head{padding:13px;gap:8px;align-items:flex-start}.head-icon{width:36px;height:36px;font-size:20px}.head .eyebrow{font-size:8px}.head h1{font-size:17px}.head p{font-size:10px}.head-user{font-size:10px;max-width:38%;padding:7px}.panel{padding:13px}.template-results{grid-template-columns:1fr}.step-heading{flex-wrap:wrap}.step-heading small{width:100%;padding-left:37px}.workflow-steps{gap:4px}.workflow-steps span{padding:5px;font-size:10px}}
+</style>
 </head>
 <body>
 <div class="shell">
-<header class="head"><div class="eyebrow">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG · TRƯỜNG THPT HÒA VANG</div><h1>NHẮC NHỞ CÔNG VỤ</h1><p>Ban Giám hiệu · Soạn nội dung · Chọn người nhận · Duyệt trước khi gửi</p></header>
+<header class="head" aria-label="Điều hành nhắc nhở công vụ">
+ <div class="head-main"><div class="head-icon" aria-hidden="true">✦</div><div class="head-titles"><div class="eyebrow">TRƯỜNG THPT HÒA VANG · HVA-EDOS</div><h1>NHẮC NHỞ CÔNG VỤ</h1><p>Điều hành nền nếp · Chọn nhanh · Duyệt trước khi gửi</p></div></div>
+ <div class="head-user" id="headUser" aria-live="polite"><span class="head-user-dot" aria-hidden="true"></span><span id="headUserText">Đang xác thực người truy cập…</span></div>
+</header>
 <div class="layout">
 <section class="panel">
-<div class="note" style="margin-bottom:14px"><strong>Ban Giám hiệu · Soạn và gửi nhắc nhở</strong><div class="hint">Giáo viên và nhân viên xem, tiếp nhận và phản hồi tại “Việc của tôi” trên trang chính.</div></div>
+<div class="workflow-steps" aria-label="Quy trình"><span><b>1</b> Chọn người nhận</span><span><b>2</b> Chọn mẫu</span><span><b>3</b> Duyệt và gửi</span></div>
 <div id="sendView">
-<div class="note" id="authInfo">Đang kiểm tra phiên đăng nhập và quyền gửi…</div>
-<h2 style="margin-top:18px">01 · Người nhận</h2>
+<div class="hint auth-compact" id="authInfo">Đang xác thực quyền Ban Giám hiệu…</div>
+<h2 class="step-heading"><span>01</span> Người nhận <small>Chọn một hoặc nhiều người, tổ, nhóm</small></h2>
 <div class="two"><div class="field"><label for="team">Tổ / bộ phận</label><select id="team"><option value="">Tất cả tổ / bộ phận</option></select></div><div class="field"><label for="search">Kính lúp · Tìm nhanh nhân sự</label><div class="search-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search" type="search" autocomplete="off" placeholder="🔍 Tìm giáo viên, tổ, nhóm (gõ không dấu được)…" aria-label="Tìm giáo viên theo tên, tên đăng nhập, tổ hoặc nhóm"><button class="search-clear" id="clearSearch" type="button" title="Xóa từ khóa" aria-label="Xóa từ khóa">×</button></div></div></div>
 <div class="person-tools"><button type="button" id="selectVisible">Chọn tất cả kết quả lọc</button><button type="button" id="clearSelection">Bỏ chọn tất cả</button><span class="person-count" id="personCount">Chưa tải nhân sự</span></div><div class="people" id="people"><div class="muted" style="padding:12px">Chưa tải được danh sách nhân sự.</div></div><div class="hint" id="selectionCount">Đã chọn 0 người</div><div class="selected-chips" id="selectedChips"></div>
-<h2 style="margin-top:24px">02 · Nội dung và mức độ</h2>
-<div class="field"><label for="scenario">Tình huống nhắc nhở <span style="color:#b42332">*</span></label><select id="scenario"></select></div>
+<h2 class="step-heading"><span>02</span> Mẫu nhắc nhở <small>Có thể kết hợp nhiều tình huống</small></h2>
+<div class="template-toolbar"><button type="button" class="btn outline" id="templateOpen" aria-expanded="false" aria-controls="templatePicker">☷ Chọn mẫu nhắc nhở</button><span id="templateCount" class="template-count">Chưa chọn mẫu</span><button type="button" id="templateClear" class="btn-link">Bỏ chọn mẫu</button></div>
+<div id="templatePicker" class="template-picker" hidden><div class="search-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="templateSearch" autocomplete="off" placeholder="Tìm mẫu: lên lớp, chào cờ, báo cáo, coi kiểm tra…" aria-label="Tìm mẫu nhắc nhở"></div><div id="templateResults" class="template-results"></div><div class="template-footer"><span id="templateHint">Chọn một hoặc nhiều mẫu</span><button type="button" class="btn primary" id="templateApply">Dùng các mẫu đã chọn</button></div></div>
+<div class="selected-chips" id="templateChips" aria-live="polite"></div>
+<select id="scenario" class="hidden" aria-label="Mẫu đang chọn"></select>
 <div class="two"><div class="field"><label for="level">Mức độ</label><select id="level"><option value="NHAC_NHO">Mức 1 · Nhắc nhở</option><option value="CANH_BAO">Mức 2 · Cảnh báo</option><option value="GIAI_TRINH">Mức 3 · Yêu cầu giải trình</option></select></div><div class="field"><label for="tone">Văn phong dự thảo</label><select id="tone"><option value="LICH_SU_NGHIEM_KHAC">Lịch sự, nghiêm khắc</option><option value="CHUAN_HANH_CHINH">Chuẩn hành chính</option><option value="NGAN_GON">Ngắn gọn, dứt khoát</option></select></div></div>
 <div class="two"><div class="field"><label for="eventDate">Ngày ghi nhận sự việc</label><input type="date" id="eventDate"></div><div class="field"><label for="deadline">Hạn phản hồi (nếu có)</label><input type="datetime-local" id="deadline"></div></div>
 <div class="field"><label for="facts">Thông tin thực tế đã ghi nhận / yêu cầu cụ thể</label><textarea id="facts" placeholder="Ví dụ: Buổi chào cờ ngày…, theo lịch công tác; chưa nhận được thông tin xin phép. Chỉ nhập dữ kiện đã kiểm tra."></textarea><div class="hint">Không đưa nhận định chưa xác minh thành kết luận vi phạm.</div></div>
-<div class="three"><button class="btn outline" id="templateBtn" type="button">Dùng mẫu cơ bản</button><button class="btn outline" id="geminiBtn" type="button">✦ Gemini soạn</button><button class="btn outline" id="openaiBtn" type="button">✦ OpenAI soạn</button></div>
-<h2 style="margin-top:24px">03 · Duyệt trước khi gửi</h2>
+<div class="draft-actions"><button class="btn outline" id="templateBtn" type="button">↻ Tạo dự thảo từ mẫu</button><button class="btn assistant-btn" id="geminiBtn" type="button">✦ Trợ lý EDOS</button></div>
+<h2 class="step-heading"><span>03</span> Duyệt và gửi <small>Kiểm tra trước khi phát hành</small></h2>
 <div class="field"><label for="subject">Tiêu đề <span style="color:#b42332">*</span></label><input id="subject" placeholder="Nhắc nhở về việc chấp hành lịch công tác"></div>
 <div class="field"><label for="content">Nội dung gửi <span style="color:#b42332">*</span></label><textarea id="content" rows="9" placeholder="BGH kiểm tra và chỉnh sửa nội dung tại đây…"></textarea></div>
 <div class="record"><strong>Thông báo ghi vết (NVS tự đính kèm khi gửi thành công)</strong><p id="traceText" style="margin:6px 0 0">Nội dung nhắc nhở này được lưu trong lịch sử công vụ NVS để theo dõi việc tiếp nhận, phản hồi và đối chiếu khi cần thiết. Việc ghi nhận không đồng nghĩa với kết luận vi phạm khi chưa được xác minh.</p></div>
@@ -59,13 +90,14 @@ pre{white-space:pre-wrap;word-break:break-word;font:inherit;margin:0}.list-row{b
 </div>
 
 </section>
-<aside class="panel">
-<h2>Hướng dẫn sử dụng</h2>
-<div class="note"><strong>Hỗ trợ soạn thảo</strong><p style="margin:6px 0 0">Gemini và OpenAI chỉ hỗ trợ dự thảo. BGH duyệt và quyết định gửi. Nếu API chưa sẵn sàng, vẫn có thể dùng mẫu cơ bản.</p></div>
-<h3>Nhóm tình huống</h3><div class="chips"><span class="chip">Chào cờ</span><span class="chip">Lễ / sự kiện</span><span class="chip">Họp</span><span class="chip">Giờ lên lớp</span><span class="chip">Báo cáo</span><span class="chip">Coi kiểm tra</span><span class="chip">Nền nếp công vụ</span><span class="chip">Nhiệm vụ</span><span class="chip">Khảo sát</span><span class="chip">Bình chọn</span><span class="chip">Đăng ký</span><span class="chip">Khác</span><span class="chip">Nhiệm vụ được giao</span><span class="chip">Khảo sát</span><span class="chip">Bình chọn</span><span class="chip">Đăng ký</span><span class="chip">Khác</span></div>
-<h3>Nguyên tắc bắt buộc</h3><div class="list-row">① Chỉ BGH đã xác thực được quyền gửi.</div><div class="list-row">② Ghi rõ dữ kiện, phân biệt vắng không phép với chưa xác minh việc xin phép.</div><div class="list-row">③ Người nhận xem và phản hồi ở “Việc của tôi”; không vào chức năng soạn nhắc nhở.</div><div class="list-row">④ Nhật ký gửi và phản hồi phải do Backend ghi nhận, không dựa vào dữ liệu trình duyệt.</div>
-<h3>Xem trước nội dung</h3><div class="list-row" id="previewBox"><span class="muted">Bấm “Xem trước” để kiểm tra nội dung trước khi gửi.</span></div>
-<div class="note warning"><strong>Trạng thái tích hợp</strong><p style="margin:6px 0 0">Cho phép tìm nhân sự và soạn dự thảo; chỉ gửi thực khi máy chủ EDOS cung cấp API lưu và xác nhận giao dịch. Không tạo thông báo giả.</p></div>
+<aside class="panel guidance-panel">
+<h2>Thao tác nhanh</h2>
+<div class="guide-line"><strong>1. Người nhận</strong><span>Kính lúp tìm theo giáo viên, tổ hoặc nhóm; chọn nhiều người và không trùng.</span></div>
+<div class="guide-line"><strong>2. Mẫu nhắc nhở</strong><span>Mở kho mẫu, tìm từ khóa, tích nhiều tình huống rồi ghép thành một dự thảo.</span></div>
+<div class="guide-line"><strong>3. Trợ lý EDOS</strong><span>Hỗ trợ diễn đạt nội dung; BGH rà soát dữ kiện trước khi gửi.</span></div>
+<div class="guide-line"><strong>4. Người nhận</strong><span>Xem và phản hồi nội dung đích danh tại “Việc của tôi”.</span></div>
+<h3>Xem trước nội dung</h3><div class="list-row" id="previewBox"><span class="muted">Dự thảo sẽ xuất hiện tại đây sau khi bấm “Xem trước”.</span></div>
+<div class="note warning"><strong>Kiểm soát gửi</strong><p>Chỉ phát hành khi máy chủ xác nhận chức năng lưu và gửi. Không tạo tin nhắn giả.</p></div>
 </aside>
 </div></div>
 <script src="HVA_Personnel.js"></script>
@@ -79,8 +111,8 @@ pre{white-space:pre-wrap;word-break:break-word;font:inherit;margin:0}.list-row{b
      if(!token||!Number.isFinite(ex)||ex<=Date.now())throw Error("Phiên đăng nhập EDOS đã hết hạn.");
      const u=JSON.parse(getStore("user")||"{}");
      const role=String(u.chucVu||u.viTriViecLam||"")+" "+String(u.vaiTro||u.role||"");
-     const folded=role.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/đ/gi,"d").toLowerCase();
-     return {username:u.username||u.tenDangNhap,hoTen:u.hoTen||u.hoten,role,sessionToken:token,isBGH:/hieu truong|pho hieu truong|ban giam hieu|\\bbgh\\b/.test(folded)};
+     const folded=Array.from(role.normalize("NFD")).filter(ch=>{const c=ch.charCodeAt(0);return c<768||c>879}).join("").replace(/đ/gi,"d").toLowerCase();
+     return {username:u.username||u.tenDangNhap,hoTen:u.hoTen||u.hoten||u.hoVaTen||u.tenHienThi,role,sessionToken:token,isBGH:/hieu truong|pho hieu truong|ban giam hieu|\\bbgh\\b/.test(folded)};
    },
    getPersonnel:async function(){
      if(!window.HVAPersonnel||typeof window.HVAPersonnel.buildGroups!=="function")throw Error("Chưa nạp danh sách nhân sự HVA.");
@@ -147,7 +179,7 @@ function nvsReminderBGHGuard(){
   }
   return true;
 }
-const $=id=>document.getElementById(id), state={session:null,people:[],groups:[],selected:new Set(),inbox:[]};
+const $=id=>document.getElementById(id), state={session:null,people:[],groups:[],selected:new Set(),templates:new Set()};
 const fold=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase();
 function visiblePeople(){
  const q=fold($('search').value.trim()),t=$('team').value;
@@ -163,7 +195,7 @@ const err=e=>String(e&&e.message||e||'Không xác định');
 function status(id,msg,type=''){const el=$(id);el.textContent=msg;el.className='status '+type;}
 function call(method,arg){if(typeof BRIDGE[method]!=='function')return Promise.reject(Error('Chưa kết nối Backend: '+method));return Promise.resolve().then(()=>BRIDGE[method](arg));}
 function isBGH(){return !!(state.session&&state.session.isBGH);}
-function payload(){return {sessionToken:state.session?.sessionToken||'',scenarioCode:$('scenario').value,scenarioLabel:$('scenario').selectedOptions[0]?.textContent||'',level:$('level').value,tone:$('tone').value,eventDate:$('eventDate').value,deadline:$('deadline').value,facts:$('facts').value.trim()};}
+function payload(){const codes=scenarioCodes(),names=codes.map(x=>scenarios.find(s=>s[0]===x)?.[1]).filter(Boolean);return {sessionToken:state.session?.sessionToken||'',scenarioCode:codes.length>1?'MULTI':codes[0]||'',scenarioCodes:codes,scenarioLabel:names.join('; '),level:$('level').value,tone:$('tone').value,eventDate:$('eventDate').value,deadline:$('deadline').value,facts:$('facts').value.trim()};}
 function renderPeople(){
  const q=fold($('search').value.trim()),team=$('team').value;
  const previous=new Set([...$('people').querySelectorAll('details[open]')].map(x=>x.dataset.key));
@@ -179,7 +211,7 @@ function renderPeople(){
    const members=(g.members||[]).map(m=>state.people.find(p=>p.username===m.username)).filter(Boolean).filter(p=>visUsers.has(p.username));
    if(!members.length)return;
    members.forEach(p=>renderedUsers.add(p.username));
-   const key=String(g.groupKey||g.key||g.name||g.tenNhom||label)+'_'+kind+'_'+idx;
+   const key=String(g.groupKey||g.key||g.name||g.tenNhom||g.tenTo||label)+'_'+kind+'_'+idx;
    const opened=!!q||previous.has(key)||(!previous.size&&kind==='COUNCIL');
    inner+='<details class="group-card" data-key="'+esc(key)+'" '+(opened?'open':'')+'><summary><span>'+esc(g.name||g.tenNhom||g.groupName||g.tenTo||label)+'</span><span>'+members.length+' người</span></summary><div class="group-members"><label class="person"><input type="checkbox" data-group="'+esc(key)+'"><span><strong>Chọn toàn nhóm đang hiển thị</strong></span></label>'+rows(members)+'</div></details>';
    count++;
@@ -194,7 +226,7 @@ function renderPeople(){
  $('selectedChips').innerHTML=[...state.selected].map(u=>{const p=state.people.find(x=>x.username===u);return '<span class="selected-chip">'+esc(p?.hoTen||u)+'<button type="button" data-remove="'+esc(u)+'" aria-label="Bỏ chọn '+esc(p?.hoTen||u)+'">×</button></span>';}).join('')||'<span class="muted">Chưa chọn người nhận.</span>';
 }
 function normalizePersonnel(m){
-return {username:String(m.username||'').trim(),hoTen:String(m.hoTen||m.name||'').trim(),to:String(m.to||m.tenTo||m.toChuyenMon||'').trim(),chucVu:String(m.chucVu||m.vaiTro||'').trim()};
+return {username:String(m.username||m.userName||'').trim(),hoTen:String(m.hoTen||m.name||'').trim(),to:String(m.to||m.tenTo||m.toChuyenMon||m.groupLabel||'').trim(),chucVu:String(m.chucVu||m.vaiTro||'').trim()};
 }
 function installGroups(raw){
 state.groups=Array.isArray(raw)?raw.filter(g=>Array.isArray(g.members)):[];
@@ -203,16 +235,48 @@ const unique=new Map(state.people.map(p=>[p.username,p]));
 all.forEach(p=>{if(!unique.has(p.username))unique.set(p.username,p);});
 state.people=[...unique.values()].sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
 }
+
+function scenarioCodes(){return [...state.templates];}
+function updateTemplateView(){
+ const names=scenarioCodes().map(code=>scenarios.find(s=>s[0]===code)).filter(Boolean);
+ $('templateCount').textContent=names.length?names.length+' mẫu đã chọn':'Chưa chọn mẫu';
+ $('templateChips').innerHTML=names.map(s=>'<span class="selected-chip">'+esc(s[1])+' <button type="button" data-template-remove="'+esc(s[0])+'" aria-label="Bỏ mẫu '+esc(s[1])+'">×</button></span>').join('')||'<span class="muted">Bấm “Chọn mẫu nhắc nhở” để tìm và chọn một hoặc nhiều mẫu.</span>';
+ $('scenario').value=names[0]?.[0]||'NN-OTHER';
+}
+function renderTemplateResults(){
+ const q=fold($('templateSearch').value);
+ const rows=scenarios.filter(x=>!q||fold(x[0]+' '+x[1]).includes(q));
+ $('templateResults').innerHTML=rows.map(x=>'<label class="template-item"><input type="checkbox" data-template="'+esc(x[0])+'" '+(state.templates.has(x[0])?'checked':'')+'><span><strong>'+esc(x[1])+'</strong><small>'+esc(x[0])+'</small></span></label>').join('')||'<div class="muted" style="padding:15px">Không có mẫu phù hợp.</div>';
+ $('templateHint').textContent='Tìm thấy '+rows.length+' mẫu · Đã chọn '+state.templates.size;
+}
+$('templateOpen').onclick=()=>{
+ const show=$('templatePicker').hidden;
+ $('templatePicker').hidden=!show;$('templateOpen').setAttribute('aria-expanded',String(show));
+ if(show){renderTemplateResults();$('templateSearch').focus();}
+};
+$('templateSearch').addEventListener('input',renderTemplateResults);
+$('templateResults').addEventListener('change',e=>{
+ const el=e.target.closest('input[data-template]');if(!el)return;
+ el.checked?state.templates.add(el.dataset.template):state.templates.delete(el.dataset.template);
+ updateTemplateView();renderTemplateResults();
+});
+$('templateChips').addEventListener('click',e=>{
+ const b=e.target.closest('[data-template-remove]');if(!b)return;
+ state.templates.delete(b.dataset.templateRemove);updateTemplateView();renderTemplateResults();
+});
+$('templateClear').onclick=()=>{state.templates.clear();updateTemplateView();renderTemplateResults();};
+$('templateApply').onclick=()=>{$('templatePicker').hidden=true;$('templateOpen').setAttribute('aria-expanded','false');basicDraft();};
 async function initialize(){
-$('scenario').innerHTML=scenarios.map(s=>'<option value="'+esc(s[0])+'">'+esc(s[1])+'</option>').join('');
+$('scenario').innerHTML=scenarios.map(s=>'<option value="'+esc(s[0])+'">'+esc(s[1])+'</option>').join('');updateTemplateView();
 try{state.session=await call('getSession');if(!state.session?.sessionToken)throw Error('Chưa có phiên đăng nhập hợp lệ.');
 if(!isBGH())throw Error('Chỉ Ban Giám hiệu được quyền soạn và gửi nhắc nhở.');
-$('authInfo').textContent='Phiên đăng nhập: '+(state.session.hoTen||state.session.username)+' · Ban Giám hiệu soạn và gửi; người nhận xem tại Việc của tôi.';
+$('headUserText').textContent=(state.session.hoTen||state.session.username||'Tài khoản BGH')+' · '+(state.session.role||'Ban Giám hiệu');
+$('headUser').classList.add('authenticated');
+$('authInfo').textContent='Đã xác thực tài khoản Ban Giám hiệu. Nội dung gửi riêng được nhận tại “Việc của tôi”.';
 const connected=typeof BRIDGE.sendReminder==='function';
 $('sendBtn').disabled=!connected;
 if(!connected)status('sendStatus','Đang ở chế độ chuẩn bị nội dung. Backend chưa có chức năng gửi và lưu nhắc nhở; nút Gửi được khóa để tránh ghi nhận sai.','error');
 $('geminiBtn').disabled=typeof BRIDGE.generateDraft!=='function';
-$('openaiBtn').disabled=typeof BRIDGE.generateDraft!=='function';
 const r=await call('getPersonnel',{sessionToken:state.session.sessionToken});state.people=Array.isArray(r)?r:Array.isArray(r?.people)?r.people:[];
 state.people=state.people.map(normalizePersonnel).filter(p=>p.username&&p.hoTen).filter((p,i,a)=>a.findIndex(x=>x.username===p.username)===i).sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
 if(Array.isArray(window.NVS_REMINDER_PERSONNEL_GROUPS))installGroups(window.NVS_REMINDER_PERSONNEL_GROUPS);
@@ -221,7 +285,7 @@ try{installGroups(await window.HVAPersonnel.buildGroups());}
 catch(ex){console.warn('Không tải được nhóm từ HVA Personnel',ex);}
 }
 const teams=[...new Set(state.people.map(p=>p.to).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));$('team').innerHTML='<option value="">Tất cả tổ / bộ phận</option>'+teams.map(t=>'<option value="'+esc(t)+'">'+esc(t)+'</option>').join('');renderPeople();
-}catch(e){$('authInfo').textContent='Chưa thể khởi tạo chức năng nhắc nhở: '+err(e);$('sendBtn').disabled=true;}
+}catch(e){$('authInfo').textContent='Chưa thể khởi tạo chức năng nhắc nhở: '+err(e);$('headUserText').textContent='Chưa xác thực được người truy cập';$('sendBtn').disabled=true;}
 }
 $('team').addEventListener('change',renderPeople);$('search').addEventListener('input',renderPeople);$('search').addEventListener('search',renderPeople);$('clearSearch').onclick=()=>{$('search').value='';renderPeople();$('search').focus();};
 $('selectVisible').onclick=()=>{if(!isBGH())return;visiblePeople().forEach(p=>state.selected.add(p.username));renderPeople();};$('clearSelection').onclick=()=>{state.selected.clear();renderPeople();};
@@ -230,10 +294,11 @@ $('people').addEventListener('change',e=>{
 if(e.target.matches('input[data-group]')){const details=e.target.closest('details');details.querySelectorAll('input[data-user]').forEach(x=>{e.target.checked?state.selected.add(x.dataset.user):state.selected.delete(x.dataset.user);});renderPeople();return;}
 if(e.target.matches('input[data-user]')){const u=e.target.dataset.user;e.target.checked?state.selected.add(u):state.selected.delete(u);$('selectionCount').textContent='Đã chọn '+state.selected.size+' / '+state.people.length+' người';renderPeople();}});
 function basicDraft(){
- const p=payload(),entry=scenarios.find(x=>x[0]===p.scenarioCode);
- const topic=entry?.[1]||'việc thực hiện nhiệm vụ',date=p.eventDate?p.eventDate.split('-').reverse().join('/'):'[ngày/tháng/năm]';
- const observed=p.facts?'Thông tin cần đối chiếu: '+p.facts+'\n\n':'';
- const special={
+ const p=payload(),chosen=scenarioCodes();
+ if(!chosen.length){$('templatePicker').hidden=false;$('templateOpen').setAttribute('aria-expanded','true');renderTemplateResults();$('templateSearch').focus();status('sendStatus','Hãy chọn ít nhất một mẫu nhắc nhở.');return;}
+ const date=p.eventDate?p.eventDate.split('-').reverse().join('/'):'[ngày/tháng/năm]';
+ const items=chosen.map(code=>scenarios.find(x=>x[0]===code)).filter(Boolean);
+  const special={
   'NN-G01':'Qua theo dõi việc thực hiện thời khóa biểu ngày '+date+', nhà trường ghi nhận nội dung cần đối chiếu về thời gian vào lớp của Thầy/Cô. Đề nghị Thầy/Cô kiểm tra, phản hồi thông tin và thực hiện đúng giờ lên lớp, bảo đảm thời lượng tiết dạy.',
   'NN-G04':'Qua theo dõi giờ học ngày '+date+', nhà trường ghi nhận tình trạng học sinh sử dụng điện thoại chưa đúng quy định. Đề nghị Thầy/Cô kiểm tra sự việc, hướng dẫn học sinh sử dụng thiết bị đúng quy định và phối hợp với giáo viên chủ nhiệm khi cần thiết.',
   'NN-G05':'Qua theo dõi tiết học ngày '+date+', nhà trường ghi nhận nội dung cần kiểm tra liên quan đến việc chấp hành nội quy lớp học của học sinh. Đề nghị Thầy/Cô xác minh tình hình, thực hiện biện pháp giáo dục phù hợp và phối hợp với giáo viên chủ nhiệm.',
@@ -246,26 +311,36 @@ function basicDraft(){
   'NN-K01':'Qua theo dõi công tác coi kiểm tra, nhà trường ghi nhận nội dung cần đối chiếu về việc thực hiện nhiệm vụ tại ca, phòng được phân công. Đề nghị Thầy/Cô kiểm tra, phản hồi thông tin và thực hiện đầy đủ quy trình coi kiểm tra theo quy định.',
   'NN-K02':'Qua theo dõi hoạt động công vụ ngày '+date+', nhà trường ghi nhận việc sử dụng thẻ viên chức có nội dung cần nhắc nhở. Đề nghị Thầy/Cô thực hiện đúng quy định về đeo thẻ trong thời gian làm việc.'
  };
- const general='Nhà trường đề nghị Thầy/Cô kiểm tra, rà soát nội dung: '+topic+'. Trường hợp thông tin ghi nhận là chính xác, đề nghị chủ động khắc phục và thực hiện đúng yêu cầu công vụ.';
- const direction=p.level==='GIAI_TRINH'?'Đề nghị Thầy/Cô phản hồi và làm rõ thông tin để nhà trường có cơ sở xem xét khách quan.':p.level==='CANH_BAO'?'Đề nghị Thầy/Cô nghiêm túc lưu ý, khắc phục nội dung đã ghi nhận và tránh để tái diễn.':'Đề nghị Thầy/Cô quan tâm thực hiện và phối hợp với bộ phận phụ trách.';
- const deadline=p.deadline?'\n\nThời hạn phản hồi: '+p.deadline.replace('T',' lúc ')+'.':'';
- $('subject').value='Nhắc nhở công vụ – '+topic;
- $('content').value='Kính gửi Thầy/Cô,\n\n'+observed+(special[p.scenarioCode]||general)+'\n\n'+direction+deadline+'\n\nNếu có nội dung chưa được cập nhật hoặc lý do cần làm rõ, đề nghị Thầy/Cô phản hồi để nhà trường đối chiếu.\n\nTrân trọng.';
- status('sendStatus','Đã tạo dự thảo theo tình huống. Vui lòng bổ sung dữ kiện cụ thể, kiểm tra lại trước khi gửi.');
+ const lines=items.map((item,i)=>{
+  const topic=item[1],general='Theo ghi nhận ban đầu, nhà trường có nội dung cần kiểm tra về việc: '+topic+'. Đề nghị Thầy/Cô rà soát và thực hiện biện pháp phù hợp.';
+  return (items.length>1?String(i+1)+'. '+topic+'\n':'')+(special[item[0]]||general);
+ });
+ const level=p.level==='GIAI_TRINH'?'Đề nghị Thầy/Cô phản hồi, làm rõ các thông tin để nhà trường xem xét khách quan.':p.level==='CANH_BAO'?'Đề nghị Thầy/Cô kiểm tra và khắc phục các nội dung được ghi nhận.':'Đề nghị Thầy/Cô rà soát và phối hợp thực hiện theo yêu cầu của nhà trường.';
+ $('subject').value=items.length===1?'Nhắc nhở công vụ – '+items[0][1]:'Nhắc nhở công vụ – '+items.length+' nội dung';
+ $('content').value='Kính gửi Thầy/Cô,\n\n'+(p.facts?'Thông tin thực tế cần đối chiếu: '+p.facts+'\n\n':'')+lines.join('\n\n')+'\n\n'+level+(p.deadline?'\n\nHạn phản hồi: '+p.deadline.replace('T',' lúc '):'')+'\n\nTrường hợp có thông tin cần bổ sung, đề nghị phản hồi để nhà trường đối chiếu.\n\nTrân trọng.';
+ status('sendStatus','Đã ghép '+items.length+' mẫu thành một dự thảo; BGH kiểm tra kỹ và chỉnh sửa trước khi gửi.');
 }
 $('templateBtn').onclick=basicDraft;
-async function generate(provider){if(!isBGH())return status('sendStatus','Chỉ BGH có quyền soạn lời nhắc.','error');
-const b=$(provider==='gemini'?'geminiBtn':'openaiBtn');b.disabled=true;status('sendStatus','Đang yêu cầu '+provider+' soạn dự thảo…');
-try{const r=await call('generateDraft',{...payload(),provider});if(!r?.success||!r.draft)throw Error(r?.message||'AI chưa trả về dự thảo.');
-$('subject').value=String(r.draft.title||'');$('content').value=String(r.draft.content||'');
-status('sendStatus','Đã nhận dự thảo '+provider+'. '+(Array.isArray(r.draft.warnings)&&r.draft.warnings.length?'Lưu ý: '+r.draft.warnings.join('; '):'BGH kiểm tra trước khi gửi.'),'ok');
-}catch(e){status('sendStatus','Không thể dùng '+provider+': '+err(e)+'. Có thể chọn “Dùng mẫu cơ bản”.','error');}finally{b.disabled=false;}}
-$('geminiBtn').onclick=()=>generate('gemini');$('openaiBtn').onclick=()=>generate('openai');
+async function generate(){
+ if(!isBGH())return status('sendStatus','Chỉ Ban Giám hiệu được soạn nhắc nhở.','error');
+ if(!state.templates.size)return status('sendStatus','Chọn ít nhất một mẫu trước khi dùng Trợ lý EDOS.','error');
+ const b=$('geminiBtn');b.disabled=true;status('sendStatus','Trợ lý EDOS đang soạn dự thảo…');
+ try{
+   const p=payload(),topics=scenarioCodes().map(code=>scenarios.find(x=>x[0]===code)?.[1]).filter(Boolean);
+   const input={...p,scenarioCode:topics.length>1?'MULTI':p.scenarioCode,scenarioLabel:topics.join('; '),facts:[p.facts,topics.length>1?'Các nội dung đã chọn: '+topics.join('; '):''].filter(Boolean).join('\n'),provider:'gemini'};
+   const out=await call('generateDraft',input);
+   if(!out?.success||!out.draft)throw Error(out?.message||'Chưa nhận được bản dự thảo.');
+   $('subject').value=String(out.draft.title||'');$('content').value=String(out.draft.content||'');
+   status('sendStatus','Trợ lý EDOS đã tạo dự thảo. Ban Giám hiệu vui lòng rà soát dữ kiện trước khi gửi.','ok');
+ }catch(e){status('sendStatus','Trợ lý EDOS chưa thể soạn: '+err(e)+'. Có thể dùng mẫu soạn sẵn.','error');}
+ finally{b.disabled=typeof BRIDGE.generateDraft!=='function';}
+}
+$('geminiBtn').onclick=generate;
 function preview(){const title=$('subject').value.trim(),body=$('content').value.trim();$('previewBox').innerHTML='<strong>'+esc(title||'(Chưa có tiêu đề)')+'</strong><p><pre>'+esc(body||'(Chưa có nội dung)')+'</pre></p><div class="record">'+esc($('traceText').textContent)+'</div><small class="muted">Người nhận: '+state.selected.size+' · Mức độ: '+esc($('level').selectedOptions[0].textContent)+'</small>';}
 $('previewBtn').onclick=preview;
 $('sendBtn').onclick=async()=>{if(!isBGH())return status('sendStatus','Không có quyền gửi.','error');
 const p=payload(),title=$('subject').value.trim(),content=$('content').value.trim();
-if(!state.selected.size||!title||!content)return status('sendStatus','Cần chọn người nhận, nhập tiêu đề và nội dung.','error');
+if(!state.selected.size||!title||!content||!state.templates.size)return status('sendStatus','Cần chọn người nhận, ít nhất một mẫu, tiêu đề và nội dung.','error');
 if(!$('verified').checked)return status('sendStatus','BGH cần xác nhận đã rà soát trước khi gửi.','error');
 if(!window.confirm('Xác nhận gửi nhắc nhở đến '+state.selected.size+' người? Hệ thống sẽ lưu lịch sử và gửi thông báo.'))return;
 $('sendBtn').disabled=true;status('sendStatus','Đang gửi và chờ Backend xác nhận…');
