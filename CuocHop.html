@@ -1039,6 +1039,10 @@ window.addEventListener('message',e=>{
  // Message is only a prompt to query server-side status, never trusted as proof.
  hvaMeetRefreshConnection();
 });
+window.addEventListener('focus',()=>{
+ // Users return from the Google authorization popup to this tab.
+ if($('meetingMode')?.value==='ONLINE')hvaMeetRefreshConnection();
+});
 async function hvaCheckPendingMeet(){
  if(hvaMeetBusy)return;
  const pending=hvaMeetRestorePending();
