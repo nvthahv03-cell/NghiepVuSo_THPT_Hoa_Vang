@@ -35,3 +35,11 @@
 - Đã chặn mã học sinh dạng công thức bảng tính và lớp/mã học sinh không hợp lệ.
 - Đã kiểm tra quyền BGH xem hồ sơ, chặn GV khác xem hồ sơ, chặn GV tự nhận xét thay Hiệu trưởng, chặn chỉnh sửa sau khi BGH xác nhận.
 - Đã có thao tác BGH xác nhận hoặc yêu cầu bổ sung với nhật ký; vẫn chờ gắn vào router Apps Script và kiểm tra trên Google Sheet thực tế.
+
+## Bản Sổ chủ nhiệm theo 21 nội dung sổ giấy (04/11/2026)
+- Bản giao diện `SoChuNhiem_DienTu.html` chuyển từ biểu mẫu chung sang menu 21 mục với trường nhập được thiết kế riêng cho mỗi loại nội dung: văn bản, giáo viên bộ môn, CMHS, cán bộ lớp, thống kê, sơ đồ chỗ ngồi, kế hoạch tháng/tuần, thành tích, theo dõi học sinh, thu nộp và nhận xét Hiệu trưởng.
+- Mục 4 dùng **trực tiếp danh sách học sinh đã xác thực**, không lập danh sách thứ hai. Có nhập Excel/CSV, xem trước, tải mẫu và xuất danh sách.
+- Mỗi mục được lưu riêng theo `sectionKey + lớp + năm học`. Máy chủ kiểm soát định dạng, năm học, phân quyền và không cho tạo hồ sơ trùng mục. Giáo viên bị chặn ghi mục 21; BGH chỉ lập nhận xét cho lớp có danh sách học sinh trên máy chủ. GVCN được đọc lại nhận xét BGH của lớp mình.
+- Đã kiểm tra cú pháp các tệp JS/Backend, 21 nhãn mục, sự tồn tại của các điều khiển giao diện và không thay đổi `BC_ChuNhiem.html`, `BC_DayThemHocThem.html`. Bộ kiểm thử dữ liệu giả lập đã kiểm tra lưu độc lập 19 mục có nhập liệu (mục 4 lấy dữ liệu lớp, mục 21 dành BGH), cách ly lớp, khóa quyền và đọc nhận xét. Đây **không** phải kiểm thử trên Google Sheet thật.
+- Cần khi triển khai: kết nối router Apps Script đã xác thực token với `HVA4_dispatch_`; cài `HVA4_DATA_SPREADSHEET_ID`; chạy `HVA4_setupByAdmin_`; kiểm tra phân công GVCN thực trên server và đăng nhập thử GV/BGH trước khi nghiệm thu. Không đưa dữ liệu học sinh thật vào thử nghiệm công khai.
+- Nhánh `feature/hva-four-nghiep-vu-20261104` đang khác `main`; đối chiếu thay đổi mới trên `main` trước khi phát hành. Không gộp nhánh và không báo PASS vận hành khi chưa chạy thử thật.
