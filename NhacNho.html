@@ -112,7 +112,7 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
      const u=JSON.parse(getStore("user")||"{}");
      const role=String(u.chucVu||u.viTriViecLam||"")+" "+String(u.vaiTro||u.role||"");
      const folded=Array.from(role.normalize("NFD")).filter(ch=>{const c=ch.charCodeAt(0);return c<768||c>879}).join("").replace(/đ/gi,"d").toLowerCase();
-     return {username:u.username||u.tenDangNhap,hoTen:u.hoTen||u.hoten||u.hoVaTen||u.tenHienThi,role,sessionToken:token,isBGH:/hieu truong|pho hieu truong|ban giam hieu|\\bbgh\\b/.test(folded)};
+     return {username:u.username||u.tenDangNhap,hoTen:u.hoTen||u.hoten||u.hoVaTen||u.tenHienThi,role,sessionToken:token,isBGH:/hieu truong|pho hieu truong|ban giam hieu/.test(folded)||folded.split(/[^a-z0-9]+/).includes("bgh")};
    },
    getPersonnel:async function(){
      if(!window.HVAPersonnel||typeof window.HVAPersonnel.buildGroups!=="function")throw Error("Chưa nạp danh sách nhân sự HVA.");
