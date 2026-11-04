@@ -26,7 +26,20 @@ function HVA4_get_(module,u){
 }
 function HVA4_validate_(module,x,draft){
  if(!x||typeof x!=='object'||Array.isArray(x))throw new Error('Nội dung gửi không hợp lệ.');
- const item={};Object.keys(x).forEach(k=>{if(!/^[a-zA-Z][a-zA-Z0-9]{0,36}$/.test(k))return;item[k]=HVA4_str_(x[k],3000)});
+ const item={};Object.keys(x).forEach(k=>{if(!/^[a-zA-Z][a-zA-Z0-9]{0,36}$/.test(k)||k==='rows')return;item[k]=HVA4_str_(x[k],3000)});
+ if(module==='homeroom'&&x.rows!==undefined){
+   if(!Array.isArray(x.rows)||x.rows.length>180)throw Error('Số dòng ghi trong mục sổ không hợp lệ.');
+   item.rows=x.rows.map(row=>{
+    if(!row||typeof row!=='object'||Array.isArray(row))throw Error('Một dòng nội dung không hợp lệ.');
+    const safe={};Object.keys(row).forEach(key=>{
+      if(!/^c(?:[0-9]|1[0-9])$/.test(key))throw Error('Tên trường ghi sổ không hợp lệ.');
+      if(typeof row[key]!=='string'&&typeof row[key]!=='number')throw Error('Nội dung ô không hợp lệ.');
+      const value=String(row[key]).trim();if(value.length>1200)throw Error('Nội dung một ô vượt giới hạn.');
+      safe[key]=value;
+    });return safe;
+   });
+   if(JSON.stringify(item.rows).length>65000)throw Error('Nội dung mục sổ quá dài.');
+ }
  if(!draft){
   const needed=module==='homeroom'?['schoolYear','section','content']:module==='nq52'?['month','duties','done','a1','a2','a3','quantity','quality','progress','strength','weakness','solution','selfClass']:['date','period','lesson','equipment','className','phbmTH','phbmLT','onClass','it'];
   if(needed.some(k=>!item[k]))throw new Error('Chưa nhập đủ các trường bắt buộc.');
@@ -39,10 +52,23 @@ function HVA4_save_(module,raw,draft,u){
  HVA4_guard_(module,u);const x=HVA4_validate_(module,raw,draft),lock=LockService.getScriptLock();lock.waitLock(30000);
  try{
   const sh=HVA4_sheet_(module),rows=HVA4_rows_(sh),period=module==='nq52'?x.month:module==='homeroom'?u.schoolYear:x.date;
-  const found=module==='nq52'?rows.find(r=>r.owner===u.username&&r.period===period):null;
+  const found=module==='nq52'?rows.find(r=>r.owner===u.username&&r.period===period):module==='homeroom'&&x.sectionKey?rows.find(r=>r.className===u.className&&r.period===u.schoolYear&&r.payload.sectionKey===x.sectionKey):null;
   if(module==='device'&&!/^\d{1,2}\/\d{1,2}$/.test(x.className||''))throw new Error('Lớp học không hợp lệ.');
   if(found&&!['NHÁP','YÊU CẦU BỔ SUNG'].includes(found.status))throw new Error('Hồ sơ đã gửi hoặc đã được xác nhận; không được tự ghi đè. Liên hệ người có thẩm quyền khi cần điều chỉnh.');
-  if(module==='homeroom'){if(!u.className)throw new Error('Chưa có lớp chủ nhiệm được xác minh.');if(x.schoolYear&&x.schoolYear!==u.schoolYear)throw new Error('Năm học không khớp phân công.');if(x.section==='Kiểm tra, nhận xét của Hiệu trưởng')throw new Error('Giáo viên không được tự ghi nhận xét của Hiệu trưởng.');x.schoolYear=u.schoolYear;x.className=u.className;}
+  if(module==='homeroom'){
+    if(!u.className&&!HVA4_admin_(u))throw new Error('Chưa có lớp chủ nhiệm được xác minh.');
+    if(x.schoolYear&&x.schoolYear!==u.schoolYear)throw new Error('Năm học không khớp phân công.');
+    if(x.sectionKey){
+      const num=Number(x.sectionKey);
+      if(!Number.isInteger(num)||num<1||num>21)throw new Error('Mục sổ chủ nhiệm không hợp lệ.');
+      if(num===21&&!HVA4_admin_(u))throw new Error('Chỉ Ban Giám hiệu được ghi nhận xét kiểm tra.');
+      if(num!==21&&!u.className)throw new Error('Chưa có lớp chủ nhiệm được xác minh.');
+      if(!Array.isArray(x.rows)||!x.rows.length||!x.rows.some(row=>Object.values(row).some(v=>!!v)))throw new Error('Chưa nhập dữ liệu của mục sổ.');
+      x.content=JSON.stringify(x.rows);
+      if(num===21&&!u.className)throw new Error('BGH cần chọn lớp được phân quyền trước khi nhận xét.');
+    }else if(x.section==='Kiểm tra, nhận xét của Hiệu trưởng')throw new Error('Giáo viên không được tự ghi nhận xét của Hiệu trưởng.');
+    x.schoolYear=u.schoolYear;x.className=u.className;
+  }
   if(module==='device'){x.teacherUsername=u.username;}
   const id=found?found.id:Utilities.getUuid(),now=new Date(),status=draft?'NHÁP':'ĐÃ GỬI';
   HVA4_audit_(u.username,found?'CAP_NHAT':'TAO_MOI',id,module);
