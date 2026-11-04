@@ -1120,8 +1120,18 @@ async function hvaCreateRealGoogleMeet(){
    }
   }
  }catch(e){
-  btn.disabled=false; // Repeated request uses the SAME deterministic key on the server.
-  hvaMeetStatus('Chưa xác nhận được kết quả từ Google. Có thể thử lại; hệ thống giữ cùng mã yêu cầu để tránh tạo trùng. '+(e.message||String(e)),true);
+  const detail=String(e&&e.message||e||'');
+  const notDeployed=/chưa được triển khai chức năng Google Meet|Action POST không hợp lệ|googleCalendarStatus/i.test(detail);
+  if(notDeployed){
+    btn.disabled=true;
+    btn.title='Chức năng tạo Google Meet chưa được kích hoạt trên Google Apps Script của nhà trường.';
+    hvaMeetShowButton('hvaConnectCalendarBtn',false);
+    hvaMeetShowButton('hvaMeetCheckBtn',false);
+    hvaMeetStatus('Máy chủ Google Apps Script chưa triển khai chức năng tạo Google Meet. Quản trị hệ thống cần cập nhật và triển khai Backend; tải lại trang sau khi đã kích hoạt.',true);
+  }else{
+    btn.disabled=false; // A retry uses the SAME deterministic key to prevent duplicates.
+    hvaMeetStatus('Chưa xác nhận được kết quả từ Google. Có thể thử lại với cùng mã yêu cầu. '+detail,true);
+  }
  }finally{hvaMeetBusy=false}
 }
 
