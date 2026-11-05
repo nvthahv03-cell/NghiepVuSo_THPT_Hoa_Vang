@@ -3168,184 +3168,97 @@ btn.addEventListener('click',event=>{event.stopImmediatePropagation();open();},t
 }
 </style>
 <style id="hva-open-air-gates">
-/* HVA – Không gian mở: 4 lối vào, KHÔNG còn 4 khung màu phủ nền.
-   Bảo lưu ảnh nền, vị trí/chức năng các link, quyền và DOM đã PASS. */
+/* HVA 79: giao diện nhẹ nhàng, không thay DOM, sự kiện, quyền hay đường dẫn. */
+body .nvs-quick{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:clamp(8px,1.7vw,20px)!important;margin:12px 0 16px!important;
+ align-items:stretch!important;
+}
+body .nvs-quick>.nvs-quick-card{
+ width:100%!important;min-width:0!important;min-height:104px!important;height:auto!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ gap:7px!important;padding:12px 8px!important;background:transparent!important;
+ border:0!important;border-radius:16px!important;box-shadow:none!important;
+ color:#17466e!important;transition:background .16s ease,transform .16s ease!important;
+}
+body .nvs-quick>.nvs-quick-card:hover{background:rgba(226,242,251,.60)!important;transform:translateY(-1px)!important;box-shadow:none!important}
+body .nvs-quick>.nvs-quick-card .nvs-quick-icon,
+body .nvs-quick>.nvs-quick-card .nvs-quick-icon>i{border-radius:50%!important}
+body .nvs-quick>.nvs-quick-card .nvs-quick-icon>i{box-shadow:0 4px 12px rgba(13,65,110,.13)!important}
+body .nvs-quick>.nvs-quick-card>strong{font-size:clamp(12px,1.25vw,15px)!important;line-height:1.35!important;text-align:center!important;text-shadow:none!important}
+body .nvs-quick>.nvs-quick-card:focus-visible{outline:3px solid #137bb8!important;outline-offset:2px!important}
+body .nvs-chooser{border:0!important;border-radius:22px!important;box-shadow:0 9px 26px rgba(0,52,119,.13)!important}
 body .nvs-chooser .nvs-two-gates{
-  display:grid!important;
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:8px clamp(14px,4vw,55px)!important;
-  max-width:860px!important;
-  margin:12px auto 0!important;
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:clamp(8px,1.5vw,20px)!important;width:100%!important;max-width:980px!important;margin:16px auto 0!important;
+ align-items:start!important;
 }
 body .nvs-chooser .nvs-two-gates .nvs-gate-wrap{
-  box-sizing:border-box!important;
-  min-height:156px!important;
-  padding:0!important;
-  margin:0!important;
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
+ box-sizing:border-box!important;min-width:0!important;min-height:0!important;
+ margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;
 }
 body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate,
 body .nvs-chooser .nvs-two-gates .nvs-gate{
-  box-sizing:border-box!important;
-  position:relative!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:center!important;
-  align-items:center!important;
-  height:164px!important;
-  min-height:164px!important;
-  max-height:none!important;
-  width:100%!important;
-  padding:12px 7px!important;
-  gap:8px!important;
-  overflow:visible!important;
-  background:transparent!important;
-  border:0!important;
-  border-radius:30px!important;
-  box-shadow:none!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-  color:#fff!important;
-  text-decoration:none!important;
-  transition:transform .2s ease!important;
+ box-sizing:border-box!important;position:relative!important;display:flex!important;
+ width:100%!important;height:auto!important;min-height:142px!important;max-height:none!important;
+ flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;
+ gap:10px!important;padding:12px 5px!important;border:0!important;border-radius:18px!important;
+ background:transparent!important;box-shadow:none!important;overflow:visible!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;text-decoration:none!important;
+ transition:transform .16s ease,background .16s ease!important;
 }
-/* Bỏ viền hình chữ nhật và các họa tiết trang trí chồng lớp. */
 body .nvs-chooser .nvs-two-gates .nvs-gate::before,
-body .nvs-chooser .nvs-two-gates .nvs-gate::after{
-  content:none!important;
-  display:none!important;
-}
+body .nvs-chooser .nvs-two-gates .nvs-gate::after{content:none!important;display:none!important}
 body .nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-icon{
-  box-sizing:border-box!important;
-  display:grid!important;
-  place-items:center!important;
-  flex:0 0 75px!important;
-  width:75px!important;
-  height:75px!important;
-  min-width:75px!important;
-  min-height:75px!important;
-  max-width:75px!important;
-  max-height:75px!important;
-  margin:0!important;
-  border:1px solid rgba(236,252,255,.78)!important;
-  border-radius:50%!important;
-  background:radial-gradient(circle at 32% 25%,rgba(255,255,255,.28),rgba(2,64,135,.64) 68%)!important;
-  box-shadow:0 7px 20px rgba(0,24,80,.18)!important;
-  filter:none!important;
-  font-size:33px!important;
-  color:#fff!important;
-  transition:transform .2s ease,background .2s ease!important;
+ box-sizing:border-box!important;display:grid!important;place-items:center!important;flex:0 0 70px!important;
+ width:70px!important;height:70px!important;min-width:70px!important;min-height:70px!important;
+ max-width:70px!important;max-height:70px!important;margin:0!important;
+ border:1px solid rgba(239,252,255,.74)!important;border-radius:50%!important;
+ background:radial-gradient(circle at 32% 22%,rgba(255,255,255,.32),rgba(3,69,137,.76) 70%)!important;
+ color:#fff!important;font-size:30px!important;box-shadow:0 5px 13px rgba(0,24,80,.17)!important;
+ filter:none!important;transition:transform .16s ease!important;
 }
 body .nvs-chooser .nvs-two-gates #nvsWorkGate .nvs-gate-icon,
 body .nvs-chooser .nvs-two-gates #nvsLearningGate .nvs-gate-icon{
-  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.26),rgba(0,118,152,.70) 72%)!important;
+ background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.30),rgba(0,121,154,.76) 72%)!important;
 }
 body .nvs-chooser .nvs-two-gates #nvsDocumentGate .nvs-gate-icon{
-  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.25),rgba(31,93,152,.71) 72%)!important;
+ background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.28),rgba(34,95,154,.77) 72%)!important;
 }
 body .nvs-chooser .nvs-two-gates .nvs-gate strong{
-  display:block!important;
-  width:100%!important;
-  flex:0 0 auto!important;
-  margin:0!important;
-  padding:0!important;
-  color:#fff!important;
-  font-size:clamp(13px,1.4vw,17px)!important;
-  line-height:1.38!important;
-  font-weight:850!important;
-  letter-spacing:.015em!important;
-  text-align:center!important;
-  text-shadow:0 2px 9px rgba(0,25,74,.62)!important;
+ display:block!important;width:100%!important;min-width:0!important;flex:0 0 auto!important;
+ margin:0!important;padding:0!important;color:#fff!important;
+ font-size:clamp(12px,1.25vw,15px)!important;font-weight:800!important;
+ line-height:1.38!important;letter-spacing:0!important;text-align:center!important;
+ overflow-wrap:break-word!important;text-shadow:0 1px 5px rgba(0,26,70,.52)!important;
 }
 body .nvs-chooser .nvs-two-gates .nvs-gate strong em{
-  display:block!important;
-  margin-top:3px!important;
-  font-style:normal!important;
-  font-size:clamp(11px,1.05vw,13px)!important;
-  line-height:1.35!important;
-  font-weight:750!important;
-  color:#ffeb9f!important;
-  text-shadow:0 1px 5px rgba(0,40,80,.48)!important;
+ display:block!important;margin-top:3px!important;font-style:normal!important;
+ font-size:clamp(10px,1vw,12px)!important;font-weight:650!important;line-height:1.3!important;
+ color:#fff2b4!important;text-shadow:0 1px 4px rgba(0,28,65,.45)!important;
 }
-/* Thông tin mô tả giữ trong DOM, tránh làm dày mặt tiền. */
 body .nvs-chooser .nvs-two-gates .nvs-gate>span:not(.nvs-gate-icon):not(.nvs-gate-enter),
-body .nvs-chooser .nvs-two-gates .nvs-gate-enter{
-  display:none!important;
-}
-body .nvs-chooser .nvs-two-gates .nvs-gate:hover{
-  background:transparent!important;
-  box-shadow:none!important;
-  transform:translateY(-3px)!important;
-}
-body .nvs-chooser .nvs-two-gates .nvs-gate:hover .nvs-gate-icon{
-  transform:scale(1.05)!important;
-  box-shadow:0 10px 24px rgba(0,25,75,.25)!important;
-}
-body .nvs-chooser .nvs-two-gates .nvs-gate:focus-visible{
-  outline:3px solid #fff4ae!important;
-  outline-offset:3px!important;
-}
-/* Hàng 3 tiện ích trên là ba điểm chạm không khung, đủ chiều rộng. */
-body .nvs-quick{
-  display:grid!important;
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:clamp(10px,2.7vw,35px)!important;
-  margin-top:12px!important;
-  margin-bottom:19px!important;
-}
-body .nvs-quick>.nvs-quick-card{
-  box-sizing:border-box!important;
-  min-width:0!important;
-  width:100%!important;
-  border:0!important;
-  border-radius:24px!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  padding:10px 4px!important;
-  transition:transform .18s ease!important;
-}
-body .nvs-quick>.nvs-quick-card:hover{
-  border:0!important;
-  background:rgba(213,237,250,.30)!important;
-  box-shadow:none!important;
-  transform:translateY(-2px)!important;
-}
-body .nvs-quick>.nvs-quick-card .nvs-quick-icon>i{
-  box-shadow:0 4px 11px rgba(13,65,110,.16)!important;
-  border-radius:50%!important;
-}
-body .nvs-quick>.nvs-quick-card:focus-visible{
-  outline:3px solid #168ecc!important;
-  outline-offset:3px!important;
-}
-/* Phần khung lớn giữ nguyên ảnh nền đã chốt, chỉ bỏ nét viền. */
-body .nvs-chooser{
-  border:0!important;
-  border-radius:25px!important;
-}
-@media(max-width:720px){
-  body .nvs-chooser .nvs-two-gates{gap:8px 10px!important;max-width:100%!important;margin-top:8px!important}
-  body .nvs-chooser .nvs-two-gates .nvs-gate-wrap{min-height:148px!important}
-  body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate,
-  body .nvs-chooser .nvs-two-gates .nvs-gate{
-    height:148px!important;min-height:148px!important;
-    padding:9px 4px!important;gap:7px!important;
-  }
-  body .nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-icon{
-    width:62px!important;height:62px!important;min-width:62px!important;min-height:62px!important;
-    max-width:62px!important;max-height:62px!important;flex-basis:62px!important;font-size:27px!important;
-  }
-  body .nvs-chooser .nvs-two-gates .nvs-gate strong{font-size:clamp(12px,3.35vw,15px)!important;line-height:1.3!important}
-  body .nvs-chooser .nvs-two-gates .nvs-gate strong em{font-size:clamp(10px,2.8vw,12px)!important}
-  body .nvs-quick{gap:6px!important;margin-bottom:13px!important}
-  body .nvs-quick>.nvs-quick-card{padding:9px 2px!important;min-height:78px!important}
+body .nvs-chooser .nvs-two-gates .nvs-gate-enter{display:none!important}
+body .nvs-chooser .nvs-two-gates .nvs-gate:hover{background:rgba(255,255,255,.08)!important;transform:translateY(-2px)!important;box-shadow:none!important}
+body .nvs-chooser .nvs-two-gates .nvs-gate:hover .nvs-gate-icon{transform:scale(1.035)!important}
+body .nvs-chooser .nvs-two-gates .nvs-gate:focus-visible{outline:3px solid #fff2a4!important;outline-offset:2px!important}
+@media(max-width:760px){
+ body .nvs-chooser .nvs-two-gates{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px 12px!important;margin-top:10px!important}
+ body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate,
+ body .nvs-chooser .nvs-two-gates .nvs-gate{min-height:130px!important;gap:7px!important;padding:10px 4px!important}
+ body .nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-icon{
+  width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important;
+  max-width:60px!important;max-height:60px!important;flex-basis:60px!important;font-size:26px!important;
+ }
+ body .nvs-chooser .nvs-two-gates .nvs-gate strong{font-size:clamp(12px,3.3vw,15px)!important}
+ body .nvs-chooser .nvs-two-gates .nvs-gate strong em{font-size:clamp(10px,2.8vw,12px)!important}
+ body .nvs-quick{gap:5px!important;margin-bottom:12px!important}
+ body .nvs-quick>.nvs-quick-card{min-height:90px!important;padding:8px 3px!important}
+ body .nvs-quick>.nvs-quick-card>strong{font-size:clamp(10px,2.7vw,13px)!important}
 }
 @media(prefers-reduced-motion:reduce){
-  body .nvs-chooser .nvs-two-gates .nvs-gate,
-  body .nvs-chooser .nvs-two-gates .nvs-gate-icon,
-  body .nvs-quick>.nvs-quick-card{transition:none!important;transform:none!important}
+ body .nvs-quick>.nvs-quick-card,body .nvs-chooser .nvs-two-gates .nvs-gate,
+ body .nvs-chooser .nvs-two-gates .nvs-gate-icon{transition:none!important;transform:none!important}
 }
 </style>
 </body>
