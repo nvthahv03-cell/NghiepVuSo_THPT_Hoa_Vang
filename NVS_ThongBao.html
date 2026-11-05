@@ -699,7 +699,16 @@ async function ai(){
    'NGUỒN '+(shortened?'TRÍCH ĐOẠN, CHƯA ĐẦY ĐỦ':'VĂN BẢN')+' (phải đối chiếu bản gốc): '+notes
   ].join('\n');
   status('Trợ lý VIP Pro đang soạn thông báo...');
-  const response=await hvaVipAsk(request.slice(0,3900));
+  // Giữ rõ ranh giới hướng dẫn và tài liệu trong giới hạn 4.000 ký tự của Backend.
+  const sourcePosition=notes?request.lastIndexOf(notes):request.length;
+  const instructionPart=request.slice(0,sourcePosition);
+  const available=Math.max(0,3900-instructionPart.length);
+  if(notes&&available<notes.length){
+    hvaVipStatus('Văn bản đã được đọc trên thiết bị; Backend hiện chỉ nhận được '+available+
+      '/'+notes.length+' ký tự trích dẫn. Thầy cần kiểm tra bản gốc trước khi gửi.');
+  }
+  if(notes&&available<300)throw Error('Yêu cầu quá dài, không còn đủ dung lượng trích văn bản. Hãy rút gọn ô yêu cầu.');
+  const response=await hvaVipAsk(instructionPart+notes.slice(0,available));
   let raw;
   try{raw=cleanJSON(response);}catch(_){
     // Backend có thể trả dự thảo văn bản thường. Chỉ dùng CHÍNH nội dung AI đã trả,
