@@ -701,14 +701,16 @@ async function ai(){
   const docHeader=hvaVipExtractDocumentHeader(full);
   const schemaCompact='{"fields":{"tieuDe":"","noiDung":"","han":"","link":"","xacNhan":false}}';
   const request=[
-    'Soạn thông báo triển khai của NHÀ TRƯỜNG THPT HÒA VANG gửi giáo viên, ngắn gọn, tự nhiên như tin nhắn Zalo. Chỉ trả JSON: '+schemaCompact,
-    'Kính gửi quý thầy cô và các bộ phận liên quan! Thực hiện [LOẠI VĂN BẢN] số [SỐ/KÝ HIỆU] ngày [NGÀY] của [CƠ QUAN] về việc [TRÍCH YẾU], nhà trường đề nghị: 1. ... 2. ... Trân trọng! Các đoạn trong dấu ngoặc là CHỈ DẪN CẤU TRÚC, không được chép dấu ngoặc vào kết quả.',
-    'PHẢI ĐỌC SỐ/KÝ HIỆU, NGÀY, CƠ QUAN, TRÍCH YẾU từ CHỮ TRONG TỆP; không suy đoán từ tên file. Nếu số có thật, dùng đúng ở cả tiêu đề và câu Thực hiện. Văn bản Sở thì ghi "Thực hiện Công văn/Kế hoạch/Thông báo số ... ngày ... của Sở Giáo dục và Đào tạo..." theo loại văn bản thực.',
-    'Nếu KHÔNG đọc rõ số văn bản thì tiêu đề "THÔNG BÁO TRIỂN KHAI" và KHÔNG ghi số giả. Không dùng "[cần xác minh]". Không tự đặt nội dung, người tham dự, tỷ lệ, hạn. Chỉ điền han khi nguồn nêu đủ ngày và giờ hạn thực hiện/báo cáo.',
-    'Không dùng "thầy Nguyễn Văn Thà triển khai", chỉ dùng danh nghĩa "nhà trường đề nghị". Chỉ nêu nội dung nguồn chứng minh; không biến tài liệu tham khảo thành chỉ đạo bắt buộc.',
-    'Số/ký hiệu đã nhận diện sơ bộ từ CHỮ VĂN BẢN: '+(docHeader.number||'CHƯA ĐỌC ĐƯỢC')+'; loại: '+(docHeader.kind||'chưa rõ')+'. Phải kiểm tra lại trong nội dung tệp.',
-    'Yêu cầu người soạn: '+prompt.slice(0,420),
-    'VĂN BẢN GỐC'+(shortened?' (trích đoạn chưa đầy đủ)':'')+':\n'+notes
+    'SOẠN TIN NHẮN THÔNG BÁO – TRIỂN KHAI CỦA TRƯỜNG THPT HÒA VANG. Văn phong tự nhiên, ngắn gọn, rõ người, rõ việc, đúng danh nghĩa nhà trường. Chỉ trả JSON: '+schemaCompact,
+    'ĐỌC VĂN BẢN GỐC trước: nhận diện cơ quan ban hành, LOẠI văn bản (Quyết định/Kế hoạch/Thông báo/Hướng dẫn/Công văn...), SỐ/KÝ HIỆU, NGÀY, TRÍCH YẾU; tuyệt đối không dựa vào tên file để tự đoán.',
+    'NẾU DO SỞ GDĐT HOẶC CẤP TRÊN BAN HÀNH: mở đầu "Thực hiện [loại] số ... ngày ... của Sở Giáo dục và Đào tạo về việc ..., nhà trường đề nghị:"; giao nhiệm vụ đúng văn bản.',
+    'NẾU DO TRƯỜNG THPT HÒA VANG BAN HÀNH: mở đầu "Nhà trường đã ban hành [loại] số ... ngày ... về việc ... . Đề nghị quý thầy cô và các bộ phận liên quan nghiên cứu văn bản, triển khai thực hiện theo nhiệm vụ được giao." Chỉ thêm phân công, hạn báo cáo khi văn bản có căn cứ. Không viết "Thực hiện văn bản của Sở" cho văn bản do trường ban hành.',
+    'BỐ CỤC: tiêu đề THÔNG BÁO TRIỂN KHAI [LOẠI] SỐ ...; dòng "Kính gửi quý thầy cô và các bộ phận liên quan!"; lời mở phù hợp cơ quan ban hành; đầu việc cần thiết; kết "Trân trọng!". Chỉ dẫn trong ngoặc không được xuất hiện trong kết quả.',
+    'Nếu số/ngày/trích yếu không đọc rõ thì KHÔNG bịa, KHÔNG chèn [cần xác minh]. Tiêu đề trung tính nếu chưa xác minh được số. Chủ thể luôn là "nhà trường", không phải cá nhân Phó Hiệu trưởng. Không thêm chỉ tiêu 100%, ngày, địa điểm, nhân sự hay yêu cầu trái văn bản.',
+    'Ô han chỉ là HẠN thực hiện hoặc báo cáo khi có ngày và giờ rõ ràng; không nhầm với ngày ban hành hay giờ sự kiện. Không tự chọn người nhận, không bịa link.',
+    'Yêu cầu của thầy: '+prompt.slice(0,350),
+    'Mã văn bản nhận diện từ chữ nguồn: '+(docHeader.number||'chưa rõ')+'; loại dự kiến: '+(docHeader.kind||'chưa rõ')+'. Kiểm chứng lại với chữ nguồn.',
+    'CHỮ VĂN BẢN'+(shortened?' (mới trích đoạn, chưa đầy đủ)':'')+':\n'+notes
   ].join('\n');
   status('Trợ lý VIP Pro đang soạn thông báo...');
   // Giữ rõ ranh giới hướng dẫn và tài liệu trong giới hạn 4.000 ký tự của Backend.
