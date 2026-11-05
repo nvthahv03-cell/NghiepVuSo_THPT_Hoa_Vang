@@ -685,14 +685,19 @@ async function ai(){
   if(shortened)hvaVipStatus('Văn bản dài '+full.length.toLocaleString('vi-VN')+
     ' ký tự. Trợ lý đọc các đoạn trích trọng tâm, CHƯA đọc toàn bộ; thầy cần đối chiếu PDF gốc, nhất là thời hạn.');
   const schema='{"fields":{"tieuDe":"...","noiDung":"...","han":"YYYY-MM-DDTHH:mm hoặc rỗng","link":"","xacNhan":false}}';
-  const request='Soạn tin nhắn THÔNG BÁO – TRIỂN KHAI của Trường THPT Hòa Vang. '+
-   'Chỉ trả về một đối tượng JSON không markdown theo schema '+schema+'. '+
-   'Tiêu đề ví dụ: THÔNG BÁO TRIỂN KHAI VĂN BẢN SỐ 372/TB-THPTHV. '+
-   'Nội dung có Kính gửi, căn cứ, phân công/nội dung triển khai có đánh số và Trân trọng. '+
-   'Không bịa người, số văn bản, thời gian, địa điểm, liên kết hoặc nội dung chưa có căn cứ. '+
-   'Chỉ điền han khi văn bản nêu hạn thực hiện hoặc báo cáo rõ cả ngày và giờ; không có thì rỗng. '+
-   'Không tự chọn người nhận, không phát hành. Yêu cầu của người soạn: '+prompt.slice(0,650)+
-   '. Nội dung '+(shortened?'TRÍCH ĐOẠN CHƯA ĐẦY ĐỦ':'VĂN BẢN')+' người soạn đã chọn (phải đối chiếu bản gốc): '+notes;
+  const request=[
+   'NHIỆM VỤ: Soạn tin nhắn THÔNG BÁO – TRIỂN KHAI để Ban Giám hiệu Trường THPT Hòa Vang xem, duyệt rồi gửi Hội đồng.',
+   'VĂN PHONG BẮT BUỘC: tự nhiên, ngắn gọn, mạch lạc, chuẩn tin nhắn điều hành của nhà trường. Dùng chủ thể "nhà trường đề nghị", "đề nghị quý thầy cô", KHÔNG viết "thầy Nguyễn Văn Thà triển khai", "tôi yêu cầu", "với vai trò Phó Hiệu trưởng". Không tự nhận thay mặt Hiệu trưởng ký ban hành.',
+   'MẪU CẤU TRÚC: "THÔNG BÁO TRIỂN KHAI VĂN BẢN SỐ ..."; xuống dòng "Kính gửi quý thầy cô và các bộ phận liên quan!"; tiếp theo "Thực hiện [văn bản/căn cứ có thật], nhà trường đề nghị:"; các nhiệm vụ 1., 2. theo đối tượng, việc cần làm, thời hạn; kết "Trân trọng!".',
+   'CHỈ dùng nội dung được chứng minh trong tài liệu; không sáng tác đối tượng, đầu việc, chức danh, địa điểm, thời gian, đường dẫn, số liệu, chỉ tiêu hay tỷ lệ (ví dụ 100%). Không chuyển nội dung giới thiệu tài liệu thành mệnh lệnh bắt buộc nếu văn bản không yêu cầu.',
+   'TUYỆT ĐỐI không đưa "[cần xác minh]", "[...]" hoặc dữ liệu không chắc chắn vào tiêu đề hay câu khẳng định. Nếu chưa đủ căn cứ xác định số/ký hiệu, chọn tiêu đề trung tính "THÔNG BÁO TRIỂN KHAI" và chỉ nêu nội dung đã rõ. Nêu việc chưa chắc chắn ở cuối câu trả lời bên ngoài dự thảo? Không: chỉ có JSON.',
+   'Thời hạn: chỉ điền ô han theo YYYY-MM-DDTHH:mm khi văn bản nêu rõ hạn thực hiện/báo cáo đủ ngày và giờ; thời gian dự họp không mặc nhiên là hạn báo cáo. Nếu không có thì để chuỗi rỗng.',
+   'Người nhận sẽ do người dùng chọn trong Nguồn nhân sự VIP; không tự chọn hay đưa dữ liệu không có căn cứ. Không tự bịa link Kho.',
+   'Chỉ trả về JSON hợp lệ KHÔNG markdown: '+schema+'. Lời văn trong noiDung là tin nhắn hoàn chỉnh sẵn để thầy duyệt, không phải báo cáo giải thích, không phô diễn thương hiệu AI.',
+   'YÊU CẦU THẦY NHẬP: '+prompt.slice(0,450),
+   'TÊN TỆP THAM KHẢO (chỉ là metadata, không đủ xác định nội dung): '+(hvaVipDocumentName||'không có'),
+   'NGUỒN '+(shortened?'TRÍCH ĐOẠN, CHƯA ĐẦY ĐỦ':'VĂN BẢN')+' (phải đối chiếu bản gốc): '+notes
+  ].join('\n');
   status('Trợ lý VIP Pro đang soạn thông báo...');
   const response=await hvaVipAsk(request.slice(0,3900));
   let raw;
@@ -718,6 +723,18 @@ async function ai(){
    }
   }
   if($('link').value.trim())delete fields.link;
+  const checkText=String(fields.tieuDe||'')+'\n'+String(fields.noiDung||'');
+  const placeholder=/\[(?:cần xác minh|chưa rõ|điền|số văn bản|ngày tháng|\.\.\.)\]/i.test(checkText);
+  const individualAsAuthority=/(?:thầy|cô)\s+Nguyễn\s+Văn\s+Thà\s*[-–:]?\s*Phó\s+Hiệu\s+trưởng\s+(?:triển khai|đề nghị|yêu cầu|chỉ đạo)/i.test(checkText);
+  const unsupportedPercentage=/\b100\s*%/.test(checkText)&&!/\b100\s*%/.test(hvaVipDocumentText);
+  if(placeholder||individualAsAuthority||unsupportedPercentage){
+    $('aiResult').textContent=[fields.tieuDe||'',fields.noiDung||''].join('\n\n');
+    throw Error('Dự thảo chưa đạt chuẩn: '+[
+      placeholder?'còn nội dung [cần xác minh]':'',
+      individualAsAuthority?'dùng danh nghĩa cá nhân thay cho nhà trường':'',
+      unsupportedPercentage?'tự thêm chỉ tiêu 100% không có trong tài liệu':''
+    ].filter(Boolean).join('; ')+'. Không điền vào biểu mẫu. Thầy yêu cầu Trợ lý soạn lại hoặc điều chỉnh nguồn.');
+  }
   proposal={fields,options:[],questions:[]};
   $('aiResult').textContent=[fields.tieuDe||'',fields.noiDung||'',
     fields.han?'Thời hạn đề xuất: '+fields.han:'Không xác định thời hạn báo cáo cụ thể.'].join('\n\n');
