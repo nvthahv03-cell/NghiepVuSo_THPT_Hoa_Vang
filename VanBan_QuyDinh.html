@@ -112,10 +112,22 @@ header{padding:14px max(14px,calc((100vw - 1160px)/2));}
  .hva-vb-resource-link{padding:12px;gap:9px}
  .hva-vb-resource-icon{width:38px;height:38px;flex-basis:38px;font-size:23px}
 }
-</style></head><body><header><div class="hva-vb-header"><a class="hva-vb-back" href="./index.html" aria-label="Quay lại trang chủ HVA–EDOS"><span aria-hidden="true">←</span><span>Quay lại EDOS</span></a><div class="hva-vb-header-text"><h1>KHO VĂN BẢN – BIỂU MẪU SỐ</h1><p>TRƯỜNG THPT HÒA VANG</p></div><a class="hva-vb-home" href="./index.html" aria-label="Trang chủ EDOS" title="Trang chủ EDOS">⌂</a></div></header><main><nav class="hva-vb-categories" aria-label="Danh mục kho">
-  <a href="#hva-vb-list" class="hva-vb-category is-primary"><span aria-hidden="true">▤</span> Tra cứu văn bản</a>
-  <a href="#hva-vb-forms" class="hva-vb-category"><span aria-hidden="true">▧</span> Biểu mẫu số</a>
-  <a href="#hva-vb-guide" class="hva-vb-category"><span aria-hidden="true">☷</span> Tài liệu hướng dẫn</a>
+</style>
+<style id="hva-vb-single-panel-tabs-20261105">
+/* Một nhóm nội dung tại một thời điểm, không ảnh hưởng dữ liệu hoặc phân quyền. */
+#hva-vb-list[hidden],#hva-vb-forms[hidden],#hva-vb-guide[hidden]{display:none!important}
+.hva-vb-categories .hva-vb-category{transition:background .16s ease,border-color .16s ease,color .16s ease}
+.hva-vb-categories .hva-vb-category[aria-selected="true"]{
+ background:#075cad!important;color:#fff!important;border-color:#075cad!important;
+ box-shadow:0 4px 11px rgba(7,92,173,.17)!important
+}
+.hva-vb-categories .hva-vb-category[aria-selected="false"]{background:#fff;color:#15528d}
+.hva-vb-categories .hva-vb-category:focus-visible{outline:3px solid #ffbd53;outline-offset:2px}
+</style>
+</head><body><header><div class="hva-vb-header"><a class="hva-vb-back" href="./index.html" aria-label="Quay lại trang chủ HVA–EDOS"><span aria-hidden="true">←</span><span>Quay lại EDOS</span></a><div class="hva-vb-header-text"><h1>KHO VĂN BẢN – BIỂU MẪU SỐ</h1><p>TRƯỜNG THPT HÒA VANG</p></div><a class="hva-vb-home" href="./index.html" aria-label="Trang chủ EDOS" title="Trang chủ EDOS">⌂</a></div></header><main><nav class="hva-vb-categories" aria-label="Danh mục kho" role="tablist">
+  <a href="#hva-vb-list" role="tab" aria-controls="hva-vb-list" aria-selected="true" class="hva-vb-category is-primary"><span aria-hidden="true">▤</span> Tra cứu văn bản</a>
+  <a href="#hva-vb-forms" role="tab" aria-controls="hva-vb-forms" aria-selected="false" class="hva-vb-category"><span aria-hidden="true">▧</span> Biểu mẫu số</a>
+  <a href="#hva-vb-guide" role="tab" aria-controls="hva-vb-guide" aria-selected="false" class="hva-vb-category"><span aria-hidden="true">☷</span> Tài liệu hướng dẫn</a>
 </nav><section class="panel" id="hva-vb-list"><h2 class="hva-vb-section-heading">Tra cứu văn bản</h2><div class="tabs" role="tablist" aria-label="Nhóm văn bản"><button type="button" role="tab" data-group="DEN" aria-selected="true">Văn bản đến</button><button type="button" role="tab" data-group="DI" aria-selected="false">Văn bản đi</button><button type="button" role="tab" data-group="NOIBO" aria-selected="false" class="hidden" id="privateTab">Văn bản nội bộ</button></div><div class="toolbar"><input type="search" id="search" placeholder="Tìm số hiệu, loại VB, trích yếu..." aria-label="Tìm văn bản"><select id="year" aria-label="Lọc năm"><option value="">Tất cả thời gian</option></select><button type="button" id="refresh">Làm mới</button><button type="button" id="advancedToggle" class="advanced-toggle" aria-expanded="false" aria-controls="advancedPanel">⚙ Tìm nâng cao</button></div><div id="advancedPanel" class="advanced-panel hidden"><div class="advanced-grid"><label>Từ khóa riêng<input id="advancedKeyword" type="search" placeholder="Số, ký hiệu, trích yếu..."></label><label>Loại văn bản<select id="advancedType"><option value="">Tất cả loại văn bản</option><option>Công văn</option><option>Kế hoạch</option><option>Quyết định</option><option>Thông báo</option><option>Báo cáo</option><option>Tờ trình</option><option>Hướng dẫn</option><option>Quy định</option><option>Quy chế</option><option>Nghị quyết</option><option>Biên bản</option><option>Giấy mời</option><option>Chương trình</option><option>Khác</option><option>Chưa xác định</option></select></label><label>Từ ngày ban hành<input id="advancedFrom" type="date"></label><label>Đến ngày ban hành<input id="advancedTo" type="date"></label></div><div class="advanced-footer"><label class="advanced-check"><input id="advancedMissing" type="checkbox"> Chỉ văn bản thiếu ngày ban hành</label><button type="button" id="advancedClear">Xóa bộ lọc nâng cao</button></div></div><div class="actions hidden" id="adminActions"><button type="button" id="sync">Đồng bộ Google Drive</button><span class="muted">CBQL: đối chiếu PDF, chọn Loại VB và cập nhật Trích yếu trước khi lưu.</span></div><div id="feedback" role="status" aria-live="polite"></div><div id="status" role="status">Đang chờ tải danh mục...</div><div class="tablewrap"><table><thead><tr><th>STT</th><th>Số, ký hiệu VB</th><th>Ngày ban hành</th><th>Loại VB</th><th>Trích yếu</th><th>PDF</th></tr></thead><tbody id="rows"><tr><td colspan="6">Chưa có dữ liệu.</td></tr></tbody></table></div><p class="muted">Văn bản có ngày ban hành mới nhất xếp trước; văn bản chưa xác định ngày xếp sau. Quyền mở PDF được Google Drive kiểm tra thêm; tài liệu nội bộ không xuất hiện với giáo viên.</p></section>
 <section class="panel hva-vb-resources" id="hva-vb-forms" aria-labelledby="hva-vb-forms-title">
  <div class="hva-vb-resource-title"><div><h2 id="hva-vb-forms-title">Biểu mẫu số</h2><p>Kho biểu mẫu chính thức của Trường THPT Hòa Vang</p></div><span class="hva-vb-status">Mở qua Google Drive</span></div>
@@ -172,4 +184,41 @@ function openEdit(d){editId=d.id;$('editSo').value=d.soHieu;$('editNgay').value=
  });$('editDialog').close();feedback('Đã lưu thông tin văn bản.');}
  catch(err){feedback('Không lưu được: '+err.message,true);alert('Không lưu được: '+err.message);}
 });load();
-</script></body></html>
+</script>
+<script id="hva-vb-single-panel-tabs-behavior">
+(function(){
+ 'use strict';
+ const nav=document.querySelector('.hva-vb-categories');
+ if(!nav)return;
+ const ids=['hva-vb-list','hva-vb-forms','hva-vb-guide'];
+ const tabs=ids.map(id=>nav.querySelector('a[aria-controls="'+id+'"]'));
+ const panels=ids.map(id=>document.getElementById(id));
+ if(tabs.some(x=>!x)||panels.some(x=>!x))return;
+ function select(id,updateHash){
+   if(!ids.includes(id))id='hva-vb-list';
+   ids.forEach((name,i)=>{
+     const active=name===id;
+     panels[i].hidden=!active;
+     tabs[i].setAttribute('aria-selected',String(active));
+     tabs[i].classList.toggle('is-primary',active);
+     tabs[i].tabIndex=active?0:-1;
+   });
+   if(updateHash&&location.hash!=='#'+id)history.replaceState(null,'','#'+id);
+ }
+ tabs.forEach((tab,i)=>{
+   tab.addEventListener('click',function(event){
+     event.preventDefault();
+     select(ids[i],true);
+   });
+   tab.addEventListener('keydown',function(event){
+     let next=-1;
+     if(event.key==='ArrowRight')next=(i+1)%tabs.length;
+     if(event.key==='ArrowLeft')next=(i+tabs.length-1)%tabs.length;
+     if(next!==-1){event.preventDefault();select(ids[next],true);tabs[next].focus();}
+   });
+ });
+ window.addEventListener('hashchange',()=>select(location.hash.slice(1),false));
+ select(location.hash.slice(1),false);
+})();
+</script>
+</body></html>
