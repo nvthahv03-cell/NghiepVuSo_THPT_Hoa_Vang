@@ -35,7 +35,7 @@ function hvaStudioAiGenerate_(p) {
     const userInput = String(p.input||'').trim();
     if (!topic || topic.length>300 || !userInput || userInput.length>12000)
       return fail('Tên chủ đề hoặc yêu cầu tạo giáo án không hợp lệ.');
-    if (!/mệnh đề|menh de/i.test(topic))
+    if (!/menh de/i.test(topic.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d')))
       return fail('Đợt thử chỉ dành cho chủ đề Mệnh đề và tập hợp.');
 
     const key = String(props.getProperty('GEMINI_API_KEY')||'').trim();
@@ -87,4 +87,38 @@ function hvaStudioAiGenerate_(p) {
     // Không trả stack trace, khóa, yêu cầu gốc hoặc dữ liệu phiên.
     return {success:false,message:'Không thể tạo giáo án trong lần thử này.'};
   }
+}
+
+/**
+ * KIỂM TRA CẤU HÌNH TẠI APPS SCRIPT TEST (chạy từ editor).
+ * Chỉ trả TRUE/FALSE, không bao giờ in giá trị khóa hoặc token.
+ * Không gọi Gemini và không ghi dữ liệu.
+ */
+function hvaStudioAiTestReadiness_() {
+  const p=PropertiesService.getScriptProperties();
+  const has=(name)=>Boolean(String(p.getProperty(name)||'').trim());
+  const dependencies={
+    session:typeof nvsActor_==='function',
+    staff:typeof hvaTraCuuNhanSuTheoUser_==='function',
+    gemini:typeof nvsGeminiFallbackV441_==='function',
+    response:typeof nvsResp_==='function'
+  };
+  const allowed=String(p.getProperty('HVA_STUDIO_TEST_USERS')||'')
+    .split(',').map(x=>x.trim()).filter(Boolean);
+  const result={
+    module:'hva_studio_ai_generate',
+    testOnly:true,
+    dependencies,
+    configured:{
+      geminiKey:has('GEMINI_API_KEY'),
+      model:has('HVA_STUDIO_GEMINI_MODEL'),
+      authorizedTestUsers:allowed.length>0
+    },
+    routerIntegrated:'CHUA_XAC_MINH',
+    ssoIntegrated:'CHUA_XAC_MINH',
+    liveGeminiCall:'CHUA_KIEM_THU'
+  };
+  result.readyForServerSideTest=Object.values(dependencies).every(Boolean)
+    && result.configured.geminiKey && result.configured.authorizedTestUsers;
+  return result;
 }
