@@ -1043,7 +1043,7 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
 
   <!-- NVS: HAI CỔNG ĐỘC LẬP, KHÔNG CÒN DANH MỤC CŨ -->
   <section class="nvs-chooser" aria-labelledby="nvs-choose-title">
-    <div class="nvs-choose-heading"><span class="nvs-emblem"><i class="bi bi-buildings"></i></span><h2 id="nvs-choose-title">CỔNG NGHIỆP VỤ SỐ</h2><p>Đăng nhập chung · Chọn không gian làm việc phù hợp</p></div>
+    <div class="nvs-choose-heading"><span class="nvs-emblem"><i class="bi bi-buildings"></i></span><h2 id="nvs-choose-title">CỔNG NGHIỆP VỤ SỐ</h2><div class="hva-school-under-portal">TRƯỜNG THPT HÒA VANG</div><p>Đăng nhập chung · Chọn không gian làm việc phù hợp</p></div>
     <div class="nvs-two-gates">
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-admin" id="nvsAdminGate" href="./DieuHanh.html" aria-label="Vào BGH – Điều hành"><span class="nvs-gate-icon"><i class="bi bi-bank"></i></span><strong>BAN GIÁM HIỆU<em>ĐIỀU HÀNH</em></strong><span>Thông báo – Phát hành · Lịch công tác · Cuộc họp · Theo dõi và xử lý</span><span class="nvs-gate-enter">Vào Điều hành <i class="bi bi-arrow-right"></i></span></a></div>
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-work" id="nvsWorkGate" href="./NghiepVu.html" aria-label="Vào Giáo viên – Nhân viên – Tác nghiệp số"><span class="nvs-gate-icon"><i class="bi bi-pc-display-horizontal"></i></span><strong>GIÁO VIÊN – NHÂN VIÊN<em>TÁC NGHIỆP SỐ</em></strong><span>TTCM · TPCM · GV · NV<br>Nhận nhiệm vụ · Lập báo cáo · Nộp sản phẩm · Tra cứu công việc</span><span class="nvs-gate-enter">Vào Tác nghiệp <i class="bi bi-arrow-right"></i></span></a></div>
@@ -3345,6 +3345,70 @@ body .nvs-premium-nav>button>i,body .nvs-chooser .nvs-premium-nav>button>i{displ
 body .nvs-premium-nav>button>span{color:#194a8d!important;font-weight:750!important;line-height:1.3!important}
 body .nvs-premium-nav>button:hover{background:#e4f2ff!important}
 @media(max-width:720px){body .hva-assistant-news-dropdown>summary{font-size:11px;min-height:34px;padding:5px}body .nvs-premium-nav>button{min-height:62px!important;font-size:10px!important}body .nvs-premium-nav>button>i{width:38px!important;height:36px!important;min-width:38px!important;min-height:36px!important;font-size:29px!important}}
+</style>
+<style id="hva-pro-compact-header-assistant-20261105">
+/* Thu gọn phần đầu, vẫn giữ nguyên menu, home, online, logout và sự kiện. */
+body .hva-pro-header{min-height:0!important;margin-top:5px!important;border-radius:13px!important}
+body .hva-pro-header-inner{
+  min-height:65px!important;height:auto!important;
+  padding:7px 13px!important;grid-template-columns:40px minmax(0,1fr) 80px!important;gap:9px!important;
+}
+body .hva-pro-brand{justify-content:center!important}
+body .hva-pro-brandtext{width:auto!important;max-width:100%!important;text-align:center!important}
+body .hva-pro-brandtext .hva-pro-kicker,
+body .hva-pro-brandtext .hva-pro-vietnam,
+body .hva-pro-brandtext .hva-pro-slogan{display:none!important}
+body .hva-pro-school{margin:0!important;line-height:1.1!important;font-size:clamp(22px,3vw,31px)!important;font-weight:900!important;letter-spacing:.01em!important;white-space:nowrap!important;overflow-wrap:normal!important;text-shadow:0 2px 6px rgba(0,22,67,.3)!important}
+body .hva-pro-back{width:37px!important;height:37px!important;border-radius:10px!important}
+body .hva-pro-back i{font-size:20px!important}
+body .hva-pro-tools{align-items:flex-end!important;gap:4px!important}
+body .nvs-home-link{width:31px!important;height:31px!important;min-width:31px!important;min-height:31px!important}
+body .hva-pro-online{height:22px!important;min-height:22px!important;padding:0 6px!important;font-size:8px!important}
+body .nvs-header-logout{min-height:23px!important;padding:3px 6px!important;font-size:9px!important}
+/* Chuyển tên trường về đúng vị trí dưới tên cổng. */
+body .nvs-choose-heading .hva-school-under-portal{
+  margin:2px 0 1px!important;color:#fff!important;
+  font:850 clamp(13px,1.7vw,19px)/1.28 Inter,Arial,sans-serif!important;
+  letter-spacing:.055em!important;text-align:center!important;
+  text-shadow:0 1px 6px rgba(0,19,69,.65)!important;
+}
+body .nvs-choose-heading h2{margin-bottom:2px!important}
+body .nvs-choose-heading p{margin-top:4px!important}
+/* Assistant gọn theo chiều dọc, không ẩn tên hay lời chào của người sử dụng. */
+body .edos-assistant{padding:9px 12px!important;margin-top:7px!important;margin-bottom:5px!important;border-radius:13px!important}
+body .edos-ai-heading{gap:7px!important;min-height:38px!important}
+body .edos-ai-heading .edos-v33-brand{gap:9px!important;align-items:center!important}
+body .edos-ai-heading .edos-v33-robot{
+  width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;flex-basis:42px!important;
+  border-radius:10px!important;
+}
+body .edos-ai-heading strong{font-size:14px!important;line-height:1.2!important}
+body .edos-ai-heading small{font-size:10px!important;line-height:1.2!important}
+body .edos-ai-greeting{margin:6px 0!important;padding:8px 10px!important;min-height:0!important;height:auto!important;line-height:1.3!important}
+body .edos-ai-greeting #edosGreeting{font-size:12px!important;font-weight:800!important;line-height:1.3!important}
+body .edos-ai-greeting #edosGreetingRole{font-size:10px!important;line-height:1.25!important;margin-top:2px!important}
+body .edos-ai-greeting #edosGreetingWish{font-size:10px!important;line-height:1.3!important;margin-top:2px!important}
+body .edos-v35-newsbar{padding:5px 7px!important;min-height:39px!important;gap:6px!important}
+body .hva-assistant-news-dropdown>summary{min-height:32px!important}
+body .edos-v35-enter,body .edos-v35-mic{min-height:33px!important}
+@media(max-width:720px){
+ body .hva-pro-header{margin:4px 4px 0!important}
+ body .hva-pro-header-inner{min-height:59px!important;padding:5px 7px!important;grid-template-columns:29px minmax(0,1fr) 67px!important;gap:4px!important}
+ body .hva-pro-back{width:28px!important;height:28px!important;border-radius:8px!important}
+ body .hva-pro-back i{font-size:16px!important}
+ body .hva-pro-school{font-size:clamp(20px,5.5vw,27px)!important}
+ body .nvs-home-link{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important}
+ body .hva-pro-online{height:18px!important;min-height:18px!important;font-size:7px!important}
+ body .nvs-header-logout{min-height:18px!important;font-size:8px!important;padding:2px 4px!important}
+ body .edos-assistant{padding:7px 9px!important;margin:5px 4px 4px!important}
+ body .edos-ai-heading .edos-v33-robot{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;flex-basis:36px!important}
+ body .edos-ai-heading strong{font-size:12px!important}
+ body .edos-ai-heading small{font-size:9px!important}
+ body .edos-ai-greeting{padding:6px 8px!important;margin:5px 0!important}
+ body .edos-ai-greeting #edosGreeting{font-size:11px!important}
+ body .edos-ai-greeting #edosGreetingRole,body .edos-ai-greeting #edosGreetingWish{font-size:9px!important}
+ body .nvs-choose-heading .hva-school-under-portal{font-size:clamp(12px,3.2vw,16px)!important;letter-spacing:.025em!important}
+}
 </style>
 </body>
 </html>
