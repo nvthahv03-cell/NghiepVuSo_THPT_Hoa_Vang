@@ -909,7 +909,7 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
 })();
 </script>
 <style id="hva-dieu-hanh-gate-policy">#nvsAdminGate[hidden],#nvsAdminGate[aria-hidden="true"]{display:none!important}#nvsMenuPanel details[data-dieu-hanh][hidden]{display:none!important}</style>
-<link rel="stylesheet" href="./HVA_Navigation.css"></head>
+<link rel="stylesheet" href="./HVA_Navigation.css"><link rel="stylesheet" href="./HVA_DigitalMenus_Polish.css"></head>
 <body>
 
 <div id="hvaLogoutModal" class="hva-logout-overlay" role="dialog" aria-modal="true" aria-labelledby="hvaLogoutTitle">
@@ -1022,7 +1022,7 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
     <button id="nvsQuickWork" class="nvs-quick-card" type="button" data-nvs-quick="work" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-person-lines-fill"></i><span class="nvs-quick-badge" data-nvs-count="work" hidden></span></span><strong>Việc của tôi</strong></button>
     <button class="nvs-quick-card" type="button" data-nvs-quick="notice" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-bell"></i><span class="nvs-quick-badge" data-nvs-count="notice" hidden></span></span><strong>Thông báo</strong></button>
     <button class="nvs-quick-card" type="button" data-nvs-quick="survey" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-clipboard-check"></i><span class="nvs-quick-badge" data-nvs-count="survey" hidden></span></span><strong>Khảo sát/Bình chọn</strong></button>
-    <div id="nvsQuickRoleSlot" class="nvs-quick-role-slot" aria-label="Hồ sơ điện tử"></div>
+    <div id="nvsQuickRoleSlot" class="nvs-quick-role-slot" aria-label="Văn bản điện tử đã chuyển xuống menu Văn bản số" hidden></div>
   </section>
   <section id="nvsQuickDetail" class="nvs-quick-detail" hidden aria-live="polite"></section>
   <div id="nvsPollOverlay" class="nvs-poll-overlay" aria-hidden="true">
@@ -1038,6 +1038,8 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
     <div class="nvs-two-gates">
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-admin" id="nvsAdminGate" href="./DieuHanh.html" aria-label="Vào BGH – Điều hành"><span class="nvs-gate-icon"><i class="bi bi-bank"></i></span><strong>BAN GIÁM HIỆU<em>ĐIỀU HÀNH</em></strong><span>Thông báo – Phát hành · Lịch công tác · Cuộc họp · Theo dõi và xử lý</span><span class="nvs-gate-enter">Vào Điều hành <i class="bi bi-arrow-right"></i></span></a></div>
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-work" id="nvsWorkGate" href="./NghiepVu.html" aria-label="Vào Giáo viên – Nhân viên – Tác nghiệp số"><span class="nvs-gate-icon"><i class="bi bi-pc-display-horizontal"></i></span><strong>GIÁO VIÊN – NHÂN VIÊN<em>TÁC NGHIỆP SỐ</em></strong><span>TTCM · TPCM · GV · NV<br>Nhận nhiệm vụ · Lập báo cáo · Nộp sản phẩm · Tra cứu công việc</span><span class="nvs-gate-enter">Vào Tác nghiệp <i class="bi bi-arrow-right"></i></span></a></div>
+      <div class="nvs-gate-wrap nvs-gate-learning-wrap"><a class="nvs-gate nvs-gate-learning" id="nvsLearningGate" href="./KhoHocLieuSo.html" aria-label="Học liệu số – chờ HVA Learning Studio"><span class="nvs-gate-icon"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i></span><strong>HỌC LIỆU SỐ<em>Chờ Kim Quy 2 hoàn thiện</em></strong><span>Giáo án · Bài giảng · Ngân hàng câu hỏi · Học liệu trực quan</span><span class="nvs-gate-enter">Xem phân hệ <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
+      <div class="nvs-gate-wrap nvs-gate-documents-wrap"><a class="nvs-gate nvs-gate-documents" id="nvsDocumentGate" href="./VanBan_QuyDinh.html" aria-label="Văn bản số – văn bản điện tử và biểu mẫu"><span class="nvs-gate-icon"><i class="bi bi-folder2-open" aria-hidden="true"></i></span><strong>VĂN BẢN SỐ<em>Kho điện tử · Biểu mẫu</em></strong><span>Văn bản điện tử · Tra cứu · Sử dụng biểu mẫu</span><span class="nvs-gate-enter">Mở văn bản số <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
     </div>
     <div class="nvs-v4-actions" aria-label="Tiện ích công vụ">
       <button type="button" id="nvsOpenRemind" hidden style="display:none" class="nvs-v4-action nvs-v4-remind nvs-remind-trigger nvs-v7-circle nvs-v7-orange" aria-haspopup="dialog" aria-controls="nvsRemindOverlay" aria-label="Mở Nhắc nhở công vụ"><span>Nhắc nhở<br>công vụ</span></button>
