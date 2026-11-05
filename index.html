@@ -1085,7 +1085,7 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
 @media(prefers-reduced-motion:reduce){
  .nvs-chooser .nvs-two-gates .nvs-gate{transition:none!important}
 }
-</style></head>
+</style><style id="hva-three-top-quick-actions">.nvs-quick{grid-template-columns:repeat(3,minmax(0,1fr))!important}.nvs-quick>#nvsQuickRoleSlot{display:none!important}.nvs-quick>.nvs-quick-card{min-width:0}</style></head>
 <body>
 
 <div id="hvaAdminAccessNotice" hidden role="dialog" aria-modal="true" aria-labelledby="hvaAdminAccessTitle" aria-describedby="hvaAdminAccessDescription"><div class="hva-admin-notice-panel"><div class="hva-admin-notice-icon" aria-hidden="true">🔒</div><h2 id="hvaAdminAccessTitle">Thông báo quyền truy cập</h2><p id="hvaAdminAccessDescription">Tài khoản của Thầy/Cô chưa được cấp quyền vào không gian Điều hành số. Vui lòng sử dụng Tác nghiệp số hoặc liên hệ Ban Giám hiệu khi cần hỗ trợ.</p><button id="hvaAdminAccessClose" type="button">Đã hiểu</button></div></div>
@@ -1199,7 +1199,7 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
     <button id="nvsQuickWork" class="nvs-quick-card" type="button" data-nvs-quick="work" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-person-lines-fill"></i><span class="nvs-quick-badge" data-nvs-count="work" hidden></span></span><strong>Việc của tôi</strong></button>
     <button class="nvs-quick-card" type="button" data-nvs-quick="notice" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-bell"></i><span class="nvs-quick-badge" data-nvs-count="notice" hidden></span></span><strong>Thông báo</strong></button>
     <button class="nvs-quick-card" type="button" data-nvs-quick="survey" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-clipboard-check"></i><span class="nvs-quick-badge" data-nvs-count="survey" hidden></span></span><strong>Khảo sát/Bình chọn</strong></button>
-    <div id="nvsQuickRoleSlot" class="nvs-quick-role-slot" aria-label="Hồ sơ điện tử"></div>
+    <div id="nvsQuickRoleSlot" class="nvs-quick-role-slot" aria-label="Chức năng chuyển vào menu Văn bản số" hidden></div>
   </section>
   <section id="nvsQuickDetail" class="nvs-quick-detail" hidden aria-live="polite"></section>
   <div id="nvsPollOverlay" class="nvs-poll-overlay" aria-hidden="true">
