@@ -661,6 +661,19 @@ async function publish(){
 }
 function voice(){if(voiceWanted){voiceWanted=false;try{rec?.stop()}catch(_){}$('voiceBtn').textContent='🎙 NHẬP BẰNG GIỌNG NÓI';return}const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return status('Trình duyệt chưa hỗ trợ nhận dạng giọng nói.');rec=new SR();rec.lang='vi-VN';rec.continuous=true;rec.interimResults=false;voiceWanted=true;$('voiceBtn').textContent='■ DỪNG GHI ÂM';rec.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++){if(!e.results[i].isFinal)continue;let t=e.results[i][0].transcript.trim();const stop=/(?:^|[\s,;.!?])hết[\s.!?]*$/iu.test(t);if(stop)t=t.replace(/(?:^|[\s,;.!?])hết[\s.!?]*$/iu,'').trim();if(t)$('aiPrompt').value+=($('aiPrompt').value?' ':'')+t;if(stop)voice()}};rec.onend=()=>{if(voiceWanted){voiceWanted=false;$('voiceBtn').textContent='🎙 NHẬP BẰNG GIỌNG NÓI';status('Micro đã ngắt; bấm để ghi tiếp.')}};rec.onerror=e=>status('Micro: '+e.error);try{rec.start();status('Đang nghe tiếng Việt; nói “Hết” để dừng.')}catch(e){voiceWanted=false;status(e.message)}}
 function cleanJSON(t){const s=String(t||'').replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();const a=s.indexOf('{'),b=s.lastIndexOf('}');if(a<0||b<=a)throw Error('AI không trả về JSON biểu mẫu.');return JSON.parse(s.slice(a,b+1))}
+function hvaVipExtractDocumentHeader(text){
+  // Đọc từ nội dung chữ PDF/DOCX, KHÔNG từ tên tệp.
+  const head=String(text||'').slice(0,3500).replace(/\s+/g,' ');
+  const match=head.match(/(?:^|\s)(?:Số\s*[:：]\s*)?(\d{1,5}\s*\/\s*(?:SGDĐT|SGD-DT|SGD|TB|KH|CV|UBND|[A-ZĐ]{2,12})(?:[-.][A-ZĐ0-9.]{1,20}){0,4})\b/i);
+  if(!match)return {number:'',kind:''};
+  const number=match[1].replace(/\s+/g,'');
+  const around=head.slice(Math.max(0,match.index-180),match.index+180);
+  const kind=/\bCÔNG\s+VĂN\b/i.test(around)?'Công văn':
+    /\bKẾ\s+HOẠCH\b/i.test(around)?'Kế hoạch':
+    /\bTHÔNG\s+BÁO\b/i.test(around)?'Thông báo':
+    /\bHƯỚNG\s+DẪN\b/i.test(around)?'Hướng dẫn':'Văn bản';
+  return {number,kind};
+}
 async function ai(){
  const prompt=$('aiPrompt').value.trim();
  if(!prompt&&!hvaVipDocumentText)return status('Hãy nhập yêu cầu hoặc đính kèm văn bản bằng dấu +.');
@@ -685,18 +698,17 @@ async function ai(){
   if(shortened)hvaVipStatus('Văn bản dài '+full.length.toLocaleString('vi-VN')+
     ' ký tự. Trợ lý đọc các đoạn trích trọng tâm, CHƯA đọc toàn bộ; thầy cần đối chiếu PDF gốc, nhất là thời hạn.');
   const schema='{"fields":{"tieuDe":"...","noiDung":"...","han":"YYYY-MM-DDTHH:mm hoặc rỗng","link":"","xacNhan":false}}';
+  const docHeader=hvaVipExtractDocumentHeader(full);
+  const schemaCompact='{"fields":{"tieuDe":"","noiDung":"","han":"","link":"","xacNhan":false}}';
   const request=[
-   'NHIỆM VỤ: Soạn tin nhắn THÔNG BÁO – TRIỂN KHAI để Ban Giám hiệu Trường THPT Hòa Vang xem, duyệt rồi gửi Hội đồng.',
-   'VĂN PHONG BẮT BUỘC: tự nhiên, ngắn gọn, mạch lạc, chuẩn tin nhắn điều hành của nhà trường. Dùng chủ thể "nhà trường đề nghị", "đề nghị quý thầy cô", KHÔNG viết "thầy Nguyễn Văn Thà triển khai", "tôi yêu cầu", "với vai trò Phó Hiệu trưởng". Không tự nhận thay mặt Hiệu trưởng ký ban hành.',
-   'MẪU CẤU TRÚC: "THÔNG BÁO TRIỂN KHAI VĂN BẢN SỐ ..."; xuống dòng "Kính gửi quý thầy cô và các bộ phận liên quan!"; tiếp theo "Thực hiện [văn bản/căn cứ có thật], nhà trường đề nghị:"; các nhiệm vụ 1., 2. theo đối tượng, việc cần làm, thời hạn; kết "Trân trọng!".',
-   'CHỈ dùng nội dung được chứng minh trong tài liệu; không sáng tác đối tượng, đầu việc, chức danh, địa điểm, thời gian, đường dẫn, số liệu, chỉ tiêu hay tỷ lệ (ví dụ 100%). Không chuyển nội dung giới thiệu tài liệu thành mệnh lệnh bắt buộc nếu văn bản không yêu cầu.',
-   'TUYỆT ĐỐI không đưa "[cần xác minh]", "[...]" hoặc dữ liệu không chắc chắn vào tiêu đề hay câu khẳng định. Nếu chưa đủ căn cứ xác định số/ký hiệu, chọn tiêu đề trung tính "THÔNG BÁO TRIỂN KHAI" và chỉ nêu nội dung đã rõ. Nêu việc chưa chắc chắn ở cuối câu trả lời bên ngoài dự thảo? Không: chỉ có JSON.',
-   'Thời hạn: chỉ điền ô han theo YYYY-MM-DDTHH:mm khi văn bản nêu rõ hạn thực hiện/báo cáo đủ ngày và giờ; thời gian dự họp không mặc nhiên là hạn báo cáo. Nếu không có thì để chuỗi rỗng.',
-   'Người nhận sẽ do người dùng chọn trong Nguồn nhân sự VIP; không tự chọn hay đưa dữ liệu không có căn cứ. Không tự bịa link Kho.',
-   'Chỉ trả về JSON hợp lệ KHÔNG markdown: '+schema+'. Lời văn trong noiDung là tin nhắn hoàn chỉnh sẵn để thầy duyệt, không phải báo cáo giải thích, không phô diễn thương hiệu AI.',
-   'YÊU CẦU THẦY NHẬP: '+prompt.slice(0,450),
-   'TÊN TỆP THAM KHẢO (chỉ là metadata, không đủ xác định nội dung): '+(hvaVipDocumentName||'không có'),
-   'NGUỒN '+(shortened?'TRÍCH ĐOẠN, CHƯA ĐẦY ĐỦ':'VĂN BẢN')+' (phải đối chiếu bản gốc): '+notes
+    'Soạn thông báo triển khai của NHÀ TRƯỜNG THPT HÒA VANG gửi giáo viên, ngắn gọn, tự nhiên như tin nhắn Zalo. Chỉ trả JSON: '+schemaCompact,
+    'Kính gửi quý thầy cô và các bộ phận liên quan! Thực hiện [LOẠI VĂN BẢN] số [SỐ/KÝ HIỆU] ngày [NGÀY] của [CƠ QUAN] về việc [TRÍCH YẾU], nhà trường đề nghị: 1. ... 2. ... Trân trọng! Các đoạn trong dấu ngoặc là CHỈ DẪN CẤU TRÚC, không được chép dấu ngoặc vào kết quả.',
+    'PHẢI ĐỌC SỐ/KÝ HIỆU, NGÀY, CƠ QUAN, TRÍCH YẾU từ CHỮ TRONG TỆP; không suy đoán từ tên file. Nếu số có thật, dùng đúng ở cả tiêu đề và câu Thực hiện. Văn bản Sở thì ghi "Thực hiện Công văn/Kế hoạch/Thông báo số ... ngày ... của Sở Giáo dục và Đào tạo..." theo loại văn bản thực.',
+    'Nếu KHÔNG đọc rõ số văn bản thì tiêu đề "THÔNG BÁO TRIỂN KHAI" và KHÔNG ghi số giả. Không dùng "[cần xác minh]". Không tự đặt nội dung, người tham dự, tỷ lệ, hạn. Chỉ điền han khi nguồn nêu đủ ngày và giờ hạn thực hiện/báo cáo.',
+    'Không dùng "thầy Nguyễn Văn Thà triển khai", chỉ dùng danh nghĩa "nhà trường đề nghị". Chỉ nêu nội dung nguồn chứng minh; không biến tài liệu tham khảo thành chỉ đạo bắt buộc.',
+    'Số/ký hiệu đã nhận diện sơ bộ từ CHỮ VĂN BẢN: '+(docHeader.number||'CHƯA ĐỌC ĐƯỢC')+'; loại: '+(docHeader.kind||'chưa rõ')+'. Phải kiểm tra lại trong nội dung tệp.',
+    'Yêu cầu người soạn: '+prompt.slice(0,420),
+    'VĂN BẢN GỐC'+(shortened?' (trích đoạn chưa đầy đủ)':'')+':\n'+notes
   ].join('\n');
   status('Trợ lý VIP Pro đang soạn thông báo...');
   // Giữ rõ ranh giới hướng dẫn và tài liệu trong giới hạn 4.000 ký tự của Backend.
@@ -732,6 +744,17 @@ async function ai(){
    }
   }
   if($('link').value.trim())delete fields.link;
+  // Bảo vệ số văn bản: không để AI phát hành số/ký hiệu không có trong chữ tệp.
+  const generated=(String(fields.tieuDe||'')+' '+String(fields.noiDung||''));
+  const mentions=[...generated.matchAll(/\b\d{1,5}\s*\/\s*[A-ZĐ]{2,14}(?:[-.][A-ZĐ0-9.]{1,20}){0,4}\b/gi)]
+    .map(m=>m[0].replace(/\s+/g,'').toUpperCase());
+  const srcCodes=new Set([...full.matchAll(/\b\d{1,5}\s*\/\s*[A-ZĐ]{2,14}(?:[-.][A-ZĐ0-9.]{1,20}){0,4}\b/gi)]
+    .map(m=>m[0].replace(/\s+/g,'').toUpperCase()));
+  if(mentions.some(v=>!srcCodes.has(v))){
+    $('aiResult').textContent=[fields.tieuDe||'',fields.noiDung||''].join('\n\n');
+    throw Error('Trợ lý ghi số/ký hiệu không tìm thấy trong chữ của văn bản đính kèm. Không điền form; thầy kiểm tra tệp gốc.');
+  }
+
   const checkText=String(fields.tieuDe||'')+'\n'+String(fields.noiDung||'');
   const placeholder=/\[(?:cần xác minh|chưa rõ|điền|số văn bản|ngày tháng|\.\.\.)\]/i.test(checkText);
   const individualAsAuthority=/(?:thầy|cô)\s+Nguyễn\s+Văn\s+Thà\s*[-–:]?\s*Phó\s+Hiệu\s+trưởng\s+(?:triển khai|đề nghị|yêu cầu|chỉ đạo)/i.test(checkText);
