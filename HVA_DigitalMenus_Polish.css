@@ -1,0 +1,29 @@
+/* HVA–EDOS: giao diện sáng, rõ nét. KHÔNG thay đổi nền, ảnh nền và các chức năng PASS. */
+.hva-digital-menus{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:17px 0 19px}
+.hva-digital-menu{display:flex;align-items:center;gap:14px;min-width:0;min-height:96px;padding:17px 19px;background:#fff;border:1px solid #c6dced;border-radius:16px;text-decoration:none;color:#10486f;box-shadow:0 5px 18px rgba(8,61,111,.08);transition:box-shadow .18s,transform .18s,border-color .18s}
+.hva-digital-menu:hover{border-color:#5fa6d4;box-shadow:0 9px 23px rgba(8,61,111,.13);transform:translateY(-2px)}
+.hva-digital-menu:focus-visible{outline:3px solid #20a6e8;outline-offset:3px}
+.hva-digital-menu .hva-menu-icon{width:51px;height:51px;flex:0 0 51px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#e2f2ff,#d6eafe);color:#1166a6;font-size:25px}
+.hva-digital-menu .hva-menu-icon i{line-height:1}
+.hva-menu-content{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.hva-menu-content strong{font-size:16px;font-weight:850;letter-spacing:.01em;line-height:1.3;color:#0b426e}
+.hva-menu-content small{font-size:12px;line-height:1.45;color:#597b94}
+.hva-digital-menu .hva-menu-arrow{font-size:21px;color:#4a8fbe}
+.hva-digital-menu.is-waiting .hva-menu-icon{background:#eaf2fa;color:#527d9c}
+.hva-menu-wait{display:inline-flex;width:max-content;max-width:100%;font-size:10px;font-weight:750;color:#617e94;padding:3px 7px;background:#eef3f8;border:1px solid #d9e4ef;border-radius:99px}
+@media(max-width:680px){.hva-digital-menus{grid-template-columns:1fr;gap:10px;margin:14px 0}.hva-digital-menu{min-height:82px;padding:13px 14px}.hva-menu-content strong{font-size:15px}.hva-menu-content small{font-size:11.5px}}
+/* Chỉ phần khung/chữ, không đè nền nền gốc. */
+.nvs-chooser .nvs-two-gates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.nvs-chooser .nvs-gate-wrap{min-width:0}
+.nvs-chooser .nvs-gate{height:100%;min-height:170px;border-radius:19px;box-shadow:0 7px 22px rgba(8,61,111,.13)}
+.nvs-chooser .nvs-gate:focus-visible{outline:3px solid #24b5e5;outline-offset:4px}
+.nvs-chooser .nvs-gate-learning{background:linear-gradient(135deg,#0c6998,#1484ae)!important;color:#fff}
+.nvs-chooser .nvs-gate-documents{background:linear-gradient(135deg,#164e88,#3775ae)!important;color:#fff}
+.nvs-chooser .nvs-gate-learning strong,.nvs-chooser .nvs-gate-documents strong,.nvs-chooser .nvs-gate-learning span,.nvs-chooser .nvs-gate-documents span{color:#fff}
+.nvs-chooser .nvs-gate-learning em,.nvs-chooser .nvs-gate-documents em{color:#e9f5ff}
+.nvs-chooser .nvs-gate-learning .nvs-gate-icon,.nvs-chooser .nvs-gate-documents .nvs-gate-icon{border-color:rgba(255,255,255,.35)}
+/* Đúng 3 nút trên. Nút Văn bản điện tử mở từ các menu ở dưới. */
+.nvs-quick{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.nvs-quick>#nvsQuickRoleSlot{display:none!important}
+.nvs-quick>.nvs-quick-card{min-width:0!important}
+@media(max-width:720px){.nvs-chooser .nvs-two-gates{grid-template-columns:1fr;gap:11px}.nvs-chooser .nvs-gate{min-height:154px}}
