@@ -759,6 +759,8 @@ async function ai(){
    }
   }
   if($('link').value.trim())delete fields.link;
+  hvaVipRenderAdvice(raw.thamMuu||{},shortened||Boolean(notes&&available<notes.length));
+
   // Bảo vệ số văn bản: không để AI phát hành số/ký hiệu không có trong chữ tệp.
   const generated=(String(fields.tieuDe||'')+' '+String(fields.noiDung||''));
   const mentions=[...generated.matchAll(/\b\d{1,5}\s*\/\s*[A-ZĐ]{2,14}(?:[-.][A-ZĐ0-9.]{1,20}){0,4}\b/gi)]
@@ -782,7 +784,6 @@ async function ai(){
       unsupportedPercentage?'tự thêm chỉ tiêu 100% không có trong tài liệu':''
     ].filter(Boolean).join('; ')+'. Không điền vào biểu mẫu. Thầy yêu cầu Trợ lý soạn lại hoặc điều chỉnh nguồn.');
   }
-  hvaVipRenderAdvice(raw.thamMuu||{},shortened||Boolean(notes&&available<notes.length));
   proposal={fields,options:[],questions:[]};
   $('aiResult').textContent=[fields.tieuDe||'',fields.noiDung||'',
     fields.han?'Thời hạn đề xuất: '+fields.han:'Không xác định thời hạn báo cáo cụ thể.'].join('\n\n');
