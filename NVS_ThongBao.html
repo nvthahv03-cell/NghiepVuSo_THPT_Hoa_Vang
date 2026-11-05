@@ -313,6 +313,26 @@
 .hva-vip-members{padding:8px 12px;border-top:1px solid #e5eff9;background:#f8fbff;max-height:280px;overflow:auto;display:grid;gap:4px}
 .hva-vip-members[hidden]{display:none}.hva-vip-member{display:flex;gap:9px;align-items:center;padding:7px;border-radius:8px;background:white;font-size:13px;cursor:pointer}
 .hva-vip-member small{display:block;color:#64788c}.hva-vip-member input,.hva-vip-special input,.hva-vip-group input{width:17px;height:17px;accent-color:#075cad}
+/* EDOS-CH-HEAD: thừa kế mẫu EDOS đã PASS, chỉ thay trình bày */
+.hva-pro-header{margin:5px 6px 0;min-height:94px;border-radius:10px;background:radial-gradient(circle at 86% 22%,rgba(8,221,228,.34),transparent 26%),linear-gradient(105deg,#064482 0%,#0757a8 45%,#058bbd 75%,#06bccc 100%)}
+.hva-pro-header-inner{min-height:92px;max-width:1460px;grid-template-columns:54px minmax(0,1fr) minmax(110px,auto);gap:12px;padding:10px 18px}
+.hva-pro-brand{justify-content:center;min-width:0}
+.hva-pro-brand .hva-pro-divider{display:none}
+.hva-edos-identity{width:auto;max-width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.08}
+.hva-edos-logo{color:#fff;font-weight:900;font-size:clamp(22px,2.65vw,34px);letter-spacing:-.035em;text-shadow:0 2px 9px rgba(0,30,82,.30)}
+.hva-edos-logo span{color:#ffa129}
+.hva-edos-en{color:#f5fbff;font-weight:750;font-size:clamp(9px,.88vw,12px)}
+.hva-edos-school{color:#fff;font-weight:850;font-size:clamp(9px,.9vw,12px)}
+.hva-edos-motto{color:#e3f4ff;font-size:clamp(9px,.82vw,11px);font-style:italic;font-weight:650}
+.hva-pro-tools{justify-content:flex-end}
+.hva-pro-online{height:36px;padding:0 11px;font-size:10px}
+.hva-qr-hide{border:1px solid #d4d7e6;border-radius:8px;width:29px;height:29px;flex:0 0 29px;background:#fff;color:#64748b;display:grid;place-items:center;font-size:16px;cursor:pointer}
+.hva-qr-hide:hover{background:#fee2e2;color:#b91c1c;border-color:#fecaca}
+.hva-restore-meetings{display:inline-flex;align-items:center;gap:5px;margin-top:10px;border:1px solid #c4b5fd;border-radius:9px;background:#faf5ff;color:#6d28d9;padding:7px 10px;font-size:10px;font-weight:800;cursor:pointer}
+.hva-restore-meetings[hidden]{display:none!important}
+@media(max-width:720px){.hva-pro-header-inner{grid-template-columns:37px minmax(0,1fr) 95px;min-height:83px;padding:8px 8px;gap:5px}.hva-pro-back{width:35px;height:35px}.hva-edos-logo{font-size:20px}.hva-edos-en{font-size:7px}.hva-edos-school{font-size:7px;line-height:1.15}.hva-edos-motto{font-size:6.5px;line-height:1.15}.hva-pro-online{font-size:8px;padding:0 7px;height:29px}.hva-pro-online-dot{width:7px;height:7px}.hva-pro-version{font-size:7px}}
+@media(max-width:390px){.hva-pro-header-inner{grid-template-columns:33px minmax(0,1fr) 77px;gap:3px}.hva-edos-logo{font-size:18px}.hva-edos-school{font-size:6.4px}.hva-edos-en{font-size:6.5px}.hva-edos-motto{font-size:6px}.hva-pro-online{min-width:0;padding:0 4px;font-size:7px}}
+
 .noticeHistory{display:grid;gap:8px}.noticeHistoryItem{border:1px solid #d6e5f5;border-radius:12px;background:#f7fbff;padding:12px 15px;display:grid;gap:5px;color:#123d67}.noticeHistoryItem strong{font-size:14px}.noticeHistoryItem small{color:#61788d}.noticeHistoryEmpty{color:#657d95;font-size:13px;padding:8px}.status{white-space:pre-line}.field{font-size:15px}#noiDung{min-height:230px;line-height:1.65;resize:vertical}.notice{border-left-color:#0e8a95;background:#effaf9}
 </style></head><body data-mod="ThongBao"><header class="hva-pro-header">
   <div class="hva-pro-header-inner">
