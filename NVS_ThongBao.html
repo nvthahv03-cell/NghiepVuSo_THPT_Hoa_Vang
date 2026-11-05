@@ -633,8 +633,48 @@ async function publish(){
 }
 function voice(){if(voiceWanted){voiceWanted=false;try{rec?.stop()}catch(_){}$('voiceBtn').textContent='🎙 NHẬP BẰNG GIỌNG NÓI';return}const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return status('Trình duyệt chưa hỗ trợ nhận dạng giọng nói.');rec=new SR();rec.lang='vi-VN';rec.continuous=true;rec.interimResults=false;voiceWanted=true;$('voiceBtn').textContent='■ DỪNG GHI ÂM';rec.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++){if(!e.results[i].isFinal)continue;let t=e.results[i][0].transcript.trim();const stop=/(?:^|[\s,;.!?])hết[\s.!?]*$/iu.test(t);if(stop)t=t.replace(/(?:^|[\s,;.!?])hết[\s.!?]*$/iu,'').trim();if(t)$('aiPrompt').value+=($('aiPrompt').value?' ':'')+t;if(stop)voice()}};rec.onend=()=>{if(voiceWanted){voiceWanted=false;$('voiceBtn').textContent='🎙 NHẬP BẰNG GIỌNG NÓI';status('Micro đã ngắt; bấm để ghi tiếp.')}};rec.onerror=e=>status('Micro: '+e.error);try{rec.start();status('Đang nghe tiếng Việt; nói “Hết” để dừng.')}catch(e){voiceWanted=false;status(e.message)}}
 function cleanJSON(t){const s=String(t||'').replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();const a=s.indexOf('{'),b=s.lastIndexOf('}');if(a<0||b<=a)throw Error('AI không trả về JSON biểu mẫu.');return JSON.parse(s.slice(a,b+1))}
-async function ai(){const prompt=$('aiPrompt').value.trim();if(!prompt)return status('Hãy nhập yêu cầu AI.');if(!token())return status('Chưa có phiên đăng nhập NVS; vui lòng đăng nhập lại.');const b=$('aiBtn');b.disabled=true;proposal=null;$('applyAI').disabled=true;status('Đang yêu cầu AI soạn biểu mẫu...');const schema={ThongBao:'fields: {tieuDe,noiDung,han (YYYY-MM-DDTHH:mm),link,xacNhan (boolean)}',BinhChon:'fields: {tieuDe,noiDung,luaChon (single hoặc multi),han (YYYY-MM-DDTHH:mm),link,anDanh (boolean),xemKetQua (boolean)}; options: mảng phương án',KhaoSat:'fields: {tieuDe,noiDung,han (YYYY-MM-DDTHH:mm),link,anDanh (boolean)}; questions: [{title,type (single,multi,short,long,date,scale),options:[],required:true}]'}[MOD];const task='Bạn là AI hỗ trợ nghiệp vụ '+MOD+' của Trường THPT Hòa Vang. Chỉ trả về một đối tượng JSON hợp lệ không markdown theo schema '+schema+'. Chỉ điền thông tin có căn cứ trong yêu cầu; thiếu thì để trống, không tự chọn người nhận, không tự phát hành. Yêu cầu: '+prompt;
-try{const res=await fetch(WEB_APP_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'askVirtualAssistant',sessionToken:token(),context:'Nghiệp vụ chung',question:task})});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();if(!data.success||typeof data.answer!=='string')throw Error(data.message||'Backend chưa trả lời');const raw=cleanJSON(data.answer);const f={};for(const id of defs[MOD])if(Object.hasOwn(raw.fields||{},id)){const n=$(id),v=raw.fields[id];if(n.type==='checkbox'){if(typeof v==='boolean')f[id]=v}else if(typeof v==='string'&&v.length<=12000){if(n.type==='datetime-local'&&v&&!/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(v))continue;if(n.type==='url'&&v&&!/^https:\/\//.test(v))continue;if(n.tagName==='SELECT'&&![...n.options].some(o=>o.value===v))continue;f[id]=v}}proposal={fields:f,options:Array.isArray(raw.options)?raw.options.filter(x=>typeof x==='string').slice(0,30):[],questions:Array.isArray(raw.questions)?raw.questions.filter(q=>q&&typeof q.title==='string').slice(0,30):[]};$('aiResult').textContent=JSON.stringify(proposal,null,2);$('applyAI').disabled=false;status('Đã có dự thảo AI. Kiểm tra rồi bấm ĐIỀN FORM; chưa lưu/phát hành.')}catch(e){status('Chưa thể lấy dự thảo AI: '+e.message)}finally{b.disabled=false}}
+async function ai(){
+ const prompt=$('aiPrompt').value.trim();
+ if(!prompt&&!hvaVipDocumentText)return status('Hãy nhập yêu cầu hoặc đính kèm văn bản bằng dấu +.');
+ if(hvaVipDocumentError)return status('Tài liệu chưa đọc được: '+hvaVipDocumentError);
+ if(!token())return status('Chưa có phiên đăng nhập EDOS; vui lòng đăng nhập lại.');
+ const button=$('aiBtn');
+ if(button.disabled)return;
+ button.disabled=true;proposal=null;$('applyAI').disabled=true;
+ status('Trợ lý VIP Pro đang chuẩn bị nội dung...');
+ try{
+  // Mỗi câu hỏi gửi Backend dưới 4.000 ký tự; đọc tệp dài theo từng phần.
+  const notes=await hvaVipReadNotes(hvaVipDocumentText);
+  const schema='{"fields":{"tieuDe":"...","noiDung":"...","han":"YYYY-MM-DDTHH:mm hoặc rỗng","link":"","xacNhan":false}}';
+  const request='Soạn tin nhắn THÔNG BÁO – TRIỂN KHAI của Trường THPT Hòa Vang. '+
+   'Chỉ trả về một đối tượng JSON không markdown theo schema '+schema+'. '+
+   'Tiêu đề ví dụ: THÔNG BÁO TRIỂN KHAI VĂN BẢN SỐ 372/TB-THPTHV. '+
+   'Nội dung có Kính gửi, căn cứ, phân công/nội dung triển khai có đánh số và Trân trọng. '+
+   'Không bịa người, số văn bản, thời gian, địa điểm, liên kết hoặc nội dung chưa có căn cứ. '+
+   'Chỉ điền han khi văn bản nêu hạn thực hiện hoặc báo cáo rõ cả ngày và giờ; không có thì rỗng. '+
+   'Không tự chọn người nhận, không phát hành. Yêu cầu của người soạn: '+prompt.slice(0,650)+
+   '. Ghi chú trích từ tài liệu người soạn đã chọn (cần đối chiếu bản gốc): '+notes;
+  status('Trợ lý VIP Pro đang soạn thông báo...');
+  const response=await hvaVipAsk(request.slice(0,3900));
+  const raw=cleanJSON(response),fields={};
+  for(const id of defs[MOD])if(Object.hasOwn(raw.fields||{},id)){
+   const el=$(id),v=raw.fields[id];
+   if(el.type==='checkbox'){if(typeof v==='boolean')fields[id]=v;}
+   else if(typeof v==='string'&&v.length<=12000){
+    if(el.type==='datetime-local'&&v&&!/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(v))continue;
+    if(el.type==='url'&&v&&!/^https:\/\//.test(v))continue;
+    fields[id]=v;
+   }
+  }
+  if($('link').value.trim())delete fields.link;
+  proposal={fields,options:[],questions:[]};
+  $('aiResult').textContent=[fields.tieuDe||'',fields.noiDung||'',
+    fields.han?'Thời hạn đề xuất: '+fields.han:'Không xác định thời hạn báo cáo cụ thể.'].join('\n\n');
+  $('applyAI').disabled=false;
+  status('Đã có dự thảo. Thầy kiểm tra rồi bấm ĐIỀN FORM; thời hạn không rõ sẽ để trống. Chưa gửi.');
+ }catch(e){status('Trợ lý chưa tạo được dự thảo: '+String(e.message||e));}
+ finally{button.disabled=false;}
+}
 function applyAI(){if(!proposal)return;for(const [k,v] of Object.entries(proposal.fields)){const n=$(k);if(!n)continue;if(n.type==='checkbox')n.checked=v;else n.value=v}if(MOD==='BinhChon'&&proposal.options.length){$('pollOptions').replaceChildren();proposal.options.forEach(x=>addOption($('pollOptions'),x))}if(MOD==='KhaoSat'&&proposal.questions.length){$('questions').replaceChildren();proposal.questions.forEach(addQuestion)}status('AI đã điền form. Hãy kiểm tra nội dung, thời hạn và chọn người nhận. Chưa phát hành.');}
 function init(){userInit();renderNoticeHistory();hvaVipInitAttach();$('loadPeople').onclick=loadPeople;$('peopleSearch').oninput=renderPeople;$('clearPeople').onclick=()=>{chosen.clear();renderPeople()};$('saveBtn').onclick=save;$('restoreBtn').onclick=restore;$('clearBtn').onclick=reset;$('previewBtn').onclick=preview;$('publishBtn').onclick=publish;$('closePreview').onclick=()=>$('previewModal').classList.remove('open');$('printBtn').onclick=()=>window.print();$('voiceBtn').onclick=voice;$('aiBtn').onclick=ai;$('applyAI').onclick=applyAI;if(MOD==='BinhChon'){addOption($('pollOptions'));addOption($('pollOptions'));$('addPollOption').onclick=()=>addOption($('pollOptions'))}if(MOD==='KhaoSat'){addQuestion();$('addQuestion').onclick=()=>addQuestion()}renderPeople();if(window.HVAPersonnel?.buildGroups)loadPeople();else status('Chưa tìm thấy HVA_Personnel.js; cần giữ file dùng chung đang PASS.');}
 document.addEventListener('DOMContentLoaded',init);
