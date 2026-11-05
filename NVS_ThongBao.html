@@ -359,6 +359,90 @@ const $=id=>document.getElementById(id), MOD=document.body.dataset.mod, KEY='NVS
 const WEB_APP_URL='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
 const defs={ThongBao:['tieuDe','noiDung','han','link','xacNhan'],BinhChon:['tieuDe','noiDung','luaChon','han','link','anDanh','xemKetQua'],KhaoSat:['tieuDe','noiDung','han','link','anDanh']};
 let groups=[],people=new Map(),chosen=new Map(),proposal=null,rec=null,voiceWanted=false;
+let hvaVipDocumentText='',hvaVipDocumentName='',hvaVipDocumentError='';
+function hvaVipStatus(t){$('hvaFileReadStatus').textContent=t;}
+function hvaVipLoadScript(url,test){
+ if(test())return Promise.resolve();
+ return new Promise((resolve,reject)=>{
+  const script=document.createElement('script');script.src=url;script.async=true;
+  script.onload=()=>test()?resolve():reject(Error('Không khởi tạo được thư viện đọc tài liệu.'));
+  script.onerror=()=>reject(Error('Không tải được thư viện đọc tài liệu.'));
+  document.head.append(script);
+ });
+}
+async function hvaVipReadFile(file){
+ if(file.size>8*1024*1024)throw Error('Tệp vượt 8 MB. Hãy chọn văn bản có dung lượng nhỏ hơn.');
+ const ext=(file.name.split('.').pop()||'').toLowerCase();
+ if(ext==='txt')return file.text();
+ if(ext==='pdf'){
+  await hvaVipLoadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',()=>Boolean(window.pdfjsLib));
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+  const parts=[];let length=0;
+  for(let i=1;i<=Math.min(60,pdf.numPages);i++){
+   const page=await pdf.getPage(i),data=await page.getTextContent();
+   const text=data.items.map(x=>x.str||'').join(' ');
+   parts.push(text);length+=text.length;if(length>22000)break;
+  }
+  const full=parts.join('\n').trim();
+  if(!full)throw Error('PDF không có lớp chữ. Hãy dùng bản PDF có chữ hoặc chuyển văn bản scan thành chữ trước khi tải.');
+  return full;
+ }
+ if(ext==='docx'){
+  await hvaVipLoadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.9.1/mammoth.browser.min.js',()=>Boolean(window.mammoth));
+  const result=await window.mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});
+  return String(result.value||'');
+ }
+ throw Error('Hỗ trợ PDF có lớp chữ, Word .docx và TXT. Không hỗ trợ Word .doc cũ.');
+}
+async function hvaVipFileChanged(){
+ const file=$('hvaAttachFile').files[0];if(!file)return;
+ hvaVipDocumentText='';hvaVipDocumentError='';hvaVipDocumentName='';
+ $('hvaAttachCaption').textContent=file.name+' · đang đọc...';
+ hvaVipStatus('Đang đọc chữ trên thiết bị. Tệp chưa được chuyển lên máy chủ.');
+ try{
+  const text=(await hvaVipReadFile(file)).trim();
+  if(!text)throw Error('Không tìm được nội dung chữ trong tệp.');
+  hvaVipDocumentText=text.slice(0,22000);hvaVipDocumentName=file.name;
+  $('hvaAttachCaption').textContent='Đã chọn: '+file.name;
+  hvaVipStatus('Đọc được '+text.length.toLocaleString('vi-VN')+' ký tự. '+(text.length>22000?'Chỉ lấy phần đầu vì tài liệu quá dài; cần đọc lại văn bản gốc.':'Nội dung chữ sẽ được gửi tới Trợ lý khi thầy yêu cầu tạo dự thảo.'));
+ }catch(e){
+  hvaVipDocumentError=String(e.message||e);hvaVipStatus(hvaVipDocumentError);
+  $('hvaAttachCaption').textContent='Chưa đọc được tài liệu';
+ }
+}
+function hvaVipInitAttach(){
+ const button=$('hvaAttachToggle'),menu=$('hvaAttachMenu');
+ button.onclick=()=>{menu.hidden=!menu.hidden;button.setAttribute('aria-expanded',String(!menu.hidden));};
+ $('hvaAttachFile').onchange=()=>{menu.hidden=true;button.setAttribute('aria-expanded','false');hvaVipFileChanged();};
+ $('hvaAttachFromKho').onclick=()=>{
+  menu.hidden=true;button.setAttribute('aria-expanded','false');
+  window.open('./VanBan_QuyDinh.html','_blank','noopener,noreferrer');
+  hvaVipStatus('Kho văn bản mở ở thẻ khác. Thầy sao chép liên kết vào ô “Liên kết văn bản trong Kho EDOS”. Nếu muốn AI đọc, hãy tải tài liệu vào dấu +.');
+  $('link').focus();
+ };
+}
+async function hvaVipAsk(question){
+ const response=await fetch(WEB_APP_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+  body:JSON.stringify({action:'askVirtualAssistant',sessionToken:token(),context:'Nghiệp vụ chung',question})});
+ if(!response.ok)throw Error('Backend HTTP '+response.status);
+ const result=await response.json();
+ if(!result||result.success!==true||typeof result.answer!=='string')throw Error(result?.message||'Trợ lý chưa trả lời.');
+ return result.answer.trim();
+}
+async function hvaVipReadNotes(text){
+ if(!text)return '';
+ const chunks=[];for(let i=0;i<text.length;i+=2500)chunks.push(text.slice(i,i+2500));
+ const notes=[];
+ for(let i=0;i<chunks.length;i++){
+  status('Trợ lý VIP Pro đọc tài liệu: phần '+(i+1)+'/'+chunks.length+'...');
+  const instruction='Trích xuất chính xác từ phần '+(i+1)+'/'+chunks.length+
+   ': số văn bản, nhiệm vụ cần triển khai, đối tượng, mốc thời gian, thời hạn báo cáo, link tài liệu. Không suy diễn, không soạn thông báo. Tối đa 350 ký tự. NỘI DUNG:\n'+chunks[i];
+  notes.push(await hvaVipAsk(instruction));
+ }
+ return notes.join('\n').slice(0,2700);
+}
+
 function status(s){$('status').textContent=s;}
 function getUser(){try{return window.HVAPersonnel?.currentUser?.()||JSON.parse(localStorage.getItem('user')||sessionStorage.getItem('user')||'{}')}catch(_){return {}}}
 function token(){try{return localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||''}catch(_){return ''}}
@@ -552,7 +636,7 @@ function cleanJSON(t){const s=String(t||'').replace(/^```(?:json)?/i,'').replace
 async function ai(){const prompt=$('aiPrompt').value.trim();if(!prompt)return status('Hãy nhập yêu cầu AI.');if(!token())return status('Chưa có phiên đăng nhập NVS; vui lòng đăng nhập lại.');const b=$('aiBtn');b.disabled=true;proposal=null;$('applyAI').disabled=true;status('Đang yêu cầu AI soạn biểu mẫu...');const schema={ThongBao:'fields: {tieuDe,noiDung,han (YYYY-MM-DDTHH:mm),link,xacNhan (boolean)}',BinhChon:'fields: {tieuDe,noiDung,luaChon (single hoặc multi),han (YYYY-MM-DDTHH:mm),link,anDanh (boolean),xemKetQua (boolean)}; options: mảng phương án',KhaoSat:'fields: {tieuDe,noiDung,han (YYYY-MM-DDTHH:mm),link,anDanh (boolean)}; questions: [{title,type (single,multi,short,long,date,scale),options:[],required:true}]'}[MOD];const task='Bạn là AI hỗ trợ nghiệp vụ '+MOD+' của Trường THPT Hòa Vang. Chỉ trả về một đối tượng JSON hợp lệ không markdown theo schema '+schema+'. Chỉ điền thông tin có căn cứ trong yêu cầu; thiếu thì để trống, không tự chọn người nhận, không tự phát hành. Yêu cầu: '+prompt;
 try{const res=await fetch(WEB_APP_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'askVirtualAssistant',sessionToken:token(),context:'Nghiệp vụ chung',question:task})});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();if(!data.success||typeof data.answer!=='string')throw Error(data.message||'Backend chưa trả lời');const raw=cleanJSON(data.answer);const f={};for(const id of defs[MOD])if(Object.hasOwn(raw.fields||{},id)){const n=$(id),v=raw.fields[id];if(n.type==='checkbox'){if(typeof v==='boolean')f[id]=v}else if(typeof v==='string'&&v.length<=12000){if(n.type==='datetime-local'&&v&&!/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(v))continue;if(n.type==='url'&&v&&!/^https:\/\//.test(v))continue;if(n.tagName==='SELECT'&&![...n.options].some(o=>o.value===v))continue;f[id]=v}}proposal={fields:f,options:Array.isArray(raw.options)?raw.options.filter(x=>typeof x==='string').slice(0,30):[],questions:Array.isArray(raw.questions)?raw.questions.filter(q=>q&&typeof q.title==='string').slice(0,30):[]};$('aiResult').textContent=JSON.stringify(proposal,null,2);$('applyAI').disabled=false;status('Đã có dự thảo AI. Kiểm tra rồi bấm ĐIỀN FORM; chưa lưu/phát hành.')}catch(e){status('Chưa thể lấy dự thảo AI: '+e.message)}finally{b.disabled=false}}
 function applyAI(){if(!proposal)return;for(const [k,v] of Object.entries(proposal.fields)){const n=$(k);if(!n)continue;if(n.type==='checkbox')n.checked=v;else n.value=v}if(MOD==='BinhChon'&&proposal.options.length){$('pollOptions').replaceChildren();proposal.options.forEach(x=>addOption($('pollOptions'),x))}if(MOD==='KhaoSat'&&proposal.questions.length){$('questions').replaceChildren();proposal.questions.forEach(addQuestion)}status('AI đã điền form. Hãy kiểm tra nội dung, thời hạn và chọn người nhận. Chưa phát hành.');}
-function init(){userInit();renderNoticeHistory();$('loadPeople').onclick=loadPeople;$('peopleSearch').oninput=renderPeople;$('clearPeople').onclick=()=>{chosen.clear();renderPeople()};$('saveBtn').onclick=save;$('restoreBtn').onclick=restore;$('clearBtn').onclick=reset;$('previewBtn').onclick=preview;$('publishBtn').onclick=publish;$('closePreview').onclick=()=>$('previewModal').classList.remove('open');$('printBtn').onclick=()=>window.print();$('voiceBtn').onclick=voice;$('aiBtn').onclick=ai;$('applyAI').onclick=applyAI;if(MOD==='BinhChon'){addOption($('pollOptions'));addOption($('pollOptions'));$('addPollOption').onclick=()=>addOption($('pollOptions'))}if(MOD==='KhaoSat'){addQuestion();$('addQuestion').onclick=()=>addQuestion()}renderPeople();if(window.HVAPersonnel?.buildGroups)loadPeople();else status('Chưa tìm thấy HVA_Personnel.js; cần giữ file dùng chung đang PASS.');}
+function init(){userInit();renderNoticeHistory();hvaVipInitAttach();$('loadPeople').onclick=loadPeople;$('peopleSearch').oninput=renderPeople;$('clearPeople').onclick=()=>{chosen.clear();renderPeople()};$('saveBtn').onclick=save;$('restoreBtn').onclick=restore;$('clearBtn').onclick=reset;$('previewBtn').onclick=preview;$('publishBtn').onclick=publish;$('closePreview').onclick=()=>$('previewModal').classList.remove('open');$('printBtn').onclick=()=>window.print();$('voiceBtn').onclick=voice;$('aiBtn').onclick=ai;$('applyAI').onclick=applyAI;if(MOD==='BinhChon'){addOption($('pollOptions'));addOption($('pollOptions'));$('addPollOption').onclick=()=>addOption($('pollOptions'))}if(MOD==='KhaoSat'){addQuestion();$('addQuestion').onclick=()=>addQuestion()}renderPeople();if(window.HVAPersonnel?.buildGroups)loadPeople();else status('Chưa tìm thấy HVA_Personnel.js; cần giữ file dùng chung đang PASS.');}
 document.addEventListener('DOMContentLoaded',init);
 })();
 </script></body></html>
