@@ -364,13 +364,97 @@ function getUser(){try{return window.HVAPersonnel?.currentUser?.()||JSON.parse(l
 function token(){try{return localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||''}catch(_){return ''}}
 function userInit(){const u=getUser();const node=$('identity');if(node)node.textContent=[u.hoTen||u.hoten||u.name||'Người dùng HVA',u.chucVu||u.viTriViecLam||u.role||''].filter(Boolean).join(' · ');}
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function allMembers(g){return (g.members||[]).map(p=>{const id=String(p.username||p.maGV||p.id||'');return {...p,id,hoTen:p.hoTen||p.hoten||p.name||'',tenTo:p.tenTo||g.name||g.tenTo||''}}).filter(p=>p.id)}
-function count(){const groupNames=new Set([...chosen.values()].map(p=>p.tenTo));$('count').textContent=groupNames.size+' nhóm · '+chosen.size+' người';$('chips').replaceChildren();for(const [id,p] of chosen){const chip=document.createElement('span');chip.className='chip';chip.textContent=p.hoTen+' · '+p.tenTo;const b=document.createElement('button');b.type='button';b.textContent='×';b.setAttribute('aria-label','Bỏ '+p.hoTen);b.onclick=()=>{chosen.delete(id);renderPeople()};chip.append(b);$('chips').append(chip)}}
-function setMember(p,on){if(on)chosen.set(p.id,p);else chosen.delete(p.id)}
-function toggleGroup(g,on){allMembers(g).forEach(p=>setMember(p,on));renderPeople()}
-function renderPeople(){const q=$('peopleSearch').value.trim().toLocaleLowerCase('vi');const root=$('groupList');root.replaceChildren();const specials=[['HỘI ĐỒNG','Hội đồng'],['CHI BỘ','Chi bộ'],['BAN GIÁM HIỆU','Ban Giám hiệu']];const specialRoot=$('specialGroups');specialRoot.replaceChildren();for(const [label,name] of specials){const group=groups.find(g=>String(g.name||g.tenTo||'').toLocaleLowerCase('vi')===name.toLocaleLowerCase('vi'));if(!group)continue;const members=allMembers(group);const div=document.createElement('div');div.className='recipientSpecial';const left=document.createElement('div');left.innerHTML='<strong>'+safe(label)+'</strong><small>'+members.length+' người</small>';const lab=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=members.length>0&&members.every(p=>chosen.has(p.id));cb.onchange=()=>toggleGroup(group,cb.checked);lab.append(cb,document.createTextNode(' Chọn nhóm'));div.append(left,lab);specialRoot.append(div)}
-for(const g of groups){const members=allMembers(g).filter(p=>(p.hoTen+' '+p.tenTo).toLocaleLowerCase('vi').includes(q));if(!members.length)continue;const box=document.createElement('div');box.className='group';const head=document.createElement('div');head.className='groupHead';const title=document.createElement('button');title.type='button';title.textContent=(g.name||g.tenTo||'Tổ/Bộ phận')+' ('+members.length+')';title.style.cssText='border:0;background:transparent;text-align:left;color:inherit;font-weight:800';const toggle=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=members.every(p=>chosen.has(p.id));cb.onchange=()=>{members.forEach(p=>setMember(p,cb.checked));renderPeople()};toggle.append(cb,document.createTextNode(' Chọn nhóm'));head.append(title,toggle);const list=document.createElement('div');list.className='groupMembers';list.hidden=!q;title.onclick=()=>list.hidden=!list.hidden;for(const p of members){const lab=document.createElement('label');lab.className='member';const c=document.createElement('input');c.type='checkbox';c.checked=chosen.has(p.id);c.onchange=()=>{setMember(p,c.checked);renderPeople()};lab.append(c,document.createTextNode(p.hoTen));list.append(lab)}box.append(head,list);root.append(box)}if(!groups.length)root.textContent='Chưa tải được dữ liệu nhân sự thực. Không tự tạo danh sách.';count()}
-async function loadPeople(){if(!window.HVAPersonnel?.buildGroups){status('Thiếu HVA_Personnel.js. Giữ file dùng chung hiện hành cạnh các HTML.');return}status('Đang tải nhân sự HVA...');try{groups=await window.HVAPersonnel.buildGroups();people=new Map();for(const g of groups)for(const p of allMembers(g))if(!people.has(p.id))people.set(p.id,p);renderPeople();status('Đã nạp '+people.size+' nhân sự từ nguồn HVA.')}catch(e){status('Không tải được nhân sự: '+e.message)}}
+/* CÙNG NGUỒN NHÂN SỰ VIP VỚI CUỘC HỌP: HVA_Personnel.buildGroups()
+   Backend getNVSMeetingPersonnel; giữ groupKey, kind, tenTo, members. */
+const openedVipGroups=new Set();
+function allMembers(g){
+  return (Array.isArray(g.members)?g.members:[])
+    .map(x=>({...x,id:String(x.username||'').trim(),username:String(x.username||'').trim(),
+      hoTen:x.hoTen||'',tenTo:x.tenTo||g.tenTo||'',chucVu:x.chucVu||''}))
+    .filter(x=>x.username);
+}
+function count(){
+  const units=new Set([...chosen.values()].map(p=>p.tenTo).filter(Boolean));
+  $('count').textContent=units.size+' nhóm · '+chosen.size+' người';
+  const root=$('chips');root.replaceChildren();
+  for(const [id,p] of chosen){
+    const chip=document.createElement('span');chip.className='chip';chip.textContent=p.hoTen+' · '+p.tenTo;
+    const b=document.createElement('button');b.type='button';b.textContent='×';b.setAttribute('aria-label','Bỏ '+p.hoTen);
+    b.onclick=()=>{chosen.delete(id);renderPeople()};chip.append(b);root.append(chip);
+  }
+}
+function setMember(p,on){if(on)chosen.set(p.username,p);else chosen.delete(p.username);}
+function toggleVipGroup(g,on){allMembers(g).forEach(p=>setMember(p,on));renderPeople();}
+function vipGroupLabel(g){return String(g.tenTo||'Nhóm nhân sự');}
+function matchVipMember(p,q){return [p.hoTen,p.username,p.chucVu,p.tenTo,p.lopChuNhiem].some(v=>String(v||'').toLocaleLowerCase('vi').includes(q));}
+function makeVipCheck(g,members,allLabel){
+  const label=document.createElement('label'),input=document.createElement('input');
+  input.type='checkbox';input.checked=members.length>0&&members.every(p=>chosen.has(p.username));
+  input.onchange=()=>{members.forEach(p=>setMember(p,input.checked));renderPeople();};
+  label.append(input,document.createTextNode(' '+allLabel));return label;
+}
+function renderPeople(){
+  const q=$('peopleSearch').value.trim().toLocaleLowerCase('vi');
+  const specialRoot=$('specialGroups'),root=$('groupList');
+  specialRoot.replaceChildren();root.replaceChildren();
+  if(!groups.length){root.textContent='Chưa tải được nguồn nhân sự VIP. Bấm Nạp nhân sự HVA.';count();return;}
+  for(const [key,cls] of [['COUNCIL','is-council'],['CHIBO','is-party'],['BGH','is-bgh']]){
+    const g=groups.find(v=>key==='COUNCIL'?v.kind==='COUNCIL':v.groupKey===key);
+    if(!g)continue;
+    const members=allMembers(g);const visible=members.some(p=>matchVipMember(p,q))||vipGroupLabel(g).toLocaleLowerCase('vi').includes(q);
+    if(q&&!visible)continue;
+    const box=document.createElement('div');box.className='hva-vip-special '+cls;
+    const head=document.createElement('div');
+    const name=document.createElement('strong');name.textContent=vipGroupLabel(g);
+    const meta=document.createElement('small');meta.textContent=members.length+' người';
+    head.append(name,meta);box.append(head,makeVipCheck(g,members,key==='COUNCIL'?'Chọn Hội đồng':'Chọn nhóm'));
+    specialRoot.append(box);
+  }
+  const sections=[['TEAM','TỔ / BỘ PHẬN'],['GVCN','GIÁO VIÊN CHỦ NHIỆM'],['WORKGROUP','NHÓM CÔNG TÁC']];
+  for(const [kind,title] of sections){
+    const applicable=groups.filter(g=>g.kind===kind);
+    if(!applicable.length)continue;
+    let added=false;
+    for(const g of applicable){
+      const members=allMembers(g);
+      const groupMatches=vipGroupLabel(g).toLocaleLowerCase('vi').includes(q);
+      const visible=q&&!groupMatches?members.filter(p=>matchVipMember(p,q)):members;
+      if(!visible.length)continue;
+      if(!added){const h=document.createElement('div');h.className='hva-vip-category';h.textContent=title;root.append(h);added=true;}
+      const box=document.createElement('div');box.className='hva-vip-group';
+      const head=document.createElement('div');head.className='hva-vip-grouphead';
+      const button=document.createElement('button');button.type='button';
+      button.textContent=vipGroupLabel(g)+' ('+members.length+' người)';
+      const list=document.createElement('div');list.className='hva-vip-members';
+      const groupKey=String(g.groupKey);
+      list.hidden=!q&&!openedVipGroups.has(groupKey);
+      button.onclick=()=>{list.hidden=!list.hidden;if(list.hidden)openedVipGroups.delete(groupKey);else openedVipGroups.add(groupKey);};
+      head.append(button,makeVipCheck(g,members,'Chọn nhóm'));box.append(head,list);
+      for(const p of visible){
+        const label=document.createElement('label');label.className='hva-vip-member';
+        const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=chosen.has(p.username);
+        checkbox.onchange=()=>{setMember(p,checkbox.checked);renderPeople();};
+        const info=document.createElement('span');
+        const name=document.createElement('strong');name.textContent=p.hoTen||p.username;
+        const meta=document.createElement('small');meta.textContent=[p.lopChuNhiem?'GVCN '+p.lopChuNhiem:'',p.chucVu,p.tenTo].filter(Boolean).join(' · ');
+        info.append(name,meta);label.append(checkbox,info);list.append(label);
+      }
+      root.append(box);
+    }
+  }
+  if(!root.children.length)root.textContent='Không tìm thấy tổ/nhóm phù hợp.';count();
+}
+async function loadPeople(){
+  if(!window.HVAPersonnel?.buildGroups)return status('Bộ nguồn nhân sự VIP của Cuộc họp chưa được tải.');
+  status('Đang nạp nguồn nhân sự VIP từ EDOS...');
+  try{
+    groups=await window.HVAPersonnel.buildGroups();
+    people=new Map();
+    for(const g of groups)for(const p of allMembers(g))if(!people.has(p.username))people.set(p.username,p);
+    for(const id of [...chosen.keys()])if(!people.has(id))chosen.delete(id);
+    renderPeople();status('Đã nạp '+people.size+' tài khoản từ nguồn nhân sự VIP dùng chung với Cuộc họp.');
+  }catch(e){status('Không tải được nguồn nhân sự VIP: '+String(e.message||e));renderPeople();}
+}
 function addOption(root,val=''){const r=document.createElement('div');r.className='optRow';const inp=document.createElement('input');inp.className='field opt';inp.placeholder='Nhập phương án';inp.value=val;const b=document.createElement('button');b.type='button';b.className='btn pale';b.textContent='×';b.onclick=()=>{if(root.querySelectorAll('.optRow').length>2)r.remove();else status('Cần ít nhất 2 phương án.')};r.append(inp,b);root.append(r)}
 function addQuestion(q={}){const wrap=document.createElement('div');wrap.className='qitem';const top=document.createElement('div');top.className='qtop';const title=document.createElement('strong');title.textContent='Câu hỏi';const del=document.createElement('button');del.className='btn pale';del.textContent='Xóa câu';del.onclick=()=>wrap.remove();top.append(title,del);const input=document.createElement('input');input.className='field qt';input.placeholder='Nội dung câu hỏi';input.value=q.title||'';const select=document.createElement('select');select.className='field qtype';for(const [v,t] of [['single','Chọn một'],['multi','Chọn nhiều'],['short','Trả lời ngắn'],['long','Đoạn văn'],['date','Ngày'],['scale','Thang 1–5']]){const o=new Option(t,v);select.add(o)}select.value=q.type||'single';const opts=document.createElement('div');opts.className='options';const add=document.createElement('button');add.className='btn pale';add.textContent='+ Thêm phương án';add.onclick=()=>addOption(opts);const required=document.createElement('label');const ck=document.createElement('input');ck.type='checkbox';ck.checked=q.required!==false;required.append(ck,document.createTextNode(' Bắt buộc'));required.className='inline';const update=()=>{opts.hidden=add.hidden=!['single','multi'].includes(select.value)};select.onchange=update;wrap.append(top,input,select,opts,add,required);$('questions').append(wrap);(q.options&&q.options.length?q.options:['','']).forEach(v=>addOption(opts,v));update()}
 function questions(){return [...document.querySelectorAll('.qitem')].map(x=>({title:x.querySelector('.qt').value.trim(),type:x.querySelector('.qtype').value,options:[...x.querySelectorAll('.opt')].map(n=>n.value.trim()).filter(Boolean),required:x.querySelector('input[type="checkbox"]').checked}))}
