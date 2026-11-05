@@ -1085,119 +1085,6 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
 @media(prefers-reduced-motion:reduce){
  .nvs-chooser .nvs-two-gates .nvs-gate{transition:none!important}
 }
-</style><style id="hva-home-clean-design-after-backup">
-/* Duy nhất lớp bố cục cuối cùng, chỉ tác động các cổng và 3 tiện ích.
-   Không thay nền Digital gốc, không thay JavaScript/đường dẫn/nghiệp vụ. */
-.nvs-quick{
- display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
- align-items:stretch!important;gap:clamp(9px,1.5vw,16px)!important;
- margin-block:clamp(12px,1.8vw,20px)!important;
-}
-.nvs-quick #nvsQuickRoleSlot,.nvs-quick #nvsQuickRoleSlot #nvsOpenLibrary{display:none!important}
-.nvs-quick>.nvs-quick-card,.nvs-quick>#nvsOpenRemind{
- min-width:0!important;width:100%!important;box-sizing:border-box!important;
- min-height:108px!important;height:auto!important;max-height:none!important;
- display:flex!important;align-items:center!important;justify-content:center!important;
- flex-direction:column!important;gap:8px!important;padding:12px 10px!important;
- border-radius:17px!important;border:1px solid #cfe4f2!important;
- background:linear-gradient(160deg,#ffffff,#edf7ff)!important;
- box-shadow:0 6px 18px #0d548217!important;
-}
-.nvs-quick>.nvs-quick-card[hidden],.nvs-quick>#nvsOpenRemind[hidden]{display:none!important}
-.nvs-quick>.nvs-quick-card>strong,.nvs-quick>#nvsOpenRemind>strong{
- width:100%!important;min-height:0!important;height:auto!important;
- max-height:none!important;font:750 clamp(11px,1.35vw,14px)/1.3 "Segoe UI",Arial,sans-serif!important;
- white-space:normal!important;overflow:visible!important;text-align:center!important;
- overflow-wrap:anywhere!important;color:#124c80!important;
-}
-.nvs-chooser{
- /* TUYỆT ĐỐI không đổi background-image gốc của trường. */
- box-sizing:border-box!important;overflow:hidden!important;
- padding:clamp(17px,2.4vw,29px)!important;
- border-radius:23px!important;margin-block:14px 25px!important;
- box-shadow:0 18px 38px #002b4b35!important;
-}
-.nvs-chooser .nvs-choose-heading h2{
- font:850 clamp(19px,2.2vw,27px)/1.18 "Segoe UI",Arial,sans-serif!important;
- letter-spacing:.015em!important;margin:6px 0 5px!important;
-}
-.nvs-chooser .nvs-choose-heading p{
- font-size:clamp(12px,1.2vw,14px)!important;line-height:1.4!important;
-}
-.nvs-chooser .nvs-two-gates{
- display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
- align-items:stretch!important;gap:clamp(10px,1.4vw,17px)!important;
- margin:clamp(16px,2vw,24px) 0 0!important;
-}
-.nvs-chooser .nvs-two-gates>.nvs-gate-wrap{
- grid-column:auto!important;min-width:0!important;max-width:none!important;
- display:flex!important;align-items:stretch!important;
-}
-.nvs-chooser .nvs-two-gates .nvs-gate{
- box-sizing:border-box!important;width:100%!important;height:100%!important;
- min-width:0!important;min-height:200px!important;max-height:none!important;
- display:flex!important;flex-direction:column!important;align-items:center!important;
- justify-content:flex-start!important;gap:10px!important;padding:20px 11px!important;
- border-radius:18px!important;text-align:center!important;
- box-shadow:0 9px 21px #002b5180!important;
-}
-.nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-icon{
- margin:0 auto!important;width:52px!important;height:52px!important;
- min-width:52px!important;flex:0 0 52px!important;font-size:25px!important;
- border-radius:15px!important;
-}
-.nvs-chooser .nvs-two-gates .nvs-gate strong{
- width:100%!important;min-width:0!important;display:flex!important;
- flex-direction:column!important;align-items:center!important;gap:5px!important;
- font:850 clamp(12px,1.35vw,16px)/1.2 "Segoe UI",Arial,sans-serif!important;
- letter-spacing:.005em!important;color:#fff!important;overflow-wrap:anywhere!important;
-}
-.nvs-chooser .nvs-two-gates .nvs-gate strong em{
- display:block!important;font:600 clamp(10px,.9vw,12px)/1.3 "Segoe UI",Arial,sans-serif!important;
- color:#ebf7ff!important;font-style:normal!important;
-}
-.nvs-chooser .nvs-two-gates .nvs-gate>span:not(.nvs-gate-icon):not(.nvs-gate-enter){display:none!important}
-.nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-enter{
- margin-top:auto!important;width:auto!important;max-width:100%!important;
- font:750 11px/1.3 "Segoe UI",Arial,sans-serif!important;
- padding:8px 11px!important;border-radius:999px!important;white-space:normal!important;
-}
-.nvs-chooser .nvs-two-gates .nvs-gate:focus-visible{outline:3px solid #f9da69!important;outline-offset:3px!important}
-@media(min-width:701px) and (max-width:1100px){
- .nvs-chooser .nvs-two-gates{grid-template-columns:repeat(2,minmax(0,1fr))!important}
- .nvs-chooser .nvs-two-gates .nvs-gate{min-height:175px!important}
-}
-@media(max-width:700px){
- .nvs-quick{gap:8px!important;margin-block:12px 15px!important}
- .nvs-quick>.nvs-quick-card,.nvs-quick>#nvsOpenRemind{
-  min-height:95px!important;height:auto!important;padding:10px 4px!important;border-radius:14px!important;
- }
- .nvs-quick>.nvs-quick-card>strong,.nvs-quick>#nvsOpenRemind>strong{
-  font-size:clamp(10px,2.7vw,12px)!important;line-height:1.27!important;
- }
- .nvs-chooser{padding:17px 12px 19px!important}
- .nvs-chooser .nvs-two-gates{
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:10px!important;margin-top:16px!important;
- }
- .nvs-chooser .nvs-two-gates .nvs-gate{
-  min-height:154px!important;padding:14px 6px!important;gap:7px!important;border-radius:15px!important;
- }
- .nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-icon{
-  width:42px!important;height:42px!important;min-width:42px!important;flex-basis:42px!important;
-  font-size:22px!important;
- }
- .nvs-chooser .nvs-two-gates .nvs-gate strong{font-size:clamp(11.5px,3vw,14px)!important;gap:4px!important}
- .nvs-chooser .nvs-two-gates .nvs-gate strong em{font-size:clamp(9.5px,2.4vw,11px)!important}
- .nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-enter{font-size:10px!important;padding:6px 7px!important}
-}
-@media(max-width:360px){
- .nvs-chooser{padding:14px 9px!important}
- .nvs-chooser .nvs-two-gates{gap:8px!important}
- .nvs-chooser .nvs-two-gates .nvs-gate{min-height:148px!important;padding:11px 5px!important}
- .nvs-chooser .nvs-two-gates .nvs-gate strong{font-size:11px!important}
-}
-@media(prefers-reduced-motion:reduce){.nvs-chooser .nvs-gate{transition:none!important}}
 </style></head>
 <body>
 
@@ -3322,5 +3209,119 @@ function hide(){box.hidden=true;btn.setAttribute('aria-expanded','false');docume
 btn.addEventListener('click',event=>{event.stopImmediatePropagation();open();},true);close.addEventListener('click',hide);box.addEventListener('click',e=>{if(e.target===box)hide();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!box.hidden){e.stopImmediatePropagation();hide();}},true);window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===frame.contentWindow&&e.data?.type==='HVA_UTILITIES_CLOSE')hide();});
 })();
 </script>
+<style id="hva-home-clean-design-after-backup">
+/* Duy nhất lớp bố cục cuối cùng, chỉ tác động các cổng và 3 tiện ích.
+   Không thay nền Digital gốc, không thay JavaScript/đường dẫn/nghiệp vụ. */
+.nvs-quick{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ align-items:stretch!important;gap:clamp(9px,1.5vw,16px)!important;
+ margin-block:clamp(12px,1.8vw,20px)!important;
+}
+.nvs-quick #nvsQuickRoleSlot,.nvs-quick #nvsQuickRoleSlot #nvsOpenLibrary{display:none!important}
+.nvs-quick>.nvs-quick-card,.nvs-quick>#nvsOpenRemind{
+ min-width:0!important;width:100%!important;box-sizing:border-box!important;
+ min-height:108px!important;height:auto!important;max-height:none!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ flex-direction:column!important;gap:8px!important;padding:12px 10px!important;
+ border-radius:17px!important;border:1px solid #cfe4f2!important;
+ background:linear-gradient(160deg,#ffffff,#edf7ff)!important;
+ box-shadow:0 6px 18px #0d548217!important;
+}
+.nvs-quick>.nvs-quick-card[hidden],.nvs-quick>#nvsOpenRemind[hidden]{display:none!important}
+.nvs-quick>.nvs-quick-card>strong,.nvs-quick>#nvsOpenRemind>strong{
+ width:100%!important;min-height:0!important;height:auto!important;
+ max-height:none!important;font:750 clamp(11px,1.35vw,14px)/1.3 "Segoe UI",Arial,sans-serif!important;
+ white-space:normal!important;overflow:visible!important;text-align:center!important;
+ overflow-wrap:anywhere!important;color:#124c80!important;
+}
+.nvs-chooser{
+ /* TUYỆT ĐỐI không đổi background-image gốc của trường. */
+ box-sizing:border-box!important;overflow:hidden!important;
+ padding:clamp(17px,2.4vw,29px)!important;
+ border-radius:23px!important;margin-block:14px 25px!important;
+ box-shadow:0 18px 38px #002b4b35!important;
+}
+.nvs-chooser .nvs-choose-heading h2{
+ font:850 clamp(19px,2.2vw,27px)/1.18 "Segoe UI",Arial,sans-serif!important;
+ letter-spacing:.015em!important;margin:6px 0 5px!important;
+}
+.nvs-chooser .nvs-choose-heading p{
+ font-size:clamp(12px,1.2vw,14px)!important;line-height:1.4!important;
+}
+.nvs-chooser .nvs-two-gates{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-items:stretch!important;gap:clamp(10px,1.4vw,17px)!important;
+ margin:clamp(16px,2vw,24px) 0 0!important;
+}
+.nvs-chooser .nvs-two-gates>.nvs-gate-wrap{
+ grid-column:auto!important;min-width:0!important;max-width:none!important;
+ display:flex!important;align-items:stretch!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate{
+ box-sizing:border-box!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:200px!important;max-height:none!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:flex-start!important;gap:10px!important;padding:20px 11px!important;
+ border-radius:18px!important;text-align:center!important;
+ box-shadow:0 9px 21px #002b5180!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-icon{
+ margin:0 auto!important;width:52px!important;height:52px!important;
+ min-width:52px!important;flex:0 0 52px!important;font-size:25px!important;
+ border-radius:15px!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate strong{
+ width:100%!important;min-width:0!important;display:flex!important;
+ flex-direction:column!important;align-items:center!important;gap:5px!important;
+ font:850 clamp(12px,1.35vw,16px)/1.2 "Segoe UI",Arial,sans-serif!important;
+ letter-spacing:.005em!important;color:#fff!important;overflow-wrap:anywhere!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate strong em{
+ display:block!important;font:600 clamp(10px,.9vw,12px)/1.3 "Segoe UI",Arial,sans-serif!important;
+ color:#ebf7ff!important;font-style:normal!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate>span:not(.nvs-gate-icon):not(.nvs-gate-enter){display:none!important}
+.nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-enter{
+ margin-top:auto!important;width:auto!important;max-width:100%!important;
+ font:750 11px/1.3 "Segoe UI",Arial,sans-serif!important;
+ padding:8px 11px!important;border-radius:999px!important;white-space:normal!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate:focus-visible{outline:3px solid #f9da69!important;outline-offset:3px!important}
+@media(min-width:701px) and (max-width:1100px){
+ .nvs-chooser .nvs-two-gates{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate{min-height:175px!important}
+}
+@media(max-width:700px){
+ .nvs-quick{gap:8px!important;margin-block:12px 15px!important}
+ .nvs-quick>.nvs-quick-card,.nvs-quick>#nvsOpenRemind{
+  min-height:95px!important;height:auto!important;padding:10px 4px!important;border-radius:14px!important;
+ }
+ .nvs-quick>.nvs-quick-card>strong,.nvs-quick>#nvsOpenRemind>strong{
+  font-size:clamp(10px,2.7vw,12px)!important;line-height:1.27!important;
+ }
+ .nvs-chooser{padding:17px 12px 19px!important}
+ .nvs-chooser .nvs-two-gates{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;margin-top:16px!important;
+ }
+ .nvs-chooser .nvs-two-gates .nvs-gate{
+  min-height:154px!important;padding:14px 6px!important;gap:7px!important;border-radius:15px!important;
+ }
+ .nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-icon{
+  width:42px!important;height:42px!important;min-width:42px!important;flex-basis:42px!important;
+  font-size:22px!important;
+ }
+ .nvs-chooser .nvs-two-gates .nvs-gate strong{font-size:clamp(11.5px,3vw,14px)!important;gap:4px!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate strong em{font-size:clamp(9.5px,2.4vw,11px)!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate .nvs-gate-enter{font-size:10px!important;padding:6px 7px!important}
+}
+@media(max-width:360px){
+ .nvs-chooser{padding:14px 9px!important}
+ .nvs-chooser .nvs-two-gates{gap:8px!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate{min-height:148px!important;padding:11px 5px!important}
+ .nvs-chooser .nvs-two-gates .nvs-gate strong{font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){.nvs-chooser .nvs-gate{transition:none!important}}
+</style>
 </body>
 </html>
