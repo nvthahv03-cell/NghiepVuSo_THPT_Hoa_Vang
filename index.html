@@ -3057,5 +3057,115 @@ btn.addEventListener('click',event=>{event.stopImmediatePropagation();open();},t
   }
 }
 </style>
+<style id="hva-visual-calm-79-users">
+/* HVA – Giảm mệt thị giác cho người dùng. Chỉ tinh chỉnh diện mạo.
+   Không sửa nền gốc, hình nền, bố cục 3+4, trạng thái, nút hay sự kiện. */
+.nvs-quick{
+  gap:clamp(10px,1.5vw,19px)!important;
+  margin-bottom:clamp(15px,2.3vw,25px)!important;
+}
+.nvs-quick>.nvs-quick-card,
+.nvs-quick>#nvsOpenRemind{
+  border:1px solid rgba(164,200,224,.42)!important;
+  border-radius:17px!important;
+  background:linear-gradient(155deg,rgba(255,255,255,.99),rgba(245,251,255,.97))!important;
+  box-shadow:0 5px 18px rgba(13,59,105,.065)!important;
+  transition:box-shadow .18s ease,transform .18s ease,border-color .18s ease!important;
+}
+.nvs-quick>.nvs-quick-card:hover,
+.nvs-quick>#nvsOpenRemind:hover{
+  transform:translateY(-1px)!important;
+  border-color:rgba(76,147,196,.64)!important;
+  box-shadow:0 8px 22px rgba(13,59,105,.12)!important;
+}
+.nvs-quick>.nvs-quick-card:focus-visible,
+.nvs-quick>#nvsOpenRemind:focus-visible{
+  outline:3px solid #1e91ce!important;
+  outline-offset:3px!important;
+}
+.nvs-quick .nvs-quick-icon,
+.nvs-quick .nvs-quick-icon>i{
+  filter:none!important;
+}
+.nvs-quick>.nvs-quick-card>strong,
+.nvs-quick>#nvsOpenRemind>strong{
+  font-weight:750!important;
+  color:#123f6b!important;
+  text-shadow:none!important;
+}
+/* Bốn cổng vẫn giữ màu và nền ĐÃ PASS: chỉ bỏ cảm giác lồng viền. */
+.nvs-chooser{
+  border-color:transparent!important;
+  box-shadow:0 11px 28px rgba(0,52,119,.14)!important;
+}
+.nvs-chooser .nvs-two-gates{
+  gap:clamp(11px,1.3vw,19px)!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate,
+.nvs-chooser .nvs-two-gates .nvs-gate{
+  border:1px solid rgba(255,255,255,.38)!important;
+  border-radius:21px!important;
+  box-shadow:0 6px 18px rgba(0,32,80,.13)!important;
+  backdrop-filter:none!important;
+  transition:box-shadow .2s ease,transform .2s ease!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate:hover{
+  box-shadow:0 10px 24px rgba(0,32,80,.20)!important;
+  transform:translateY(-2px)!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate:focus-visible{
+  outline:3px solid #e3f8ff!important;
+  outline-offset:3px!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate::before{
+  box-shadow:none!important;
+  opacity:.16!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate-icon{
+  filter:none!important;
+  box-shadow:none!important;
+  border-color:rgba(223,248,255,.55)!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate strong{
+  text-shadow:none!important;
+  letter-spacing:.005em!important;
+}
+.nvs-chooser .nvs-two-gates .nvs-gate strong em{
+  text-shadow:none!important;
+}
+/* Thanh công cụ chân trang: một bề mặt nổi, không thêm các khung con. */
+.nvs-premium-nav,
+.nvs-chooser .nvs-premium-nav{
+  border:1px solid rgba(172,210,231,.44)!important;
+  background:linear-gradient(160deg,rgba(255,255,255,.96),rgba(236,248,255,.96))!important;
+  box-shadow:0 9px 25px rgba(6,55,102,.105)!important;
+}
+.nvs-premium-nav>button,
+.nvs-chooser .nvs-premium-nav>button{
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+.nvs-premium-nav>button:focus-visible{
+  outline:2px solid #178dca!important;
+  outline-offset:2px!important;
+}
+.nvs-premium-nav>button>i{
+  filter:none!important;
+  box-shadow:0 3px 9px rgba(5,90,160,.13)!important;
+}
+@media(max-width:720px){
+  .nvs-quick{gap:8px!important;margin-bottom:13px!important}
+  .nvs-chooser .nvs-two-gates{gap:10px!important}
+  .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate,
+  .nvs-chooser .nvs-two-gates .nvs-gate{border-radius:17px!important}
+  .nvs-premium-nav,.nvs-chooser .nvs-premium-nav{box-shadow:0 6px 19px rgba(6,55,102,.1)!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .nvs-quick>.nvs-quick-card,
+  .nvs-quick>#nvsOpenRemind,
+  .nvs-chooser .nvs-two-gates .nvs-gate{transition:none!important;transform:none!important}
+}
+</style>
 </body>
 </html>
