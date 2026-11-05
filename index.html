@@ -909,7 +909,14 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
 })();
 </script>
 <style id="hva-dieu-hanh-gate-policy">#nvsAdminGate[hidden],#nvsAdminGate[aria-hidden="true"]{display:none!important}#nvsMenuPanel details[data-dieu-hanh][hidden]{display:none!important}</style>
-<link rel="stylesheet" href="./HVA_Navigation.css"><link rel="stylesheet" href="./HVA_DigitalMenus_Polish.css"></head>
+<link rel="stylesheet" href="./HVA_Navigation.css"><link rel="stylesheet" href="./HVA_DigitalMenus_Polish.css"><style id="hva-force-three-quick-no-library">
+/* Bảo đảm nút Hồ sơ điện tử không xuất hiện trên hàng nhanh với mọi vai trò. */
+.nvs-quick{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#nvsQuickRoleSlot,
+.nvs-quick #nvsQuickRoleSlot,
+#nvsOpenLibrary{display:none!important;visibility:hidden!important}
+.nvs-quick>[data-nvs-quick],.nvs-quick>#nvsOpenRemind{min-width:0}
+</style></head>
 <body>
 
 <div id="hvaLogoutModal" class="hva-logout-overlay" role="dialog" aria-modal="true" aria-labelledby="hvaLogoutTitle">
@@ -1039,7 +1046,7 @@ window.HVA_DIEUHANH_ACCESS=Object.freeze({allowed,valid});
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-admin" id="nvsAdminGate" href="./DieuHanh.html" aria-label="Vào BGH – Điều hành"><span class="nvs-gate-icon"><i class="bi bi-bank"></i></span><strong>BAN GIÁM HIỆU<em>ĐIỀU HÀNH</em></strong><span>Thông báo – Phát hành · Lịch công tác · Cuộc họp · Theo dõi và xử lý</span><span class="nvs-gate-enter">Vào Điều hành <i class="bi bi-arrow-right"></i></span></a></div>
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-work" id="nvsWorkGate" href="./NghiepVu.html" aria-label="Vào Giáo viên – Nhân viên – Tác nghiệp số"><span class="nvs-gate-icon"><i class="bi bi-pc-display-horizontal"></i></span><strong>GIÁO VIÊN – NHÂN VIÊN<em>TÁC NGHIỆP SỐ</em></strong><span>TTCM · TPCM · GV · NV<br>Nhận nhiệm vụ · Lập báo cáo · Nộp sản phẩm · Tra cứu công việc</span><span class="nvs-gate-enter">Vào Tác nghiệp <i class="bi bi-arrow-right"></i></span></a></div>
       <div class="nvs-gate-wrap nvs-gate-learning-wrap"><a class="nvs-gate nvs-gate-learning" id="nvsLearningGate" href="./KhoHocLieuSo.html" aria-label="Học liệu số – chờ HVA Learning Studio"><span class="nvs-gate-icon"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i></span><strong>HỌC LIỆU SỐ<em>Chờ Kim Quy 2 hoàn thiện</em></strong><span>Giáo án · Bài giảng · Ngân hàng câu hỏi · Học liệu trực quan</span><span class="nvs-gate-enter">Xem phân hệ <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
-      <div class="nvs-gate-wrap nvs-gate-documents-wrap"><a class="nvs-gate nvs-gate-documents" id="nvsDocumentGate" href="./VanBan_QuyDinh.html" aria-label="Văn bản số – văn bản điện tử và biểu mẫu"><span class="nvs-gate-icon"><i class="bi bi-folder2-open" aria-hidden="true"></i></span><strong>VĂN BẢN SỐ<em>Kho điện tử · Biểu mẫu</em></strong><span>Văn bản điện tử · Tra cứu · Sử dụng biểu mẫu</span><span class="nvs-gate-enter">Mở văn bản số <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
+      <div class="nvs-gate-wrap nvs-gate-documents-wrap"><a class="nvs-gate nvs-gate-documents" id="nvsDocumentGate" href="./VanBan_QuyDinh.html" aria-label="Kho văn bản – biểu mẫu số và hồ sơ điện tử"><span class="nvs-gate-icon"><i class="bi bi-folder2-open" aria-hidden="true"></i></span><strong>KHO VB – BM SỐ<em>Văn bản · Hồ sơ điện tử</em></strong><span>Hồ sơ điện tử · Văn bản số · Biểu mẫu</span><span class="nvs-gate-enter">Mở kho VB – BM <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
     </div>
     <div class="nvs-v4-actions" aria-label="Tiện ích công vụ">
       <button type="button" id="nvsOpenRemind" hidden style="display:none" class="nvs-v4-action nvs-v4-remind nvs-remind-trigger nvs-v7-circle nvs-v7-orange" aria-haspopup="dialog" aria-controls="nvsRemindOverlay" aria-label="Mở Nhắc nhở công vụ"><span>Nhắc nhở<br>công vụ</span></button>
@@ -1713,6 +1720,15 @@ if(!slot||!remind||!library||!work)return;
 // Di chuyển nút gốc, giữ nguyên sự kiện đã gắn; hai nút dùng chung đúng một ô.
 work.insertAdjacentElement('afterend',remind);
 slot.appendChild(library);
+// Hồ sơ điện tử không còn là nút nhanh thứ tư. Giữ đối tượng và event cũ
+// để không làm hỏng các nghiệp vụ đã PASS, nhưng chuyển khỏi lưới 3 nút.
+document.body.appendChild(slot);
+slot.hidden=true;
+slot.setAttribute('aria-hidden','true');
+slot.style.setProperty('display','none','important');
+library.hidden=true;
+library.tabIndex=-1;
+library.style.setProperty('display','none','important');
 remind.className='nvs-quick-card nvs-role-remind';
 remind.innerHTML='<span class="nvs-quick-icon"><i class="bi bi-clipboard2-check-fill" aria-hidden="true"></i></span><strong>Nhắc nhở<br>công vụ</strong>';
 library.innerHTML='<span class="nvs-quick-icon"><svg class="edos-folder-icon" viewBox="0 0 24 24" width="27" height="27" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 10h18"/></svg></span><strong>Hồ sơ điện tử</strong>';
@@ -1720,7 +1736,13 @@ function refresh(){
  const allowed=typeof window.NVS_syncRemindBGH==='function'?window.NVS_syncRemindBGH():false;
  work.hidden=allowed;work.setAttribute('aria-hidden',allowed?'true':'false');work.style.setProperty('display',allowed?'none':'flex','important');
  remind.hidden=!allowed;remind.setAttribute('aria-hidden',allowed?'false':'true');remind.style.setProperty('display',allowed?'flex':'none','important');
- library.hidden=false;
+ // Nút cũ không được xuất hiện lại khi tài khoản, quyền hoặc phiên thay đổi.
+ library.hidden=true;
+ library.tabIndex=-1;
+ library.setAttribute('aria-hidden','true');
+ library.style.setProperty('display','none','important');
+ slot.hidden=true;
+ slot.style.setProperty('display','none','important');
 }
 refresh();window.NVS_refreshRoleQuickSlot=refresh;
 window.addEventListener('storage',refresh);
