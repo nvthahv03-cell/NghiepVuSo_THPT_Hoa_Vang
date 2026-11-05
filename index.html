@@ -2979,19 +2979,32 @@ const admin=document.getElementById('nvsAdminGate');
 const menu=document.getElementById('nvsMenuPanel');
 const section=menu&&[...menu.querySelectorAll('details')].find(d=>d.querySelector('a[href="./DieuHanh.html"]'));
 if(section)section.dataset.dieuHanh='true';
-function refresh(){
- const ok=!!window.HVA_DIEUHANH_ACCESS?.allowed();
- if(admin){admin.hidden=!ok;admin.setAttribute('aria-hidden',String(!ok));admin.tabIndex=ok?0:-1;}
- if(section)section.hidden=!ok;
+function canEnter(){
+ try{return window.HVA_DIEUHANH_ACCESS?.allowed()===true}catch(_){return false}
 }
-function prevent(e){const link=e.target.closest('a[href]');if(!link)return;
- const href=link.getAttribute('href')||'';if(!/^(?:\.\/)?DieuHanh\.html(?:[?#]|$)/i.test(href))return;
- if(!window.HVA_DIEUHANH_ACCESS?.allowed()){e.preventDefault();e.stopImmediatePropagation();refresh();}
+function refresh(){
+ // Hiển thị cổng cho mọi nhân sự; quyền vào vẫn phải được xác minh.
+ if(admin){admin.hidden=false;admin.removeAttribute('aria-hidden');admin.tabIndex=0;}
+ if(section)section.hidden=false;
+}
+function prevent(e){
+ const link=e.target.closest('a[href]');if(!link)return;
+ const href=link.getAttribute('href')||'';
+ if(!/^(?:\.\/)?DieuHanh\.html(?:[?#]|$)/i.test(href))return;
+ if(canEnter())return;
+ e.preventDefault();
+ e.stopImmediatePropagation();
+ refresh();
+ const msg='Tài khoản của Thầy/Cô chưa được cấp quyền truy cập Cổng Điều hành số.\nVui lòng liên hệ Ban Giám hiệu hoặc bộ phận quản trị để được kiểm tra, cấp quyền theo nhiệm vụ.';
+ window.alert(msg);
 }
 document.addEventListener('click',prevent,true);
-refresh();window.HVA_refreshDieuHanhGate=refresh;
-window.addEventListener('storage',refresh);document.addEventListener('visibilitychange',refresh);
-const login=document.getElementById('dthtAuthModal');if(login)new MutationObserver(refresh).observe(login,{attributes:true,attributeFilter:['class','hidden']});
+refresh();
+window.HVA_refreshDieuHanhGate=refresh;
+window.addEventListener('storage',refresh);
+document.addEventListener('visibilitychange',refresh);
+const login=document.getElementById('dthtAuthModal');
+if(login)new MutationObserver(refresh).observe(login,{attributes:true,attributeFilter:['class','hidden']});
 })();
 </script>
 <section id="hvaDigitalUtilities" role="dialog" aria-modal="true" aria-labelledby="hvaDigitalUtilitiesTitle" hidden><div class="hdu-shell"><header class="hdu-head"><div><strong id="hvaDigitalUtilitiesTitle">KHO TIỆN ÍCH SỐ HVA</strong><small>Công vụ · Chuyên môn · Công nghệ · Phần mềm</small></div><button type="button" id="hvaDigitalUtilitiesClose" aria-label="Đóng Tiện ích số">×</button></header><iframe title="Kho Tiện ích số Hòa Vang" id="hvaDigitalUtilitiesFrame" data-src="./TienIchSo.html" loading="lazy"></iframe></div></section>
