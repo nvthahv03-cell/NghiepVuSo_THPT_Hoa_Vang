@@ -409,7 +409,7 @@
 <div id="hvaAttachMenu" class="hva-attach-menu" hidden><label class="hva-attach-choice" for="hvaAttachFile"><i class="bi bi-paperclip"></i> Chọn PDF, Word (.docx), TXT</label><button type="button" id="hvaAttachFromKho" class="hva-attach-choice"><i class="bi bi-folder2-open"></i> Văn bản đã có trong Kho</button></div>
 <span class="hva-ai-attachment-caption" id="hvaAttachCaption">Chưa có tài liệu đính kèm</span></div>
 <input id="hvaAttachFile" type="file" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden>
-<div id="hvaFileReadStatus" class="hva-file-status" aria-live="polite"></div></div><p class="hint">Dấu + để đọc văn bản làm căn cứ soạn thảo. Văn bản trong Kho được gửi cho giáo viên bằng liên kết; không chuyển tệp đính kèm cho người nhận. AI đề xuất dự thảo và thời hạn, thầy/cô kiểm tra trước khi gửi.</p><div class="inline"><button type="button" class="btn blue" id="voiceBtn"><i class="bi bi-mic-fill"></i> NHẬP BẰNG GIỌNG NÓI</button><button type="button" class="btn blue" id="aiBtn"><i class="bi bi-stars"></i> TẠO DỰ THẢO BẰNG AI</button><button type="button" class="btn pale" id="applyAI" disabled>ĐIỀN FORM</button></div><div id="hvaVipAIStatus" class="hva-file-status" role="status" aria-live="polite">Sẵn sàng soạn thông báo từ yêu cầu và văn bản thầy chọn.</div>
+<div id="hvaFileReadStatus" class="hva-file-status" aria-live="polite"></div></div><p class="hint">Dấu + để đọc văn bản làm căn cứ soạn thảo. Văn bản trong Kho được gửi cho giáo viên bằng liên kết; không chuyển tệp đính kèm cho người nhận. AI đề xuất dự thảo và thời hạn, thầy/cô kiểm tra trước khi gửi.</p><div class="inline"><button type="button" class="btn blue" id="voiceBtn"><i class="bi bi-mic-fill"></i> NHẬP BẰNG GIỌNG NÓI</button><button type="button" class="btn blue" id="aiBtn"><i class="bi bi-stars"></i> TẠO DỰ THẢO BẰNG AI</button><button type="button" class="btn pale" id="applyAI" disabled title="Điền tiêu đề, nội dung và thời hạn từ dự thảo đã được kiểm tra">ĐIỀN FORM</button></div><div id="hvaVipAIStatus" class="hva-file-status" role="status" aria-live="polite">Sẵn sàng soạn thông báo từ yêu cầu và văn bản thầy chọn.</div>
 </div>
 <div class="hva-assistant-output" aria-label="Phản hồi của Trợ lý VIP Pro">
 <div class="hva-assistant-output-head">
@@ -792,6 +792,35 @@ async function ai(){
     const body=title===first?lines.slice(1).join('\n').trim():cleaned;
     raw={fields:{tieuDe:title,noiDung:body,han:'',link:'',xacNhan:false}};
   }
+  // Gemini đôi khi trả đầy đủ bản tham mưu nhưng thiếu phần fields vì phản hồi dài.
+  // Tạo bản tin ở một lượt riêng; tuyệt đối không lấy phân tích nội bộ làm nội dung gửi GV.
+  const firstFields=raw&&typeof raw.fields==='object'?raw.fields:{};
+  if(!String(firstFields.tieuDe||'').trim()||!String(firstFields.noiDung||'').trim()){
+    status('Đã có tham mưu. Trợ lý đang soạn riêng tin triển khai để điền biểu mẫu...');
+    const facts=raw?.thamMuu&&typeof raw.thamMuu==='object'?
+      [['vanBan','Văn bản'],['trongTam','Trọng tâm'],['doiTuong','Đối tượng'],['thoiHan','Thời hạn'],['hoSo','Hồ sơ']]
+       .map(([key,label])=>label+': '+String(raw.thamMuu[key]||'').slice(0,260)).join('\n'):'';
+    const draftInput=[
+      'CHỈ SOẠN TIN NHẮN TRIỂN KHAI CỦA NHÀ TRƯỜNG THPT HÒA VANG, KHÔNG SOẠN THAM MƯU, không dùng đại từ tôi hoặc thầy Thà chỉ đạo.',
+      'Trả về JSON duy nhất: {"fields":{"tieuDe":"","noiDung":"","han":"","link":"","xacNhan":false}}.',
+      'Nội dung mở "Kính gửi quý thầy cô và các bộ phận liên quan!", kết "Trân trọng!".',
+      'Văn bản Sở: "Thực hiện Công văn/Kế hoạch/Thông báo số... của Sở..., nhà trường đề nghị:"; văn bản trường: "Nhà trường đã ban hành ... Đề nghị quý thầy cô...". Chỉ sử dụng số văn bản, ngày, tên đơn vị, đầu việc từ CHỮ NGUỒN; không đoán từ tên PDF.',
+      'Không có thông tin thì bỏ, không tạo [cần xác minh], không thêm 100%, người nhận hoặc thời hạn. Ô han chỉ khi hạn thực hiện/báo cáo có cả ngày giờ.',
+      'Yêu cầu: '+prompt.slice(0,200),
+      'Các thông tin tham mưu phải được đối chiếu với nguồn: '+facts,
+      'CHỮ VĂN BẢN ĐÍNH KÈM: '+notes
+    ].join('\n');
+    const drafted=await hvaVipAsk(draftInput.slice(0,3900));
+    let second;
+    try{second=cleanJSON(drafted);}catch(_){
+      const text=drafted.trim();
+      if(!text)throw Error('Trợ lý chưa cung cấp bản dự thảo thông báo.');
+      const lines=text.split('\n');
+      const title=/^THÔNG BÁO/i.test(lines[0]||'')?lines.shift().trim():'THÔNG BÁO TRIỂN KHAI';
+      second={fields:{tieuDe:title,noiDung:lines.join('\n').trim(),han:'',link:'',xacNhan:false}};
+    }
+    raw.fields=second.fields||second;
+  }
   const fields={};
   for(const id of defs[MOD])if(Object.hasOwn(raw.fields||{},id)){
    const el=$(id),v=raw.fields[id];
@@ -803,6 +832,9 @@ async function ai(){
    }
   }
   if($('link').value.trim())delete fields.link;
+  if(!String(fields.tieuDe||'').trim()||!String(fields.noiDung||'').trim()){
+    throw Error('Chưa có đủ tiêu đề và nội dung thông báo để điền biểu mẫu. Phần tham mưu vẫn được giữ để thầy tham khảo.');
+  }
   hvaVipRenderAdvice(raw.thamMuu||{},shortened||Boolean(notes&&available<notes.length));
 
   // Bảo vệ số văn bản: không để AI phát hành số/ký hiệu không có trong chữ tệp.
@@ -836,7 +868,19 @@ async function ai(){
  }catch(e){status('Trợ lý chưa tạo được dự thảo: '+String(e.message||e));}
  finally{button.disabled=false;button.innerHTML=button.dataset.originalLabel||'<i class="bi bi-stars"></i> TẠO DỰ THẢO BẰNG AI';}
 }
-function applyAI(){if(!proposal)return;for(const [k,v] of Object.entries(proposal.fields)){const n=$(k);if(!n)continue;if(n.type==='checkbox')n.checked=v;else n.value=v}if(MOD==='BinhChon'&&proposal.options.length){$('pollOptions').replaceChildren();proposal.options.forEach(x=>addOption($('pollOptions'),x))}if(MOD==='KhaoSat'&&proposal.questions.length){$('questions').replaceChildren();proposal.questions.forEach(addQuestion)}status('AI đã điền form. Hãy kiểm tra nội dung, thời hạn và chọn người nhận. Chưa phát hành.');}
+function applyAI(){
+ if(!proposal||!proposal.fields||!String(proposal.fields.tieuDe||'').trim()||!String(proposal.fields.noiDung||'').trim())
+  return status('Chưa có bản thông báo đầy đủ để điền form. Hãy bấm TẠO DỰ THẢO BẰNG AI để Trợ lý soạn tin triển khai.');
+ for(const [k,v] of Object.entries(proposal.fields)){
+  const n=$(k);if(!n)continue;
+  if(n.type==='checkbox')n.checked=Boolean(v);
+  else n.value=v;
+  n.dispatchEvent(new Event('input',{bubbles:true}));
+  n.dispatchEvent(new Event('change',{bubbles:true}));
+ }
+ $('tieuDe').scrollIntoView({behavior:'smooth',block:'center'});
+ status('Đã điền tiêu đề, nội dung và thời hạn có căn cứ vào biểu mẫu. Thầy duyệt và chọn người nhận; CHƯA gửi thông báo.');
+}
 
 function hvaAdviceToText(){
  const root=$('hvaAdviceBlock');
