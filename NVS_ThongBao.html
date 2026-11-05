@@ -443,12 +443,20 @@ function hvaVipInitAttach(){
  };
 }
 async function hvaVipAsk(question){
- const response=await fetch(WEB_APP_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-  body:JSON.stringify({action:'askVirtualAssistant',sessionToken:token(),context:'Nghiệp vụ chung',question})});
- if(!response.ok)throw Error('Backend HTTP '+response.status);
- const result=await response.json();
- if(!result||result.success!==true||typeof result.answer!=='string')throw Error(result?.message||'Trợ lý chưa trả lời.');
- return result.answer.trim();
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),45000);
+ try{
+  const response=await fetch(WEB_APP_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+   body:JSON.stringify({action:'askVirtualAssistant',sessionToken:token(),context:'Thông báo',question}),signal:controller.signal});
+  if(!response.ok)throw Error('Không liên hệ được Backend EDOS (HTTP '+response.status+').');
+  let result;try{result=await response.json();}catch(_){throw Error('Backend trả dữ liệu không hợp lệ.');}
+  if(!result||result.success!==true||typeof result.answer!=='string')
+   throw Error(result?.message||'Backend chưa kích hoạt dịch vụ Trợ lý.');
+  return result.answer.trim();
+ }catch(e){
+  if(e.name==='AbortError')throw Error('Backend không trả lời sau 45 giây. Có thể dịch vụ Gemini đang gián đoạn; thầy thử lại sau.');
+  throw e;
+ }finally{clearTimeout(timer);}
 }
 async function hvaVipReadNotes(text){
  if(!text)return '';
@@ -663,8 +671,19 @@ async function ai(){
  button.disabled=true;proposal=null;$('applyAI').disabled=true;
  status('Trợ lý VIP Pro đang chuẩn bị nội dung...');
  try{
-  // Mỗi câu hỏi gửi Backend dưới 4.000 ký tự; đọc tệp dài theo từng phần.
-  const notes=await hvaVipReadNotes(hvaVipDocumentText);
+  // Một lượt gọi AI để tránh treo nút khi tài liệu nhiều trang; backend giới hạn câu hỏi 4.000 ký tự.
+  // Trích phần đầu và những đoạn liên quan hạn, phân công, thời gian; luôn thông báo nếu bản nguồn dài hơn.
+  const full=hvaVipDocumentText;
+  const focusLines=full.split(/\n|(?<=[.!?])\s+/).filter(v=>
+    /thời hạn|trước ngày|trước\s+\d|ngày\s+\d|giờ\s+\d|báo cáo|triển khai|thực hiện|thành phần|yêu cầu|nộp|tham dự|công văn|kế hoạch/i.test(v));
+  const summary=focusLines.join('\n').slice(0,1700);
+  const source=full.length>2800?
+    full.slice(0,1100)+'\n[CÁC ĐOẠN LIÊN QUAN]\n'+summary+'\n[CUỐI VĂN BẢN]\n'+full.slice(-450):
+    full;
+  const notes=source.slice(0,3050);
+  const shortened=full.length>notes.length;
+  if(shortened)hvaVipStatus('Văn bản dài '+full.length.toLocaleString('vi-VN')+
+    ' ký tự. Trợ lý đọc các đoạn trích trọng tâm, CHƯA đọc toàn bộ; thầy cần đối chiếu PDF gốc, nhất là thời hạn.');
   const schema='{"fields":{"tieuDe":"...","noiDung":"...","han":"YYYY-MM-DDTHH:mm hoặc rỗng","link":"","xacNhan":false}}';
   const request='Soạn tin nhắn THÔNG BÁO – TRIỂN KHAI của Trường THPT Hòa Vang. '+
    'Chỉ trả về một đối tượng JSON không markdown theo schema '+schema+'. '+
@@ -673,10 +692,22 @@ async function ai(){
    'Không bịa người, số văn bản, thời gian, địa điểm, liên kết hoặc nội dung chưa có căn cứ. '+
    'Chỉ điền han khi văn bản nêu hạn thực hiện hoặc báo cáo rõ cả ngày và giờ; không có thì rỗng. '+
    'Không tự chọn người nhận, không phát hành. Yêu cầu của người soạn: '+prompt.slice(0,650)+
-   '. Ghi chú trích từ tài liệu người soạn đã chọn (cần đối chiếu bản gốc): '+notes;
+   '. Nội dung '+(shortened?'TRÍCH ĐOẠN CHƯA ĐẦY ĐỦ':'VĂN BẢN')+' người soạn đã chọn (phải đối chiếu bản gốc): '+notes;
   status('Trợ lý VIP Pro đang soạn thông báo...');
   const response=await hvaVipAsk(request.slice(0,3900));
-  const raw=cleanJSON(response),fields={};
+  let raw;
+  try{raw=cleanJSON(response);}catch(_){
+    // Backend có thể trả dự thảo văn bản thường. Chỉ dùng CHÍNH nội dung AI đã trả,
+    // không tự tạo câu chữ hoặc tự phát hành.
+    const cleaned=response.replace(/^\u0060{3}[^\n]*\n?/, '').replace(/\u0060{3}\s*$/, '').trim();
+    if(!cleaned)throw Error('Trợ lý trả nội dung rỗng.');
+    const lines=cleaned.split('\n'),first=lines[0]||'';
+    const title=/^THÔNG BÁO/i.test(first)?first.slice(0,400):
+      'THÔNG BÁO – TRIỂN KHAI';
+    const body=title===first?lines.slice(1).join('\n').trim():cleaned;
+    raw={fields:{tieuDe:title,noiDung:body,han:'',link:'',xacNhan:false}};
+  }
+  const fields={};
   for(const id of defs[MOD])if(Object.hasOwn(raw.fields||{},id)){
    const el=$(id),v=raw.fields[id];
    if(el.type==='checkbox'){if(typeof v==='boolean')fields[id]=v;}
@@ -691,7 +722,7 @@ async function ai(){
   $('aiResult').textContent=[fields.tieuDe||'',fields.noiDung||'',
     fields.han?'Thời hạn đề xuất: '+fields.han:'Không xác định thời hạn báo cáo cụ thể.'].join('\n\n');
   $('applyAI').disabled=false;
-  status('Đã có dự thảo. Thầy kiểm tra rồi bấm ĐIỀN FORM; thời hạn không rõ sẽ để trống. Chưa gửi.');
+  status('Đã nhận dự thảo từ Backend. Thầy kiểm tra rồi bấm ĐIỀN FORM; thời hạn không rõ để trống. Chưa gửi.'+(shortened?' Tài liệu dài, cần đối chiếu PDF gốc.':''));
  }catch(e){status('Trợ lý chưa tạo được dự thảo: '+String(e.message||e));}
  finally{button.disabled=false;}
 }
