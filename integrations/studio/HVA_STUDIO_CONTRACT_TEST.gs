@@ -20,7 +20,11 @@ function hvaStudioContractSelfTest_(){
   check('Yêu cầu hợp lệ',function(p){},true);
   check('Sai action',function(p){p.action='askVirtualAssistant';},false);
   check('Không hỗ trợ lớp 9',function(p){p.grade='9';},false);
-  check('Không nhận model từ client',function(p){p.model='gemini-evil';},true);
+  // Kiểm tra trường đặc quyền không được xuất sang payload chuẩn hóa.
+  var privileged=JSON.parse(JSON.stringify(base));
+  privileged.model='gemini-evil'; privileged.isAdmin=true; privileged.apiKey='never-log';
+  var normalized=HVA_STUDIO_TEST_V1.validate(privileged);
+  results.push({name:'Loại trường đặc quyền phía client',pass:!Object.prototype.hasOwnProperty.call(normalized,'model')&&!Object.prototype.hasOwnProperty.call(normalized,'isAdmin')&&!Object.prototype.hasOwnProperty.call(normalized,'apiKey')});
   check('Thiếu tên chủ đề',function(p){p.topic='';},false);
   check('Sai định dạng',function(p){p.outputFormat='html';},false);
   check('Sai requestId',function(p){p.requestId='bad';},false);
