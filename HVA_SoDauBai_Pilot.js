@@ -5,7 +5,7 @@ const FIELDS=[
  ['date','Ngày'],['session','Buổi'],['period','Tiết'],['double','Loại tiết'],['subject','Môn học / Hoạt động GD'],['ppct','Tiết PPCT'],['teacher','Giáo viên'],
  ['lesson','Tên bài, nội dung công việc'],['absent','Tên HS vắng mặt'],['comment','Nhận xét của giáo viên'],['ht','Học tập'],['kl','Kỷ luật'],['vs','Vệ sinh'],['total','Tổng điểm'],['max','Điểm tối đa'],['rank','Xếp loại'],['signature','Xác nhận GV'],['state','Trạng thái']
 ];
-const ROOT={rows:[],uploads:[],revision:0,history:[],active:null};let currentId='',images=[],busy=false;
+const ROOT={rows:[],uploads:[],revision:0,history:[],active:null};let currentId='',images=[],busy=false,recognitionDrafts=[],recognitionSource='';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const txt=id=>String($(id)?.value||'').trim(),notify=s=>{$('notice').textContent=String(s)};
 function isDouble(){return $('f-double').value==='2'}
@@ -120,10 +120,93 @@ function printable(){
 }
 function print(){try{const doc=printable(),win=window.open('','_blank');if(!win)throw Error('Trình duyệt chặn cửa sổ xem trước.');win.document.open();win.document.write(doc);win.document.close();win.focus();notify('Đã mở bản xem trước '+$('print-paper').value+'. Chọn In hoặc Lưu thành PDF trên trình duyệt. Chưa có file PDF server-side.')}catch(e){notify(e.message)}}
 function addFiles(event){const files=[...(event?.target?.files||[])];if(!files.length)return;if(files.length>2){notify('Mỗi lượt chỉ nhận tối đa 2 ảnh/trang, hãy chọn lại.');return}for(const f of files){if(f.size>20*1024*1024){notify('Mỗi tệp không quá 20 MB.');return}if(!/^image\/(jpeg|png|webp)$/.test(f.type)&&!(f.type==='application/pdf'||/\.pdf$/i.test(f.name))){notify('Chỉ hỗ trợ ảnh JPG/PNG/WebP hoặc PDF.');return}}
- const capture=event?.target?.id==='source-camera';const merged=capture?[...images.map(x=>x.file),...files].slice(-2):files;images.forEach(x=>URL.revokeObjectURL(x.url));images=merged.map(f=>({file:f,url:URL.createObjectURL(f)}));
+ const capture=event?.target?.id==='source-camera';const merged=capture?[...images.map(x=>x.file),...files].slice(-2):files;images.forEach(x=>URL.revokeObjectURL(x.url));images=merged.map(f=>({file:f,url:URL.createObjectURL(f)}));recognitionDrafts=[];renderRecognition();
  const wrap=$('source-preview');wrap.replaceChildren();for(let i=0;i<images.length;i++){const im=images[i],box=document.createElement('div');box.className='source-card';const label=document.createElement('strong');label.textContent=(i===0?'Trang bên trái: ':'Trang bên phải: ')+im.file.name;box.append(label);if(im.file.type.startsWith('image/')){const img=document.createElement('img');img.src=im.url;img.alt=label.textContent;box.append(img)}else{const a=document.createElement('a');a.href=im.url;a.target='_blank';a.rel='noopener';a.textContent='Xem PDF đã chọn';box.append(a)}wrap.append(box)}
  notify('Đã nhận '+images.length+' tệp nguồn để đối chiếu thủ công. Chưa có nhận dạng chữ viết tự động hoặc ghép dòng. Ảnh chưa được tải lên Backend.');
 }
+
+/* Nhận dạng ảnh luôn là DỰ THẢO. Hàm cầu nối chỉ được cấp từ phiên EDOS đã xác thực.
+   Không gửi ảnh qua một URL cố định hoặc giải mã khóa trên trang công khai. */
+const OCR_FIELDS=['date','session','period','subject','ppct','lesson','absent','comment','ht','kl','vs','total','rank','signature'];
+const OCR_TEXT=['date','session','period','subject','ppct','lesson','absent','comment','rank','signature'];
+function recognizedValue(row,key){
+ const v=row&&Object.prototype.hasOwnProperty.call(row,key)?row[key]:null;
+ if(v==null)return '';
+ if(['ht','kl','vs','total'].includes(key))return typeof v==='number'||/^\d+(\.\d+)?$/.test(String(v).trim())?String(v):'';
+ return typeof v==='string'||typeof v==='number'?String(v):'';
+}
+function parseRecognized(result){
+ if(!result||typeof result!=='object'||!Array.isArray(result.rows))throw Error('Phản hồi nhận dạng chưa đúng cấu trúc dữ liệu.');
+ if(result.rows.length>40)throw Error('Chỉ xử lý tối đa 40 dòng mỗi lần.');if(!result.rows.length)throw Error('Chưa nhận dạng được dòng tiết học.');
+ return result.rows.map((entry,i)=>{
+  if(!entry||typeof entry!=='object'||Array.isArray(entry))throw Error('Dòng nhận dạng không hợp lệ.');
+  const row={};for(const key of OCR_FIELDS)row[key]=recognizedValue(entry,key).slice(0,['lesson','comment','absent'].includes(key)?1200:180);
+  row.double=entry.double===2||String(entry.double)==='2'?'2':'1';
+  row.uncertain=Array.isArray(entry.uncertainFields)?entry.uncertainFields.filter(x=>OCR_FIELDS.includes(x)):[];
+  row.uncertain=[...new Set(row.uncertain)];
+  row.reviewed=false;row.index=i+1;row.sourceRefs=Array.isArray(entry.sourceRefs)?entry.sourceRefs.filter(x=>Number.isInteger(x)&&x>=0&&x<2):[];
+  return row;
+ });
+}
+function statusRecognition(){const e=$('ocr-status');if(e)e.textContent=recognitionDrafts.length?recognitionDrafts.length+' dòng nhận dạng chờ đối chiếu. Chưa dòng nào tự động được lưu.':'Chưa có bản nhận dạng. Ảnh nguồn chỉ nằm tại thiết bị cho đến khi được phép gửi qua cầu nối EDOS.';}
+function renderRecognition(){
+ const root=$('ocr-review');if(!root)return;root.replaceChildren();statusRecognition();
+ recognitionDrafts.forEach((d,index)=>{
+  const card=document.createElement('article');card.className='ocr-line';
+  const title=document.createElement('div');title.className='ocr-heading';
+  const heading=document.createElement('strong');heading.textContent='Dòng '+(index+1)+' · '+(d.date||'Ngày chưa rõ')+' · tiết '+(d.period||'chưa rõ');
+  const risk=document.createElement('span');risk.className='pill';risk.textContent=d.uncertain.length?'Cần kiểm tra: '+d.uncertain.join(', '):'Cần xác nhận thủ công';
+  title.append(heading,risk);
+  const fields=document.createElement('div');fields.className='ocr-fields';
+  const labels={date:'Ngày',session:'Buổi',period:'Tiết',subject:'Môn / Hoạt động GD',ppct:'Tiết PPCT',lesson:'Tên bài, nội dung công việc',absent:'Tên HS vắng mặt',comment:'Nhận xét GV',ht:'HT',kl:'KL',vs:'VS',total:'Tổng ghi sổ',rank:'Xếp loại',signature:'GV ký tên'};
+  for(const key of OCR_FIELDS){
+   const label=document.createElement('label');label.className='field '+(['lesson','comment','absent'].includes(key)?'wide':'');
+   label.textContent=labels[key];
+   const input=document.createElement('input');input.value=d[key]||'';input.setAttribute('aria-label',labels[key]+' dòng '+(index+1));
+   if(d.uncertain.includes(key))input.classList.add('uncertain');input.addEventListener('input',()=>{d[key]=input.value;d.reviewed=false;});
+   label.append(input);fields.append(label);
+  }
+  const actions=document.createElement('div');actions.className='buttons';
+  const into=document.createElement('button');into.className='btn primary';into.textContent='ĐƯA DÒNG VÀO SỔ NHÁP';into.addEventListener('click',()=>stageRecognized(index));
+  const remove=document.createElement('button');remove.className='btn';remove.textContent='BỎ DÒNG';remove.addEventListener('click',()=>{recognitionDrafts.splice(index,1);renderRecognition()});
+  actions.append(into,remove);card.append(title,fields,actions);root.append(card);
+ });
+}
+function stageRecognized(index){
+ const d=recognitionDrafts[index];if(!d)return;
+ if(!images.length){notify('Đã mất ảnh gốc; vui lòng chọn lại ảnh trước khi đối chiếu.');return}
+ if(!confirm('Đã đối chiếu TỪNG CỘT của dòng với ảnh sổ gốc, kể cả điểm, chữ ký và tên HS vắng? Dữ liệu chỉ vào sổ NHÁP, chưa được duyệt.'))return;
+ const keys={date:'f-date',session:'f-session',period:'f-period',subject:'f-subject',ppct:'f-ppct',lesson:'f-lesson',absent:'f-absent',comment:'f-comment',ht:'f-ht',kl:'f-kl',vs:'f-vs',total:'f-total',rank:'f-rank',signature:'f-signature'};
+ clearForm();for(const [k,id]of Object.entries(keys))$(id).value=d[k]??'';
+ $('f-double').value=d.double||'1';$('f-source').value='Đối chiếu từ ảnh scan';
+ $('f-observed').value=d.uncertain.length?'Chưa rõ':'Đã đối chiếu';
+ syncMax();const x=rowForm();
+ if(x.warning){notify('Đã chuyển vào BIỂU MẪU NHẬP để sửa các điểm chưa khớp: '+x.warning+' Hãy giữ số ghi trong ảnh, không tự điều chỉnh.');window.scrollTo({top:200,behavior:'smooth'});return}
+ // Since user has inspected each image cell and confirmed, save as a non-approved draft only.
+ const clash=ROOT.rows.find(y=>y.date===x.date&&y.session===x.session&&y.period===x.period);
+ if(clash){notify('Trùng ngày/buổi/tiết đã có trong sổ. Đã điền vào biểu mẫu để thầy đối chiếu; không tự ghi đè.');window.scrollTo({top:200,behavior:'smooth'});return}
+ x.source='Đối chiếu từ ảnh scan';x.observed='Đã đối chiếu';x.state='Chờ xác nhận';x.warning='';
+ ROOT.rows.push(x);markHistory('Chuyển OCR vào nháp',x.id,'Ảnh trong phiên · đối chiếu bằng người phụ trách · chưa phê duyệt');
+ recognitionDrafts.splice(index,1);renderRecognition();render();
+ notify('Đã đưa 1 dòng vào sổ NHÁP. Chưa tính thi đua hay phê duyệt chính thức.');
+}
+async function recognize(){
+ if(busy)return;
+ if(!images.length){notify('Chưa có ảnh hoặc tệp PDF của sổ giấy.');return}
+ if(!$('ocr-permission').checked){notify('Cần xác nhận quyền xử lý và gửi ảnh chứa thông tin học sinh tới dịch vụ nhận dạng được nhà trường phê duyệt.');return}
+ const bridge=window.HVA_SDB_AUTHORIZED_RECOGNIZE;
+ if(typeof bridge!=='function'){notify('Chưa có kết nối nhận dạng ảnh từ Backend EDOS được xác thực. Có thể dùng phần nhập thủ công; không tạo dữ liệu giả.');return}
+ busy=true;$('capture-ocr').disabled=true;notify('Đang nhận dạng bản chụp qua kết nối đã xác thực…');
+ try{
+  const context={schoolYear:txt('scope-year'),className:txt('scope-class'),week:txt('scope-week'),form:'HVA_SDB_PAPER_V1',draftOnly:true};
+  const result=await bridge(images.map(x=>x.file),context);
+  const rows=parseRecognized(result);
+  recognitionDrafts=rows;recognitionSource=new Date().toISOString();renderRecognition();
+  notify('Đã nhận '+rows.length+' dòng NHÁP từ Trợ lý. Bắt buộc đối chiếu từng dòng với ảnh trước khi đưa vào sổ.');
+ }catch(e){notify('Không nhận dạng được ảnh: '+String(e&&e.message||e).slice(0,180))}
+ finally{busy=false;$('capture-ocr').disabled=false}
+}
+
 function demoImport(){if(ROOT.rows.length&&!confirm('Dữ liệu đang có sẽ bị thay thế bằng dữ liệu thử nghiệm. Tiếp tục?'))return;ROOT.rows=[
  {id:'MO-01',date:'2026-11-02',session:'Sáng',period:'1',double:'1',subject:'Toán',ppct:'01',teacher:'GV mẫu A',lesson:'Hàm số – luyện tập',absent:'',comment:'Tham gia học tập',ht:10,kl:10,vs:5,total:25,max:25,rank:'Tốt',signature:'Đã ghi (mẫu)',state:'Chờ xác nhận',source:'Dữ liệu minh họa',observed:'Đã đối chiếu',warning:'',verifiedAt:'',createdAt:new Date().toISOString()},
  {id:'MO-02',date:'2026-11-02',session:'Sáng',period:'2',double:'2',subject:'Ngữ văn',ppct:'02',teacher:'GV mẫu B',lesson:'Đọc hiểu văn bản',absent:'1 (minh họa)',comment:'Có ghi nhận',ht:20,kl:20,vs:10,total:50,max:50,rank:'Tốt',signature:'Đã ghi (mẫu)',state:'Chờ xác nhận',source:'Dữ liệu minh họa',observed:'Đã đối chiếu',warning:'',verifiedAt:'',createdAt:new Date().toISOString()}
@@ -135,7 +218,7 @@ function init(){
  $('save-row').onclick=save;$('clear-row').onclick=clearForm;$('load-demo').onclick=demoImport;
  $('source-images').onchange=addFiles;$('source-camera').onchange=addFiles;$('excel-export').onclick=exportExcel;$('print-book').onclick=print;$('preview-book').onclick=print;$('backup-export').onclick=exportBackup;
  for(const id of ['filter-date','filter-teacher','filter-subject','filter-state'])$(id).addEventListener('input',render);
- $('capture-ocr').onclick=()=>notify('Nhận dạng chữ viết bằng AI chưa kết nối Backend. Vui lòng xem hai ảnh nguồn và nhập dữ liệu để đối chiếu; không tự suy đoán học sinh vắng, chữ ký hoặc điểm.');
+ $('capture-ocr').onclick=recognize;renderRecognition();
  render();window.addEventListener('pagehide',()=>images.forEach(im=>URL.revokeObjectURL(im.url)));
  notify('Sẵn sàng thử nghiệm 1 lớp/1 tuần. Dữ liệu chỉ tồn tại trong phiên và chưa có phê duyệt chính thức.');
 }
