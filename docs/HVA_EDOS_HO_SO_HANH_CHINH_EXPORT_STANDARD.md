@@ -17,6 +17,21 @@ Không ép dữ liệu kỹ thuật nhạy cảm (token, nhật ký bảo mật 
 
 Hồ sơ được xuất **theo mẫu đúng nghiệp vụ**: nhật ký công tác, nhật ký trực lãnh đạo, báo cáo, biên bản, phiếu, thông báo, văn bản hành chính, bảng tổng hợp... Không dùng chung một bố cục văn bản tùy tiện cho mọi loại hồ sơ. Với sổ/nhật ký, phải có thể xuất theo **một mục**, **khoảng ngày**, **tháng** hoặc **toàn kỳ** khi phạm vi dữ liệu và quyền cho phép.
 
+## 2A. Phân biệt hồ sơ tạo mới và hồ sơ giấy được số hóa
+
+**Kiểm tra nội bộ là trường hợp ưu tiên số hóa hồ sơ giấy đã lập, ký, ban hành theo quy trình hiện hành**, gồm kế hoạch, biên bản, báo cáo và kết luận kiểm tra. Các tài liệu này không mặc nhiên được EDOS soạn mới hoặc tạo lại Word/PDF từ dữ liệu nhập.
+
+Luồng hồ sơ giấy: **Tiếp nhận văn bản giấy/bản PDF scan → phân loại theo cuộc kiểm tra và loại văn bản → gắn số/ký hiệu, ngày văn bản, người ký, đơn vị, năm học, đợt kiểm tra và mức độ tiếp cận → đối chiếu tính đủ trang, chữ ký, dấu → lưu tệp số hóa nguyên trạng → tra cứu/tải bản PDF/in theo quyền**.
+
+- Lưu bản scan gốc bất biến; nếu cần xử lý nâng chất lượng ảnh hoặc OCR thì lưu **bản phái sinh riêng**, có liên kết và nhật ký, không thay thế bản scan gốc.
+- OCR/AI chỉ hỗ trợ nhận dạng dữ liệu và gợi ý phân loại, không tự tạo kết luận, thay đổi nội dung, chữ ký, dấu hay xác nhận giá trị pháp lý của bản sao.
+- Không yêu cầu tạo file Word cho hồ sơ scan nếu không có nghiệp vụ biên tập hoặc văn bản mới được người có thẩm quyền cho phép.
+- Một **hồ sơ cuộc kiểm tra** có thể gồm nhiều tài liệu giấy được số hóa (kế hoạch, quyết định nếu có, biên bản, báo cáo, kết luận, tài liệu khắc phục...) với danh mục theo dõi mức độ đầy đủ, người phụ trách, thời gian và quyền xem.
+- Khi in lại phải là nội dung bản số hóa đúng nguồn; không in giao diện nhập liệu thay cho bản gốc. Bản scan và việc lưu trữ phải thực hiện theo quy định về văn thư, lưu trữ và bảo vệ dữ liệu; không mặc nhiên coi scan là bản điện tử có ký số.
+- Các biểu mẫu hay văn bản **phát sinh mới trực tiếp trên EDOS** vẫn phải tuân thủ quy chuẩn kết xuất Word/PDF và quy trình ký, duyệt tương ứng.
+
+**Nguyên tắc chung:** Phân hệ có hồ sơ giấy nguồn thì ưu tiên **số hóa – bảo quản – lập mục lục – tra cứu – in lại**; phân hệ sinh văn bản mới mới cần **kết xuất Word/PDF theo mẫu**. Không ép mọi hồ sơ số hóa phải tạo lại bằng Word.
+
 ## 3. Chuẩn trình bày
 
 - Khổ giấy A4; lề trên và dưới 20–25 mm, trái 30–35 mm, phải 15–20 mm.
