@@ -8,18 +8,18 @@ header{background:linear-gradient(112deg,#063b76,#056cb7 66%,#0aa3bf);color:whit
 <label class="field">Lớp<input id="scope-class" placeholder="12/9"></label>
 <label class="field">Tuần<input id="scope-week" type="number" min="1" max="53" placeholder="Tuần học"></label>
 <label class="field">Khổ giấy in<select id="print-paper"><option value="A3">A3 ngang</option><option value="A4">A4 ngang</option></select></label>
-</div><div class="notice" style="margin-top:13px">Bản này là khung thử theo các thông tin thầy giao. <strong>Chưa đối chiếu trực tiếp với toàn bộ trang mẫu sổ giấy hiện hành</strong>, nên bố cục in chưa thể xem là bản sao đúng 100% mẫu trường.</div></section>
+</div><div class="notice" style="margin-top:13px">Đã đối chiếu ảnh trang đôi sổ giấy do nhà trường cung cấp: có <strong>Tiết PPCT</strong> và cột chung <strong>Tên bài, nội dung công việc</strong>. Điểm chỉ gồm <strong>HT – KL – VS</strong>; không có điểm CC riêng. Bố cục in vẫn đang được tinh chỉnh theo mẫu giấy.</div></section>
 <div class="layout">
 <div><section class="panel"><h2><em>02</em> Ghi nhận tiết học</h2><div class="formgrid">
 <label class="field">Ngày học *<input data-field id="f-date" type="date"></label>
 <label class="field">Buổi<select data-field id="f-session"><option>Sáng</option><option>Chiều</option></select></label>
 <label class="field">Tiết *<input data-field id="f-period" type="number" min="1" max="15" placeholder="Số tiết"></label>
 <label class="field">Loại tiết<select data-field id="f-double"><option value="1">Tiết đơn (25 điểm)</option><option value="2">Tiết đôi (50 điểm)</option></select></label>
-<label class="field">Môn học *<input data-field id="f-subject" placeholder="Toán"></label>
+<label class="field">Môn học / Hoạt động GD *<input data-field id="f-subject" placeholder="Toán"></label><label class="field">Tiết PPCT<input data-field id="f-ppct" placeholder="Theo phân phối chương trình" inputmode="numeric"></label>
 <label class="field">Giáo viên<input data-field id="f-teacher" placeholder="Họ và tên"></label>
-<label class="field wide">Nội dung bài dạy *<input data-field id="f-lesson" placeholder="Tên bài / nội dung đã thực hiện"></label>
-<label class="field wide">Học sinh vắng<input data-field id="f-absent" placeholder="Theo đúng nội dung đã ghi; không tự suy đoán"></label>
-<label class="field full">Nhận xét tiết học<textarea data-field id="f-comment" rows="3" placeholder="Chép chính xác nhận xét liên quan đến tiết học"></textarea></label>
+<label class="field wide">Tên bài, nội dung công việc *<input data-field id="f-lesson" placeholder="Ghi đúng nội dung của sổ giấy"></label>
+<label class="field wide">Tên học sinh vắng mặt<input data-field id="f-absent" placeholder="Theo đúng nội dung đã ghi; không tự suy đoán"></label>
+<label class="field full">Nhận xét của giáo viên<textarea data-field id="f-comment" rows="3" placeholder="Chép chính xác nhận xét liên quan đến tiết học"></textarea></label>
 <label class="field">Điểm học tập (HT)<input data-field id="f-ht" type="number" min="0" max="20" step="0.5" placeholder="Theo sổ"></label>
 <label class="field">Điểm kỷ luật (KL)<input data-field id="f-kl" type="number" min="0" max="20" step="0.5" placeholder="Theo sổ"></label>
 <label class="field">Điểm vệ sinh (VS)<input data-field id="f-vs" type="number" min="0" max="10" step="0.5" placeholder="Theo sổ"></label>
@@ -51,7 +51,7 @@ header{background:linear-gradient(112deg,#063b76,#056cb7 66%,#0aa3bf);color:whit
 <label class="field">Lọc môn học<input id="filter-subject" type="search" placeholder="Tìm môn"></label>
 <label class="field">Trạng thái<select id="filter-state"><option value="">Tất cả</option><option>Chờ xác nhận</option><option>Đã đối chiếu (thử nghiệm)</option></select></label>
 </div><div class="between" style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin:12px 0"><span id="row-count" class="pill">0 dòng</span><button class="btn" id="load-demo">NẠP 2 DÒNG MINH HỌA 25/50</button></div>
-<div class="tablewrap"><table><thead><tr><th>STT</th><th>Ngày</th><th>Buổi</th><th>Tiết</th><th>Loại</th><th>Môn</th><th>Giáo viên</th><th>Nội dung bài dạy</th><th>HS vắng</th><th>HT</th><th>KL</th><th>VS</th><th>Tổng</th><th>Tối đa</th><th>Xếp loại</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="body-rows"></tbody></table></div></section>
+<div class="tablewrap"><table><thead><tr><th>STT</th><th>Ngày</th><th>Buổi</th><th>Tiết</th><th>Loại</th><th>Môn / HĐGD</th><th>Tiết PPCT</th><th>Giáo viên</th><th>Tên bài, nội dung công việc</th><th>HS vắng</th><th>HT</th><th>KL</th><th>VS</th><th>Tổng</th><th>Tối đa</th><th>Xếp loại</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="body-rows"></tbody></table></div></section>
 <section class="panel"><h2><em>06</em> Tổng hợp thi đua – dữ liệu đã đối chiếu thử</h2><div class="stats">
 <div class="stat"><span>Điểm / Tối đa</span><strong id="stats-points">0/0</strong></div><div class="stat"><span>Số dòng đối chiếu</span><strong id="stats-lessons">0</strong></div><div class="stat"><span>Tiết có ghi học sinh vắng</span><strong id="stats-absent">0</strong></div><div class="stat"><span>Dòng cần kiểm tra</span><strong id="stats-warning">0</strong></div>
 </div><p class="muted">Chỉ cộng tổng điểm các dòng đã đối chiếu thử, không tự quy đổi xếp loại hay xếp hạng lớp. Mục vắng hiện thống kê số dòng có ghi vắng, không tự suy ra số học sinh hoặc số lượt nghỉ.</p></section>
