@@ -118,7 +118,7 @@ function printable(){
  const headingsLeft=['Ngày / tháng','Tiết','Môn học / HĐGD','Tiết PPCT','TÊN BÀI, NỘI DUNG CÔNG VIỆC'];
  const headingsRight=['TÊN HỌC SINH VẮNG MẶT','NHẬN XÉT CỦA GIÁO VIÊN','HT','KL','VS','Tổng ghi sổ','Xếp loại tiết học','Giáo viên ký tên'];
  const line=(vals)=>'<tr>'+vals.map(v=>'<td>'+esc(v??'').replace(/\n/g,'<br>')+'</td>').join('')+'</tr>';
- const left=rows.map(r=>line([formatDate(r.date)+' · '+r.session,r.period,r.subject,r.ppct,r.lesson])).join('');
+ const left=rows.map((r,i)=>line([formatDate(r.date)+' · '+r.session,r.period,r.subject,r.ppct,r.lesson])).join('');
  const right=rows.map(r=>line([r.absent,r.comment,r.ht??'',r.kl??'',r.vs??'',r.total??'',r.rank,r.signature])).join('');
  const table=(classes,heads,body)=>'<table class="'+classes+'"><thead><tr>'+heads.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+body+'</tbody></table>';
  const html='<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Sổ ghi đầu bài – bản đối chiếu</title><style>'+
@@ -173,7 +173,7 @@ function renderRecognition(){
    const label=document.createElement('label');label.className='field '+(['lesson','comment','absent'].includes(key)?'wide':'');
    label.textContent=labels[key];
    const input=document.createElement('input');input.value=d[key]||'';input.setAttribute('aria-label',labels[key]+' dòng '+(index+1));
-   if(d.uncertain.includes(key))input.classList.add('uncertain');input.addEventListener('input',()=>{d[key]=input.value;d.reviewed=false;});
+   if(d.uncertain.includes(key))input.classList.add('uncertain');input.addEventListener('input',()=>{d[key]=input.value;d.reviewed=false;if(d.uncertain.includes(key)){d.uncertain=d.uncertain.filter(x=>x!==key);input.classList.remove('uncertain');risk.textContent=d.uncertain.length?'Cần kiểm tra: '+d.uncertain.join(', '):'Đã sửa các ô không rõ – vẫn phải đối chiếu';}});
    label.append(input);fields.append(label);
   }
   const actions=document.createElement('div');actions.className='buttons';
