@@ -1,0 +1,25 @@
+/* HVA–EDOS | Trình bày thống nhất cho các biểu mẫu Quản trị đang phát triển */
+:root{--hva:#075c9c;--hva-ink:#163a59;--hva-border:#d8e7f2}
+body{background:radial-gradient(ellipse at top right,#c9f2ff85,transparent 31%),linear-gradient(#f0f7ff,#f8fbfe 380px);color:var(--hva-ink)}
+header{position:relative;isolation:isolate;box-shadow:0 5px 20px #03578a1c}
+header::after{content:"";position:absolute;right:4%;top:0;width:240px;height:100%;opacity:.12;pointer-events:none;background:repeating-linear-gradient(60deg,transparent 0 22px,#fff 23px 24px)}
+header a{display:inline-flex;align-items:center;gap:5px;font-weight:700;border:1px solid #ffffff75;border-radius:10px;padding:8px 12px;background:#ffffff12}
+header a:hover{background:#ffffff26}
+header h1{font-size:clamp(22px,2.5vw,29px);letter-spacing:.015em}
+main{padding-top:25px}.headrow{align-items:flex-start}.headrow strong{display:block;font-size:15px;max-width:800px;line-height:1.6}.headrow .pill{flex-shrink:0}
+.card{box-shadow:0 10px 30px #07548d0b;border-color:var(--hva-border);border-radius:18px;padding:21px}
+.card h2{font-size:14px;letter-spacing:.015em;border-bottom:1px solid #e5eef5;padding-bottom:10px;margin-bottom:15px}
+.field{gap:7px;line-height:1.45}.field>span{font-weight:750}.field input,.field select,.field textarea,.full{border:1px solid #b9d5e8;min-height:43px;transition:border-color .15s,box-shadow .15s;background:#fff}
+.field input:focus,.field select:focus,.field textarea:focus,.full:focus{outline:none;border-color:#1489cb;box-shadow:0 0 0 3px #14a0e222}
+.field textarea{min-height:98px;line-height:1.55}
+.btn{min-height:40px;transition:transform .12s,background .12s}.btn:hover{transform:translateY(-1px);background:#e1f0fc}.btn.primary:hover{background:#07578d}
+.btn:focus-visible,.small:focus-visible,header a:focus-visible{outline:3px solid #f6b954;outline-offset:3px}
+.preview{min-height:225px;max-height:460px;background:linear-gradient(#fbfdff,#f2f8fe);font-family:"Segoe UI",Arial,sans-serif;font-size:12.5px}
+.note{border-color:#dbb875;background:#fffaf1}#message{position:sticky;bottom:10px;box-shadow:0 4px 18px #0b467813}
+#consentArea{border:1px solid #e7d9b9;border-radius:10px;padding:11px;background:#fffdf7}
+#consentArea input{accent-color:#086aaf;width:16px;height:16px;vertical-align:middle}
+.rec{flex-wrap:wrap}.rec div{min-width:125px;overflow-wrap:anywhere}
+@media(max-width:900px){main{max-width:780px}.layout{grid-template-columns:1fr}.preview{min-height:170px}}
+@media(max-width:620px){header{padding:20px 17px}.card{padding:16px}.headrow{gap:8px}.headrow strong{font-size:13px}.pill{white-space:normal}.actions .btn{flex:1 1 auto}.rec{gap:5px}}
+@media(prefers-reduced-motion:reduce){.btn,.field input,.field select,.field textarea{transition:none}}
+@media print{body{background:#fff}#message{display:none}}
