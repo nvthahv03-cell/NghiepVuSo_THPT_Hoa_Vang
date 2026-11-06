@@ -32,7 +32,7 @@ header{background:linear-gradient(112deg,#063b76,#056cb7 66%,#0aa3bf);color:whit
 <div class="buttons"><button class="btn primary" id="save-row">LƯU DÒNG NHÁP</button><button class="btn" id="clear-row">THÊM DÒNG KHÁC</button></div><p class="muted" id="edit-mode">Đang thêm dòng mới</p>
 </section></div>
 <div><section class="panel"><h2><em>03</em> Chụp sổ đầu bài – đối chiếu</h2><div class="notice">Có thể dùng camera điện thoại hoặc chọn <strong>hai ảnh của một trang đôi</strong>. Ảnh gốc chỉ tồn tại trong phiên trình duyệt. Chưa có nhận dạng chữ viết tự động, chưa ghép dòng giữa hai ảnh.</div>
-<label class="field" style="margin-top:13px">CHỤP SỔ ĐẦU BÀI / TẢI ẢNH, PDF<input id="source-images" type="file" accept="image/*,application/pdf,.pdf" multiple></label>
+<label class="field" style="margin-top:13px">CHỤP SỔ ĐẦU BÀI BẰNG CAMERA ĐIỆN THOẠI<input id="source-camera" type="file" accept="image/*" capture="environment"></label><label class="field" style="margin-top:13px">HOẶC TẢI HAI ẢNH / PDF<input id="source-images" type="file" accept="image/*,application/pdf,.pdf" multiple></label>
 <div class="sourcegrid" id="source-preview"></div>
 <div class="buttons"><button class="btn" id="capture-ocr">NHẬN DẠNG – CHUYỂN VÀO SỔ</button></div>
 <p class="muted">Nút nhận dạng hiện báo trạng thái chưa kết nối, không tự tạo kết quả. Khi tích hợp Backend cần nhận diện ảnh đôi, ghép dòng theo tiết, đánh dấu thông tin thiếu chắc chắn và trình người phụ trách duyệt.</p>
