@@ -3516,5 +3516,46 @@ html body .nvs-chooser nav.nvs-premium-nav>button>i.bi::before{
  -webkit-text-fill-color:#1762d9!important;
 }
 </style>
+<style id="hva-quick-four-column-layout-fix">
+/* BGH: bốn tiện ích chính phải nằm đúng một hàng trên desktop và mobile.
+   Quy tắc này đặt CUỐI tài liệu để không bị các CSS legacy ghi đè. */
+html body section.nvs-quick{
+ display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ grid-auto-flow:row!important;
+ gap:clamp(5px,1.3vw,18px)!important;
+ width:100%!important;max-width:100%!important;
+ align-items:stretch!important;
+}
+html body section.nvs-quick>.nvs-quick-card,
+html body section.nvs-quick>#nvsOpenRemind{
+ min-width:0!important;width:100%!important;max-width:100%!important;
+ grid-column:auto!important;
+ justify-self:stretch!important;
+}
+html body section.nvs-quick>.nvs-quick-calendar{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:center!important;
+ justify-content:center!important;
+ color:#1555a8!important;
+ text-decoration:none!important;
+ box-sizing:border-box!important;
+}
+html body section.nvs-quick>.nvs-quick-calendar strong{
+ color:#114a9a!important;text-align:center!important;
+ font-size:clamp(10px,1.25vw,14px)!important;
+ line-height:1.25!important;
+ white-space:normal!important;
+}
+@media(max-width:520px){
+ html body section.nvs-quick{gap:4px!important}
+ html body section.nvs-quick>.nvs-quick-card,
+ html body section.nvs-quick>#nvsOpenRemind{padding:8px 2px!important;min-width:0!important}
+ html body section.nvs-quick>.nvs-quick-calendar strong{
+  font-size:clamp(9px,2.4vw,12px)!important;overflow-wrap:anywhere!important;
+ }
+}
+</style>
 </body>
 </html>
