@@ -67,7 +67,7 @@ async function loadPeople(){
   if(typeof window.HVAPersonnel?.buildGroups!=='function')throw Error('Chưa có nguồn nhân sự dùng chung');
   const groups=await window.HVAPersonnel.buildGroups();state.groups=groups;
   const units=new Set(),dict=new Map();
-  for(const g of groups){const unit=safe(g.tenTo);if(!/tổ /i.test(unit)&&!/văn phòng/i.test(unit))continue;units.add(unit);
+  for(const g of groups){const unit=safe(g.tenTo);const key=window.HVAPersonnel.unitKey?.(unit);if(!['MATH_IT','LITERATURE','ENGLISH','HISTORY_GEO','PHYSICS_TECH','CHEMISTRY','BIO_PE_DEF'].includes(key))continue;units.add(unit);
    for(const p of g.members||[]){const id=personId(p);if(!id)continue;
     const name=safe(p.hoTen||id),role=safe(p.chucVu);if(/hiệu trưởng|phó hiệu trưởng/i.test(role))continue;
     if(!dict.has(id))dict.set(id,{id,name,unit,role});
