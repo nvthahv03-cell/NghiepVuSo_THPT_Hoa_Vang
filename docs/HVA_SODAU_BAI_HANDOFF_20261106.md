@@ -52,3 +52,26 @@ Lưu ý: việc ghi chữ ký trong nguồn là **ghi nhận sự hiện diện 
 Bắt đầu bằng **01 lớp, 01 tuần**, cung cấp ảnh hai mặt của tối thiểu một trang đôi sổ giấy và đầy đủ các kiểu tiết đơn/tiết đôi (có trường hợp ghi 25/50, thiếu/chênh điểm). Thử nhận dạng, đối chiếu từng dòng với bản gốc, loại tiết, số tiết, tổng, số lượt vắng, xác nhận, bản in A3/A4, mở file XLSX và đối chiếu thống kê. Chỉ sau đó mới nhân rộng; không sửa các phân hệ EDOS đã PASS.
 
 **Kết luận:** Có bản thử phục vụ thao tác và rà soát, không phải hệ thống hồ sơ Sổ ghi đầu bài điện tử đang vận hành.
+
+## Bổ sung ngày 06/11/2026 – nhận dạng ảnh theo hướng có người kiểm soát
+
+Theo ảnh sổ giấy nhà trường cung cấp: cột (4) **Tiết PPCT**, cột (5) **Tên bài, nội dung công việc**, cột (6) **Tên học sinh vắng mặt**, (7) **Nhận xét của giáo viên**, ba thành phần điểm **HT, KL, VS**, xếp loại và giáo viên ký tên. Giáo viên có thể ghi điểm VS lệch ô; **không tạo thành phần CC** theo yêu cầu xác nhận của BGH. Quy tắc 25/50 cho tiết đơn/đôi đang áp dụng ở bản thử theo chỉ đạo trước đó, chưa dùng để thay đổi bất kỳ điểm nào ghi trên ảnh.
+
+### Đã cập nhật trong mã
+- Màn hình chụp ảnh cho phép một hoặc hai ảnh; chức năng trợ lý nay gọi `window.HVA_SDB_AUTHORIZED_RECOGNIZE(files, context)` **chỉ khi** EDOS cung cấp hàm cầu nối đã xác thực, đồng thời người sử dụng xác nhận ảnh được phép xử lý. Khi thiếu cầu nối, hiện thông báo không có kết nối và **không tự sinh dữ liệu**.
+- Bảng đọc ảnh xuất ra các dòng **nháp**, người dùng sửa những trường chưa rõ, đối chiếu với ảnh, xác nhận từng dòng rồi mới chuyển sang sổ nháp; hàng chưa xác nhận không vào thống kê thi đua. Nếu gặp trùng ngày/buổi/tiết, không tự ghi đè.
+- Bản xem/in chia hai trang trái – phải theo nhóm cột của sổ giấy, A3/A4 ngang, có vị trí nhận xét GVCN và Hiệu trưởng. Vẫn là **mẫu in thử**, chưa khẳng định khớp số trang thực tế hoặc ký duyệt.
+- Bộ xử lý máy chủ thử nghiệm đặt ở `backend/HVA_SDB_GEMINI_VISION_PILOT.gs`, hàm `hvaSdbRecognizePilot_(p)`. Chưa nối router GAS thật.
+
+### Giao thức cầu nối đề xuất – chưa triển khai
+
+Bên trong EDOS đã xác thực, lớp cầu nối (chưa có) chuyển ảnh thành base64, gửi yêu cầu có `action:'hva_sdb_recognize'`, `requestId:'sdb-...'`, `images:[{mimeType,data}]`, `permissionConfirmed:true` tới router thử nghiệm có bảo vệ phiên. Backend xác định danh tính qua `nvsActor_` và danh sách thử `HVA_SDB_TEST_USERS`, dùng `GEMINI_API_KEY` và `HVA_SDB_VISION_MODEL` trong Script Properties. Không có khóa trong URL/GitHub hoặc frontend. Response dạng `{success:true,draft:true,reviewRequired:true,rows:[...]}`. Hệ thống frontend nhận qua hàm `window.HVA_SDB_AUTHORIZED_RECOGNIZE`, không tự đọc session cross-origin.
+
+**Phải xác minh giới hạn, rủi ro dữ liệu cá nhân học sinh, quyền chia sẻ ảnh, quyền phụ trách lớp, chính sách lưu ảnh, quota, xử lý lỗi/503 và chống lặp trên máy chủ trước khi bật trên dữ liệu thật.** Bản pilot chưa lưu ảnh gốc tập trung và chưa có kết nối duyệt chính thức; không PASS.
+
+### Công việc còn lại theo thứ tự ưu tiên
+1. Rà bản in hai trang với bản scan chuẩn đầy đủ một tuần; xử lý ngắt trang có hàng dài và vị trí chữ ký.
+2. Kiểm toán bản sao GAS EDOS đang triển khai; nối action thử nghiệm và cầu nối xác thực trên đúng origin/SSO; cấu hình model Gemini hỗ trợ ảnh.
+3. Thử trên ảnh trang đôi của trường (không công khai dữ liệu học sinh), kiểm tra ghép hàng, chữ tay, điểm ghi lệch ô, PPCT, nhận xét, vắng, chữ ký.
+4. Thiết kế kho ảnh gốc và dữ liệu đã đối chiếu theo ID hồ sơ, revision, quyền và audit máy chủ; tổng hợp chỉ dữ liệu được duyệt chính thức.
+5. Nghiệm thu A3/A4, PDF và XLSX bằng thiết bị thật; sau đó mới xin phép đưa vào EDOS.
