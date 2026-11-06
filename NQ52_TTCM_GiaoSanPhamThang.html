@@ -1,0 +1,124 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kế hoạch nhiệm vụ và sản phẩm tháng | HVA</title>
+<style>
+:root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#213b54;background:#f3f7fb}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}header{padding:20px max(18px,calc((100vw - 1250px)/2));background:linear-gradient(125deg,#073f78,#087baa);color:#fff}header a{color:white;text-decoration:none;font-size:12px}header h1{font-size:21px;margin:8px 0 5px}header p{font-size:12px;margin:0;color:#dff6ff}main{max-width:1250px;padding:21px 18px 50px;margin:auto}.topline{display:flex;justify-content:space-between;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:15px}.chip{color:#795a16;background:#fff6dd;border:1px solid #e6d8a6;font-size:11px;padding:8px 11px;border-radius:100px}.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:15px}.card{background:#fff;border:1px solid #d7e6f1;border-radius:15px;padding:17px;box-shadow:0 6px 22px #143e6510;margin-bottom:14px;min-width:0}h2{font-size:15px;color:#085e97;margin:0 0 12px}.muted{font-size:11px;color:#657f95;line-height:1.55}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:650}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field input,.field select,.field textarea{width:100%;border:1px solid #c4d6e5;padding:10px 11px;border-radius:9px;background:#fcfeff;color:#1d3a55;outline-color:#078fc1}.field textarea{resize:vertical;min-height:73px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.btn{border:1px solid #b7d4e6;border-radius:10px;color:#095b87;background:#edf8fe;padding:10px 13px;font-size:12px;font-weight:750;cursor:pointer}.btn.primary{background:#0967a0;color:#fff;border-color:#0967a0}.btn:disabled{opacity:.5;cursor:not-allowed}.strip{border-left:3px solid #0a8aba;padding:10px;background:#f1f9ff;font-size:11px;line-height:1.6;border-radius:7px}.preview{white-space:pre-wrap;line-height:1.6;font-size:12px;color:#213b54;background:#f9fbfd;border:1px solid #d9e7f0;padding:12px;border-radius:10px;max-height:440px;overflow:auto;min-height:150px}.task{border:1px solid #d8e7f1;border-radius:11px;padding:12px;margin:10px 0;background:#fbfdff}.task h3{font-size:12px;margin:0 0 6px}.task p{font-size:11px;color:#647b90;line-height:1.5;margin:4px 0}.task .row{margin-top:9px}.mini{font-size:11px;padding:7px 9px}.personlist{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:250px;overflow:auto;margin-top:9px}.personlist label{font-size:11px;font-weight:500}.count{color:#08729e;font-size:12px;font-weight:750}#status{padding:11px;background:#e9f5ff;color:#225d86;border:1px solid #d1e7f7;border-radius:10px;font-size:12px;margin-top:13px}.notice{background:#fff9eb;color:#7f611e;border-radius:9px;padding:11px;border:1px solid #f0dfb3;font-size:11px;line-height:1.55}.stats{display:flex;gap:15px;font-size:12px;color:#56728b}strong{color:#075889}@media(max-width:880px){.layout{grid-template-columns:1fr}}@media(max-width:590px){.fields,.personlist{grid-template-columns:1fr}}@media print{header,.no-print,#status{display:none}.card{box-shadow:none;border:0}}
+</style></head><body>
+<header><a href="./DieuHanh.html">‹ TRỞ VỀ ĐIỀU HÀNH</a><h1>KẾ HOẠCH NHIỆM VỤ VÀ SẢN PHẨM THÁNG</h1><p>TRƯỜNG THPT HÒA VANG · DÀNH CHO TỔ TRƯỞNG CHUYÊN MÔN</p></header>
+<main><div class="topline"><div><strong>Lập phương án phân công theo sản phẩm đầu ra</strong><div class="muted">Mẫu thao tác: chưa gửi giáo viên, chưa cập nhật EDOS và chưa dùng để chấm NQ52.</div></div><span class="chip">GIAO DIỆN DỰ THẢO · CHƯA KẾT NỐI BACKEND</span></div>
+<div class="layout"><div><section class="card"><h2>1. Thông tin phương án giao việc</h2><div class="fields">
+<label class="field">Tháng thực hiện<input type="month" id="month"></label><label class="field">Tổ chuyên môn<select id="unit"><option value="">Chọn tổ chuyên môn</option></select></label>
+<label class="field full">Trọng tâm công tác tháng<input id="focus" maxlength="350" placeholder="Ví dụ: hoàn thiện chuyên đề ôn tập, học liệu số và đánh giá tiến bộ HSG"></label>
+</div><div class="strip" style="margin-top:12px">TTCM lập phương án; người có thẩm quyền kiểm tra, giao hoặc phê duyệt theo phân quyền sau khi Backend được hoàn thiện. Không tự phát hành chỉ vì đã chọn nhân sự.</div></section>
+<section class="card"><h2>2. Giao nhiệm vụ và sản phẩm cho giáo viên</h2><div class="fields">
+<label class="field">Nhóm nhiệm vụ<select id="category"><option value="">Chọn nhóm</option><option value="A">A – Thường xuyên</option><option value="B">B – Phát triển sản phẩm</option><option value="C">C – Trọng tâm, dài hạn</option></select></label>
+<label class="field">Mẫu nhiệm vụ<select id="template"><option value="">Chọn nhiệm vụ từ danh mục</option></select></label>
+<label class="field full">Tên nhiệm vụ cụ thể<input id="taskTitle" maxlength="300" placeholder="Nêu rõ đầu việc, không chỉ ghi chung chung"></label>
+<label class="field full">Sản phẩm / kết quả tháng này<textarea id="deliverable" maxlength="1600" placeholder="Nêu số lượng hoặc kết quả kiểm chứng được"></textarea></label>
+<label class="field full">Tiêu chí nghiệm thu<textarea id="acceptance" maxlength="1600" placeholder="Yêu cầu về chất lượng, khả năng sử dụng, hoàn thành tiến độ"></textarea></label>
+<label class="field">Thời hạn<input type="date" id="deadline"></label><label class="field">Mức độ ưu tiên<select id="priority"><option>Thông thường</option><option>Trọng tâm</option><option>Ưu tiên cao</option></select></label>
+<label class="field full">Mốc giai đoạn / lưu ý (nếu có)<textarea id="milestone" maxlength="900" placeholder="Nhiệm vụ KHKT, HSG có thể nghiệm thu theo giai đoạn"></textarea></label></div>
+<h2 style="margin-top:17px">Người được đề xuất phân công</h2><div class="row"><button class="btn mini" id="loadRoster" type="button">NẠP NHÂN SỰ HVA</button><button class="btn mini" id="clearRoster" type="button">BỎ CHỌN</button><span class="count" id="selection">0 giáo viên</span></div><div class="personlist" id="people"><span class="muted">Chưa nạp danh sách nhân sự xác thực.</span></div>
+<div class="row" style="margin-top:15px"><button class="btn primary" id="addTask" type="button">THÊM NHIỆM VỤ VÀO PHƯƠNG ÁN</button><button class="btn" id="clearTask" type="button">LÀM MỚI Ô GIAO VIỆC</button></div></section>
+<section class="card"><h2>3. Danh sách nhiệm vụ đã lập</h2><div class="stats"><span><strong id="taskCount">0</strong> nhiệm vụ</span><span><strong id="personCount">0</strong> GV</span><span><strong id="devCount">0</strong> sản phẩm phát triển / trọng tâm</span></div><div id="tasks"><p class="muted">Chưa thêm nhiệm vụ nào.</p></div><div class="row"><button class="btn" id="previewBtn" type="button">TỔNG HỢP PHƯƠNG ÁN</button><button class="btn" id="clearAll" type="button">XÓA PHƯƠNG ÁN</button></div></section></div>
+<aside><section class="card"><h2>Hướng dẫn TTCM giao việc</h2><div class="notice"><b>Không giao lại từng tiết dạy.</b> Công việc thường xuyên được đối chiếu với phân công chuyên môn và hệ thống sẵn có. Ưu tiên chọn sản phẩm thực tế cần phát triển, theo năng lực từng GV; không giao đồng loạt một định mức cứng cho cả tổ.</div><div id="guide" class="strip" style="margin-top:12px">Chọn một mẫu nhiệm vụ để xem hướng dẫn và tiêu chí gợi ý.</div></section>
+<section class="card"><h2>4. Xem trước phương án</h2><div class="preview" id="preview">Phương án chưa được tổng hợp.</div><div class="row" style="margin-top:11px"><button class="btn" type="button" id="copy">SAO CHÉP</button><button class="btn" type="button" id="export">XUẤT JSON DỰ THẢO</button></div><p class="muted">Không lưu dữ liệu trên trình duyệt hoặc máy chủ; tải lại trang sẽ mất bản nháp. Bản xuất là dữ liệu tham khảo, chưa phải quyết định giao nhiệm vụ.</p></section></aside></div><div id="status" role="status" aria-live="polite">Sẵn sàng lập phương án giao nhiệm vụ tháng.</div></main>
+<script src="./HVA_Personnel.js"></script><script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const C=[
+['A','Thực hiện kế hoạch dạy học','Đối chiếu tiến độ và chất lượng thực hiện chương trình theo phân công','Đúng kế hoạch, hồ sơ đầy đủ, không phát sinh lỗi chưa xử lý','Không giao lại từng tiết; tham chiếu dữ liệu chuyên môn đã có'],
+['A','Kiểm tra, đánh giá học sinh','Hoàn thành nhiệm vụ kiểm tra, chấm và trả bài theo lịch được giao','Đúng hạn, bảo mật, đảm bảo yêu cầu chuyên môn','Không coi một đề thông thường là sản phẩm vượt yêu cầu'],
+['A','Hồ sơ chuyên môn','Hồ sơ, dữ liệu chuyên môn được hoàn tất theo quy định','Đầy đủ, chính xác, cập nhật đúng hạn','Ưu tiên kiểm tra nguồn EDOS, không yêu cầu tải minh chứng trùng'],
+['B','Phát triển học liệu số','01 bộ học liệu có thể dùng chung trong tổ theo chủ đề được chọn','Có mục tiêu, nội dung chuẩn, hoạt động học, đánh giá và phản hồi chuyên môn','Chọn chủ đề cụ thể và xác định sản phẩm phù hợp'],
+['B','Ngân hàng câu hỏi / đề theo chủ đề','01 bộ câu hỏi có đáp án, hướng dẫn chấm; kèm ma trận, đặc tả khi áp dụng','Đúng yêu cầu cần đạt, có phân hóa, được nhóm chuyên môn thẩm định','Không tải đề bảo mật lên nơi công khai'],
+['B','Chuyên đề đổi mới phương pháp','01 chuyên đề hoặc hoạt động nghiên cứu bài học có kế hoạch, sản phẩm và kết quả rút kinh nghiệm','Có khả năng áp dụng, được chia sẻ hoặc góp ý trong tổ','Không yêu cầu sáng kiến hình thức hàng tháng'],
+['B','Hướng dẫn đồng nghiệp / chia sẻ học liệu','01 sản phẩm hỗ trợ đồng nghiệp hoặc tài nguyên dùng chung','Chứng minh giá trị sử dụng, có xác nhận từ tổ chuyên môn','Không tính trùng cùng sản phẩm nếu đã nghiệm thu ở nhiệm vụ khác'],
+['B','Cải tiến công cụ hoặc quy trình','01 công cụ hoặc đề xuất cải tiến có bản sử dụng thử và đánh giá hiệu quả','Giải quyết vấn đề cụ thể, có người sử dụng thử và phản hồi','Cho phép GV đề xuất sáng tạo ngoài danh mục'],
+['C','Bồi dưỡng học sinh giỏi','Các chuyên đề đã hoàn thành trong tháng và báo cáo tiến bộ đội tuyển','Đúng kế hoạch, có kiểm tra đánh giá giai đoạn','Không chờ có giải mới ghi nhận kết quả tháng'],
+['C','Hướng dẫn nghiên cứu KHKT','Sản phẩm giai đoạn: đề cương, thực nghiệm, báo cáo hoặc bản mẫu','Đúng mốc kế hoạch, nội dung có thể kiểm chứng','Không kê khai thành tích cuộc thi khi chưa có kết quả'],
+['C','Hướng dẫn cuộc thi / dự án','Sản phẩm tập luyện, hồ sơ, dự án hoặc bài dự thi theo giai đoạn','Đáp ứng yêu cầu cuộc thi và hoàn thành đúng mốc','Đánh giá theo sản phẩm trong kỳ'],
+['C','Phụ đạo học sinh','Kế hoạch, chuyên đề và kết quả đánh giá tiến bộ trong tháng','Có đối tượng, hoạt động và kết quả theo dõi','Gắn với nhiệm vụ đã giao; không đánh đồng số buổi với chất lượng'],
+['C','Ôn thi tốt nghiệp THPT','Chuyên đề ôn tập và kết quả đánh giá theo kế hoạch tháng','Có dữ liệu phân tích lỗi và điều chỉnh phù hợp','Lưu ý điều kiện lớp và đặc điểm học sinh']
+];
+const state={all:[],groups:[],people:[],selected:new Set(),tasks:[]};
+const say=s=>$('status').textContent=s;
+const safe=s=>String(s||'').trim();
+const personId=p=>safe(p.username||p.maGV);
+function refillTemplates(){
+ const cat=$('category').value,sel=$('template');sel.replaceChildren(new Option('Chọn nhiệm vụ từ danh mục',''));
+ C.forEach((x,i)=>{if(!cat||x[0]===cat)sel.append(new Option(x[1],String(i)))});
+ $('guide').textContent='Chọn một nhiệm vụ để xem hướng dẫn.';
+}
+function template(){
+ const idx=$('template').value;if(idx==='')return;
+ const x=C[Number(idx)];if(!x)return;
+ $('category').value=x[0];$('taskTitle').value=x[1];$('deliverable').value=x[2];$('acceptance').value=x[3];$('guide').textContent=x[4];
+}
+function renderPeople(){
+ const unit=$('unit').value,box=$('people');box.replaceChildren();
+ const members=state.people.filter(p=>!unit||p.unit===unit);
+ if(!members.length){box.textContent='Không có dữ liệu giáo viên của tổ đã chọn. Chỉ dùng danh sách nhân sự đã xác thực.';return}
+ for(const p of members){const label=document.createElement('label'),ck=document.createElement('input');ck.type='checkbox';ck.style.width='auto';ck.checked=state.selected.has(p.id);ck.onchange=()=>{if(ck.checked)state.selected.add(p.id);else state.selected.delete(p.id);renderSelected()};label.append(ck,document.createTextNode(' '+p.name));box.append(label)}
+ renderSelected();
+}
+function renderSelected(){$('selection').textContent=state.selected.size+' người đã chọn'}
+async function loadPeople(){
+ const btn=$('loadRoster');btn.disabled=true;try{
+  if(typeof window.HVAPersonnel?.buildGroups!=='function')throw Error('Chưa có nguồn nhân sự dùng chung');
+  const groups=await window.HVAPersonnel.buildGroups();state.groups=groups;
+  const units=new Set(),dict=new Map();
+  for(const g of groups){const unit=safe(g.tenTo);if(!/tổ /i.test(unit)&&!/văn phòng/i.test(unit))continue;units.add(unit);
+   for(const p of g.members||[]){const id=personId(p);if(!id)continue;
+    const name=safe(p.hoTen||id),role=safe(p.chucVu);if(/hiệu trưởng|phó hiệu trưởng/i.test(role))continue;
+    if(!dict.has(id))dict.set(id,{id,name,unit,role});
+   }
+  }
+  state.people=[...dict.values()];$('unit').replaceChildren(new Option('Chọn tổ chuyên môn',''),...[...units].sort((a,b)=>a.localeCompare(b,'vi')).map(x=>new Option(x,x)));
+  renderPeople();say('Đã nạp '+state.people.length+' nhân sự từ nguồn HVA. Chỉ là dữ liệu để lập phương án, chưa xác thực quyền TTCM trên Backend.');
+ }catch(e){say('Không tải được nhân sự: '+(e.message||String(e)))}
+ finally{btn.disabled=false}
+}
+function add(){
+ const month=$('month').value,unit=$('unit').value,cat=$('category').value,title=safe($('taskTitle').value),deliverable=safe($('deliverable').value),acceptance=safe($('acceptance').value),deadline=$('deadline').value;
+ if(!month||!unit||!cat||!title||!deliverable||!acceptance||!deadline||!state.selected.size){say('Cần đủ tháng, tổ, nhóm việc, nhiệm vụ, sản phẩm, tiêu chí, thời hạn và người nhận.');return}
+ if(deadline.slice(0,7)!==month){say('Thời hạn đang ngoài tháng kế hoạch. Với nhiệm vụ dài hạn, hãy đặt mốc sản phẩm của tháng này.');return}
+ const assigned=state.people.filter(p=>p.unit===unit&&state.selected.has(p.id));if(assigned.length!==state.selected.size){say('Chỉ phân công người thuộc tổ đã chọn. Bỏ chọn nhân sự ngoài tổ.');return}
+ const exists=state.tasks.some(t=>t.title.toLocaleLowerCase('vi')===title.toLocaleLowerCase('vi')&&t.members.some(m=>state.selected.has(m.id)));
+ if(exists){say('Đã có nhiệm vụ cùng tên cho một trong những người được chọn. Kiểm tra để tránh giao trùng.');return}
+ state.tasks.push({id:state.tasks.length+1,month,unit,category:cat,title,deliverable,acceptance,deadline,priority:$('priority').value,milestone:safe($('milestone').value),members:assigned.map(({id,name})=>({id,name}))});
+ renderTasks();say('Đã thêm vào phương án '+assigned.length+' người. Chưa giao hoặc gửi thông báo.');
+}
+function renderTasks(){
+ const root=$('tasks');root.replaceChildren();$('taskCount').textContent=state.tasks.length;$('personCount').textContent=new Set(state.tasks.flatMap(x=>x.members.map(p=>p.id))).size;
+ $('devCount').textContent=state.tasks.filter(x=>x.category!=='A').length;
+ if(!state.tasks.length){root.innerHTML='<p class="muted">Chưa thêm nhiệm vụ nào.</p>';return}
+ state.tasks.forEach((t,i)=>{const row=document.createElement('div');row.className='task';const title=document.createElement('h3');title.textContent=(i+1)+'. ['+t.category+'] '+t.title;
+ const p=document.createElement('p');p.textContent='Sản phẩm: '+t.deliverable+' | Hạn: '+t.deadline;
+ const q=document.createElement('p');q.textContent='Người được giao: '+t.members.map(p=>p.name).join('; ');
+ const b=document.createElement('button');b.className='btn mini';b.type='button';b.textContent='BỎ NHIỆM VỤ';b.onclick=()=>{state.tasks.splice(i,1);renderTasks();say('Đã bỏ nhiệm vụ khỏi phương án.')};
+ row.append(title,p,q,b);root.append(row)})
+}
+function clearTask(){['taskTitle','deliverable','acceptance','milestone'].forEach(id=>$(id).value='');$('category').value='';refillTemplates();$('deadline').value='';state.selected.clear();renderPeople()}
+function payload(){return{type:'HVA_MONTHLY_ASSIGNMENT_DRAFT',month:$('month').value,unit:$('unit').value,focus:safe($('focus').value),status:'DRAFT_NOT_PUBLISHED',tasks:state.tasks}}
+function preview(){
+ if(!state.tasks.length){say('Chưa có nhiệm vụ để tổng hợp.');return}
+ const p=payload();const lines=['TRƯỜNG THPT HÒA VANG','PHƯƠNG ÁN GIAO NHIỆM VỤ VÀ SẢN PHẨM THÁNG '+p.month,'Tổ: '+p.unit,'Trọng tâm: '+(p.focus||'—'),''];
+ p.tasks.forEach((t,i)=>lines.push((i+1)+'. '+t.title,'  Nhóm: '+t.category+' · Hạn: '+t.deadline+' · '+t.priority,'  Người thực hiện: '+t.members.map(x=>x.name).join('; '),'  Sản phẩm: '+t.deliverable,'  Tiêu chí: '+t.acceptance,'  Giai đoạn/lưu ý: '+(t.milestone||'—'),''));
+ lines.push('BẢN DỰ THẢO, CHƯA PHÊ DUYỆT HOẶC PHÁT HÀNH.');$('preview').textContent=lines.join('\n');say('Đã tổng hợp phương án; chưa gửi.');
+}
+function exportFile(){
+ if(!state.tasks.length){say('Không có phương án để xuất.');return}
+ const blob=new Blob([JSON.stringify(payload(),null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='HVA_PhuongAnGiaoViec_'+($('month').value||'thang')+'.json';a.click();URL.revokeObjectURL(url);say('Đã xuất bản nháp JSON; chưa ghi lên máy chủ.');
+}
+function init(){
+ const d=new Date();$('month').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+ $('category').onchange=refillTemplates;$('template').onchange=template;$('unit').onchange=()=>{state.selected.clear();renderPeople()};
+ $('loadRoster').onclick=loadPeople;$('clearRoster').onclick=()=>{state.selected.clear();renderPeople()};$('clearTask').onclick=clearTask;
+ $('addTask').onclick=add;$('previewBtn').onclick=preview;$('export').onclick=exportFile;
+ $('clearAll').onclick=()=>{if(!confirm('Xóa toàn bộ nhiệm vụ đã lập trong phiên?'))return;state.tasks=[];renderTasks();$('preview').textContent='Phương án đã xóa.';say('Đã xóa phương án.')};
+ $('copy').onclick=async()=>{try{await navigator.clipboard.writeText($('preview').textContent);say('Đã sao chép nội dung xem trước.')}catch(_){say('Không sao chép tự động được.')}};
+ refillTemplates();renderTasks();loadPeople();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script></body></html>
