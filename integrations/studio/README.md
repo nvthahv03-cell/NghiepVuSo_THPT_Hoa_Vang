@@ -24,3 +24,19 @@
 - Chưa thực hiện kiểm thử thực tế trong Apps Script; cấu hình endpoint/model Gemini cần được xác nhận.
 
 **Không đặt khóa hoặc token thật trong GitHub, URL, ảnh chụp hay tài liệu bàn giao.**
+
+## Cầu nối cửa sổ TEST – 06/11/2026
+- EDOS: `integrations/studio/HVA_STUDIO_EDOS_BRIDGE_TEST.js`, **không được nạp tự động trên trang chính**.
+- Studio: `studio-edos-window-bridge-test.js` (repository HVA-LEARNING-STUDIO), **chưa được gắn vào trang chính**.
+- EDOS mở URL Studio cố định, xác minh `event.source`, origin, pathname và mã kênh; Studio xác minh opener/origin/kênh. EDOS giữ token phiên trong phạm vi EDOS, chỉ truyền payload học liệu và phản hồi bản nháp.
+- `authorizedSend(request)` phải được lập trình viên EDOS cung cấp trong ngữ cảnh đã xác thực; **không có URL Backend mặc định, không chuyển token qua postMessage hoặc query string**. Khi chưa có callback này, bridge không mở.
+- Cả hai trang GitHub Pages cùng host `nvthahv03-cell.github.io`, khác đường dẫn nhưng **cùng origin** theo trình duyệt. Vì vậy kiểm tra origin **không đủ**: bắt buộc so khớp `event.source`, cửa sổ đã mở và pathname Studio; không coi đây là cơ chế tách biệt bảo mật giữa hai ứng dụng. Không dựa vào localStorage của Studio.
+- Cảnh báo: Cầu nối trên chỉ chứng minh đường thông điệp. Chưa hoàn thành xác thực quyền server, chưa có SSO toàn diện, chưa có callback kết nối router GAS thật.
+- Kiểm thử trong JavaScript mô phỏng: 01 yêu cầu thành công, 01 lần gọi authorizedSend, không có trường token trong payload, listener được dọn. **Chưa kiểm thử trên trình duyệt hoặc Google Apps Script thật**.
+
+### Kích hoạt thử nghiệm sau khi có bản sao Backend
+1. Khởi tạo EDOS TEST tách khỏi production. Xác minh `nvsActor_`, role, hồ sơ nhân sự và router GAS.
+2. Triển khai action riêng trên router TEST; callback `authorizedSend` tại EDOS TEST phải gắn `sessionToken` hợp lệ từ chính phiên EDOS vào body khi gọi Backend TEST, không truyền về Studio; chỉ nhận trường cho phép từ payload.
+3. Nạp bridge JS ở giao diện EDOS TEST, nối nút Học liệu TEST với `HVA_STUDIO_EDOS_BRIDGE_TEST.open({ authorizedSend })`. Không thay nút Học liệu production.
+4. Nạp module Studio trong bản TEST và dùng `connectEdosStudioTest()` để lấy `client.generate(task)`. Không gọi trực tiếp Backend bằng token nhúng.
+5. Kiểm thử thực tế desktop/mobile, các trạng thái phiên hết hạn, người dùng thiếu quyền, mở Studio trực tiếp, giả mạo message, đóng cửa sổ, lặp ID, lỗi mạng, quota và rollback.
