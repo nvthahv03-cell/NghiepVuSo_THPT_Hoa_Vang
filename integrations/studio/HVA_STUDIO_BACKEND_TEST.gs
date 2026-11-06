@@ -90,14 +90,30 @@ var HVA_STUDIO_TEST_V1 = (function () {
     var endpoint='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent';
     var body={contents:[{role:'user',parts:[{text:d.input}]}],systemInstruction:{parts:[{text:systemText(d)} ]},generationConfig:{temperature:0.35,maxOutputTokens:8192}};
     // API key chỉ đi trong header máy chủ; không ghi log, không đính vào URL.
-    var res=UrlFetchApp.fetch(endpoint,{method:'post',contentType:'application/json',headers:{'x-goog-api-key':apiKey},payload:JSON.stringify(body),muteHttpExceptions:true,followRedirects:false});
-    if(res.getResponseCode()!==200) throw Error('Gemini chưa phản hồi thành công.');
-    var json=JSON.parse(res.getContentText());
+    var res;
+    try{
+      res=UrlFetchApp.fetch(endpoint,{method:'post',contentType:'application/json',headers:{'x-goog-api-key':apiKey},payload:JSON.stringify(body),muteHttpExceptions:true,followRedirects:false});
+    }catch(e){throw Error('GEMINI_NETWORK');}
+    var http=res.getResponseCode();
+    if(http!==200){
+      if(http===429) throw Error('GEMINI_QUOTA');
+      if(http===503||http===502||http===504) throw Error('GEMINI_UNAVAILABLE');
+      if(http===401||http===403) throw Error('GEMINI_AUTH');
+      if(http===404) throw Error('GEMINI_MODEL');
+      if(http===400) throw Error('GEMINI_REQUEST');
+      throw Error('GEMINI_HTTP');
+    }
+    var json;
+    try{json=JSON.parse(res.getContentText());}catch(e){throw Error('GEMINI_BAD_JSON');}
     var candidates=json&&json.candidates;
     var first=candidates&&candidates[0];
-    var parts=first&&first.content&&first.content.parts;
+    if(json&&json.promptFeedback&&json.promptFeedback.blockReason) throw Error('GEMINI_SAFETY');
+    if(!first) throw Error('GEMINI_EMPTY');
+    if(['SAFETY','RECITATION','BLOCKLIST','PROHIBITED_CONTENT','SPII'].indexOf(first.finishReason)>=0) throw Error('GEMINI_SAFETY');
+    if(first.finishReason==='MAX_TOKENS') throw Error('GEMINI_TRUNCATED');
+    var parts=first.content&&first.content.parts;
     var answer=Array.isArray(parts)?parts.map(function(part){return typeof part.text==='string'?part.text:'';}).join('\n').trim():'';
-    if(!answer||answer.length>300000||!first||['SAFETY','RECITATION','BLOCKLIST','PROHIBITED_CONTENT'].indexOf(first.finishReason)>=0) throw Error('Gemini không trả bản nháp hợp lệ.');
+    if(!answer||answer.length>300000) throw Error('GEMINI_EMPTY');
     return answer;
   }
   function generate(p){
@@ -115,8 +131,26 @@ var HVA_STUDIO_TEST_V1 = (function () {
       var answer=callGemini(d,props);
       return {success:true,answer:answer,draft:true,reviewRequired:true,provider:'gemini',requestId:d.requestId};
     }catch(e){
-      // Không phát tán key, stack trace, model hoặc phản hồi nhà cung cấp.
-      return error('Chưa tạo được bản nháp học liệu. Vui lòng báo quản trị viên.');
+      // Mã chẩn đoán cố định, không ghi log prompt/key/token/stack trace.
+      var allowed=['GEMINI_QUOTA','GEMINI_UNAVAILABLE','GEMINI_AUTH','GEMINI_MODEL','GEMINI_REQUEST','GEMINI_HTTP','GEMINI_NETWORK','GEMINI_BAD_JSON','GEMINI_SAFETY','GEMINI_TRUNCATED','GEMINI_EMPTY'];
+      var code=allowed.indexOf(String(e&&e.message))>=0?String(e.message):'GEMINI_CONFIG';
+      var messages={
+        GEMINI_QUOTA:'Gemini đã đạt giới hạn sử dụng thử nghiệm.',
+        GEMINI_UNAVAILABLE:'Gemini đang tạm thời không khả dụng.',
+        GEMINI_AUTH:'Máy chủ Gemini từ chối xác thực.',
+        GEMINI_MODEL:'Model Gemini thử nghiệm không hợp lệ hoặc chưa được cấp quyền.',
+        GEMINI_REQUEST:'Gemini từ chối định dạng yêu cầu.',
+        GEMINI_HTTP:'Máy chủ Gemini chưa phản hồi thành công.',
+        GEMINI_NETWORK:'Không thể kết nối đến Gemini.',
+        GEMINI_BAD_JSON:'Không đọc được phản hồi Gemini.',
+        GEMINI_SAFETY:'Yêu cầu bị hệ thống an toàn Gemini từ chối.',
+        GEMINI_TRUNCATED:'Gemini trả bản nháp chưa hoàn chỉnh.',
+        GEMINI_EMPTY:'Gemini không trả nội dung học liệu.',
+        GEMINI_CONFIG:'Dịch vụ học liệu chưa được cấu hình hoàn chỉnh.'
+      };
+      var result=error(messages[code]);
+      result.errorCode=code;
+      return result;
     }
   }
   return {generate:generate,validate:validate};
