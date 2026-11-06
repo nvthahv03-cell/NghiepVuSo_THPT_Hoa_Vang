@@ -40,3 +40,9 @@
 3. Nạp bridge JS ở giao diện EDOS TEST, nối nút Học liệu TEST với `HVA_STUDIO_EDOS_BRIDGE_TEST.open({ authorizedSend })`. Không thay nút Học liệu production.
 4. Nạp module Studio trong bản TEST và dùng `connectEdosStudioTest()` để lấy `client.generate(task)`. Không gọi trực tiếp Backend bằng token nhúng.
 5. Kiểm thử thực tế desktop/mobile, các trạng thái phiên hết hạn, người dùng thiếu quyền, mở Studio trực tiếp, giả mạo message, đóng cửa sổ, lặp ID, lỗi mạng, quota và rollback.
+
+## Chẩn đoán Gemini — 06/11/2026
+- Đã bổ sung mã lỗi an toàn `GEMINI_QUOTA`, `GEMINI_UNAVAILABLE`, `GEMINI_AUTH`, `GEMINI_MODEL`, `GEMINI_REQUEST`, `GEMINI_BAD_JSON`, `GEMINI_SAFETY`, `GEMINI_TRUNCATED`, `GEMINI_EMPTY`, `GEMINI_NETWORK`.
+- Đã chạy **11/11 tình huống Gemini mô phỏng đạt** (không gửi yêu cầu mạng thật).
+- Tài liệu: [DIAG_GEMINI_2026-11-06.md](./DIAG_GEMINI_2026-11-06.md) — có nhánh router chính xác cho bản Backend tham chiếu 03/11 trên **bản sao thử nghiệm**.
+- Mã lỗi chỉ hỗ trợ tìm nguyên nhân, không chứng minh Gemini thật đã hoạt động.
