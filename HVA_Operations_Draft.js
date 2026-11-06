@@ -116,7 +116,7 @@ function apply(){
 }
 function bind(){
  $('opsSearch').oninput=render;
- $('opsLeader').onchange=e=>{leader=e.target.value;if(mode==='dp'&&leader&&people.has(leader))$('owner').value=people.get(leader).hoTen};
+ $('opsLeader').onchange=e=>{leader=e.target.value;if(leader&&people.has(leader)){if(mode==='dp')$('owner').value=people.get(leader).hoTen;else $('teacher').value=people.get(leader).hoTen}};
  $('opsReload').onclick=loadPeople;
  $('opsAddRow').onclick=()=>{rows.push({name:'',owner:'',due:'',result:''});renderRows()};
  $('opsAsk').onclick=ask;$('opsApply').onclick=apply;
