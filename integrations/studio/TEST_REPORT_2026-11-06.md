@@ -32,3 +32,10 @@ Tổng số lần gửi request đến Gemini giả lập: **5**.
 - Script Cache chỉ là cơ chế chống lạm dụng cơ bản, không thay thế quota bền vững.
 
 **Kết luận:** PASS kiểm thử hợp đồng và mô phỏng; **KHÔNG PASS triển khai Google Apps Script / Gemini / SSO / EDOS chính thức**.
+
+## Cập nhật kiểm tra tiếp theo (cùng ngày)
+- Sửa Backend để từ chối yêu cầu thiếu `sessionToken` và che lỗi nội bộ khi tra cứu actor.
+- Thêm `HVA_STUDIO_ROUTER_TEST_SNIPPET.gs`: hàm nối thử nghiệm tách biệt, **chưa gắn vào router thật**.
+- Chạy lại bộ hợp đồng mới: **9/9 đạt** (thêm trường hợp thiếu phiên).
+- Chạy 10 trường hợp Backend mô phỏng: **10/10 đạt**; gồm hợp lệ, chặn lặp, thiếu/sai phiên, bỏ qua `role` giả mạo, giới hạn, và tắt chức năng. Có 5 request giả lập đi đến bộ xử lý Gemini mock.
+- Các kết quả trên **không thay thế kiểm thử Google Apps Script thật, SSO hoặc Gemini thật**.
