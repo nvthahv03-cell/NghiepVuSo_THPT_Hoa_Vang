@@ -4,7 +4,7 @@
  */
 function hvaStudioContractSelfTest_(){
   var base={
-    action:'hva_studio_ai_generate',
+    action:'hva_studio_ai_generate',sessionToken:'test-session-only',
     taskType:'lesson_plan',program:'GDPT_2018',subject:'Toán',grade:'12',
     topic:'Khảo sát hàm số',input:'Thiết kế kế hoạch bài dạy.',
     outputFormat:'markdown',requestId:'studio-123456789012'
@@ -19,6 +19,7 @@ function hvaStudioContractSelfTest_(){
   }
   check('Yêu cầu hợp lệ',function(p){},true);
   check('Sai action',function(p){p.action='askVirtualAssistant';},false);
+  check('Thiếu phiên',function(p){delete p.sessionToken;},false);
   check('Không hỗ trợ lớp 9',function(p){p.grade='9';},false);
   // Kiểm tra trường đặc quyền không được xuất sang payload chuẩn hóa.
   var privileged=JSON.parse(JSON.stringify(base));
