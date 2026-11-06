@@ -1691,7 +1691,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
 <!-- NVS PWA: nút cài ứng dụng -->
 <script src="./nvs-pwa.js" defer></script>
 <div id="nvsV14RoleAction" hidden aria-hidden="true"></div>
-<nav class="nvs-premium-nav" aria-label="Điều hướng NVS"><button type="button" data-nvs-nav="sdb" aria-label="Mở Sổ ghi đầu bài điện tử – đang hoàn thiện"><i class="bi bi-journal-text" aria-hidden="true"></i><span>Sổ ĐB điện tử <small style="display:block;font-size:9px;font-weight:600;opacity:.85">Đang hoàn thiện</small></span></button><button type="button" data-nvs-nav="help"><i class="bi bi-book" aria-hidden="true"></i><span>Hướng dẫn sử dụng</span></button><button type="button" data-nvs-nav="connect" id="hvaDigitalUtilitiesToggle" aria-label="Mở Tiện ích số" aria-haspopup="dialog" aria-controls="hvaDigitalUtilities" aria-expanded="false"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Tiện ích số</span></button><button type="button" data-nvs-nav="chat" id="hvaChatToggle" aria-label="Mở HVA Chat" aria-haspopup="dialog" aria-controls="hvaChatPanel" aria-expanded="false"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i><span>HVA Chat</span></button></nav><div class="nvs-nav-dialog" id="nvsNavDialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="nvsNavDialogTitle"><div class="nvs-nav-dialog-box"><h2 id="nvsNavDialogTitle"></h2><p id="nvsNavDialogText"></p><button type="button" id="nvsNavDialogClose">Đóng</button></div></div><script id="nvs-premium-nav-script">(()=>{'use strict';const nav=document.querySelector('.nvs-premium-nav');if(!nav)return;const dialog=document.getElementById('nvsNavDialog'),close=document.getElementById('nvsNavDialogClose');let origin=null;const info={calendar:['Lịch công tác','Lịch nhà trường và Lịch của tôi sẽ được kết nối với lịch HVA hiện có sau khi xác nhận đường dẫn và quyền truy cập. Chưa có dữ liệu lịch trong NVS V2.'],help:['Hướng dẫn sử dụng','Tài liệu và video hướng dẫn sử dụng HVA-EDOS đang được hoàn thiện. Có thể mở các nghiệp vụ hiện có từ danh mục bên trái.'],connect:['Kết nối','Chức năng kết nối nội bộ HVA đang chờ xác nhận liên kết và quyền truy cập.'],person:['Cá nhân','Thông tin tài khoản đang được hiển thị trên Trang chủ NVS. Chức năng hồ sơ cá nhân chuyên biệt đang chờ kết nối.']};nav.querySelectorAll('button[data-nvs-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.nvsNav==='sdb'){location.href='./SoDauBai.html';return;}if(b.dataset.nvsNav==='calendar'){location.href='./LichCongTac.html';return;}if(b.dataset.nvsNav==='help'){location.href='./HuongDanSuDung.html';return;}if(b.dataset.nvsNav==='chat')return;origin=b;const x=info[b.dataset.nvsNav];document.getElementById('nvsNavDialogTitle').textContent=x[0];document.getElementById('nvsNavDialogText').textContent=x[1];dialog.setAttribute('aria-hidden','false');close.focus()}));function hide(){dialog.setAttribute('aria-hidden','true');origin?.focus()}close.addEventListener('click',hide);dialog.addEventListener('click',e=>{if(e.target===dialog)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog.getAttribute('aria-hidden')==='false')hide()})})();</script><div id="nvsRemindOverlay" class="nvs-remind-overlay" aria-hidden="true"><iframe id="nvsRemindFrame" class="nvs-remind-frame" title="Nhắc nhở công vụ" data-src="./NhacNho.html" loading="lazy"></iframe></div>
+<nav class="nvs-premium-nav" aria-label="Điều hướng NVS"><button type="button" data-nvs-nav="sdb" aria-label="Mở Sổ ghi đầu bài điện tử – đang hoàn thiện" title="Đang hoàn thiện – dùng để kiểm thử"><i class="bi bi-journal-text" aria-hidden="true"></i><span>Sổ ĐB điện tử</span></button><button type="button" data-nvs-nav="help"><i class="bi bi-book" aria-hidden="true"></i><span>Hướng dẫn sử dụng</span></button><button type="button" data-nvs-nav="connect" id="hvaDigitalUtilitiesToggle" aria-label="Mở Tiện ích số" aria-haspopup="dialog" aria-controls="hvaDigitalUtilities" aria-expanded="false"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Tiện ích số</span></button><button type="button" data-nvs-nav="chat" id="hvaChatToggle" aria-label="Mở HVA Chat" aria-haspopup="dialog" aria-controls="hvaChatPanel" aria-expanded="false"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i><span>HVA Chat</span></button></nav><div class="nvs-nav-dialog" id="nvsNavDialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="nvsNavDialogTitle"><div class="nvs-nav-dialog-box"><h2 id="nvsNavDialogTitle"></h2><p id="nvsNavDialogText"></p><button type="button" id="nvsNavDialogClose">Đóng</button></div></div><script id="nvs-premium-nav-script">(()=>{'use strict';const nav=document.querySelector('.nvs-premium-nav');if(!nav)return;const dialog=document.getElementById('nvsNavDialog'),close=document.getElementById('nvsNavDialogClose');let origin=null;const info={calendar:['Lịch công tác','Lịch nhà trường và Lịch của tôi sẽ được kết nối với lịch HVA hiện có sau khi xác nhận đường dẫn và quyền truy cập. Chưa có dữ liệu lịch trong NVS V2.'],help:['Hướng dẫn sử dụng','Tài liệu và video hướng dẫn sử dụng HVA-EDOS đang được hoàn thiện. Có thể mở các nghiệp vụ hiện có từ danh mục bên trái.'],connect:['Kết nối','Chức năng kết nối nội bộ HVA đang chờ xác nhận liên kết và quyền truy cập.'],person:['Cá nhân','Thông tin tài khoản đang được hiển thị trên Trang chủ NVS. Chức năng hồ sơ cá nhân chuyên biệt đang chờ kết nối.']};nav.querySelectorAll('button[data-nvs-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.nvsNav==='sdb'){location.href='./SoDauBai.html';return;}if(b.dataset.nvsNav==='calendar'){location.href='./LichCongTac.html';return;}if(b.dataset.nvsNav==='help'){location.href='./HuongDanSuDung.html';return;}if(b.dataset.nvsNav==='chat')return;origin=b;const x=info[b.dataset.nvsNav];document.getElementById('nvsNavDialogTitle').textContent=x[0];document.getElementById('nvsNavDialogText').textContent=x[1];dialog.setAttribute('aria-hidden','false');close.focus()}));function hide(){dialog.setAttribute('aria-hidden','true');origin?.focus()}close.addEventListener('click',hide);dialog.addEventListener('click',e=>{if(e.target===dialog)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog.getAttribute('aria-hidden')==='false')hide()})})();</script><div id="nvsRemindOverlay" class="nvs-remind-overlay" aria-hidden="true"><iframe id="nvsRemindFrame" class="nvs-remind-frame" title="Nhắc nhở công vụ" data-src="./NhacNho.html" loading="lazy"></iframe></div>
 <style id="nvs-remind-v7-permission-fix">#nvsOpenRemind[hidden],#nvsOpenRemind[style*="display: none"]{display:none!important;visibility:hidden!important}#nvsOpenRemind:not([hidden]){visibility:visible}</style>
 <script id="nvs-remind-v6-script">(function(){'use strict';
 const btn=document.getElementById('nvsOpenRemind'),layer=document.getElementById('nvsRemindOverlay'),frame=document.getElementById('nvsRemindFrame');
@@ -3555,6 +3555,73 @@ html body section.nvs-quick>.nvs-quick-calendar strong{
  html body section.nvs-quick>.nvs-quick-calendar strong{
   font-size:clamp(9px,2.4vw,12px)!important;overflow-wrap:anywhere!important;
  }
+}
+</style>
+<style id="hva-footer-four-icons-unified">
+/* Bốn nút cùng một hình học, một màu, không có thẻ nền riêng trên nút đầu.
+ * Đặt cuối file để thắng các lớp CSS đời trước. */
+html body nav.nvs-premium-nav {
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-items:stretch!important;
+}
+html body nav.nvs-premium-nav>button,
+html body .nvs-chooser nav.nvs-premium-nav>button,
+html body nav.nvs-premium-nav>button:first-child {
+ display:flex!important;flex-direction:column!important;
+ justify-content:center!important;align-items:center!important;
+ gap:7px!important;min-width:0!important;min-height:83px!important;
+ padding:7px 2px!important;box-sizing:border-box!important;
+ border:none!important;border-radius:14px!important;
+ background:transparent!important;box-shadow:none!important;
+ filter:none!important;transform:none!important;
+ color:#164d91!important;text-align:center!important;
+}
+html body nav.nvs-premium-nav>button>i.bi,
+html body .nvs-chooser nav.nvs-premium-nav>button>i.bi,
+html body nav.nvs-premium-nav>button:first-child>i.bi,
+html body nav.nvs-premium-nav>button:nth-child(2)>i.bi,
+html body nav.nvs-premium-nav>button:nth-child(3)>i.bi,
+html body nav.nvs-premium-nav>button:nth-child(4)>i.bi {
+ display:grid!important;place-items:center!important;
+ flex:0 0 70px!important;
+ width:70px!important;height:70px!important;
+ min-width:70px!important;min-height:70px!important;
+ max-width:70px!important;max-height:70px!important;
+ padding:0!important;border-radius:50%!important;
+ border:2px solid #90dffc!important;
+ background:radial-gradient(circle at 32% 18%,#5ae7fc 0%,#079ddd 45%,#0758a5 100%)!important;
+ box-shadow:0 3px 10px #075a9f50,0 0 0 3px #fff,inset 0 2px 3px #ffffffb0!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ opacity:1!important;filter:none!important;
+ font-size:32px!important;line-height:1!important;
+ animation:none!important;transform:none!important;
+}
+html body nav.nvs-premium-nav>button>i.bi::before,
+html body .nvs-chooser nav.nvs-premium-nav>button>i.bi::before {
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ opacity:1!important;text-shadow:none!important;filter:none!important;
+}
+html body nav.nvs-premium-nav>button>span,
+html body .nvs-chooser nav.nvs-premium-nav>button>span {
+ display:block!important;width:100%!important;min-height:32px!important;
+ margin:0!important;color:#164d91!important;
+ font:800 clamp(10px,1.12vw,14px)/1.18 "Segoe UI",Arial,sans-serif!important;
+ text-align:center!important;overflow-wrap:anywhere!important;
+}
+html body nav.nvs-premium-nav>button:hover {background:#e5f3ff!important}
+html body nav.nvs-premium-nav>button:hover>i.bi {transform:translateY(-2px)!important}
+@media(max-width:720px){
+ html body nav.nvs-premium-nav>button{min-height:72px!important;gap:5px!important;padding:5px 1px!important}
+ html body nav.nvs-premium-nav>button>i.bi,
+ html body nav.nvs-premium-nav>button:nth-child(2)>i.bi,
+ html body nav.nvs-premium-nav>button:nth-child(3)>i.bi,
+ html body nav.nvs-premium-nav>button:nth-child(4)>i.bi{
+  width:clamp(39px,11vw,54px)!important;height:clamp(39px,11vw,54px)!important;
+  min-width:clamp(39px,11vw,54px)!important;min-height:clamp(39px,11vw,54px)!important;
+  max-width:clamp(39px,11vw,54px)!important;max-height:clamp(39px,11vw,54px)!important;
+  flex-basis:clamp(39px,11vw,54px)!important;font-size:clamp(20px,5.6vw,27px)!important;
+ }
+ html body nav.nvs-premium-nav>button>span{font-size:clamp(9px,2.2vw,11px)!important;min-height:29px!important}
 }
 </style>
 </body>
