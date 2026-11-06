@@ -39,3 +39,11 @@ Tổng số lần gửi request đến Gemini giả lập: **5**.
 - Chạy lại bộ hợp đồng mới: **9/9 đạt** (thêm trường hợp thiếu phiên).
 - Chạy 10 trường hợp Backend mô phỏng: **10/10 đạt**; gồm hợp lệ, chặn lặp, thiếu/sai phiên, bỏ qua `role` giả mạo, giới hạn, và tắt chức năng. Có 5 request giả lập đi đến bộ xử lý Gemini mock.
 - Các kết quả trên **không thay thế kiểm thử Google Apps Script thật, SSO hoặc Gemini thật**.
+
+## Thử cầu nối EDOS ↔ Studio (06/11/2026)
+- Tạo `HVA_STUDIO_EDOS_BRIDGE_TEST.js` và `studio-edos-window-bridge-test.js` tại hai repository; chưa nạp lên trang chạy thực tế.
+- Thực thi mô phỏng `postMessage`: bắt tay READY, yêu cầu GENERATE, callback mock, RESULT, close đều thành công.
+- Tổng mock request: 1; payload không chứa trường token; sau close còn 0 listener cả hai phía.
+- Chưa gắn `authorizedSend` vào router Google Apps Script thật và chưa triển khai SSO.
+- Cả EDOS và Studio trên cùng hostname GitHub Pages: kiểm soát source/path và phân quyền phía server là bắt buộc; để tách hoàn toàn origin, cần cấp domain/subdomain khác.
+- Kết luận: **PASS mô phỏng luồng trao đổi**, **CHƯA PASS Browser/GAS/Gemini thật**.
