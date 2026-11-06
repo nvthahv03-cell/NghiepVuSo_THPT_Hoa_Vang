@@ -73,11 +73,37 @@ const del=document.createElement('button');del.type='button';del.textContent='X�
 item.append(label,open,del);box.append(item)})}
 function load(d){const mapping={'work-date':'date','work-start':'start','work-end':'end','work-title':'title','work-chair':'chair','work-party':'party','work-location':'location','work-category':'category','edited-text':'content','followup-text':'actions','privacy-level':'level','transcript-text':'transcript'};for(const [input,key]of Object.entries(mapping))$(input).value=d[key]||'';$('review-check').checked=false;preview()}
 function exportDraft(){try{const d=validate(makeRecord());if(!$('review-check').checked)throw Error('Cần xác nhận đã rà soát trước khi xuất.');const payload={status:'DRAFT_NOT_PUBLISHED',version:1,exportedAt:new Date().toISOString(),journal:d};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='HVA_'+mode+'_'+d.date+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);status('Đã xuất JSON dự thảo. Không kèm tệp âm thanh; chưa gửi máy chủ.')}catch(e){status(e.message)}}
+
+function printA4(){
+ try{
+  const d=validate(makeRecord());
+  if(!$('review-check').checked)throw Error('Cần xác nhận đã rà soát và đối chiếu với nội dung cuộc làm việc trước khi in.');
+  const escapeHTML=v=>String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const line=v=>escapeHTML(v||'Chưa xác định').replace(/\n/g,'<br>');
+  const label=isDuty?'Người trực lãnh đạo':'Người chủ trì';
+  const doc='<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>'+escapeHTML(d.type)+'</title>'+
+  '<style>@page{size:A4;margin:22mm 18mm 22mm 32mm}body{font-family:"Times New Roman",serif;color:#000;font-size:13pt;line-height:1.5}header{text-align:center;margin-bottom:16px}h1{font-size:16pt;margin:10px 0;text-transform:uppercase}p{margin:6px 0}.label{font-weight:bold}.content{white-space:normal;overflow-wrap:anywhere;text-align:justify;margin:8px 0 18px}.draft{font-style:italic;text-align:center;font-size:11pt;color:#666;border:1px solid #999;padding:6px;margin:14px 0 22px}.footer{text-align:right;margin-top:28px;page-break-inside:avoid}.footer p{margin:2px 0}@media print{a,button{display:none}}</style></head><body>'+
+  '<header><div>TRƯỜNG THPT HÒA VANG</div><h1>'+escapeHTML(d.type)+'</h1><div>Ngày '+escapeHTML(d.date)+'</div></header>'+
+  '<div class="draft">BẢN DỰ THẢO – CHƯA PHÊ DUYỆT, CHƯA LƯU HỒ SƠ CHÍNH THỨC</div>'+
+  '<p><span class="label">Thời gian:</span> '+escapeHTML(d.start||'—')+' – '+escapeHTML(d.end||'—')+'</p>'+
+  '<p><span class="label">'+label+':</span> '+escapeHTML(d.chair)+'</p>'+
+  '<p><span class="label">Địa điểm:</span> '+escapeHTML(d.location||'—')+'</p>'+
+  '<p><span class="label">Thành phần:</span> '+escapeHTML(d.party||'—')+'</p>'+
+  '<p><span class="label">Nội dung công việc:</span> '+escapeHTML(d.title)+'</p>'+
+  '<p class="label">1. Nội dung ghi nhận</p><div class="content">'+line(d.content)+'</div>'+
+  '<p class="label">2. Công việc tiếp tục theo dõi / bàn giao</p><div class="content">'+line(d.actions||'Không có nội dung được xác nhận.')+'</div>'+
+  '<div class="footer"><p>NGƯỜI LẬP NHẬT KÝ</p><p><i>(Dự thảo – chưa ký)</i></p></div></body></html>';
+  const w=window.open('','_blank');
+  if(!w)throw Error('Trình duyệt chặn cửa sổ. Hãy cho phép mở cửa sổ in A4.');
+  w.document.open();w.document.write(doc);w.document.close();w.focus();
+  status('Đã mở bản dự thảo A4. Chọn In / Lưu thành PDF trong trình duyệt. Không thay thế chức năng kết xuất PDF/DOCX chính thức.');
+ }catch(e){status(e.message)}
+}
 async function copy(){try{await navigator.clipboard.writeText(format(validate(makeRecord())));status('Đã sao chép bản nhật ký dự thảo.')}catch(e){status('Chưa thể sao chép: '+String(e.message||e).slice(0,120))}}
 function clear(){if(!confirm('Xóa nội dung đang nhập và bản ghi âm tạm trong trang?'))return;stopRecording();for(const el of document.querySelectorAll('main input:not([type=checkbox]),main textarea,main select')){if(el.type==='file')el.value='';else if(el.tagName==='SELECT')el.selectedIndex=0;else el.value=''}document.querySelectorAll('main input[type=checkbox]').forEach(e=>e.checked=false);revokeAudio();audioBlob=null;audio.hidden=true;$('download-audio').disabled=true;$('work-date').value=new Date().toLocaleDateString('en-CA');$('preview-text').textContent='Chưa có nội dung.';status('Đã xóa nội dung đang nhập.')}
 function init(){const today=new Date();$('work-date').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
  $('record-start').onclick=startRecording;$('record-stop').onclick=stopRecording;$('audio-file').onchange=attachAudio;$('download-audio').onclick=downloadAudio;
- $('manual-edit').onclick=appendManual;$('ai-edit').onclick=aiEdit;$('preview-btn').onclick=preview;$('draft-save').onclick=saveDraft;$('draft-export').onclick=exportDraft;$('draft-copy').onclick=copy;$('draft-clear').onclick=clear;
+ $('manual-edit').onclick=appendManual;$('ai-edit').onclick=aiEdit;$('preview-btn').onclick=preview;$('draft-save').onclick=saveDraft;$('draft-export').onclick=exportDraft;$('draft-copy').onclick=copy;$('draft-print').onclick=printA4;$('draft-clear').onclick=clear;
  $('record-stop').disabled=true;$('download-audio').disabled=true;audio.hidden=true;
  status('Giao diện sẵn sàng: ghi âm trên thiết bị và biên tập từ văn bản; chưa có tuyến chuyển âm thanh thành chữ hoặc lưu máy chủ.');
 }
