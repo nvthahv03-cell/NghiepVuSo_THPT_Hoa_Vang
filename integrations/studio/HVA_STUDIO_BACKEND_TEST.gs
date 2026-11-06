@@ -20,6 +20,7 @@ var HVA_STUDIO_TEST_V1 = (function () {
   function error(message){return {success:false,message:message||'Không thể tạo học liệu.',draft:true,reviewRequired:true};}
   function validate(p){
     if(!p||typeof p!=='object'||Array.isArray(p)||p.action!==ACTION) throw Error('Yêu cầu không hợp lệ.');
+    if(!Object.prototype.hasOwnProperty.call(p,'sessionToken') || !str(p.sessionToken)) throw Error('Thiếu phiên đăng nhập.');
     var taskType=str(p.taskType),program=str(p.program),subject=str(p.subject),grade=String(p.grade||'');
     var topic=str(p.topic),input=str(p.input),requestId=str(p.requestId);
     if(TYPES.indexOf(taskType)<0||PROGRAMS.indexOf(program)<0) throw Error('Loại học liệu hoặc chương trình không hợp lệ.');
@@ -102,10 +103,11 @@ var HVA_STUDIO_TEST_V1 = (function () {
   function generate(p){
     var props=PropertiesService.getScriptProperties();
     if(str(props.getProperty('HVA_STUDIO_TEST_ENABLED'))!=='true') return error('Học liệu số chưa được kích hoạt.');
-    var a=actor(p);
-    if(!a||!authorized(a,props)) return error('Phiên không hợp lệ hoặc không có quyền.');
     var d;
     try{d=validate(p);}catch(e){return error(e.message);}
+    var a;
+    try{a=actor(p);if(!a||!authorized(a,props)) return error('Phiên không hợp lệ hoặc không có quyền.');}
+    catch(e){return error('Phiên không hợp lệ hoặc không có quyền.');}
     var reservation=reserve(a.username,d.requestId);
     if(reservation==='replay') return error('Yêu cầu này đã được tiếp nhận, không gửi lặp lại.');
     if(reservation!=='ok') return error('Đã đạt giới hạn hoặc máy chủ đang bận. Vui lòng thử lại sau.');
