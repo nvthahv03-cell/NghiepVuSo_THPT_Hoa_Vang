@@ -4,10 +4,11 @@ function verify(f){
   const c=[],a=(name,ok)=>c.push({name,pass:!!ok}),count=(s,re)=>(s.match(re)||[]).length;
   const ids=s=>[...s.matchAll(/<[^>]+\bid="([^"]+)"/g)].map(x=>x[1]);
   a('DH 7 nhóm',count(D,/<section class="group">/g)===7);
-  a('DH 23 chức năng',count(D,/<a class="tile(?: tile-review)?"/g)===23);
-  a('DH bộ đếm chính xác',D.includes('7 nhóm · 23 chức năng'));
+  a('DH 24 chức năng',count(D,/<a class="tile(?: tile-review)?"/g)===24);
+  a('DH bộ đếm chính xác',D.includes('7 nhóm · 24 chức năng'));
   a('DH có NQ52 trong nhóm 1.2',/<h2>1\.2\. PHÂN CÔNG – ĐIỀU PHỐI<\/h2>[\s\S]*?NQ52_TTCM_GiaoSanPhamThang\.html[\s\S]*?<h2>1\.3\./.test(D));
   a('DH đánh dấu NQ52 bản dự thảo',D.includes('Bản dự thảo · Chưa nối Backend'));
+  a('DH có hộp tiếp nhận A22 (chưa Backend)',D.includes('href="./NVS_A22_HopTiepNhan.html"')&&D.includes('Hộp tiếp nhận · Chờ Backend'));
   a('NQ52 chưa phát hành',Q.includes('DRAFT_NOT_PUBLISHED')&&Q.includes('CHƯA KẾT NỐI BACKEND'));
   a('NQ52 có kiểm tra phiên/vai trò giao diện',Q.includes('nq52-draft-access-script')&&Q.includes('hvaSessionToken')&&Q.includes('hvaSessionExpiresAt')&&Q.includes('ttcm'));
   a('NVS ba tab A/B/C',count(N,/role="tab"/g)===3);
