@@ -8,7 +8,7 @@
  * Không cho phép client chỉ định sheet/column, không truy xuất file scan hoặc CCCD.
  */
 const HVA_ADMIN_LOOKUP_V1_={
-  actions:['nvsAdminLookupCapabilities','nvsAdminLookupPeople','nvsAdminLookupSearch'],
+  actions:['nvsAdminLookupCapabilities','nvsAdminLookupPeople','nvsAdminLookupSearch','nvsAdminLookupExport'],
   maxResults:150,maxPeople:30,
   sources:{
     dtht:{sheet:'NVS_DTHT',title:'Báo cáo dạy thêm – học thêm'},
@@ -39,6 +39,8 @@ function nvsAdminLookupSafeSheet_(name){
   if(typeof HVA_CONFIG==='undefined'||!HVA_CONFIG.SPREADSHEET_STORAGE_ID)throw Error('Chưa cấu hình kho dữ liệu EDOS.');
   const sh=SpreadsheetApp.openById(HVA_CONFIG.SPREADSHEET_STORAGE_ID).getSheetByName(name);
   if(!sh)return null; // Không tự tạo sheet hay coi thiếu sheet là 0 hồ sơ
+  const expected={NVS_DTHT:19,NVS_HO_SO_A22:13,NVS_GIAO_VIEC:17};
+  if(sh.getLastColumn()<(expected[name]||1))throw Error('Cấu trúc dữ liệu nguồn chưa tương thích.');
   if(sh.getLastRow()<2)return [];
   if(sh.getLastRow()>100000)throw Error('Nguồn dữ liệu vượt ngưỡng đọc an toàn.');
   return sh.getRange(2,1,sh.getLastRow()-1,sh.getLastColumn()).getDisplayValues();
@@ -75,9 +77,12 @@ function nvsAdminLookupDTHT_(rows){
   }).filter(x=>x.username&&x.recordId);
 }
 function nvsAdminLookupA22_(rows){
-  return rows.map(row=>nvsAdminLookupMake_('a22',nvsAdminLookupCell_(row,0),nvsAdminLookupCell_(row,4),nvsAdminLookupCell_(row,5),
-    nvsAdminLookupCell_(row,6),'',nvsAdminLookupCell_(row,2)+' · '+nvsAdminLookupCell_(row,3),nvsAdminLookupCell_(row,8),nvsAdminLookupCell_(row,12)||nvsAdminLookupCell_(row,7),'Đã nhận hồ sơ; xem nội dung tại hệ thống phân quyền A22.'))
-  .filter(x=>x.username&&x.recordId);
+  return rows.map(row=>{
+    let year='';try{const p=JSON.parse(nvsAdminLookupCell_(row,11));year=String(p.schoolYear||'').slice(0,20)}catch(_){}
+    return nvsAdminLookupMake_('a22',nvsAdminLookupCell_(row,0),nvsAdminLookupCell_(row,4),nvsAdminLookupCell_(row,5),
+      nvsAdminLookupCell_(row,6),year,nvsAdminLookupCell_(row,2)+' · '+nvsAdminLookupCell_(row,3),nvsAdminLookupCell_(row,8),
+      nvsAdminLookupCell_(row,12)||nvsAdminLookupCell_(row,7),'Đã nhận hồ sơ; xem nội dung tại hệ thống phân quyền A22.');
+  }).filter(x=>x.username&&x.recordId);
 }
 function nvsAdminLookupTask_(rows){
   return rows.map(row=>nvsAdminLookupMake_('task',nvsAdminLookupCell_(row,0),nvsAdminLookupCell_(row,8),nvsAdminLookupCell_(row,9),'','',
@@ -85,7 +90,7 @@ function nvsAdminLookupTask_(rows){
       'Người giao: '+nvsAdminLookupCell_(row,11)+'; hạn: '+nvsAdminLookupCell_(row,4)))
     .filter(x=>x.username&&x.recordId);
 }
-function nvsAdminLookupSearch_(p,access){
+function nvsAdminLookupSearch_(p,access,operation){
   const mode=nvsAdminLookupText_(p.mode,20),topic=nvsAdminLookupText_(p.topic||'all',20),
       teacherUsername=nvsAdminLookupText_(p.teacherUsername,120).toLowerCase(),
       schoolYear=nvsAdminLookupText_(p.schoolYear,20),
@@ -113,12 +118,12 @@ function nvsAdminLookupSearch_(p,access){
   }
   const matched=result.filter(x=>
     (!teacherUsername||x.username===teacherUsername)&&
-    (!schoolYear||!x.schoolYear||x.schoolYear.replace('–','-')===schoolYear.replace('–','-'))&&
+    (!schoolYear||!!x.schoolYear&&x.schoolYear.replace('–','-')===schoolYear.replace('–','-'))&&
     (!team||nvsAdminLookupNorm_(x.team).includes(team))&&
     (!keyword||nvsAdminLookupNorm_([x.sourceName,x.title,x.detail,x.name,x.team,x.recordId].join(' ')).includes(keyword))
   ).sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt),'vi'));
   // Nhật ký tra cứu phải ghi thành công trước khi trả dữ liệu.
-  nvsAdminLookupAudit_(access.username,'SEARCH',{mode,topic,teacherUsername,schoolYear,keyword,team,reason},matched.length);
+  nvsAdminLookupAudit_(access.username,operation==='EXPORT'?'EXPORT':'SEARCH',{mode,topic,teacherUsername,schoolYear,keyword,team,reason},matched.length);
   return{success:true,records:matched.slice(0,HVA_ADMIN_LOOKUP_V1_.maxResults),totalFound:matched.length,truncated:matched.length>HVA_ADMIN_LOOKUP_V1_.maxResults,sources,serverTime:new Date().toISOString()};
 }
 function nvsAdminLookupRoute_(action,p){
@@ -127,7 +132,8 @@ function nvsAdminLookupRoute_(action,p){
     const access=nvsAdminLookupAuth_(p||{});
     if(action==='nvsAdminLookupCapabilities')return nvsResp_({success:true,supported:true,version:'QT-LOOKUP-1',readOnlyBusinessData:true,auditRequired:true,topics:Object.keys(HVA_ADMIN_LOOKUP_V1_.sources)});
     if(action==='nvsAdminLookupPeople')return nvsResp_(nvsAdminLookupPeople_(p||{},access));
-    if(action==='nvsAdminLookupSearch')return nvsResp_(nvsAdminLookupSearch_(p||{},access));
+    if(action==='nvsAdminLookupSearch')return nvsResp_(nvsAdminLookupSearch_(p||{},access,'SEARCH'));
+    if(action==='nvsAdminLookupExport')return nvsResp_(nvsAdminLookupSearch_(p||{},access,'EXPORT'));
   }catch(e){return nvsResp_({success:false,message:'Tra cứu Quản trị: '+String(e.message||e)})}
 }
 function testNVS_AdminLookup_ChiDoc(){
