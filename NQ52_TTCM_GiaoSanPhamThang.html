@@ -1,5 +1,33 @@
 <!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Kế hoạch nhiệm vụ và sản phẩm tháng | HVA</title>
+<style id="nq52-draft-access-guard">
+html:not(.nq52-access-ok) body{visibility:hidden!important}
+html.nq52-access-denied body{visibility:visible!important}
+html.nq52-access-denied body>*{display:none!important}
+html.nq52-access-denied body>#nq52AccessDenied{display:block!important}
+</style>
+<script id="nq52-draft-access-script">
+(function(){
+'use strict';
+function stored(k){try{return localStorage.getItem(k)||sessionStorage.getItem(k)||''}catch(_){return ''}}
+function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().replace(/\s+/g,' ').trim()}
+const raw=stored('hvaSessionExpiresAt'), n=Number(raw);
+const exp=Number.isFinite(n)&&n>0?(n<1e12?n*1000:n):Date.parse(raw);
+let user={};try{user=JSON.parse(stored('user')||'{}')||{}}catch(_){}
+const fields=norm([user.chucVu,user.viTriViecLam,user.vaiTro,user.role,user.chucDanh].filter(Boolean).join(' '));
+const codes=String(user.vaiTro||user.role||'').trim().toUpperCase().split(/[^A-Z0-9]+/);
+const bgh=fields.includes('hieu truong')||fields.includes('ban giam hieu')||codes.includes('BGH');
+const ttcm=fields.includes('to truong')||fields.includes('truong to')||fields.includes('ttcm')||codes.includes('TTCM');
+const allowed=!!stored('hvaSessionToken')&&Number.isFinite(exp)&&exp>Date.now()&&(bgh||ttcm);
+document.documentElement.classList.add(allowed?'nq52-access-ok':'nq52-access-denied');
+if(!allowed)document.addEventListener('DOMContentLoaded',()=>{
+ const card=document.createElement('main');card.id='nq52AccessDenied';card.style.cssText='max-width:650px;margin:65px auto;padding:28px;border:1px solid #caddec;border-radius:14px;background:#fff;color:#15476f;font:16px/1.6 system-ui,sans-serif';
+ const h=document.createElement('h1');h.textContent='Chưa có quyền mở phương án NQ52';h.style.fontSize='20px';
+ const p=document.createElement('p');p.textContent='Vui lòng đăng nhập EDOS bằng tài khoản BGH hoặc tổ trưởng chuyên môn để sử dụng bản dự thảo. Thao tác tại đây chưa gửi và chưa được Backend phê duyệt.';
+ const link=document.createElement('a');link.href='./index.html';link.textContent='Về trang chủ EDOS';card.append(h,p,link);document.body.append(card);
+});
+})();
+</script>
 <style>
 :root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#213b54;background:#f3f7fb}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}header{padding:20px max(18px,calc((100vw - 1250px)/2));background:linear-gradient(125deg,#073f78,#087baa);color:#fff}header a{color:white;text-decoration:none;font-size:12px}header h1{font-size:21px;margin:8px 0 5px}header p{font-size:12px;margin:0;color:#dff6ff}main{max-width:1250px;padding:21px 18px 50px;margin:auto}.topline{display:flex;justify-content:space-between;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:15px}.chip{color:#795a16;background:#fff6dd;border:1px solid #e6d8a6;font-size:11px;padding:8px 11px;border-radius:100px}.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:15px}.card{background:#fff;border:1px solid #d7e6f1;border-radius:15px;padding:17px;box-shadow:0 6px 22px #143e6510;margin-bottom:14px;min-width:0}h2{font-size:15px;color:#085e97;margin:0 0 12px}.muted{font-size:11px;color:#657f95;line-height:1.55}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:12px;font-weight:650}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field input,.field select,.field textarea{width:100%;border:1px solid #c4d6e5;padding:10px 11px;border-radius:9px;background:#fcfeff;color:#1d3a55;outline-color:#078fc1}.field textarea{resize:vertical;min-height:73px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.btn{border:1px solid #b7d4e6;border-radius:10px;color:#095b87;background:#edf8fe;padding:10px 13px;font-size:12px;font-weight:750;cursor:pointer}.btn.primary{background:#0967a0;color:#fff;border-color:#0967a0}.btn:disabled{opacity:.5;cursor:not-allowed}.strip{border-left:3px solid #0a8aba;padding:10px;background:#f1f9ff;font-size:11px;line-height:1.6;border-radius:7px}.preview{white-space:pre-wrap;line-height:1.6;font-size:12px;color:#213b54;background:#f9fbfd;border:1px solid #d9e7f0;padding:12px;border-radius:10px;max-height:440px;overflow:auto;min-height:150px}.task{border:1px solid #d8e7f1;border-radius:11px;padding:12px;margin:10px 0;background:#fbfdff}.task h3{font-size:12px;margin:0 0 6px}.task p{font-size:11px;color:#647b90;line-height:1.5;margin:4px 0}.task .row{margin-top:9px}.mini{font-size:11px;padding:7px 9px}.personlist{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:250px;overflow:auto;margin-top:9px}.personlist label{font-size:11px;font-weight:500}.count{color:#08729e;font-size:12px;font-weight:750}#status{padding:11px;background:#e9f5ff;color:#225d86;border:1px solid #d1e7f7;border-radius:10px;font-size:12px;margin-top:13px}.notice{background:#fff9eb;color:#7f611e;border-radius:9px;padding:11px;border:1px solid #f0dfb3;font-size:11px;line-height:1.55}.stats{display:flex;gap:15px;font-size:12px;color:#56728b}strong{color:#075889}@media(max-width:880px){.layout{grid-template-columns:1fr}}@media(max-width:590px){.fields,.personlist{grid-template-columns:1fr}}@media print{header,.no-print,#status{display:none}.card{box-shadow:none;border:0}}
 </style></head><body>
