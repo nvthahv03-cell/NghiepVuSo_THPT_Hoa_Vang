@@ -84,7 +84,7 @@ if(!granted){const el=document.getElementById('qtDenied');el.hidden=false;}
 </section>
 <section class="notice" id="qtSearchHub" aria-label="Trung tâm tra cứu tổng hợp" style="margin:18px 0 4px;background:#fff;border-color:#b9dbe9">
 <h3 style="font-size:16px">🔎 TRA CỨU TỔNG HỢP EDOS</h3>
-<p>Tra cứu <strong>theo giáo viên</strong> hoặc <strong>theo nội dung công việc</strong>: báo cáo DTHT, kiểm tra nội bộ, hồ sơ nghiệp vụ, giao việc. Xuất Excel, CSV, bản in/PDF. Kết quả chỉ lấy từ các nguồn dữ liệu được xác thực, có nhật ký truy vấn.</p>
+<p>Tra cứu <strong>theo giáo viên</strong> hoặc <strong>theo nội dung công việc</strong>: báo cáo DTHT, kiểm tra nội bộ, hồ sơ nghiệp vụ, giao việc. Có giao diện xuất Excel, CSV, bản in/PDF; <strong>đang chờ triển khai Backend tra cứu</strong>. Không tạo kết quả từ dữ liệu giả.</p>
 <div class="quick-links"><a href="./NVS_QuanTri_TraCuu.html" style="display:inline-flex;background:#086aa4;color:white;padding:11px 16px;border-radius:10px;font-weight:800;min-height:44px;align-items:center">Mở Trung tâm tra cứu tổng hợp</a></div>
 </section>
 <div class="controls"><h2>Danh mục quản trị</h2><input class="search" type="search" id="qtSearch" placeholder="Tìm theo mã, tên hoặc nghiệp vụ..." aria-label="Tìm chức năng quản trị"></div>
@@ -141,10 +141,10 @@ function render(){
  const list=node('div','entries');
  for(const [code,title,description,state,href] of matches){
   const linked=!!href&&allowed.has(href),item=node(linked?'a':'div','entry'+(state==='planned'?' planned':'')+(linked?' entry-link':''));
-  if(linked){item.href=href;item.setAttribute('aria-label',code+' '+title+' – '+status[state][0]);}
+  if(linked){item.href=href;item.setAttribute('aria-label',code+' '+title+' – '+(code==='QT5.4'?'Chờ kết nối Backend':status[state][0]));}
   item.append(node('span','code',code));
   const content=node('div','entry-main');content.append(node('span','entry-title',title),node('div','entry-desc',description));item.append(content);
-  item.append(node('span','mark '+status[state][1],status[state][0]));
+  item.append(node('span','mark '+status[state][1],code==='QT5.4'?'Chờ Backend':status[state][0]));
   list.append(item);shown++;
  }
  section.append(list);root.append(section);
