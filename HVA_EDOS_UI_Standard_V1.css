@@ -1,0 +1,70 @@
+/* HVA–EDOS · Chuẩn giao diện điều hướng và tra cứu V1 · 09/11/2026
+   Phạm vi: chỉ những trang gắn class hva-ui-v1 ở <body>.
+   Không tác động biểu mẫu nghiệp vụ PASS–LOCK hay trang chủ. */
+body.hva-ui-v1 {
+  --hva-ui-ink:#153c60;
+  --hva-ui-muted:#526f85;
+  --hva-ui-stroke:#cbdfea;
+  --hva-ui-accent:#086ba7;
+  --hva-ui-focus:#f4c862;
+  --hva-ui-surface:#ffffff;
+  font-family:Inter,"Segoe UI",Arial,sans-serif;
+  text-rendering:optimizeLegibility;
+  overflow-wrap:break-word;
+}
+body.hva-ui-v1,body.hva-ui-v1 *{box-sizing:border-box}
+body.hva-ui-v1 :where(button,input,select,textarea){font-family:inherit}
+body.hva-ui-v1 :where(a,button,summary){touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body.hva-ui-v1 :where(a,button,input,select,textarea,summary):focus-visible {
+  outline:3px solid var(--hva-ui-focus);
+  outline-offset:3px;
+}
+body.hva-ui-v1 :where(.card,.panel,.group,.workspace,.notice,.tablewrap,.table-outer){min-width:0}
+body.hva-ui-v1 :where(h1,h2,h3,p,td,th){overflow-wrap:break-word}
+body.hva-ui-v1 :where(button,.btn,.back,.assistant-btn,#hvaQuanTriShortcut,.hva-nav-tap){
+  min-height:44px;
+}
+body.hva-ui-v1 :where(input[type="text"],input[type="search"],input[type="date"],select,textarea){
+  max-width:100%;
+}
+body.hva-ui-v1 :where(.back,.btn,.assistant-btn,#hvaQuanTriShortcut){
+  transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease;
+}
+body.hva-ui-v1 :where(.back,.btn,.assistant-btn,#hvaQuanTriShortcut):hover:not(:disabled){
+  box-shadow:0 4px 13px #0b50721b;
+}
+body.hva-ui-v1 :where(.status,.muted,.sub,.entry-desc,.note,.summary-note){
+  line-height:1.55;
+}
+body.hva-ui-v1 :where(.hva-ui-link){
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:44px;padding:9px 13px;border-radius:10px;text-decoration:none;
+  font-size:12px;font-weight:760;
+}
+body.hva-ui-v1 .hva-ui-link-light{
+  color:#fff;background:#ffffff1b;border:1px solid #d3f1ff90;
+}
+body.hva-ui-v1 .hva-ui-link-light:hover{background:#ffffff33}
+body.hva-ui-v1 .hva-ui-link-solid{
+  color:#fff;background:#0b6196;border:1px solid #1578af;
+}
+body.hva-ui-v1 .hva-ui-link-solid:hover{background:#064f80}
+body.hva-ui-v1 :where(.hva-ui-context-actions){display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+@media(max-width:620px){
+  body.hva-ui-v1 :where(.hva-ui-context-actions){gap:7px}
+  body.hva-ui-v1 :where(.hva-ui-link){min-height:44px;padding:9px 10px}
+  body.hva-ui-v1 :where(.panel,.card,.workspace){max-width:100%}
+  body.hva-ui-v1 :where(.tools,.actions){row-gap:9px}
+  body.hva-ui-v1 :where(table){font-variant-numeric:tabular-nums}
+}
+@media(prefers-reduced-motion:reduce){
+  body.hva-ui-v1 :where(a,button,.back,.btn,.assistant-btn,.hva-nav-tap){
+    transition:none!important;
+    animation:none!important;
+    scroll-behavior:auto!important;
+  }
+}
+@media print{
+  body.hva-ui-v1 .hva-ui-context-actions{display:none!important}
+  body.hva-ui-v1 :where(.card,.panel){box-shadow:none}
+}
