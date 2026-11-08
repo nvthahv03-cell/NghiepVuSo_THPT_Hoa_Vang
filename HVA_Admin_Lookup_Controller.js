@@ -11,7 +11,7 @@ function buttons(){
  for(const id of ['modePerson','modeTopic','clear','personQuery','topic','schoolYear','team','keyword','reason'])by(id).disabled=state.busy;
  by('search').disabled=!state.ready||state.busy;
  by('findPeople').disabled=!state.ready||state.busy;
- for(const id of ['exportXlsx','exportCsv','exportPdf'])by(id).disabled=!state.ready||state.busy||!state.results||state.results.truncated;
+ for(const id of ['exportXlsx','exportCsv','exportPdf'])by(id).disabled=!state.ready||state.busy||!state.results||state.results.truncated||!Array.isArray(state.results.sources)||!state.results.sources.some(x=>x.status==='CONNECTED');
 }
 async function api(action,props={}){
  const sessionToken=read('hvaSessionToken');if(!sessionToken)throw Error('Phiên EDOS đã hết hạn hoặc chưa đăng nhập.');
@@ -115,7 +115,7 @@ function exportMeta(data,c){
   reason:c.reason,totalFound:data.totalFound,truncated:!!data.truncated,exportedAt:new Date().toISOString()};
 }
 async function output(kind){
- if(!state.results||!state.criteria||state.results.truncated){note('resultsStatus','Không có dữ liệu hợp lệ hoặc kết quả bị cắt; chưa cho phép xuất.',true);return}
+ if(!state.results||!state.criteria||state.results.truncated||!state.results.sources?.some(x=>x.status==='CONNECTED')){note('resultsStatus','Chưa có nguồn dữ liệu kết nối hoặc kết quả bị cắt; không thể xuất bảng thiếu căn cứ.',true);return}
  const c={...state.criteria};state.busy=true;buttons();note('resultsStatus','Đang xác minh lại quyền và ghi nhật ký xuất file trên máy chủ...');
  try{
   // Yêu cầu riêng bắt buộc có ghi nhật ký xuất; không sử dụng kết quả cũ để bỏ qua kiểm soát.
