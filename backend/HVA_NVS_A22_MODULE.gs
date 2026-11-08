@@ -739,12 +739,12 @@ function nvsA22Validate_(packet,actor){
  const raw=JSON.stringify(data);if(raw.length>30000)throw Error('Hồ sơ vượt giới hạn lưu trữ.');
  return{requestId,code,title,raw};
 }
-function nvsA22List_(actor){
+function nvsA22List_(actor,ownOnly){
  const u=nvsA22User_(actor),roster=nvsGetPeople_();
  if(!roster.some(x=>nvsA22User_(x)===u))throw Error('Không có tài khoản trong CSDL nhân sự đang công tác.');
  const sh=nvsA22Sheet_();
  const rows=sh.getLastRow()>1?sh.getRange(2,1,sh.getLastRow()-1,NVS_A22_HEADER_.length).getDisplayValues():[];
- const canSee=r=>r[4].toLowerCase()===u||r[9].toLowerCase().split(',').includes(u)||r[10].toLowerCase().split(',').includes(u);
+ const canSee=r=>r[4].toLowerCase()===u||(!ownOnly&&(r[9].toLowerCase().split(',').includes(u)||r[10].toLowerCase().split(',').includes(u)));
  return{success:true,records:rows.filter(canSee).map(r=>({recordId:r[0],code:r[2],title:r[3],owner:r[5],team:r[6],createdAt:r[7],status:r[8]})).reverse().slice(0,200)};
 }
 function nvsA22Get_(actor,id){
@@ -762,7 +762,8 @@ function nvsA22Route_(action,p){
  try{
   const actor=nvsActor_(p||{});
   if(!actor||!nvsA22User_(actor))return nvsResp_({success:false,message:'Phiên EDOS không hợp lệ hoặc hết hạn.'});
-  if(action==='nvsA22List')return nvsResp_(nvsA22List_(actor));
+  if(action==='nvsA22List')return nvsResp_(nvsA22List_(actor,false));
+  if(action==='nvsA22ListMine')return nvsResp_(nvsA22List_(actor,true));
   if(action==='nvsA22Get')return nvsResp_(nvsA22Get_(actor,p.recordId));
   const recipients=nvsA22Recipients_(actor);
   if(action==='nvsA22Capabilities')return nvsResp_({success:true,supported:true,version:'A22-1',bghCount:recipients.bgh.length,ccCount:recipients.cc.length});
