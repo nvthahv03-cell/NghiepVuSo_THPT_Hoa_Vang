@@ -48,7 +48,8 @@
       main{padding:0 12px}.hero{padding:18px;align-items:flex-start;flex-direction:column}.panel{padding:17px 15px}.grid,.choice-grid,.identity-grid{grid-template-columns:1fr}
       .choice{min-height:85px}.actions .btn{flex:1;min-width:0}.preview{padding:17px 15px;font-size:14px}.official-head{gap:7px;font-size:10px}.sign{width:65%;font-size:12px}.report-subtitle{font-size:14px}}
     @media print{@page{size:A4;margin:18mm 18mm 18mm 20mm}body{background:#fff;color:#000}.hva-pro-header,.hero,#choices,#editor,.bottom-nav,#printActions,#notice{display:none!important}main{max-width:none;padding:0;margin:0}.panel{box-shadow:none;border:0;padding:0;margin:0}#previewSection{display:block!important}#previewSection>h2{display:none}.preview{max-width:none;margin:0;padding:0;border:0;box-shadow:none;font-size:13pt;color:#000}.preview-stamp{font-size:9pt;break-inside:avoid}.official-head{font-size:10pt}.report-subtitle{font-size:12pt}.report-title{font-size:14pt}a{color:#000}}
-  </style>
+  .hva-a11-assistant-placeholder{opacity:.55;cursor:not-allowed!important;box-shadow:none!important}
+</style>
   <script src="./HVA_Assistant_Shared.js" defer></script>
 </head>
 <body>
@@ -59,7 +60,7 @@
 </div></header>
 <main>
   <section class="hero"><div><div class="eyebrow">A.1.1 – Thực hiện nhiệm vụ, báo cáo khác</div><h1 id="heading">Báo cáo thực hiện nhiệm vụ – Báo cáo khác</h1><p>Chọn loại báo cáo để lập nội dung và xem trước theo thể thức hành chính.</p></div>
-  <div class="header-links"><a class="btn secondary" href="./NghiepVu.html">Danh mục nghiệp vụ</a><button class="btn ghost" id="assistantTop" data-nvs-nav="ai" type="button">✦ Trợ lý</button></div></section>
+  <div class="header-links"><a class="btn secondary" href="./NghiepVu.html">Danh mục nghiệp vụ</a><button class="btn ghost hva-a11-assistant-placeholder" id="assistantTop" data-nvs-nav="ai" disabled aria-disabled="true" title="Chưa kết nối Trợ lý AI tại biểu mẫu này; không có thao tác gửi dữ liệu" type="button">✦ Trợ lý (chờ kết nối)</button></div></section>
   <section class="panel" id="choices" aria-labelledby="choicesHeading"><div class="panel-top"><div><h2 id="choicesHeading">Chọn loại báo cáo</h2><p class="muted">Bốn nghiệp vụ thuộc A.1.1; không lặp menu A.1.2–A.1.4 trong trang này.</p></div></div>
   <div class="choice-grid" id="choiceGrid">
     <button type="button" class="choice" data-id="task" aria-pressed="false"><span class="choice-icon" aria-hidden="true">▤</span><span><strong>Báo cáo thực hiện nhiệm vụ được giao</strong><small>Kết quả thực hiện nhiệm vụ theo phân công.</small><span class="tag">Lập bản xem trước</span></span></button>
@@ -79,7 +80,7 @@
     <div id="loginWarning" class="warning" hidden>Phiên đăng nhập chưa hợp lệ. Vui lòng đăng nhập từ <a href="./index.html">Trang chủ NVS</a> để chuẩn bị báo cáo.</div>
     <form id="reportForm" novalidate><fieldset id="formFields"><div id="fields" class="grid"></div>
       <div class="field full" style="margin-top:17px"><label for="driveLink">Liên kết tài liệu, minh chứng Google Drive (nếu có)</label><input type="url" id="driveLink" name="driveLink" placeholder="https://drive.google.com/..." autocomplete="off"><p class="muted">Chỉ ghi nhận liên kết trong bản xem trước. Không tải tệp lên NVS; không kiểm chứng quyền Drive tại đây.</p></div>
-      <div class="actions"><button class="btn" type="submit" id="previewButton">Xem trước báo cáo</button><button class="btn secondary" type="button" id="clearButton">Làm mới</button><button class="btn secondary" type="button" data-nvs-nav="ai">✦ Trợ lý soạn báo cáo</button></div>
+      <div class="actions"><button class="btn" type="submit" id="previewButton">Xem trước báo cáo</button><button class="btn secondary" type="button" id="clearButton">Làm mới</button><button class="btn secondary hva-a11-assistant-placeholder" type="button" data-nvs-nav="ai" disabled aria-disabled="true" title="Chưa kết nối Trợ lý AI tại biểu mẫu này; không có thao tác gửi dữ liệu">✦ Trợ lý (chờ kết nối)</button></div>
     </fieldset></form>
     <p class="muted" style="margin-top:16px"><strong>Nơi nhận dự kiến:</strong> Ban Giám hiệu; tổ trưởng chuyên môn được thông tin theo quyền được duyệt. Chưa có kết nối gửi và phản hồi hồ sơ trong trang này.</p>
   </section>
@@ -88,7 +89,7 @@
     <div class="actions" id="printActions"><button type="button" class="btn secondary" id="editButton">← Quay lại chỉnh sửa</button><button type="button" class="btn" id="printButton">In / Lưu PDF bản xem trước</button><span class="muted">Không phải hồ sơ đã ký hoặc gửi.</span></div>
   </section>
 </main>
-<nav class="bottom-nav" aria-label="Điều hướng NVS"><a href="./index.html">Trang chủ</a><a href="./NghiepVu.html">Nghiệp vụ số</a><button type="button" data-nvs-nav="ai">✦ Trợ lý</button></nav>
+<nav class="bottom-nav" aria-label="Điều hướng NVS"><a href="./index.html">Trang chủ</a><a href="./NghiepVu.html">Nghiệp vụ số</a><button type="button" data-nvs-nav="ai" class="hva-a11-assistant-placeholder" disabled aria-disabled="true" title="Chưa kết nối Trợ lý AI tại biểu mẫu này; không có thao tác gửi dữ liệu">✦ Trợ lý (chờ kết nối)</button></nav>
 <script>
 (() => {
   'use strict';
@@ -208,5 +209,5 @@
   // Trợ lý dùng chung theo hệ thống NVS hiện hành; không tạo dịch vụ AI thứ hai.
 })();
 </script>
-<script src="./NVS_A1.assistant.js"></script>
+<!-- Trợ lý tại A1.1 chưa có adapter được kiểm thử: không tải tệp JS không tồn tại. -->
 </body></html>
