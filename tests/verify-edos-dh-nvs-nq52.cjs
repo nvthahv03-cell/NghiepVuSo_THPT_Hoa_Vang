@@ -16,7 +16,11 @@ function verify(f){
   a('NVS bốn mục C', ['C.1','C.2','C.3','C.4'].every(x=>N.includes('data-code="'+x+'"')));
   a('NVS B1.2 có lịch',N.includes('data-search="B.1.2 Lịch công tác – Cuộc họp" href="./LichCongTac.html"'));
   a('NVS B1.4 có việc của tôi',N.includes('data-search="B.1.4 Nhiệm vụ được giao" href="./NVS_GiaoViec_TheoDoi.html?view=mine"'));
-  a('NVS năm mục B chờ kết nối',count(N,/class="item pending"/g)===5);
+  a('NVS còn 2 mục B cần nguồn dữ liệu',count(N,/class="item pending"/g)===2);
+  a('NVS B2.3 có tra cứu hồ sơ A22',N.includes('href="./NVS_TraCuu_CaNhan.html?view=files"'));
+  a('NVS B2.4 có tra cứu tình trạng nhiệm vụ',N.includes('href="./NVS_TraCuu_CaNhan.html?view=results"'));
+  a('NVS C1/C2 có điều hướng cá nhân',N.includes("if(id==='C.1'){location.href='./NVS_TraCuu_CaNhan.html?view=files';return;}")&&N.includes("if(id==='C.2'){location.href='./NVS_TraCuu_CaNhan.html?view=tasks';return;}"));
+  a('NVS C4 không ẩn tính năng NQ52 chờ tích hợp',N.includes('id="nvsNQ52Handoff"')&&N.includes('id="nvsCPersonalLink"'));
   a('NVS lịch footer mở lịch thật',N.includes("if(b.dataset.nvsNav==='calendar'){location.href='./LichCongTac.html';return;}"));
   a('NVS C4 chú thích NQ52 đúng trạng thái',N.includes('id="nvsNQ52Handoff"')&&N.includes("nq52Note.hidden=id!=='C.4'"));
   a('NVS không tự xếp loại NQ52',N.includes('Không dùng dữ liệu Giao việc thông thường để tự động xếp loại'));
