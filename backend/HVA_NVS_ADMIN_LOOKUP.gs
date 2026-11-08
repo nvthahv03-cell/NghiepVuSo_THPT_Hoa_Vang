@@ -100,6 +100,12 @@ function nvsAdminLookupTask_(rows){
       'Người giao: '+nvsAdminLookupCell_(row,11)+'; hạn: '+nvsAdminLookupCell_(row,4)))
     .filter(x=>x.username&&x.recordId);
 }
+function nvsAdminLookupDate_(s){
+  const raw=String(s||'').trim();
+  const d=raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+  if(d)return Date.UTC(Number(d[3]),Number(d[2])-1,Number(d[1]),Number(d[4]||0),Number(d[5]||0),Number(d[6]||0))||0;
+  const n=Date.parse(raw);return Number.isFinite(n)?n:0;
+}
 function nvsAdminLookupSearch_(p,access,operation){
   const mode=nvsAdminLookupText_(p.mode,20),topic=nvsAdminLookupText_(p.topic||'all',20),
       teacherUsername=nvsAdminLookupText_(p.teacherUsername,120).toLowerCase(),
@@ -131,7 +137,7 @@ function nvsAdminLookupSearch_(p,access,operation){
     (!schoolYear||!!x.schoolYear&&x.schoolYear.replace('–','-')===schoolYear.replace('–','-'))&&
     (!team||nvsAdminLookupNorm_(x.team).includes(team))&&
     (!keyword||nvsAdminLookupNorm_([x.sourceName,x.title,x.detail,x.name,x.team,x.recordId].join(' ')).includes(keyword))
-  ).sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt),'vi'));
+  ).sort((a,b)=>nvsAdminLookupDate_(b.updatedAt)-nvsAdminLookupDate_(a.updatedAt)||String(b.recordId).localeCompare(String(a.recordId),'vi'));
   // Nhật ký tra cứu phải ghi thành công trước khi trả dữ liệu.
   nvsAdminLookupAudit_(access.username,operation==='EXPORT'?'EXPORT':'SEARCH',{mode,topic,teacherUsername,schoolYear,keyword,team,reason},matched.length);
   return{success:true,records:matched.slice(0,HVA_ADMIN_LOOKUP_V1_.maxResults),totalFound:matched.length,truncated:matched.length>HVA_ADMIN_LOOKUP_V1_.maxResults,sources,serverTime:new Date().toISOString()};
