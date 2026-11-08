@@ -1,0 +1,242 @@
+{
+  "contractVersion": "EDOS-ARCH-V1-20261109",
+  "status": "DESIGN_LOCK_ONLY__NOT_DEPLOYED",
+  "gateway": {
+    "project": "HVA_EDOS_BACKEND",
+    "publicEntrypoints": [
+      "doGet",
+      "doPost"
+    ],
+    "singleProductionWebApp": true,
+    "modules": [
+      "EDOS_AUTH",
+      "EDOS_PERSONNEL",
+      "EDOS_DATA",
+      "EDOS_DIEUHANH",
+      "EDOS_NGHIEPVU",
+      "EDOS_QUANTRI",
+      "EDOS_AUDIT",
+      "EDOS_INTEGRATIONS"
+    ],
+    "configSource": "ScriptProperties",
+    "note": "Không nạp đồng thời hai bản Backend cũ; xác thực Backend và adapter action bắt buộc"
+  },
+  "personnelMaster": {
+    "owner": "PERSONNEL_MASTER",
+    "property": "EDOS_PERSONNEL_MASTER_ID",
+    "spreadsheet": "EXISTING_SOURCE",
+    "tab": "VERIFY_ACTUAL_NAME: Du_lieu_NhanSu_HVA vs Du_lieu_NhanSu_THPT_HOA_VANG",
+    "writePolicy": "SINGLE_OWNER_ONLY"
+  },
+  "edosWorkbooks": [
+    {
+      "key": "EDOS_DH",
+      "proposedName": "HVA_EDOS_DB_DIEU_HANH",
+      "property": "EDOS_DH_DB_ID",
+      "existingSource": "CURRENT_DH_DB__VERIFY",
+      "tabs": [
+        {
+          "name": "DB_03_GiaoViec",
+          "state": "EXISTING_LEGACY__VERIFY_SCHEMA"
+        },
+        {
+          "name": "DB_01_VanBan",
+          "state": "EXISTING_LEGACY__VERIFY_SCHEMA"
+        },
+        {
+          "name": "DH_LichCongTac",
+          "state": "PLANNED"
+        },
+        {
+          "name": "DH_CuocHop",
+          "state": "PLANNED"
+        },
+        {
+          "name": "DH_ThongBao",
+          "state": "PLANNED"
+        },
+        {
+          "name": "DH_KiemTraNoiBo",
+          "state": "PLANNED"
+        },
+        {
+          "name": "DH_LichSuXuLy",
+          "state": "PLANNED"
+        }
+      ]
+    },
+    {
+      "key": "EDOS_NV",
+      "proposedName": "HVA_EDOS_DB_NGHIEP_VU",
+      "property": "EDOS_NV_DB_ID",
+      "existingSource": "CURRENT_NVS_STORAGE__VERIFY",
+      "tabs": [
+        {
+          "name": "NVS_DTHT",
+          "state": "EXISTING_LEGACY__VERIFY_SCHEMA"
+        },
+        {
+          "name": "NVS_CHU_NHIEM",
+          "state": "EXISTING_LEGACY__VERIFY_SCHEMA"
+        },
+        {
+          "name": "NVS_HO_SO_A22",
+          "state": "MODULE_DEFINED__NOT_DEPLOYED"
+        },
+        {
+          "name": "NV_TiepNhan",
+          "state": "PLANNED"
+        },
+        {
+          "name": "NV_MinhChung",
+          "state": "PLANNED"
+        },
+        {
+          "name": "NV_BDHSG",
+          "state": "PLANNED"
+        }
+      ]
+    },
+    {
+      "key": "EDOS_QT",
+      "proposedName": "HVA_EDOS_DB_QUAN_TRI",
+      "property": "EDOS_QT_DB_ID",
+      "existingSource": "NEW_WORKBOOK__NOT_CREATED",
+      "tabs": [
+        {
+          "name": "QT_DanhMuc",
+          "state": "PLANNED"
+        },
+        {
+          "name": "QT_RolePermission",
+          "state": "PLANNED"
+        },
+        {
+          "name": "QT_UyQuyen",
+          "state": "PLANNED"
+        },
+        {
+          "name": "QT_DataRegistry",
+          "state": "PLANNED"
+        },
+        {
+          "name": "QT_AuditLog",
+          "state": "PLANNED"
+        },
+        {
+          "name": "QT_TraCuuIndex",
+          "state": "PLANNED"
+        },
+        {
+          "name": "QT_BackupManifest",
+          "state": "PLANNED"
+        }
+      ]
+    }
+  ],
+  "nq52": {
+    "key": "NQ52",
+    "proposedName": "HVA_NQ52_DB",
+    "property": "NQ52_DB_ID",
+    "workbookBoundary": "SEPARATE_FROM_EDOS_QT",
+    "appBoundary": "INDEPENDENT_NQ52_SERVICE__EDOS_ADAPTER_ONLY",
+    "state": "PLANNED__NOT_CREATED",
+    "tabs": [
+      "NQ52_Ky",
+      "NQ52_NhiemVuThang",
+      "NQ52_SanPham",
+      "NQ52_NghiemThu",
+      "NQ52_TuDanhGia",
+      "NQ52_ThamDinh",
+      "NQ52_KetQua",
+      "NQ52_KienNghi",
+      "NQ52_AuditLog"
+    ],
+    "noAutomaticScoringOrClassification": true
+  },
+  "canonicalOwnership": [
+    {
+      "entity": "person",
+      "owner": "PERSONNEL_MASTER",
+      "allowDirectCrossWrite": false
+    },
+    {
+      "entity": "task",
+      "owner": "EDOS_DH",
+      "preferredTab": "DB_03_GiaoViec",
+      "migration": "RECONCILE_NVS_GIAO_VIEC_FIRST",
+      "allowDualWrite": false
+    },
+    {
+      "entity": "document",
+      "owner": "EDOS_DH"
+    },
+    {
+      "entity": "calendar",
+      "owner": "EDOS_DH"
+    },
+    {
+      "entity": "internalInspection",
+      "owner": "EDOS_DH",
+      "state": "NO_VERIFIED_REPOSITORY_YET"
+    },
+    {
+      "entity": "dthtReport",
+      "owner": "EDOS_NV",
+      "preferredTab": "NVS_DTHT"
+    },
+    {
+      "entity": "homeroomReport",
+      "owner": "EDOS_NV",
+      "preferredTab": "NVS_CHU_NHIEM"
+    },
+    {
+      "entity": "a22Record",
+      "owner": "EDOS_NV",
+      "preferredTab": "NVS_HO_SO_A22",
+      "state": "MODULE_PENDING_DEPLOYMENT"
+    },
+    {
+      "entity": "permission",
+      "owner": "EDOS_QT"
+    },
+    {
+      "entity": "systemAudit",
+      "owner": "EDOS_QT",
+      "note": "Legacy DB_AuditLog remains preserved until audited migration"
+    },
+    {
+      "entity": "searchIndexMetadata",
+      "owner": "EDOS_QT",
+      "notFullCopiedRecords": true
+    },
+    {
+      "entity": "nq52Assessment",
+      "owner": "NQ52",
+      "noAutomaticDecision": true
+    }
+  ],
+  "legacyConflicts": [
+    "TWO_DOGET_AND_TWO_DOPOST",
+    "DUPLICATE_TOPLEVEL_CONFIG_PERSONNELSERVICE_COMMONDB_ETC",
+    "TWO_HUMAN_RESOURCE_TAB_NAMES_SAME_SPREADSHEET_ID",
+    "TWO_LOGIN_SERVICE_VARIANTS",
+    "TWO_DTHT_ROUTES",
+    "TWO_TASK_DATABASE_SCHEMAS",
+    "DUPLICATE_GENERATE_MEETING_AI_DRAFT_CASE",
+    "A22_AND_ADMIN_LOOKUP_ACTIONS_NOT_IN_UPLOADED_ROUTERS"
+  ],
+  "acceptanceGates": [
+    "BACKUP_GAS_AND_SHEETS",
+    "VERIFY_PERSONNEL_TAB_AND_SCHEMA",
+    "INVENTORY_ACTIONS_AND_CLIENT_PAYLOADS",
+    "DEDUPE_GLOBAL_SYMBOLS",
+    "CONFIRM_PERMISSIONS_SESSIONS",
+    "RECONCILE_TASK_TABLES",
+    "STAGING_ROUTE_TESTS",
+    "VERIFY_OAUTH_CALLBACK",
+    "PASSLOCK_REGRESSION",
+    "ATOMIC_CUTOVER_WITH_ROLLBACK",
+    "NQ52_SEPARATE_APPROVAL"
+  ]
+}
