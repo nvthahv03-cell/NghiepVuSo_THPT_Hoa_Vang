@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
+<title>Tra cứu hồ sơ và công việc của tôi | HVA–EDOS</title>
+<style>
+:root{font-family:Inter,"Segoe UI",Arial,sans-serif;background:#f3f7fc;color:#173f60}*{box-sizing:border-box}body{margin:0;min-width:280px}button,input,select{font:inherit}
+header{background:linear-gradient(117deg,#073b76 0%,#0864a1 65%,#0a94ba);color:#fff;padding:22px max(18px,calc((100vw - 1150px)/2))}
+header h1{font-size:clamp(20px,3vw,28px);margin:13px 0 6px;font-weight:850}header p{font-size:13px;color:#d9efff;margin:0}
+.back{display:inline-block;color:#fff;text-decoration:none;border:1px solid #ffffff9c;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:700}
+main{max-width:1150px;padding:0 16px;margin:19px auto 55px}
+.panel{background:#fff;border:1px solid #d2e3f1;border-radius:15px;margin-bottom:14px;padding:20px;box-shadow:0 4px 18px #114d8210}
+.notice{background:#fff9e8;border:1px solid #ecd9ad;border-radius:10px;padding:13px 15px;font-size:12px;line-height:1.6}
+.nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:13px 0}
+.tab{background:#edf5fc;color:#22577e;border:1px solid #cfe2f0;border-radius:10px;font-weight:750;font-size:13px;padding:12px 7px;min-height:44px;cursor:pointer}
+.tab[aria-selected="true"]{background:#086cad;border-color:#086cad;color:#fff}
+.tab:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #30acdf;outline-offset:2px}
+h2{font-size:17px;color:#085d92;margin:0 0 10px}p.sub{font-size:13px;color:#637c93;line-height:1.55;margin:0 0 12px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
+.tools input{border:1px solid #b8d4e7;border-radius:9px;padding:10px 13px;min-width:200px;flex:1;max-width:380px}
+.btn{border:0;border-radius:9px;background:#086aab;color:white;cursor:pointer;font-weight:750;padding:10px 14px;font-size:12px;min-height:40px}
+.btn.alt{background:#eaf5fb;border:1px solid #bfd9ea;color:#135b8c}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.status{font-size:13px;font-weight:650;color:#1a618c;margin:8px 0 14px}
+.status.error{color:#a92f3b}
+.table-outer{max-width:100%;overflow-x:auto;border:1px solid #e0e9f2;border-radius:9px}
+table{border-collapse:collapse;width:100%;min-width:620px}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #e5eef5;font-size:12px;vertical-align:top}th{background:#edf5fb;color:#195981;font-size:12px}tr:last-child td{border-bottom:0}
+.statrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}
+.stat{border:1px solid #d8e7f2;border-radius:12px;padding:13px;background:#f8fbfe}.stat strong{display:block;color:#0b6099;font-size:22px}.stat span{font-size:11px;color:#536e83}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#fbfdff;border:1px solid #d8e5ee;padding:16px;border-radius:10px;font:14px/1.7 "Times New Roman",serif}
+a.link{color:#086aaf;text-decoration:underline;font-size:12px;font-weight:700}
+footer{text-align:center;font-size:12px;color:#6c859a;padding-bottom:25px}
+[hidden]{display:none!important}
+@media(max-width:650px){.panel{padding:14px}.tab{font-size:11px;padding:10px 3px}.statrow{grid-template-columns:repeat(2,minmax(0,1fr))}.tools input{max-width:none}}
+@media print{header,.nav,.tools,footer,.btn,.notice{display:none!important}body{background:#fff}.panel{border:none;box-shadow:none}main{margin:0}.table-outer{overflow:visible}table{min-width:0}}
+</style></head><body>
+<header><a class="back" href="./NghiepVu.html">← Nghiệp vụ số</a><h1>TRA CỨU HỒ SƠ VÀ KẾT QUẢ CÔNG TÁC</h1><p>Hồ sơ cá nhân · Nhiệm vụ được giao · Tổng hợp từ dữ liệu đã được máy chủ xác thực</p></header>
+<main>
+<div class="notice"><strong>Nguyên tắc:</strong> Trang này chỉ đọc thông tin theo tài khoản đã đăng nhập. Không tự tạo kết quả đánh giá, không quyết định xếp loại NQ52. Hồ sơ nhóm A chỉ xuất hiện sau khi Backend A22 được triển khai và tiếp nhận dữ liệu thật.</div>
+<nav class="nav" role="tablist" aria-label="Nội dung tra cứu">
+<button class="tab" id="tab-files" data-view="files" aria-selected="true" role="tab" aria-controls="panel-files">Hồ sơ nhóm A</button>
+<button class="tab" id="tab-tasks" data-view="tasks" aria-selected="false" role="tab" aria-controls="panel-tasks">Việc của tôi</button>
+<button class="tab" id="tab-results" data-view="results" aria-selected="false" role="tab" aria-controls="panel-results">Kết quả công tác</button>
+</nav>
+<section class="panel" id="panel-files" role="tabpanel" aria-labelledby="tab-files">
+<h2>Hồ sơ nghiệp vụ A do tôi lập</h2><p class="sub">Tra cứu theo mã hồ sơ và trạng thái tiếp nhận từ Backend A22. Hồ sơ chưa nộp chỉ được giữ ở bản nháp trên thiết bị, không xuất hiện ở đây.</p>
+<div class="tools"><input id="filter-files" type="search" placeholder="Tìm mã, tiêu đề hoặc trạng thái" aria-label="Tìm hồ sơ nhóm A">
+<button class="btn" id="reload-files">Làm mới hồ sơ</button><a class="link" href="./NghiepVu.html">Lập hồ sơ mới</a></div>
+<p class="status" id="status-files" role="status" aria-live="polite">Chưa tải dữ liệu.</p>
+<div class="table-outer"><table><thead><tr><th>Mã hồ sơ</th><th>Nghiệp vụ / tiêu đề</th><th>Ngày tiếp nhận</th><th>Trạng thái</th><th>Chi tiết</th></tr></thead><tbody id="rows-files"><tr><td colspan="5">Chưa có kết quả từ máy chủ.</td></tr></tbody></table></div>
+</section>
+<section class="panel" id="panel-tasks" role="tabpanel" aria-labelledby="tab-tasks" hidden>
+<h2>Công việc được giao cho tôi</h2><p class="sub">Dữ liệu được trả về theo quyền tài khoản tại tuyến Giao việc. Để tiếp nhận, báo cáo kết quả hoặc nộp minh chứng, mở trang Việc của tôi.</p>
+<div class="tools"><input id="filter-tasks" type="search" placeholder="Tìm tên, người giao hoặc trạng thái" aria-label="Tìm nhiệm vụ"><button class="btn" id="reload-tasks">Làm mới công việc</button><a class="link" href="./NVS_GiaoViec_TheoDoi.html?view=mine">Tiếp nhận / báo cáo công việc</a></div>
+<p class="status" id="status-tasks" role="status" aria-live="polite">Chưa tải dữ liệu.</p>
+<div class="table-outer"><table><thead><tr><th>Công việc</th><th>Người giao</th><th>Hạn hoàn thành</th><th>Trạng thái</th><th>Minh chứng</th></tr></thead><tbody id="rows-tasks"><tr><td colspan="5">Chưa có kết quả từ máy chủ.</td></tr></tbody></table></div>
+</section>
+<section class="panel" id="panel-results" role="tabpanel" aria-labelledby="tab-results" hidden>
+<h2>Tổng hợp tình trạng công việc</h2>
+<p class="sub">Thống kê đơn giản từ danh sách nhiệm vụ do Backend trả về. Không dùng để kết luận chất lượng, vi phạm hay xếp loại tháng; nhiệm vụ có thể thay đổi trạng thái khi BGH nghiệm thu.</p>
+<div class="statrow">
+<div class="stat"><strong id="s-all">—</strong><span>Tổng nhiệm vụ</span></div>
+<div class="stat"><strong id="s-done">—</strong><span>Đã hoàn thành</span></div>
+<div class="stat"><strong id="s-review">—</strong><span>Chờ xác nhận</span></div>
+<div class="stat"><strong id="s-other">—</strong><span>Các trạng thái khác</span></div></div>
+<p class="status" id="status-results" role="status" aria-live="polite">Chưa có kết quả xác thực từ máy chủ.</p>
+<button class="btn" id="reload-results">Cập nhật kết quả</button>
+<p class="sub" style="margin-top:18px"><strong>NQ52 – Đánh giá hiệu quả công việc:</strong> Chờ phân hệ độc lập được nghiệm thu, chưa tổng hợp hoặc xếp loại NQ52 tại đây.</p>
+</section>
+<section class="panel" id="detail" hidden><div class="tools"><h2 id="detail-title">Chi tiết hồ sơ</h2><button class="btn alt" id="close-detail">Đóng</button></div><pre id="detail-text"></pre></section>
+</main><footer>HVA–EDOS · Chỉ sử dụng dữ liệu đã xác thực qua Backend theo phân quyền.</footer>
+<script src="./NVS_A22_Definitions.js"></script>
+<script>
+(()=>{'use strict';
+const API='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
+const $=id=>document.getElementById(id);
+const readToken=()=>{for(const name of ['sessionStorage','localStorage'])try{const v=window[name].getItem('hvaSessionToken');if(v)return v}catch(_){ }return ''};
+const state={files:null,tasks:null,view:null};
+const setStatus=(kind,text,error=false)=>{const el=$('status-'+kind);el.textContent=text;el.classList.toggle('error',error)};
+async function api(action,args={}){
+ const sessionToken=readToken();if(!sessionToken)throw Error('Chưa có phiên EDOS, vui lòng đăng nhập lại.');
+ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,sessionToken,...args})});
+ if(!r.ok)throw Error('Không kết nối được máy chủ (HTTP '+r.status+').');
+ let result;try{result=await r.json()}catch(_){throw Error('Máy chủ trả dữ liệu không đúng định dạng.')}
+ if(!result||(result.success!==true&&result.ok!==true))throw Error(String(result?.message||'Dịch vụ chưa được triển khai.'));
+ return result;
+}
+const td=(tr,text)=>{const cell=document.createElement('td');cell.textContent=String(text??'');tr.append(cell);return cell};
+function empty(tbody,n,text){tbody.replaceChildren();const tr=document.createElement('tr');td(tr,text).colSpan=n;tbody.append(tr)}
+function safeLink(text){try{const u=new URL(text);return u.protocol==='https:'&&!u.username&&!u.password?u.href:''}catch(_){return ''}}
+function renderFiles(){
+ const data=Array.isArray(state.files)?state.files:[],q=$('filter-files').value.trim().toLowerCase(),rows=data.filter(x=>([x.code,x.title,x.status,x.recordId].join(' ').toLowerCase()).includes(q)),body=$('rows-files');
+ empty(body,5,'Không tìm thấy hồ sơ phù hợp.');if(!rows.length)return;
+ body.replaceChildren();
+ for(const record of rows){
+  const tr=document.createElement('tr');td(tr,record.recordId||'—');td(tr,(record.code||'')+' – '+(record.title||''));td(tr,record.createdAt||'');td(tr,record.status||'');
+  const cell=document.createElement('td'),btn=document.createElement('button');btn.type='button';btn.className='btn alt';btn.textContent='Xem';btn.addEventListener('click',()=>showDetail(record.recordId));cell.append(btn);tr.append(cell);body.append(tr);
+ }
+}
+function renderTasks(){
+ const data=Array.isArray(state.tasks)?state.tasks:[],q=$('filter-tasks').value.trim().toLowerCase(),rows=data.filter(x=>([x.title,x.status,x.assignerName,x.taskId].join(' ').toLowerCase()).includes(q)),body=$('rows-tasks');
+ empty(body,5,'Không tìm thấy nhiệm vụ phù hợp.');if(!rows.length)return;
+ body.replaceChildren();
+ for(const record of rows){
+  const tr=document.createElement('tr');td(tr,record.title||'');td(tr,record.assignerName||'');td(tr,record.deadline||'');td(tr,record.status||'');
+  const cell=document.createElement('td'),url=safeLink(record.resultUrl||'');
+  if(url){const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.className='link';link.textContent='Mở minh chứng';cell.append(link)}else cell.textContent='Chưa có liên kết';
+  tr.append(cell);body.append(tr);
+ }
+}
+function renderResults(){
+ const r=state.tasks;if(!Array.isArray(r)){for(const k of ['all','done','review','other'])$('s-'+k).textContent='—';return}
+ const done=r.filter(x=>x.status==='Đã hoàn thành').length,review=r.filter(x=>x.status==='Chờ xác nhận').length;
+ $('s-all').textContent=String(r.length);$('s-done').textContent=String(done);$('s-review').textContent=String(review);
+ $('s-other').textContent=String(r.length-done-review);
+ setStatus('results','Dữ liệu thống kê từ '+r.length+' nhiệm vụ được máy chủ trả về. Không phải kết quả xếp loại.',false);
+}
+async function getFiles(){
+ $('reload-files').disabled=true;setStatus('files','Đang tải danh sách hồ sơ đã tiếp nhận...');
+ try{const r=await api('nvsA22ListMine');if(!Array.isArray(r.records))throw Error('Backend không trả danh sách hồ sơ.');
+ state.files=r.records;renderFiles();setStatus('files','Đã tải '+r.records.length+' hồ sơ được gửi bằng tài khoản hiện tại.');
+ }catch(e){state.files=null;empty($('rows-files'),5,'Không có dữ liệu đã xác minh.');setStatus('files','Chưa truy xuất được hồ sơ: '+e.message,true)}
+ finally{$('reload-files').disabled=false}
+}
+async function getTasks(){
+ $('reload-tasks').disabled=true;$('reload-results').disabled=true;setStatus('tasks','Đang tải nhiệm vụ từ máy chủ...');
+ try{const r=await api('nvsTaskList');if(!Array.isArray(r.tasks))throw Error('Backend không trả danh sách nhiệm vụ.');
+ state.tasks=r.tasks.filter(x=>x.view==='mine');renderTasks();renderResults();
+ setStatus('tasks','Đã tải '+state.tasks.length+' nhiệm vụ của tài khoản hiện tại.');
+ }catch(e){state.tasks=null;empty($('rows-tasks'),5,'Không có dữ liệu đã xác minh.');renderResults();setStatus('tasks','Chưa truy xuất được nhiệm vụ: '+e.message,true);setStatus('results','Chưa thống kê được: '+e.message,true)}
+ finally{$('reload-tasks').disabled=false;$('reload-results').disabled=false}
+}
+async function showDetail(recordId){
+ const el=$('detail');el.hidden=false;$('detail-title').textContent='Chi tiết hồ sơ '+String(recordId||'');$('detail-text').textContent='Đang truy vấn nội dung theo quyền...';
+ try{
+  const r=await api('nvsA22Get',{recordId});const f=r.form||{},spec=window.HVA_A22_DEFS?.[r.code];
+  const lines=['TRƯỜNG THPT HÒA VANG','HỒ SƠ NGHIỆP VỤ NHÓM A','','Mã tiếp nhận: '+String(r.recordId||''),'Mã nghiệp vụ: '+String(r.code||''),'Tiêu đề: '+String(r.title||''),'Người lập: '+String(r.owner||''),'Tổ: '+String(r.team||''),'Ngày tiếp nhận: '+String(r.createdAt||''),'Trạng thái: '+String(r.status||''),'','THÔNG TIN NGHIỆP VỤ'];
+  for(const item of spec?.fields||[])lines.push(item.label+': '+String(f.extras?.[item.key]||'—'));
+  lines.push('','NỘI DUNG',''+String(f.content||'—'),'','KẾT QUẢ / KIẾN NGHỊ',String(f.result||'—'),'','MINH CHỨNG',String(f.evidence||'—'));
+  $('detail-text').textContent=lines.join('\n');
+ }catch(e){$('detail-text').textContent='Không xem được chi tiết: '+e.message}
+ el.scrollIntoView({behavior:'smooth'});
+}
+function selectView(view){
+ if(!['files','tasks','results'].includes(view))view='files';state.view=view;
+ for(const tab of document.querySelectorAll('.tab')){const active=tab.dataset.view===view;tab.setAttribute('aria-selected',String(active))}
+ for(const p of ['files','tasks','results'])$('panel-'+p).hidden=p!==view;
+ $('detail').hidden=true;
+ const u=new URL(location.href);u.searchParams.set('view',view);history.replaceState(null,'',u.pathname+u.search+u.hash);
+ if(view==='files'&&!Array.isArray(state.files))getFiles();
+ if((view==='tasks'||view==='results')&&!Array.isArray(state.tasks))getTasks();
+}
+for(const tab of document.querySelectorAll('.tab'))tab.addEventListener('click',()=>selectView(tab.dataset.view));
+$('filter-files').addEventListener('input',renderFiles);$('filter-tasks').addEventListener('input',renderTasks);
+$('reload-files').addEventListener('click',getFiles);$('reload-tasks').addEventListener('click',getTasks);$('reload-results').addEventListener('click',getTasks);
+$('close-detail').addEventListener('click',()=>{$('detail').hidden=true;$('tab-files').focus()});
+selectView(new URL(location.href).searchParams.get('view')||'files');
+})();
+</script>
+</body></html>
