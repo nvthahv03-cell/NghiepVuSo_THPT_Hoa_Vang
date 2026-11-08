@@ -135,4 +135,56 @@ by('print').addEventListener('click',()=>{if(preview())window.print()});
 by('edit').addEventListener('click',()=>by('form').scrollIntoView({behavior:'smooth'}));
 select.addEventListener('change',()=>{setCode(select.value);notice('Đã chuyển mẫu. Hãy kiểm tra lại thông tin trước khi xuất.')});
 by('send').disabled=true;
+/* Tuyến tiếp nhận dùng chung chỉ mở khi Backend đã triển khai action A22 và trả chứng nhận hỗ trợ. */
+const A22_BACKEND_URL='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
+let canSubmit=false,clientRequestId=null;
+const token=()=>storeRead('hvaSessionToken');
+function newRequestId(){
+ if(window.crypto&&typeof window.crypto.randomUUID==='function')return 'A22-'+window.crypto.randomUUID();
+ return 'A22-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,16);
+}
+async function a22API(action,payload={}){
+ const sessionToken=token();if(!sessionToken)throw Error('Phiên EDOS không hợp lệ. Vui lòng đăng nhập lại.');
+ const res=await fetch(A22_BACKEND_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,sessionToken,...payload})});
+ if(!res.ok)throw Error('Backend không phản hồi hợp lệ (HTTP '+res.status+').');
+ let data;try{data=await res.json()}catch(_){throw Error('Backend trả dữ liệu không phải JSON.')}
+ if(!data||!(data.success||data.ok))throw Error(String(data?.message||'Backend chưa tiếp nhận hồ sơ.'));
+ return data;
+}
+async function probeBackend(){
+ if(!token()){notice('Chưa có phiên EDOS; có thể chuẩn bị và tải bản nháp, chưa thể gửi hồ sơ.');return}
+ try{
+  const r=await a22API('nvsA22Capabilities');
+  if(r.supported!==true||r.version!=='A22-1'||!r.bghCount||!r.ccCount)throw Error('Backend chưa xác nhận tuyến tiếp nhận đủ BGH và TTCM.');
+  canSubmit=true;
+  by('send').disabled=false;
+  by('send').textContent='Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM';
+  by('send').title='Chỉ báo đã tiếp nhận khi Backend trả mã hồ sơ';
+  notice('Tuyến tiếp nhận A22 đã xác thực. Hãy kiểm tra và xem trước hồ sơ trước khi nộp.',true);
+ }catch(err){
+  canSubmit=false;by('send').disabled=true;
+  by('send').title='Chưa có tuyến Backend A22 được xác thực';
+  notice('Chưa thể nộp hồ sơ: '+err.message+' Có thể lưu nháp và xuất JSON.');
+ }
+}
+by('form').addEventListener('input',()=>{clientRequestId=null});
+by('send').addEventListener('click',async()=>{
+ if(!canSubmit){notice('Chưa có Backend A22 đã xác thực; hồ sơ chưa được gửi.');return}
+ if(!validate())return;
+ if(!window.confirm('Xác nhận nộp hồ sơ '+by('code').value+' vào hộp tiếp nhận BGH và đồng nhận TTCM?'))return;
+ const btn=by('send');btn.disabled=true;btn.textContent='Đang kiểm tra tiếp nhận...';
+ try{
+  if(!clientRequestId)clientRequestId=newRequestId();
+  const data=collect();
+  const r=await a22API('nvsA22Submit',{document:{clientRequestId,form:data.base,extras:data.extras}});
+  if(!r.recordId||!r.bghCount||!r.ccCount)throw Error('Backend chưa cấp đủ mã tiếp nhận và người nhận.');
+  notice('ĐÃ TIẾP NHẬN hồ sơ số '+r.recordId+' · BGH: '+r.bghCount+' · TTCM: '+r.ccCount+'. Trạng thái: '+r.status+'. '+(r.notificationStatus==='NOT_CONFIGURED'?'Thông báo tự động chưa được cấu hình.':'') ,true);
+  by('preview').textContent=linesFor(data).join('\n')+'\n\nMÃ TIẾP NHẬN: '+r.recordId+'\nTRẠNG THÁI: '+r.status;
+  by('previewPanel').classList.remove('hidden');by('previewPanel').scrollIntoView({behavior:'smooth'});
+  clientRequestId=null;
+ }catch(err){notice('CHƯA XÁC NHẬN NỘP HỒ SƠ: '+err.message+' Nếu mạng gián đoạn, hãy thử lại mà không sửa nội dung để tránh gửi trùng.')}
+ finally{btn.disabled=!canSubmit;btn.textContent=canSubmit?'Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM':'Gửi BGH / Đồng gửi TTCM · Chưa kết nối'}
+});
+probeBackend();
+
 })();
