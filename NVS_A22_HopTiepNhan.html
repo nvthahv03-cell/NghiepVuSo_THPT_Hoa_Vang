@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Hộp tiếp nhận hồ sơ nhóm A | HVA–EDOS</title>
+<style>
+:root{font:15px/1.6 Inter,"Segoe UI",Arial,sans-serif;color:#193a59;background:#f3f7fc}*{box-sizing:border-box}body{margin:0}header{background:linear-gradient(110deg,#0b467f,#057aab);padding:18px max(15px,calc((100vw - 1120px)/2));color:white}header a{color:#fff;text-decoration:none;display:inline-block;border:1px solid #fff7;padding:7px 12px;border-radius:9px;font-size:12px;font-weight:700}h1{font-size:clamp(19px,3vw,25px);margin:13px 0 2px}header p{font-size:12px;margin:0;color:#d4f1ff}main{max-width:1120px;margin:16px auto;padding:0 15px 45px}.card{background:#fff;border:1px solid #d2e3f0;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 4px 16px #11457612}.notice{border-left:4px solid #c48c24;background:#fff9e8;padding:12px 14px;border-radius:9px;font-size:13px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.btn{background:#0b65a5;border:0;border-radius:9px;color:#fff;cursor:pointer;padding:10px 16px;font:700 13px/1.4 inherit;min-height:40px}.btn:disabled{opacity:.6;cursor:not-allowed}.btn.secondary{background:#e9f4fc;color:#155078;border:1px solid #bdd9ea}.table{width:100%;overflow-x:auto;border:1px solid #d5e6f2;border-radius:10px}table{width:100%;border-collapse:collapse;min-width:670px}th,td{text-align:left;padding:11px 12px;border-bottom:1px solid #e4edf3;font-size:13px;vertical-align:top}th{background:#eff6fc;color:#185178;font-size:12px}tr:last-child td{border-bottom:0}td .btn{white-space:nowrap}h2{color:#0b5185;font-size:17px;margin:0 0 13px}pre{white-space:pre-wrap;word-break:break-word;font:14px/1.65 "Times New Roman",serif;max-height:70vh;overflow:auto;background:#fbfdff;padding:16px;border:1px solid #dae6f1;border-radius:10px}#status{font-size:13px;font-weight:700;color:#285671}#status.error{color:#ac2539}footer{text-align:center;color:#627d90;font-size:12px;padding:10px 16px 30px}
+</style></head><body>
+<header><a href="./DieuHanh.html">← Điều hành</a><h1>HỘP TIẾP NHẬN HỒ SƠ NGHIỆP VỤ NHÓM A</h1><p>HVA–EDOS · Ban Giám hiệu / Tổ trưởng chuyên môn / Người lập hồ sơ</p></header>
+<main><div class="notice"><strong>Trạng thái kết nối:</strong> Hộp tiếp nhận chỉ có dữ liệu khi Backend tổng đã triển khai các action A22. Hồ sơ hiển thị ở đây là bản tiếp nhận, <strong>chưa đồng nghĩa đã phê duyệt hoặc ký số</strong>. Chỉ hiện hồ sơ mà tài khoản được phân quyền đọc.</div>
+<section class="card"><div class="toolbar"><h2>Danh sách hồ sơ được tiếp nhận</h2><button type="button" class="btn" id="reload">Tải hồ sơ</button></div><p id="status" role="status" aria-live="polite">Đang kiểm tra dịch vụ A22.</p><div class="table"><table><thead><tr><th>Mã</th><th>Nghiệp vụ / tiêu đề</th><th>Người lập · Tổ</th><th>Tiếp nhận</th><th>Trạng thái</th><th>Chi tiết</th></tr></thead><tbody id="rows"><tr><td colspan="6">Chưa tải được dữ liệu.</td></tr></tbody></table></div></section>
+<section id="detail" class="card" hidden><div class="toolbar"><h2 id="detailTitle">Chi tiết hồ sơ</h2><button type="button" class="btn secondary" id="closeDetail">Đóng</button></div><pre id="detailText"></pre></section>
+</main><footer>HVA–EDOS · Chỉ hiển thị dữ liệu đã được Backend xác thực.</footer>
+<script defer src="./NVS_A22_Definitions.js"></script>
+<script>
+(function(){'use strict';
+const url='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
+const by=id=>document.getElementById(id);
+const token=()=>{for(const s of ['localStorage','sessionStorage'])try{const v=window[s].getItem('hvaSessionToken');if(v)return v}catch(_){}return ''};
+const say=(txt,error=false)=>{by('status').textContent=txt;by('status').classList.toggle('error',error)};
+async function api(action,extra={}){
+ if(!token())throw Error('Chưa có phiên EDOS. Vui lòng đăng nhập lại.');
+ const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,sessionToken:token(),...extra})});
+ if(!r.ok)throw Error('Backend HTTP '+r.status);
+ let data;try{data=await r.json()}catch(_){throw Error('Backend chưa trả dữ liệu JSON hợp lệ.')}
+ if(!data||(data.success!==true&&data.ok!==true))throw Error(String(data?.message||'Chưa kết nối dịch vụ A22.'));
+ return data;
+}
+const td=(tr,s)=>{const x=document.createElement('td');x.textContent=String(s??'');tr.append(x);return x};
+async function detail(id){
+ const panel=by('detail');panel.hidden=false;by('detailText').textContent='Đang nạp hồ sơ...';
+ try{
+  const r=await api('nvsA22Get',{recordId:id}),f=r.form||{},def=window.HVA_A22_DEFS?.[r.code];
+  const lines=['TRƯỜNG THPT HÒA VANG','HỒ SƠ NHÓM A – CHƯA PHÊ DUYỆT','','Mã tiếp nhận: '+r.recordId,'Nghiệp vụ: '+r.code+' – '+(def?.title||''),'Tiêu đề: '+r.title,'Người lập: '+r.owner,'Tổ / bộ phận: '+r.team,'Ngày tiếp nhận: '+r.createdAt,'Trạng thái: '+r.status,'','THÔNG TIN CHI TIẾT'];
+  lines.push('Năm học: '+String(f.schoolYear||''));
+  lines.push('Môn/lớp/đối tượng: '+String(f.subject||''));
+  for(const spec of def?.fields||[])lines.push(spec.label+': '+String(f.extras?.[spec.key]||'—'));
+  lines.push('','NỘI DUNG VÀ CĂN CỨ',String(f.content||'—'),'','KẾT QUẢ / KIẾN NGHỊ',String(f.result||'—'),'','MINH CHỨNG',String(f.evidence||'—'));
+  by('detailTitle').textContent='Chi tiết '+r.code+' · '+r.recordId;
+  by('detailText').textContent=lines.join('\n');
+ }catch(err){by('detailText').textContent='Chưa thể xem hồ sơ: '+err.message}
+ panel.scrollIntoView({behavior:'smooth'});
+}
+async function load(){
+ by('reload').disabled=true;say('Đang truy vấn hồ sơ theo quyền tài khoản...');
+ try{
+  const r=await api('nvsA22List'),records=Array.isArray(r.records)?r.records:[];
+  const root=by('rows');root.replaceChildren();
+  if(!records.length){const tr=document.createElement('tr');td(tr,'Chưa có hồ sơ được phân quyền hiển thị.').colSpan=6;root.append(tr)}
+  records.forEach(x=>{
+    const tr=document.createElement('tr');
+    td(tr,x.code);td(tr,x.title);td(tr,String(x.owner||'')+' · '+String(x.team||''));td(tr,x.createdAt);td(tr,x.status);
+    const col=document.createElement('td'),b=document.createElement('button');b.className='btn secondary';b.type='button';b.textContent='Xem';b.addEventListener('click',()=>detail(String(x.recordId||'')));col.append(b);tr.append(col);root.append(tr);
+  });
+  say('Đã tải '+records.length+' hồ sơ theo quyền tài khoản.');
+ }catch(err){say('Chưa tải được hộp hồ sơ: '+err.message,true)}
+ finally{by('reload').disabled=false}
+}
+by('reload').addEventListener('click',load);
+by('closeDetail').addEventListener('click',()=>{by('detail').hidden=true;by('reload').focus()});
+load();
+})();
+</script></body></html>
