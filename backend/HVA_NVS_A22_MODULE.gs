@@ -21,7 +21,16 @@ const NVS_A22_RULES_={
       "mucTieuBD",
       "noiDungBD",
       "phanCongBD"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {
+      "khoiBD": [
+        "10",
+        "11",
+        "12"
+      ]
+    }
   },
   "A.1.3-BC": {
     "required": [
@@ -38,7 +47,13 @@ const NVS_A22_RULES_={
       "soBuoiBD",
       "ketQuaBD",
       "khoKhanBD"
-    ]
+    ],
+    "number": [
+      "soLuongHS",
+      "soBuoiBD"
+    ],
+    "date": [],
+    "select": {}
   },
   "A.1.4": {
     "required": [
@@ -55,7 +70,26 @@ const NVS_A22_RULES_={
       "ngayDuKien",
       "noiDungTrienKhai",
       "phoiHop"
-    ]
+    ],
+    "number": [],
+    "date": [
+      "ngayDuKien"
+    ],
+    "select": {
+      "loaiHoatDong": [
+        "Ôn thi tốt nghiệp THPT",
+        "Phụ đạo học sinh",
+        "Kiểm tra khác",
+        "Thi thử",
+        "Khác"
+      ],
+      "khoiLop": [
+        "10",
+        "11",
+        "12",
+        "Nhiều khối"
+      ]
+    }
   },
   "A.2.2": {
     "required": [
@@ -83,7 +117,21 @@ const NVS_A22_RULES_={
       "dacTaUrl",
       "deKiemTraUrl",
       "dapAnUrl"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {
+      "khoiLop": [
+        "10",
+        "11",
+        "12"
+      ],
+      "hinhThuc": [
+        "Trắc nghiệm",
+        "Tự luận",
+        "Kết hợp"
+      ]
+    }
   },
   "A.2.3": {
     "required": [
@@ -108,7 +156,24 @@ const NVS_A22_RULES_={
       "dapAnUrl",
       "maTranUrl",
       "ngayDeXuat"
-    ]
+    ],
+    "number": [],
+    "date": [
+      "ngayDeXuat"
+    ],
+    "select": {
+      "lyDoToChuc": [
+        "Kiểm tra bổ sung",
+        "Kiểm tra lại",
+        "Học sinh vắng có lý do",
+        "Khác"
+      ],
+      "khoiLop": [
+        "10",
+        "11",
+        "12"
+      ]
+    }
   },
   "A.2.4": {
     "required": [
@@ -123,7 +188,18 @@ const NVS_A22_RULES_={
       "dotKiemTra",
       "noiDungVuViec",
       "phuongAnXuLy"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {
+      "loaiBaoCao": [
+        "Báo cáo kết quả",
+        "Đề nghị điều chỉnh",
+        "Báo cáo bất thường",
+        "Kiến nghị",
+        "Khác"
+      ]
+    }
   },
   "A.3.1": {
     "required": [
@@ -142,7 +218,17 @@ const NVS_A22_RULES_={
       "tuanHoc",
       "tenChuDe",
       "keHoachUrl"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {
+      "khoiLop": [
+        "10",
+        "11",
+        "12",
+        "Nhiều khối"
+      ]
+    }
   },
   "A.3.2": {
     "required": [
@@ -162,7 +248,20 @@ const NVS_A22_RULES_={
       "tietThucHien",
       "danhGiaTienDo",
       "bienPhap"
-    ]
+    ],
+    "number": [
+      "tietKeHoach",
+      "tietThucHien"
+    ],
+    "date": [],
+    "select": {
+      "khoiLop": [
+        "10",
+        "11",
+        "12",
+        "Nhiều khối"
+      ]
+    }
   },
   "A.3.3": {
     "required": [
@@ -181,7 +280,10 @@ const NVS_A22_RULES_={
       "phamVi",
       "minhChungUrl",
       "thuyetMinh"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {}
   },
   "A.3.4": {
     "required": [
@@ -199,7 +301,10 @@ const NVS_A22_RULES_={
       "phamViHoSo",
       "hoSoUrl",
       "ghiChuHoSo"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {}
   },
   "A.4.1": {
     "required": [
@@ -218,7 +323,18 @@ const NVS_A22_RULES_={
       "giaiDoan",
       "ketQuaNghienCuu",
       "sanPhamUrl"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {
+      "loaiSanPham": [
+        "Nghiên cứu khoa học",
+        "Sáng kiến",
+        "Khoa học kỹ thuật",
+        "Bài báo",
+        "Khác"
+      ]
+    }
   },
   "A.4.2": {
     "required": [
@@ -237,7 +353,17 @@ const NVS_A22_RULES_={
       "thoiGianThi",
       "ketQuaThi",
       "minhChungUrl"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {
+      "vaiTro": [
+        "Giáo viên dự thi",
+        "Hướng dẫn học sinh",
+        "Phụ trách đội tuyển",
+        "Khác"
+      ]
+    }
   },
   "A.4.3": {
     "required": [
@@ -255,7 +381,17 @@ const NVS_A22_RULES_={
       "doiTuong",
       "noiDungChinh",
       "sanPhamUrl"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {
+      "loaiHoatDong": [
+        "Chuyên đề",
+        "Tham luận",
+        "Sinh hoạt chuyên môn",
+        "Sản phẩm chuyên môn khác"
+      ]
+    }
   },
   "A.4.4": {
     "required": [
@@ -276,7 +412,25 @@ const NVS_A22_RULES_={
       "chuDe",
       "hocLieuUrl",
       "quyenSuDung"
-    ]
+    ],
+    "number": [],
+    "date": [],
+    "select": {
+      "loaiHocLieu": [
+        "Bài giảng số",
+        "Giáo án số",
+        "Phiếu học tập",
+        "Ngân hàng câu hỏi",
+        "Video / mô phỏng",
+        "Khác"
+      ],
+      "khoiLop": [
+        "10",
+        "11",
+        "12",
+        "Nhiều khối"
+      ]
+    }
   },
   "A.5.1": {
     "required": [
@@ -295,7 +449,23 @@ const NVS_A22_RULES_={
       "lyDo",
       "nguoiPhoiHop",
       "phuongAnBanGiao"
-    ]
+    ],
+    "number": [
+      "soTiet"
+    ],
+    "date": [
+      "tuNgay",
+      "denNgay"
+    ],
+    "select": {
+      "loaiXinPhep": [
+        "Nghỉ dạy",
+        "Nghỉ làm việc",
+        "Ra ngoài trong giờ làm việc",
+        "Nghỉ cả ngày",
+        "Khác"
+      ]
+    }
   },
   "A.5.2": {
     "required": [
@@ -317,7 +487,26 @@ const NVS_A22_RULES_={
       "nguoiDoi",
       "daThongNhat",
       "lyDoDieuChinh"
-    ]
+    ],
+    "number": [],
+    "date": [
+      "ngayCu",
+      "ngayMoi"
+    ],
+    "select": {
+      "loaiDieuChinh": [
+        "Đổi tiết",
+        "Đổi ca",
+        "Điều chỉnh lịch dạy",
+        "Điều chỉnh lịch kiểm tra",
+        "Khác"
+      ],
+      "daThongNhat": [
+        "Đã thống nhất",
+        "Đang chờ xác nhận",
+        "Không áp dụng"
+      ]
+    }
   },
   "A.5.3": {
     "required": [
@@ -336,7 +525,13 @@ const NVS_A22_RULES_={
       "canCuCongTac",
       "phuongAnBanGiao",
       "kinhPhi"
-    ]
+    ],
+    "number": [],
+    "date": [
+      "tuNgay",
+      "denNgay"
+    ],
+    "select": {}
   },
   "A.5.4": {
     "required": [
@@ -352,7 +547,12 @@ const NVS_A22_RULES_={
       "noiDungDeNghi",
       "canCu",
       "thoiHan"
-    ]
+    ],
+    "number": [],
+    "date": [
+      "thoiHan"
+    ],
+    "select": {}
   },
   "A.6.1": {
     "required": [
@@ -372,7 +572,14 @@ const NVS_A22_RULES_={
       "ngaySuDung",
       "tietHoc",
       "yeuCau"
-    ]
+    ],
+    "number": [
+      "soLuong"
+    ],
+    "date": [
+      "ngaySuDung"
+    ],
+    "select": {}
   },
   "A.6.2": {
     "required": [
@@ -391,7 +598,21 @@ const NVS_A22_RULES_={
       "mucDich",
       "soLuongHocSinh",
       "thietBiYeuCau"
-    ]
+    ],
+    "number": [
+      "soLuongHocSinh"
+    ],
+    "date": [
+      "ngaySuDung"
+    ],
+    "select": {
+      "loaiPhong": [
+        "Phòng bộ môn",
+        "Phòng Tin học",
+        "Phòng thí nghiệm",
+        "Phòng chức năng khác"
+      ]
+    }
   },
   "A.6.3": {
     "required": [
@@ -409,7 +630,19 @@ const NVS_A22_RULES_={
       "tinhTrang",
       "suCo",
       "kienNghi"
-    ]
+    ],
+    "number": [
+      "soLuot"
+    ],
+    "date": [],
+    "select": {
+      "loaiDoiTuong": [
+        "Thiết bị dạy học",
+        "Phòng bộ môn",
+        "Phòng Tin học",
+        "Phòng chức năng khác"
+      ]
+    }
   },
   "A.6.4": {
     "required": [
@@ -432,12 +665,25 @@ const NVS_A22_RULES_={
       "moTaHuHong",
       "deXuatXuLy",
       "anhMinhChungUrl"
-    ]
+    ],
+    "number": [],
+    "date": [
+      "thoiDiem"
+    ],
+    "select": {
+      "mucDo": [
+        "Nhẹ – sử dụng được",
+        "Ảnh hưởng một phần",
+        "Không sử dụng được",
+        "Nguy cơ mất an toàn"
+      ]
+    }
   }
 };
 const NVS_A22_SHEET_='NVS_HO_SO_A22';
 const NVS_A22_HEADER_=['RecordId','RequestId','Code','Title','Owner','OwnerName','Team','CreatedAt','Status','BGH','CC_TTCM','PayloadJson','UpdatedAt'];
 function nvsA22Norm_(x){return String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().replace(/\s+/g,' ').trim();}
+function nvsA22Team_(x){return nvsA22Norm_(x).replace(/^(to|phong|bo phan)\s+/,'').replace(/[^a-z0-9]/g,'');}
 function nvsA22User_(p){return String(p&&p.username||'').trim().toLowerCase();}
 function nvsA22Plain_(v,n){const s=String(v==null?'':v).trim();if(s.length>(n||5000))throw Error('Dữ liệu vượt độ dài cho phép.');return s;}
 function nvsA22Sheet_(){
@@ -455,7 +701,7 @@ function nvsA22Recipients_(actor){
  const team=String(profile.to||actor.toBoPhan||'').trim();
  if(!team)throw Error('Chưa xác định tổ/bộ phận của người gửi.');
  const bgh=people.filter(p=>/hieu truong|ban giam hieu|bgh/.test(nvsA22Norm_(p.chucVu||p.vaiTro))).map(p=>nvsA22User_(p)).filter(Boolean);
- const cc=people.filter(p=>nvsA22Norm_(p.to)===nvsA22Norm_(team)&&/to truong|ttcm|ttvp|truong bo phan/.test(nvsA22Norm_(p.chucVu||p.vaiTro))).map(p=>nvsA22User_(p)).filter(Boolean);
+ const cc=people.filter(p=>nvsA22Team_(p.to)===nvsA22Team_(team)&&/to truong|ttcm|ttvp|truong bo phan/.test(nvsA22Norm_(p.chucVu||p.vaiTro))).map(p=>nvsA22User_(p)).filter(Boolean);
  const unique=a=>[...new Set(a)];
  if(!bgh.length)throw Error('Chưa xác định tài khoản BGH để tiếp nhận.');
  if(!cc.length)throw Error('Chưa xác định TTCM/TTVP của người gửi để đồng nhận.');
@@ -480,6 +726,14 @@ function nvsA22Validate_(packet,actor){
   if(rule.url.includes(k)&&!checkURL(v))throw Error('Liên kết HTTPS không hợp lệ: '+k);
   cleaned[k]=v;
  }
+ for(const k of rule.number){const v=cleaned[k];if(v&&(!/^\d+$/.test(v)||Number(v)>1000000))throw Error('Số lượng không hợp lệ: '+k);}
+ for(const k of rule.date){
+  const v=cleaned[k];if(v){
+   const dt=new Date(v+'T00:00:00Z');
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(v)||!Number.isFinite(dt.getTime())||dt.toISOString().slice(0,10)!==v)throw Error('Ngày không hợp lệ: '+k);
+  }
+ }
+ for(const [k,allowed] of Object.entries(rule.select)){if(cleaned[k]&&!allowed.includes(cleaned[k]))throw Error('Giá trị danh mục không hợp lệ: '+k);}
  if(['A.5.1','A.5.3'].includes(code)&&cleaned.tuNgay&&cleaned.denNgay&&cleaned.tuNgay>cleaned.denNgay)throw Error('Ngày kết thúc trước ngày bắt đầu.');
  const data={schema:'HVA-A22-SUBMITTED-1',code,schoolYear,title,content,result,subject,evidence,extras:cleaned,actorUsername:nvsA22User_(actor)};
  const raw=JSON.stringify(data);if(raw.length>30000)throw Error('Hồ sơ vượt giới hạn lưu trữ.');
