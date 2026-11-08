@@ -50,6 +50,8 @@ body.hva-ui-v1 .hva-ui-link-solid{
 }
 body.hva-ui-v1 .hva-ui-link-solid:hover{background:#064f80}
 body.hva-ui-v1 :where(.hva-ui-context-actions){display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+body.hva-ui-v1 :where(.hero-top,.hero-bar){flex-wrap:wrap;row-gap:10px}
+body.hva-ui-v1 :where(.hero-top,.hero-bar)>.hva-ui-context-actions{max-width:100%;min-width:0}
 @media(max-width:620px){
   body.hva-ui-v1 :where(.hva-ui-context-actions){gap:7px}
   body.hva-ui-v1 :where(.hva-ui-link){min-height:44px;padding:9px 10px}
