@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
+<title>Tra cứu tổng hợp – Quản trị HVA–EDOS</title>
+<style id="hva-admin-lookup-css">
+:root{font:14px/1.5 Inter,"Segoe UI",Arial,sans-serif;color:#183f5f;background:#f3f8fc}*{box-sizing:border-box}body{margin:0;min-width:280px}button,input,select,textarea{font:inherit}
+a{text-decoration:none;color:inherit}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #169adc;outline-offset:3px}
+body:not(.lookup-auth-ok) #app{display:none!important}#denied{display:none;background:white;border:1px solid #d2e5f0;border-radius:15px;padding:24px;margin:10vh auto;max-width:620px}
+body.lookup-auth-denied #denied{display:block}
+#denied h1{font-size:21px;margin:0 0 10px}#denied a{color:#096fac;font-weight:800}
+header{background:linear-gradient(112deg,#073f79,#0869a4 70%,#08a7bc);padding:19px max(17px,calc((100vw - 1200px)/2)) 69px;color:#fff}
+header .back{display:inline-block;border:1px solid #ffffff88;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:800}
+header h1{font-size:clamp(23px,3vw,33px);font-weight:880;margin:19px 0 5px}
+header p{font-size:12px;color:#dbf2ff;max-width:850px;margin:0;line-height:1.7}
+main{max-width:1200px;margin:-40px auto 40px;padding:0 16px;position:relative}
+.card{padding:20px;background:#fff;border:1px solid #d1e3f0;border-radius:16px;margin-bottom:16px;box-shadow:0 8px 30px #1646750d}
+.card h2{font-size:17px;margin:0 0 11px;color:#105984}
+.note{background:#fff8e7;border:1px solid #ead7ae;border-radius:10px;font-size:12px;color:#704f20;padding:11px 14px;line-height:1.7}
+.note strong{color:#6c4b17}
+.modebar{display:flex;gap:8px;margin:17px 0 14px;flex-wrap:wrap}
+.modebar button{padding:11px 14px;min-height:44px;font-weight:800;font-size:12px;color:#185781;background:#ecf6fc;border:1px solid #c8deeb;border-radius:10px;cursor:pointer}
+.modebar button[aria-pressed="true"]{background:#0868a4;color:#fff;border-color:#0868a4}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:11px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0;color:#315c7c;font-size:12px;font-weight:760}
+.field input,.field select,.field textarea{width:100%;min-height:42px;background:#fbfdff;border:1px solid #c2d9e9;border-radius:9px;padding:10px 11px;color:#204f70;outline-offset:2px}
+.field textarea{min-height:74px;resize:vertical}
+.field.wide{grid-column:1/-1}.field.double{grid-column:span 2}
+.line{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.line .field{flex:1;min-width:230px}
+.btn{background:#076da8;color:#fff;font-size:12px;font-weight:800;padding:10px 14px;min-height:43px;border:0;border-radius:9px;cursor:pointer}
+.btn.secondary{background:#e9f4fb;color:#145780;border:1px solid #c3dce9}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.search-person-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.person{background:#f7fbff;border:1px solid #d6e7f1;border-radius:9px;padding:10px 12px;text-align:left;cursor:pointer;color:#19557c;font-size:12px}
+.person strong{display:block;font-size:13px}.person small{display:block;color:#687d91;font-size:11px;margin-top:2px}
+.selected{font-size:12px;color:#0b6e4b;font-weight:750;margin:9px 0 0}
+.actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.status{font-size:12px;color:#4a7088;line-height:1.6;margin:10px 0}
+.status.error{color:#a82c3b}
+#resultCount{font-size:12px;color:#5b7d94}
+.sourcegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:13px 0}
+.source{background:#f9fcff;border:1px solid #d7e6f0;border-radius:10px;padding:11px 13px}
+.source strong{display:block;color:#1c547d;font-size:12px}.source p{font-size:11px;color:#607d90;line-height:1.5;margin:4px 0}.source em{font-size:10px;font-style:normal;font-weight:750}
+.source .ok{color:#167143}.source .no{color:#a44e28}
+.tablewrap{overflow-x:auto;border:1px solid #dce9f3;border-radius:11px;margin-top:12px}
+table{border-collapse:collapse;width:100%;min-width:1000px}
+td,th{border-bottom:1px solid #e5edf4;padding:10px 12px;text-align:left;font-size:12px;vertical-align:top}
+th{background:#eef6fb;color:#205c82;font-weight:800;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.summary{font-size:12px;line-height:1.7;color:#426c85;border:1px solid #d3e5ef;background:#f6fbfe;border-radius:10px;padding:11px 14px;margin:10px 0}
+[hidden]{display:none!important}footer{text-align:center;font-size:11px;color:#748da0;padding-bottom:25px}
+@media(max-width:810px){.fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:570px){.fields{grid-template-columns:1fr}.field.double{grid-column:1}.card{padding:14px}.search-person-list,.sourcegrid{grid-template-columns:1fr}.actions .btn{flex:1}}
+@media print{
+ header,.formcard,.actions,.no-print,footer{display:none!important}
+ body{background:#fff}main{max-width:none;padding:0;margin:0}
+ .card{padding:0;border:0;box-shadow:none;margin:0}
+ .tablewrap{overflow:visible;border:0}table{min-width:0;font-size:9pt}
+ td,th{font-size:9pt;padding:5px 7px}
+ #resultCard h2{font-size:17pt}
+}
+</style>
+<script id="hva-admin-lookup-guard">
+(function(){'use strict';
+const read=k=>{for(const key of ['sessionStorage','localStorage'])try{const x=window[key].getItem(k);if(x)return x}catch(_){}return''};
+const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
+function allowed(){
+ const raw=read('hvaSessionExpiresAt'),num=Number(raw),end=Number.isFinite(num)&&num>0?(num<1e12?num*1000:num):Date.parse(raw);
+ if(!read('hvaSessionToken')||!Number.isFinite(end)||end<=Date.now())return false;
+ let me={};try{me=JSON.parse(read('user')||'{}')||{}}catch(_){return false}
+ const role=norm([me.chucVu,me.viTriViecLam,me.vaiTro,me.role,me.chucDanh].filter(Boolean).join(' '));
+ const codes=String(me.vaiTro||me.role||'').toUpperCase().split(/[^A-Z0-9]+/);
+ return role.includes('hieu truong')||role.includes('ban giam hieu')||codes.includes('BGH');
+}
+document.addEventListener('DOMContentLoaded',()=>{const ok=allowed();document.body.classList.add(ok?'lookup-auth-ok':'lookup-auth-denied');document.getElementById('denied').hidden=ok;});
+})();
+</script>
+</head><body>
+<section id="denied" hidden role="alert"><h1>Chưa có quyền tra cứu tổng hợp</h1><p>Chỉ Ban Giám hiệu có phiên EDOS hợp lệ được truy cập giao diện này. Tài khoản quản trị kỹ thuật không mặc nhiên được đọc hồ sơ công tác giáo viên.</p><a href="./QuanTri.html">Về Quản trị</a></section>
+<div id="app"><header><a href="./QuanTri.html" class="back">← QUẢN TRỊ HỆ THỐNG</a>
+<h1>TRUNG TÂM TRA CỨU TỔNG HỢP</h1><p>Tra cứu theo giáo viên hoặc theo nội dung: báo cáo dạy thêm – học thêm, kiểm tra nội bộ, hồ sơ nghiệp vụ, giao việc. Có xuất Excel, CSV và bản in/PDF theo quyền.</p>
+</header>
+<main>
+<section class="card formcard" aria-labelledby="lookupFormTitle"><h2 id="lookupFormTitle">Điều kiện tra cứu</h2>
+<div class="note"><strong>Nguyên tắc kiểm chứng:</strong> Chỉ hiển thị hồ sơ từ nguồn Backend đã xác thực. “Không tìm thấy bản ghi” không đồng nghĩa giáo viên chưa thực hiện. Kiểm tra nội bộ hiện chưa có kho hồ sơ tập trung được xác minh. Mọi lần tra cứu và xuất file phải có mục đích và nhật ký trên máy chủ.</div>
+<div class="modebar" role="group" aria-label="Chế độ tìm kiếm">
+<button id="modePerson" aria-pressed="true" type="button">Theo giáo viên / nhân viên</button>
+<button id="modeTopic" aria-pressed="false" type="button">Theo nội dung nghiệp vụ</button></div>
+<div id="personPanel">
+<div class="line"><label class="field" for="personQuery">Tên hoặc tài khoản giáo viên
+<input id="personQuery" autocomplete="off" maxlength="100" placeholder="Nhập ít nhất 2 ký tự"></label>
+<button id="findPeople" type="button" class="btn secondary" disabled>Tìm giáo viên</button></div>
+<div id="peopleList" class="search-person-list" aria-live="polite"></div>
+<p id="peopleStatus" class="status" role="status">Chưa tìm giáo viên.</p>
+<p id="pickedPerson" class="selected" hidden></p></div>
+<div class="fields">
+<label class="field" for="topic">Nội dung cần tra cứu
+<select id="topic"><option value="all">Tất cả nghiệp vụ</option><option value="dtht">Dạy thêm – học thêm (DTHT)</option><option value="ktnb">Kiểm tra nội bộ</option><option value="a22">Hồ sơ nghiệp vụ nhóm A</option><option value="task">Giao việc – báo cáo kết quả</option></select></label>
+<label class="field" for="schoolYear">Năm học
+<input id="schoolYear" maxlength="9" placeholder="2026-2027"></label>
+<label class="field" for="team">Tổ / bộ phận
+<input id="team" maxlength="100" placeholder="Để trống nếu toàn trường"></label>
+<label class="field wide" for="keyword">Từ khóa hồ sơ / nội dung công việc
+<input id="keyword" maxlength="180" placeholder="Ví dụ: báo cáo, kiểm tra, chuyên đề, mã hồ sơ..."></label>
+<label class="field wide" for="reason">Mục đích tra cứu <span aria-hidden="true">*</span>
+<textarea id="reason" maxlength="300" required placeholder="Nêu rõ mục đích quản lý, kiểm tra, đối chiếu, báo cáo..."></textarea></label>
+</div>
+<div class="actions">
+<button id="search" class="btn" disabled>Tra cứu hồ sơ</button>
+<button id="clear" class="btn secondary" type="button">Xóa điều kiện</button>
+<span id="serviceStatus" class="status" role="status">Đang kiểm tra kết nối Backend tra cứu.</span>
+</div></section>
+<section class="card" id="resultCard" aria-labelledby="resultTitle">
+<h2 id="resultTitle">Kết quả tra cứu</h2>
+<div id="reportSummary" class="summary">Chưa có kết quả xác thực từ hệ thống.</div>
+<p id="resultsStatus" class="status" role="status" aria-live="polite">Chọn điều kiện và tra cứu để xem thông tin.</p>
+<div id="sourceList" class="sourcegrid"></div>
+<div class="actions no-print"><button id="exportXlsx" class="btn" disabled>Xuất Excel (.xlsx)</button>
+<button id="exportCsv" class="btn secondary" disabled>Xuất CSV</button>
+<button id="exportPdf" class="btn secondary" disabled>In / lưu PDF</button><span id="resultCount">Chưa có dữ liệu.</span></div>
+<div class="tablewrap"><table><thead><tr><th>Nguồn</th><th>Mã hồ sơ</th><th>Giáo viên / tổ</th><th>Năm học</th><th>Nội dung</th><th>Trạng thái</th><th>Cập nhật</th><th>Ghi chú</th></tr></thead>
+<tbody id="rows"><tr><td colspan="8">Chưa có kết quả từ Backend.</td></tr></tbody></table></div>
+<p class="status">Bản xuất chỉ là bảng tổng hợp để đối chiếu; hồ sơ gốc, bản scan và quyền truy cập chi tiết vẫn quản lý tại phân hệ nguồn.</p>
+</section></main><footer>HVA–EDOS · Trường THPT Hòa Vang · Quản trị và tra cứu có kiểm soát</footer></div>
+<script src="./HVA_Admin_Lookup_Export.js"></script>
+<script src="./HVA_Admin_Lookup_Controller.js"></script>
+</body></html>
