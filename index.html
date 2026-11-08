@@ -1048,7 +1048,7 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-admin" id="nvsAdminGate" href="./DieuHanh.html" aria-label="Vào BGH – Điều hành"><span class="nvs-gate-icon"><i class="bi bi-bank"></i></span><strong>BAN GIÁM HIỆU<em>ĐIỀU HÀNH</em></strong><span>Thông báo – Phát hành · Lịch công tác · Cuộc họp · Theo dõi và xử lý</span><span class="nvs-gate-enter">Vào Điều hành <i class="bi bi-arrow-right"></i></span></a></div>
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-work" id="nvsWorkGate" href="./NghiepVu.html?edrev=20261105a1a6" aria-label="Vào Giáo viên – Nhân viên – Tác nghiệp số"><span class="nvs-gate-icon"><i class="bi bi-pc-display-horizontal"></i></span><strong>GIÁO VIÊN – NHÂN VIÊN<em>TÁC NGHIỆP SỐ</em></strong><span>TTCM · TPCM · GV · NV<br>Nhận nhiệm vụ · Lập báo cáo · Nộp sản phẩm · Tra cứu công việc</span><span class="nvs-gate-enter">Vào Tác nghiệp <i class="bi bi-arrow-right"></i></span></a></div>
       <div class="nvs-gate-wrap nvs-gate-learning-wrap"><a class="nvs-gate nvs-gate-learning" id="nvsLearningGate" href="./KhoHocLieuSo.html" aria-label="Học liệu số – chờ HVA Learning Studio"><span class="nvs-gate-icon"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i></span><strong>HỌC LIỆU SỐ<em>Chờ Kim Quy 2 hoàn thiện</em></strong><span>Giáo án · Bài giảng · Ngân hàng câu hỏi · Học liệu trực quan</span><span class="nvs-gate-enter">Xem phân hệ <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
-      <div class="nvs-gate-wrap nvs-gate-documents-wrap"><a class="nvs-gate nvs-gate-documents" id="nvsDocumentGate" href="./VanBan_QuyDinh.html" aria-label="Kho văn bản – biểu mẫu số và hồ sơ điện tử"><span class="nvs-gate-icon"><i class="bi bi-folder2-open" aria-hidden="true"></i></span><strong>KHO VB – BM SỐ<em>Văn bản · Hồ sơ điện tử</em></strong><span>Hồ sơ điện tử · Văn bản số · Biểu mẫu</span><span class="nvs-gate-enter">Mở kho VB – BM <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
+      <div class="nvs-gate-wrap nvs-gate-documents-wrap"><a class="nvs-gate nvs-gate-documents" id="nvsDocumentGate" href="./VanBan_QuyDinh.html" aria-label="Văn bản - Biểu mẫu và hồ sơ điện tử"><span class="nvs-gate-icon"><i class="bi bi-folder2-open" aria-hidden="true"></i></span><strong>VĂN BẢN - BIỂU MẪU<em>Văn bản · Hồ sơ điện tử</em></strong><span>Hồ sơ điện tử · Văn bản số · Biểu mẫu</span><span class="nvs-gate-enter">Mở văn bản - biểu mẫu <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
     </div>
     <div class="nvs-v4-actions" aria-label="Tiện ích công vụ">
       <button type="button" id="nvsOpenRemind" hidden style="display:none" class="nvs-v4-action nvs-v4-remind nvs-remind-trigger nvs-v7-circle nvs-v7-orange" aria-haspopup="dialog" aria-controls="nvsRemindOverlay" aria-label="Mở Nhắc nhở công vụ"><span>Nhắc nhở<br>công vụ</span></button>
@@ -3624,6 +3624,18 @@ html body nav.nvs-premium-nav>button:focus-visible{
 @media(prefers-reduced-motion:reduce){
  html body nav.nvs-premium-nav>button,
  html body nav.nvs-premium-nav>button>i.bi{transition:none!important;animation:none!important}
+}
+</style>
+<style id="hva-four-gates-title-contrast-20261108">
+/* Đồng nhất tiêu đề bốn cổng với HỌC LIỆU SỐ; chỉ chỉnh chữ tiêu đề.
+   Không thay màu chú thích <em>, màu nền, nhãn chức năng hoặc hành vi điều hướng. */
+body .nvs-chooser .nvs-two-gates #nvsAdminGate > strong,
+body .nvs-chooser .nvs-two-gates #nvsWorkGate > strong,
+body .nvs-chooser .nvs-two-gates #nvsLearningGate > strong,
+body .nvs-chooser .nvs-two-gates #nvsDocumentGate > strong {
+ color:#fff!important;
+ font-weight:900!important;
+ text-shadow:0 2px 7px rgba(0,20,55,.9)!important;
 }
 </style>
 <style id="hva-online-status-minimal">
