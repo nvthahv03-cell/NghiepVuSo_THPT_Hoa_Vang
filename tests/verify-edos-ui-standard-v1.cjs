@@ -29,8 +29,13 @@ check('Học liệu số still marked as preview',f['KhoHocLieuSo.html'].include
 check('Help page has stable back to homepage',h.includes('href="./index.html"')&&h.includes('id="guideSearch"'));
 check('Personal lookup still requires token',f['NVS_TraCuu_CaNhan.html'].includes("getItem('hvaSessionToken')"));
 check('No PASS–LOCK module styled by new opt-in',!f['BC_ChuNhiem.html'].includes('HVA_EDOS_UI_Standard_V1.css')&&!f['BC_DayThemHocThem.html'].includes('HVA_EDOS_UI_Standard_V1.css'));
+const a=f['A.1.1. NhiemVu_BaoCao.html']||'',training=f['TapHuan.html']||'';
+check('A1.1 no longer references missing assistant script',!a.includes('src="./NVS_A1.assistant.js"'));
+check('A1.1 disabled 3 AI buttons awaiting backend',([...a.matchAll(/<button\b[^>]*data-nvs-nav="ai"[^>]*>/g)]).length===3&&[...a.matchAll(/<button\b[^>]*data-nvs-nav="ai"[^>]*>/g)].every(m=>m[0].includes(' disabled')));
+check('Training module links back to actual NghiepVu.html',training.includes('href="./NghiepVu.html"')&&!training.includes('NVS_NghiepVu.html'));
+check('Header help links point to existing guide',pages.filter(x=>x!=='HuongDanSuDung.html').every(x=>(f[x]||'').includes('href="./HuongDanSuDung.html"')));
 const {passed,total,failed}={passed:c.filter(x=>x.pass).length,total:c.length,failed:c.filter(x=>!x.pass)};
 return{pass:passed===total,passed,total,failed,checks:c};
 }
 module.exports={verify};
-if(require.main===module){const fs=require('node:fs'),path=require('node:path');const names=['DieuHanh.html','NghiepVu.html','QuanTri.html','NVS_TraCuu_CaNhan.html','NVS_QuanTri_TraCuu.html','KhoHocLieuSo.html','HuongDanSuDung.html','HVA_EDOS_UI_Standard_V1.css','BC_ChuNhiem.html','BC_DayThemHocThem.html'];const f=Object.fromEntries(names.map(n=>[n,fs.readFileSync(path.join(__dirname,'..',n),'utf8')]));const r=verify(f);console.log(JSON.stringify(r,null,2));process.exitCode=r.pass?0:1;}
+if(require.main===module){const fs=require('node:fs'),path=require('node:path');const names=['DieuHanh.html','NghiepVu.html','QuanTri.html','NVS_TraCuu_CaNhan.html','NVS_QuanTri_TraCuu.html','KhoHocLieuSo.html','HuongDanSuDung.html','HVA_EDOS_UI_Standard_V1.css','BC_ChuNhiem.html','BC_DayThemHocThem.html','A.1.1. NhiemVu_BaoCao.html','TapHuan.html'];const f=Object.fromEntries(names.map(n=>[n,fs.readFileSync(path.join(__dirname,'..',n),'utf8')]));const r=verify(f);console.log(JSON.stringify(r,null,2));process.exitCode=r.pass?0:1;}
