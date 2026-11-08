@@ -62,6 +62,10 @@ footer{text-align:center;font-size:12px;color:#6c859a;padding-bottom:25px}
 <div class="stat"><strong id="s-review">—</strong><span>Chờ xác nhận</span></div>
 <div class="stat"><strong id="s-other">—</strong><span>Các trạng thái khác</span></div></div>
 <p class="status" id="status-results" role="status" aria-live="polite">Chưa có kết quả xác thực từ máy chủ.</p>
+<div class="notice" style="margin:14px 0"><strong>Hồ sơ nghiệp vụ nhóm A đã nộp:</strong> <strong id="s-forms">—</strong>.
+<span id="s-forms-note">Chưa có dữ liệu được máy chủ xác nhận.</span>
+<a class="link" href="./NVS_TraCuu_CaNhan.html?view=files">Xem hồ sơ đã tiếp nhận</a>.
+Đây là số lượng hồ sơ, không phải kết quả xếp loại.</div>
 <button class="btn" id="reload-results">Cập nhật kết quả</button>
 <p class="sub" style="margin-top:18px"><strong>NQ52 – Đánh giá hiệu quả công việc:</strong> Chờ phân hệ độc lập được nghiệm thu, chưa tổng hợp hoặc xếp loại NQ52 tại đây.</p>
 </section>
@@ -107,6 +111,7 @@ function renderTasks(){
  }
 }
 function renderResults(){
+ const f=state.files;$('s-forms').textContent=Array.isArray(f)?String(f.length):'—';$('s-forms-note').textContent=Array.isArray(f)?'Dữ liệu hồ sơ đã tiếp nhận (không bao gồm bản nháp).':'Chưa kết nối tuyến tiếp nhận A22.';
  const r=state.tasks;if(!Array.isArray(r)){for(const k of ['all','done','review','other'])$('s-'+k).textContent='—';return}
  const done=r.filter(x=>x.status==='Đã hoàn thành').length,review=r.filter(x=>x.status==='Chờ xác nhận').length;
  $('s-all').textContent=String(r.length);$('s-done').textContent=String(done);$('s-review').textContent=String(review);
@@ -116,8 +121,8 @@ function renderResults(){
 async function getFiles(){
  $('reload-files').disabled=true;setStatus('files','Đang tải danh sách hồ sơ đã tiếp nhận...');
  try{const r=await api('nvsA22ListMine');if(!Array.isArray(r.records))throw Error('Backend không trả danh sách hồ sơ.');
- state.files=r.records;renderFiles();setStatus('files','Đã tải '+r.records.length+' hồ sơ được gửi bằng tài khoản hiện tại.');
- }catch(e){state.files=null;empty($('rows-files'),5,'Không có dữ liệu đã xác minh.');setStatus('files','Chưa truy xuất được hồ sơ: '+e.message,true)}
+ state.files=r.records;renderFiles();renderResults();setStatus('files','Đã tải '+r.records.length+' hồ sơ được gửi bằng tài khoản hiện tại.');
+ }catch(e){state.files=null;renderResults();empty($('rows-files'),5,'Không có dữ liệu đã xác minh.');setStatus('files','Chưa truy xuất được hồ sơ: '+e.message,true)}
  finally{$('reload-files').disabled=false}
 }
 async function getTasks(){
@@ -147,6 +152,7 @@ function selectView(view){
  const u=new URL(location.href);u.searchParams.set('view',view);history.replaceState(null,'',u.pathname+u.search+u.hash);
  if(view==='files'&&!Array.isArray(state.files))getFiles();
  if((view==='tasks'||view==='results')&&!Array.isArray(state.tasks))getTasks();
+ if(view==='results'&&!Array.isArray(state.files))getFiles();
 }
 for(const tab of document.querySelectorAll('.tab'))tab.addEventListener('click',()=>selectView(tab.dataset.view));
 $('filter-files').addEventListener('input',renderFiles);$('filter-tasks').addEventListener('input',renderTasks);
