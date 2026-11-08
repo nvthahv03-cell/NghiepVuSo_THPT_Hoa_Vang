@@ -73,9 +73,9 @@ function allowed(){
 document.addEventListener('DOMContentLoaded',()=>{const ok=allowed();document.body.classList.add(ok?'lookup-auth-ok':'lookup-auth-denied');document.getElementById('denied').hidden=ok;});
 })();
 </script>
-</head><body>
+<link rel="stylesheet" href="./HVA_EDOS_UI_Standard_V1.css"></head><body class="hva-ui-v1">
 <section id="denied" hidden role="alert"><h1>Chưa có quyền tra cứu tổng hợp</h1><p>Chỉ Ban Giám hiệu có phiên EDOS hợp lệ được truy cập giao diện này. Tài khoản quản trị kỹ thuật không mặc nhiên được đọc hồ sơ công tác giáo viên.</p><a href="./QuanTri.html">Về Quản trị</a></section>
-<div id="app"><header><a href="./QuanTri.html" class="back">← QUẢN TRỊ HỆ THỐNG</a>
+<div id="app"><header><div class="hva-ui-context-actions"><a href="./QuanTri.html" class="back">← QUẢN TRỊ HỆ THỐNG</a><a class="hva-ui-link hva-ui-link-light" href="./HuongDanSuDung.html">Hướng dẫn</a></div>
 <h1>TRUNG TÂM TRA CỨU TỔNG HỢP</h1><p>Tra cứu theo giáo viên hoặc theo nội dung: báo cáo dạy thêm – học thêm, kiểm tra nội bộ, hồ sơ nghiệp vụ, giao việc. Có xuất Excel, CSV và bản in/PDF theo quyền.</p>
 </header>
 <main>
