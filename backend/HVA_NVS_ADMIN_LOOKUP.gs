@@ -41,6 +41,14 @@ function nvsAdminLookupSafeSheet_(name){
   if(!sh)return null; // Không tự tạo sheet hay coi thiếu sheet là 0 hồ sơ
   const expected={NVS_DTHT:19,NVS_HO_SO_A22:13,NVS_GIAO_VIEC:17};
   if(sh.getLastColumn()<(expected[name]||1))throw Error('Cấu trúc dữ liệu nguồn chưa tương thích.');
+  const known={
+    NVS_HO_SO_A22:['RecordId','RequestId','Code','Title','Owner','OwnerName','Team','CreatedAt','Status','BGH','CC_TTCM','PayloadJson','UpdatedAt'],
+    NVS_GIAO_VIEC:['RecordId','TaskId','Title','Content','Deadline','Priority','Deliverable','SourceUrl','Assignee','AssigneeName','Assigner','AssignerName','Status','ResultUrl','Note','CreatedAt','UpdatedAt']
+  };
+  if(known[name]){
+    const header=sh.getRange(1,1,1,known[name].length).getDisplayValues()[0];
+    if(header.join('|')!==known[name].join('|'))throw Error('Tiêu đề cột không đúng hợp đồng nguồn; đã chặn tra cứu để tránh gán nhầm giáo viên.');
+  }
   if(sh.getLastRow()<2)return [];
   if(sh.getLastRow()>100000)throw Error('Nguồn dữ liệu vượt ngưỡng đọc an toàn.');
   return sh.getRange(2,1,sh.getLastRow()-1,sh.getLastColumn()).getDisplayValues();
@@ -49,16 +57,18 @@ function nvsAdminLookupAudit_(username,operation,query,count){
   if(typeof CommonDb==='undefined'||typeof CommonDb.ensureSheet!=='function')throw Error('Nhật ký kiểm toán chưa khả dụng; không trả dữ liệu.');
   const sh=CommonDb.ensureSheet('DB_AuditLog',['Thời gian','Hành động','Người thực hiện','Mã đối tượng','Chi tiết']);
   if(!sh)throw Error('Không ghi được nhật ký tra cứu.');
-  const detail={module:'QUAN_TRI_TRA_CUU_V1',operation,mode:query.mode||'',topic:query.topic||'',teacherUsername:query.teacherUsername||'',schoolYear:query.schoolYear||'',keyword:query.keyword||'',resultCount:count};
+  const detail={module:'QUAN_TRI_TRA_CUU_V1',operation,mode:query.mode||'',topic:query.topic||'',teacherUsername:query.teacherUsername||'',schoolYear:query.schoolYear||'',keyword:query.keyword||'',reason:query.reason||'',resultCount:count};
   // Không ghi sessionToken, dữ liệu báo cáo hay nội dung cá nhân vào nhật ký
   sh.appendRow([new Date(),'ADMIN_LOOKUP',username,'QUAN_TRI',JSON.stringify(detail)]);
 }
 function nvsAdminLookupDisplayPerson_(p){return{username:nvsAdminLookupUsername_(p),name:String(p.hoTen||'').slice(0,150),team:String(p.to||p.toBoPhan||'').slice(0,100),role:String(p.chucVu||p.vaiTro||'').slice(0,100)}}
 function nvsAdminLookupPeople_(q,access){
   const text=nvsAdminLookupNorm_(nvsAdminLookupText_(q.query,100));
+  const reason=nvsAdminLookupText_(q.reason,300);
+  if(reason.length<8)throw Error('Chưa nêu đủ mục đích tra cứu nhân sự.');
   if(text.length<2)throw Error('Nhập ít nhất 2 ký tự để tìm giáo viên/nhân viên.');
   const result=access.roster.map(nvsAdminLookupDisplayPerson_).filter(p=>nvsAdminLookupNorm_([p.name,p.username,p.team].join(' ')).includes(text)).slice(0,HVA_ADMIN_LOOKUP_V1_.maxPeople);
-  nvsAdminLookupAudit_(access.username,'PEOPLE',{mode:'person',keyword:text},result.length);
+  nvsAdminLookupAudit_(access.username,'PEOPLE',{mode:'person',keyword:text,reason},result.length);
   return{success:true,people:result,limit:HVA_ADMIN_LOOKUP_V1_.maxPeople};
 }
 function nvsAdminLookupCell_(row,i){return String(row[i]==null?'':row[i]).trim()}
