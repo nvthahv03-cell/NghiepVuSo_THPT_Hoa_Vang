@@ -67,6 +67,7 @@ function verify(f){
  tables.NVS_DTHT=saved;
  test('Kết quả trên 150 bị đánh dấu cắt, không giả đầy đủ',large?.truncated===true&&large.records.length===150&&large.totalFound>150);
  test('Client khóa xuất nếu dữ liệu bị cắt',ct.includes('state.results.truncated')&&ct.includes('result.truncated'));
+ test('Client khóa xuất nếu không có nguồn nào CONNECTED',ct.includes("state.results.sources.some(x=>x.status==='CONNECTED')")&&ct.includes("!state.results.sources?.some(x=>x.status==='CONNECTED')"));
  test('Client xuất phải dùng action có audit trên server',ct.includes("api('nvsAdminLookupExport',c)"));
  test('Client in PDF sau khi Backend xác thực',ct.includes("window.print()")&&ct.includes("nvsAdminLookupExport"));
  test('Client chặn xuất khi thiếu Backend',ct.includes('!state.ready||state.busy||!state.results'));
@@ -84,7 +85,19 @@ function verify(f){
  const bytes=excel?.buildXlsx(rows);
  test('File XLSX có chữ ký ZIP chuẩn',bytes?.[0]===0x50&&bytes?.[1]===0x4b&&bytes?.length>2000);
  test('CSV UTF-8 BOM và ngăn Excel formula injection',csv?.startsWith('\uFEFF')&&csv.includes('\'=HYPERLINK'));
- test('XLSX lưu công thức độc hại dưới kiểu inlineStr',!!bytes&&Array.from(bytes).some((x,i)=>x===105&&bytes[i+1]===110&&bytes[i+2]===108&&bytes[i+3]===105)); // inlineStr marker
+ test('XLSX lưu công thức độc hại dưới kiểu inlineStr',!!bytes&&Array.from(bytes).some((x,i)=>x===105&&bytes[i+1]===110&&bytes[i+2]===108&&bytes[i+3]===105));
+ let archiveOk=false;try{
+  const u16=i=>bytes[i]|bytes[i+1]<<8,u32=i=>(bytes[i]|(bytes[i+1]<<8)|(bytes[i+2]<<16)|(bytes[i+3]<<24))>>>0;
+  const decoder=v=>String.fromCharCode(...v);
+  const names=[],strings=[];let at=0,guard=0;
+  while(u32(at)===0x04034b50&&guard++<10){
+    const n=u16(at+26),extra=u16(at+28),size=u32(at+18),name=decoder(bytes.slice(at+30,at+30+n));
+    names.push(name);strings.push(decoder(bytes.slice(at+30+n+extra,at+30+n+extra+size)));at+=30+n+extra+size;
+  }
+  let central=0;while(u32(at)===0x02014b50&&central++<10)at+=46+u16(at+28)+u16(at+30)+u16(at+32);
+  archiveOk=names.length===5&&central===5&&u32(at)===0x06054b50&&names.includes('[Content_Types].xml')&&names.includes('xl/worksheets/sheet1.xml')&&strings.some(x=>x.includes('inlineStr'));
+ }catch(_){}
+ test('ZIP XLSX đúng 5 file, mục lục trung tâm và kết thúc chuẩn',archiveOk);
  test('Trang không nhúng API key bí mật',!/(?:AIza|sk-)[A-Za-z0-9_-]{18,}/.test(h+ct+ex));
  return{pass:checks.every(x=>x.pass),passed:checks.filter(x=>x.pass).length,total:checks.length,failed:checks.filter(x=>!x.pass),checks};
 }
