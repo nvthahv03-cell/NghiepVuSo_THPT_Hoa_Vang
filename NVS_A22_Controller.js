@@ -111,7 +111,7 @@ function applyDraft(raw){
  return raw.schema==='HVA-DRAFT-1';
 }
 by('form').addEventListener('submit',e=>{e.preventDefault();preview()});
-by('export').addEventListener('click',()=>{if(!validate())return;const data=draft();makeDownload('HVA_'+data.form.code.replaceAll('.','_')+'_DU_THAO.json',JSON.stringify(data,null,2));notice('Đã tải bản nháp JSON về thiết bị. Không phải hồ sơ đã gửi BGH.',true)});
+by('export').addEventListener('click',()=>{if(!validate())return;const data=draft();makeDownload('HVA_'+data.form.code.replaceAll('.','_')+'_DU_THAO.json',JSON.stringify(data,null,2));notice('Tệp JSON là bản sao dữ liệu để lưu và chỉnh sửa; không phải giấy biên nhận nộp hồ sơ.',true)});
 by('import').addEventListener('click',()=>by('file').click());
 by('file').addEventListener('change',async e=>{
  const f=e.target.files?.[0];if(!f)return;
@@ -131,7 +131,7 @@ by('restoreSession').addEventListener('click',()=>{
  applyDraft(JSON.parse(saved));notice('Đã nạp bản nháp trong phiên. Chưa gửi máy chủ.',true)}
  catch(err){notice('Không thể khôi phục bản nháp: '+err.message)}
 });
-by('print').addEventListener('click',()=>{if(preview())window.print()});
+by('print').addEventListener('click',()=>{if(submittedId){window.print();return}if(preview())window.print()});
 by('edit').addEventListener('click',()=>by('form').scrollIntoView({behavior:'smooth'}));
 select.addEventListener('change',()=>{setCode(select.value);notice('Đã chuyển mẫu. Hãy kiểm tra lại thông tin trước khi xuất.')});
 by('send').disabled=true;
@@ -167,7 +167,7 @@ async function probeBackend(){
   notice('Chưa thể nộp hồ sơ: '+err.message+' Có thể lưu nháp và xuất JSON.');
  }
 }
-by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('send').disabled=!canSubmit;if(canSubmit)by('send').textContent='Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM';});
+by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('previewPanel').classList.add('hidden');by('send').disabled=!canSubmit;if(canSubmit)by('send').textContent='Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM';});
 select.addEventListener('change',()=>{clientRequestId=null;submittedId='';if(canSubmit){by('send').disabled=false;by('send').textContent='Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM';}});
 by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
 by('restoreSession').addEventListener('click',()=>{clientRequestId=null;submittedId=''});
@@ -183,7 +183,7 @@ by('send').addEventListener('click',async()=>{
   const r=await a22API('nvsA22Submit',{document:{clientRequestId,form:data.base,extras:data.extras}});
   if(!r.recordId||!r.bghCount||!r.ccCount)throw Error('Backend chưa cấp đủ mã tiếp nhận và người nhận.');
   notice('ĐÃ TIẾP NHẬN hồ sơ số '+r.recordId+' · BGH: '+r.bghCount+' · TTCM: '+r.ccCount+'. Trạng thái: '+r.status+'. '+(r.notificationStatus==='NOT_CONFIGURED'?'Thông báo tự động chưa được cấu hình.':'') ,true);
-  by('preview').textContent=linesFor(data).join('\n')+'\n\nMÃ TIẾP NHẬN: '+r.recordId+'\nTRẠNG THÁI: '+r.status;
+  by('preview').textContent=linesFor(data).map(x=>x==='BẢN DỰ THẢO — CHƯA KÝ — CHƯA GỬI'?'ĐÃ TIẾP NHẬN — CHỜ PHÊ DUYỆT — CHƯA KÝ SỐ':x).join('\n')+'\n\nMÃ TIẾP NHẬN: '+r.recordId+'\nTRẠNG THÁI: '+r.status;
   by('previewPanel').classList.remove('hidden');by('previewPanel').scrollIntoView({behavior:'smooth'});
   submittedId=r.recordId;
  }catch(err){notice('CHƯA XÁC NHẬN NỘP HỒ SƠ: '+err.message+' Nếu mạng gián đoạn, hãy thử lại mà không sửa nội dung để tránh gửi trùng.')}
