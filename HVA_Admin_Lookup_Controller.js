@@ -129,7 +129,7 @@ async function output(kind){
    state.results=result;render(result,c);
    window.print();
   }
-  note('resultsStatus','Đã thực hiện yêu cầu xuất '+(kind==='xlsx'?'Excel (.xlsx)':kind==='csv'?'CSV':'bản in/PDF')+' sau khi Backend kiểm tra quyền và ghi nhật ký. Tệp chỉ chứa dữ liệu trả về theo quyền.',false);
+  note('resultsStatus',kind==='pdf'?'Đã gọi hộp thoại in. Chọn “Lưu dưới dạng PDF” để tạo tệp; Backend đã ghi nhật ký yêu cầu xuất.':'Đã yêu cầu tải '+(kind==='xlsx'?'Excel (.xlsx)':'CSV')+' sau khi Backend kiểm tra quyền và ghi nhật ký. Nội dung chỉ gồm dữ liệu đã được phân quyền.',false);
  }catch(e){note('resultsStatus','Chưa xuất file: '+e.message,true)}
  finally{state.busy=false;buttons()}
 }
