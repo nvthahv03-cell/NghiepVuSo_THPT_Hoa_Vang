@@ -8,6 +8,7 @@ const note=(id,v,err=false)=>{const t=by(id);t.textContent=String(v||'');t.class
 const el=(tag,value,cl)=>{const x=document.createElement(tag);x.textContent=String(value??'');if(cl)x.className=cl;return x};
 const topicNames={all:'Tất cả nghiệp vụ',dtht:'Dạy thêm – học thêm',ktnb:'Kiểm tra nội bộ',a22:'Hồ sơ nhóm A',task:'Giao việc'};
 function buttons(){
+ for(const id of ['modePerson','modeTopic','clear','personQuery','topic','schoolYear','team','keyword','reason'])by(id).disabled=state.busy;
  by('search').disabled=!state.ready||state.busy;
  by('findPeople').disabled=!state.ready||state.busy;
  for(const id of ['exportXlsx','exportCsv','exportPdf'])by(id).disabled=!state.ready||state.busy||!state.results||state.results.truncated;
@@ -109,7 +110,7 @@ async function search(){
 }
 function exportMeta(data,c){
  let viewer='';try{const u=JSON.parse(read('user')||'{}');viewer=String(u.hoTen||u.username||'')}catch(_){}
- return{mode:c.mode,viewer,teacher:c.teacherUsername?(state.person?.name||c.teacherUsername):'Toàn trường',
+ return{mode:c.mode,viewer,teacher:c.teacherUsername||'Toàn trường',
   topic:topicNames[c.topic],schoolYear:c.schoolYear||'Tất cả',team:c.team||'Toàn trường',keyword:c.keyword||'',
   reason:c.reason,totalFound:data.totalFound,truncated:!!data.truncated,exportedAt:new Date().toISOString()};
 }
@@ -125,10 +126,8 @@ async function output(kind){
   if(kind==='xlsx')x.xlsx(result.records,meta,result.sources);
   else if(kind==='csv')x.csvFile(result.records,meta,result.sources);
   else {
-   const old=state.results;
    state.results=result;render(result,c);
    window.print();
-   if(state.criteria!==c)state.criteria={...c};
   }
   note('resultsStatus','Đã thực hiện yêu cầu xuất '+(kind==='xlsx'?'Excel (.xlsx)':kind==='csv'?'CSV':'bản in/PDF')+' sau khi Backend kiểm tra quyền và ghi nhật ký. Tệp chỉ chứa dữ liệu trả về theo quyền.',false);
  }catch(e){note('resultsStatus','Chưa xuất file: '+e.message,true)}
