@@ -770,17 +770,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 </style>
-<style id="edos-v32-role-exclusive">
-.edos-footer-reminder{display:none!important}
-.nvs-quick>#nvsQuickWork[hidden],.nvs-quick>#nvsOpenRemind[hidden]{display:none!important}
-.nvs-quick>#nvsOpenRemind{position:static!important;inset:auto!important;transform:none!important;min-width:0!important;width:100%!important;max-width:none!important;box-sizing:border-box!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px!important;padding:8px 3px!important;border:1.5px solid #b7d9f5!important;border-radius:12px!important;background:linear-gradient(140deg,#fff8ef,#f0f8ff)!important;color:#07518d!important;box-shadow:none!important;text-shadow:none!important;cursor:pointer!important}
-.nvs-quick>#nvsOpenRemind .nvs-quick-icon{display:grid!important;place-items:center!important;width:39px!important;height:39px!important;border-radius:11px!important;background:linear-gradient(140deg,#ff9b23,#f36b0b)!important;color:#fff!important;box-shadow:0 4px 10px #e5792340!important}
-.nvs-quick>#nvsOpenRemind .nvs-quick-icon i{font-size:22px!important;color:#fff!important}
-.nvs-quick>#nvsOpenRemind strong{color:#07518d!important;font-size:clamp(10px,1.3vw,13px)!important;line-height:1.2!important;text-align:center!important}
-.nvs-quick>#nvsOpenRemind::before{content:none!important;display:none!important}
-.nvs-quick>#nvsOpenRemind:hover{border-color:#f59e0b!important;background:#fff5e8!important}
-@media(max-width:720px){.nvs-quick>#nvsOpenRemind .nvs-quick-icon{width:34px!important;height:34px!important}.nvs-quick>#nvsOpenRemind strong{font-size:clamp(9px,2.35vw,12px)!important}}
-</style>
+
 <style id="edos-v33-assistant-style">
 .edos-v33-brand{display:flex;align-items:center;gap:10px;min-width:0}.edos-v33-robot{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#e9faff,#76c9ff);font-size:29px;box-shadow:0 3px 10px #0003}.edos-v33-brand>div{min-width:0}.edos-ai-heading .edos-v33-brand strong{display:block}.edos-ai-heading .edos-v33-brand small{margin-top:2px}.edos-ai-greeting #edosGreetingWish{color:#f0f9ff;font-weight:600;font-size:11px;line-height:1.5;margin-top:5px}.edos-ai-greeting #edosGreetingRole{font-size:10px;line-height:1.5}.edos-ai-greeting{height:auto!important;min-height:0!important;overflow:visible!important}@media(max-width:600px){.edos-v33-robot{width:36px;height:36px;flex-basis:36px;font-size:25px}.edos-v33-brand{gap:7px}.edos-ai-greeting #edosGreetingWish{font-size:10px}}
 </style>
@@ -3604,6 +3594,36 @@ html body nav.nvs-premium-nav>button:hover>i.bi {
   font-size:clamp(21px,5.6vw,24px)!important;border-radius:12px!important;
  }
  html body nav.nvs-premium-nav>button>span{font-size:clamp(9px,2.35vw,11px)!important;line-height:1.28!important;min-height:34px!important}
+}
+
+/* Chốt hành vi tương tác và màn hình nhỏ, tránh hiệu ứng 3D của CSS đời trước. */
+html body nav.nvs-premium-nav>button:active>i.bi,
+html body nav.nvs-premium-nav>button:focus-visible>i.bi {
+ transform:none!important;filter:none!important;
+ box-shadow:0 0 0 2px #ffffff,0 0 0 4px #1779bd!important;
+}
+html body nav.nvs-premium-nav>button:focus-visible{
+ outline:2px solid #096bae!important;
+ outline-offset:-2px!important;
+}
+@media(max-width:360px){
+ html body nav.nvs-premium-nav,
+ html body .nvs-chooser nav.nvs-premium-nav{
+  width:calc(100% - 10px)!important;
+  padding:7px 3px!important;gap:2px!important;
+ }
+ html body nav.nvs-premium-nav>button,
+ html body nav.nvs-premium-nav>button:first-child{
+  padding:7px 0 3px!important;gap:6px!important;min-height:85px!important;
+ }
+ html body nav.nvs-premium-nav>button>span{
+  font-size:9px!important;letter-spacing:-.12px!important;
+  line-height:1.22!important;min-height:34px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html body nav.nvs-premium-nav>button,
+ html body nav.nvs-premium-nav>button>i.bi{transition:none!important;animation:none!important}
 }
 </style>
 <style id="hva-online-status-minimal">
