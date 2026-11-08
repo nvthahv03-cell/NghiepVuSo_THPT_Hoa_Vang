@@ -137,7 +137,7 @@ select.addEventListener('change',()=>{setCode(select.value);notice('Đã chuyể
 by('send').disabled=true;
 /* Tuyến tiếp nhận dùng chung chỉ mở khi Backend đã triển khai action A22 và trả chứng nhận hỗ trợ. */
 const A22_BACKEND_URL='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
-let canSubmit=false,clientRequestId=null;
+let canSubmit=false,clientRequestId=null,submittedId="";
 const token=()=>storeRead('hvaSessionToken');
 function newRequestId(){
  if(window.crypto&&typeof window.crypto.randomUUID==='function')return 'A22-'+window.crypto.randomUUID();
@@ -167,9 +167,13 @@ async function probeBackend(){
   notice('Chưa thể nộp hồ sơ: '+err.message+' Có thể lưu nháp và xuất JSON.');
  }
 }
-by('form').addEventListener('input',()=>{clientRequestId=null});
+by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('send').disabled=!canSubmit;if(canSubmit)by('send').textContent='Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM';});
+select.addEventListener('change',()=>{clientRequestId=null;submittedId='';if(canSubmit){by('send').disabled=false;by('send').textContent='Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM';}});
+by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
+by('restoreSession').addEventListener('click',()=>{clientRequestId=null;submittedId=''});
 by('send').addEventListener('click',async()=>{
  if(!canSubmit){notice('Chưa có Backend A22 đã xác thực; hồ sơ chưa được gửi.');return}
+ if(submittedId){notice('Hồ sơ đã có mã tiếp nhận: '+submittedId+'. Hãy chỉnh sửa nội dung trước khi tạo lần nộp mới.',true);return}
  if(!validate())return;
  if(!window.confirm('Xác nhận nộp hồ sơ '+by('code').value+' vào hộp tiếp nhận BGH và đồng nhận TTCM?'))return;
  const btn=by('send');btn.disabled=true;btn.textContent='Đang kiểm tra tiếp nhận...';
@@ -181,9 +185,9 @@ by('send').addEventListener('click',async()=>{
   notice('ĐÃ TIẾP NHẬN hồ sơ số '+r.recordId+' · BGH: '+r.bghCount+' · TTCM: '+r.ccCount+'. Trạng thái: '+r.status+'. '+(r.notificationStatus==='NOT_CONFIGURED'?'Thông báo tự động chưa được cấu hình.':'') ,true);
   by('preview').textContent=linesFor(data).join('\n')+'\n\nMÃ TIẾP NHẬN: '+r.recordId+'\nTRẠNG THÁI: '+r.status;
   by('previewPanel').classList.remove('hidden');by('previewPanel').scrollIntoView({behavior:'smooth'});
-  clientRequestId=null;
+  submittedId=r.recordId;
  }catch(err){notice('CHƯA XÁC NHẬN NỘP HỒ SƠ: '+err.message+' Nếu mạng gián đoạn, hãy thử lại mà không sửa nội dung để tránh gửi trùng.')}
- finally{btn.disabled=!canSubmit;btn.textContent=canSubmit?'Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM':'Gửi BGH / Đồng gửi TTCM · Chưa kết nối'}
+ finally{btn.disabled=!canSubmit||!!submittedId;btn.textContent=submittedId?'Đã tiếp nhận hồ sơ · '+submittedId:canSubmit?'Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM':'Gửi BGH / Đồng gửi TTCM · Chưa kết nối'}
 });
 probeBackend();
 
