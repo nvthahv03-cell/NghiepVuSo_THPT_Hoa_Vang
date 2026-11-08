@@ -78,9 +78,14 @@ if(!granted){const el=document.getElementById('qtDenied');el.hidden=false;}
 <h1>QUẢN TRỊ HỆ THỐNG</h1><p>Cấu trúc nghiệp vụ quản trị · Phân quyền, cấu hình, dữ liệu và kiểm soát vận hành. Các mục chưa triển khai được ghi trạng thái rõ ràng.</p></header>
 <main class="shell"><section class="summary" aria-label="Tổng quan cấu trúc quản trị">
 <div class="counter"><strong id="qtGroupTotal">6</strong><span>Nhóm<br>quản trị</span></div>
-<div class="counter"><strong id="qtTotal">18</strong><span>Chức năng<br>theo cấu trúc</span></div>
+<div class="counter"><strong id="qtTotal">19</strong><span>Chức năng<br>theo cấu trúc</span></div>
 <div class="counter"><strong id="qtDraftTotal">5</strong><span>Có mẫu<br>dự thảo</span></div>
 <div class="summary-note">Chưa có module quản trị nào được xác nhận vận hành đầy đủ trên Backend.</div>
+</section>
+<section class="notice" id="qtSearchHub" aria-label="Trung tâm tra cứu tổng hợp" style="margin:18px 0 4px;background:#fff;border-color:#b9dbe9">
+<h3 style="font-size:16px">🔎 TRA CỨU TỔNG HỢP EDOS</h3>
+<p>Tra cứu <strong>theo giáo viên</strong> hoặc <strong>theo nội dung công việc</strong>: báo cáo DTHT, kiểm tra nội bộ, hồ sơ nghiệp vụ, giao việc. Xuất Excel, CSV, bản in/PDF. Kết quả chỉ lấy từ các nguồn dữ liệu được xác thực, có nhật ký truy vấn.</p>
+<div class="quick-links"><a href="./NVS_QuanTri_TraCuu.html" style="display:inline-flex;background:#086aa4;color:white;padding:11px 16px;border-radius:10px;font-weight:800;min-height:44px;align-items:center">Mở Trung tâm tra cứu tổng hợp</a></div>
 </section>
 <div class="controls"><h2>Danh mục quản trị</h2><input class="search" type="search" id="qtSearch" placeholder="Tìm theo mã, tên hoặc nghiệp vụ..." aria-label="Tìm chức năng quản trị"></div>
 <div class="grid" id="qtGroups"><noscript>Trang Quản trị cần JavaScript để hiển thị danh mục. Không có dữ liệu nào được thay đổi.</noscript></div>
@@ -111,13 +116,14 @@ const groups=[
 {id:'QT5',name:'Giám sát và kiểm toán',description:'Nhật ký, báo cáo vận hành và dấu vết thay đổi hệ thống.',items:[
 ['QT5.1','Nhật ký hệ thống','Mẫu lập yêu cầu truy vết, chưa kết nối nhật ký Backend thật.','draft','./NVS_NhatKyHeThong.html'],
 ['QT5.2','Thống kê – báo cáo hệ thống','Mẫu yêu cầu báo cáo; chưa có số liệu vận hành đã xác minh.','draft','./NVS_ThongKeBaoCao.html'],
-['QT5.3','Giám sát truy cập và phiên','Phát hiện đăng nhập bất thường, quyền truy cập và sự cố bảo mật.','planned','']]},
+['QT5.3','Giám sát truy cập và phiên','Phát hiện đăng nhập bất thường, quyền truy cập và sự cố bảo mật.','planned',''],
+['QT5.4','Tra cứu tổng hợp theo giáo viên và nghiệp vụ','Tra cứu DTHT, hồ sơ nhóm A, giao việc; kiểm tra nội bộ chờ kho lưu trữ. Hỗ trợ xuất Excel/PDF sau khi xác thực.','view','./NVS_QuanTri_TraCuu.html']]},
 {id:'QT6',name:'Tích hợp và hỗ trợ vận hành',description:'Kết nối các phân hệ và xử lý sự cố theo quy trình.',items:[
 ['QT6.1','Kết nối Backend, API và SSO','Kiểm tra cấu hình liên thông EDOS, Studio và các hệ thống độc lập.','planned',''],
 ['QT6.2','Cấu hình thông báo và lịch trình','Kiểm soát các kênh thông báo, lịch tác vụ và trạng thái gửi.','planned',''],
 ['QT6.3','Hỗ trợ sự cố và yêu cầu kỹ thuật','Tiếp nhận, phân loại, giao xử lý, nghiệm thu và lưu nhật ký.','planned','']]}
 ];
-const allowed=new Set(['./NVS_NhanSuTaiKhoan.html','./NVS_PhanQuyenHeThong.html','./NVS_QuanLyNghiepVu.html','./VanBan_QuyDinh.html','./NVS_NhatKyHeThong.html','./NVS_ThongKeBaoCao.html']);
+const allowed=new Set(['./NVS_NhanSuTaiKhoan.html','./NVS_PhanQuyenHeThong.html','./NVS_QuanLyNghiepVu.html','./VanBan_QuyDinh.html','./NVS_NhatKyHeThong.html','./NVS_ThongKeBaoCao.html','./NVS_QuanTri_TraCuu.html']);
 const status={draft:['Mẫu dự thảo','draft'],planned:['Chưa triển khai','planned'],view:['Chỉ xem','view']};
 const by=id=>document.getElementById(id),root=by('qtGroups'),search=by('qtSearch');
 const catalog=groups.flatMap(g=>g.items.map(([code,title,description,state,href])=>({group:g.id,code,title,description,state,href})));
