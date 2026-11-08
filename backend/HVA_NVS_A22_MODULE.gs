@@ -493,11 +493,23 @@ function nvsA22List_(actor){
  const canSee=r=>r[4].toLowerCase()===u||r[9].toLowerCase().split(',').includes(u)||r[10].toLowerCase().split(',').includes(u);
  return{success:true,records:rows.filter(canSee).map(r=>({recordId:r[0],code:r[2],title:r[3],owner:r[5],team:r[6],createdAt:r[7],status:r[8]})).reverse().slice(0,200)};
 }
+function nvsA22Get_(actor,id){
+ const u=nvsA22User_(actor),profile=nvsGetPeople_().find(x=>nvsA22User_(x)===u);
+ if(!profile)throw Error('Không tìm thấy tài khoản trong nhân sự đang công tác.');
+ const code=nvsA22Plain_(id,100),sh=nvsA22Sheet_();
+ const rows=sh.getLastRow()>1?sh.getRange(2,1,sh.getLastRow()-1,NVS_A22_HEADER_.length).getDisplayValues():[];
+ const row=rows.find(r=>r[0]===code);
+ if(!row)throw Error('Không tìm thấy mã hồ sơ.');
+ const has=(csv)=>String(csv||'').toLowerCase().split(',').map(x=>x.trim()).includes(u);
+ if(row[4].toLowerCase()!==u&&!has(row[9])&&!has(row[10]))throw Error('Tài khoản không có quyền đọc hồ sơ.');
+ return{success:true,recordId:row[0],code:row[2],title:row[3],owner:row[5],team:row[6],createdAt:row[7],status:row[8],form:JSON.parse(row[11])};
+}
 function nvsA22Route_(action,p){
  try{
   const actor=nvsActor_(p||{});
   if(!actor||!nvsA22User_(actor))return nvsResp_({success:false,message:'Phiên EDOS không hợp lệ hoặc hết hạn.'});
   if(action==='nvsA22List')return nvsResp_(nvsA22List_(actor));
+  if(action==='nvsA22Get')return nvsResp_(nvsA22Get_(actor,p.recordId));
   const recipients=nvsA22Recipients_(actor);
   if(action==='nvsA22Capabilities')return nvsResp_({success:true,supported:true,version:'A22-1',bghCount:recipients.bgh.length,ccCount:recipients.cc.length});
   if(action==='nvsA22Submit'){
