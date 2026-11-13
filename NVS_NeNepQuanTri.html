@@ -77,7 +77,7 @@ if(status===null)return;if(!['ĐÃ XÁC MINH','CẦN BỔ SUNG','LOẠI KHỎI T
 const note=prompt('Nhập ghi chú xác minh (có thể để trống):','');if(note===null)return;
 if(!confirm('Xác nhận thay đổi trạng thái hồ sơ '+r.recordId+' thành '+status+'?'))return;
 try{await api('hvaNnVerify',{type:r.type,recordId:r.recordId,status,note});msg('Đã cập nhật trạng thái qua Backend: '+r.recordId);await load()}catch(e){msg(e.message||String(e),true)}}
-function csvCell(v){return '"'+text(v).replace(/"/g,'""').replace(/^[=+@\-]/,'\' $&')+'"'}
+function csvCell(v){return '"'+text(v).replace(/"/g,'""').replace(/^[=+@\-]/,m=>"'"+m)+'"'}
 function exportCSV(){if(!records.length)return;const heads=['Ngày','Giờ','Học sinh','Khối','Lớp','Loại','Nội dung','Người ghi','Trạng thái','Người xác minh','Ghi chú'];
 const lines=[heads,...records.map(r=>[r.date,r.time,r.studentName,r.grade,r.className,typeName(r.type),details(r),r.reporter,r.status,r.verifiedBy,r.verifiedNote])];
 const blob=new Blob(['\uFEFF'+lines.map(a=>a.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
