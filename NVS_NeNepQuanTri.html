@@ -20,9 +20,36 @@ th{background:#eaf5fe;color:#0a4a85;white-space:nowrap}.name{font-weight:800}.mu
 .toolbar{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.toolbar h2{font-size:18px;margin:0}
 .notice{font-size:12px;color:#58738b}.empty{text-align:center;padding:35px;color:#58738b}
 @media(max-width:1000px){.filters{grid-template-columns:repeat(3,1fr)}}@media(max-width:620px){.filters{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(2,1fr)}}
+
+/* Head kế thừa CuocHop.html: màu sắc, bố cục, danh tính EDOS */
+.hva-pro-header{position:sticky;top:0;z-index:40;margin:6px 7px 0;min-height:114px;border-radius:13px;overflow:hidden;isolation:isolate;color:#f8fdff;background:radial-gradient(circle at 82% 34%,rgba(24,225,255,.26),transparent 22%),radial-gradient(circle at 55% 110%,rgba(0,200,255,.36),transparent 31%),linear-gradient(108deg,#073b78 0%,#064b96 29%,#075cad 53%,#078fc0 77%,#08abc5 100%);border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 28px rgba(3,43,84,.18)}
+.hva-pro-header::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.55;pointer-events:none;background:radial-gradient(circle at 48% 25%,#67f4ff 0 1px,transparent 2px),radial-gradient(circle at 56% 70%,#3fe2ff 0 1.2px,transparent 2.2px),linear-gradient(60deg,transparent 49.5%,rgba(91,228,255,.3) 50%,transparent 50.5%) 44% 0/118px 82px}
+.hva-pro-header-inner{min-height:112px;max-width:1460px;margin:auto;padding:12px 20px;display:grid;grid-template-columns:58px minmax(0,1fr) auto;align-items:center;gap:16px}
+.hva-pro-back{display:flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:14px;color:#eaf8ff;background:linear-gradient(145deg,rgba(16,112,187,.95),rgba(7,73,141,.95));border:1.5px solid rgba(79,192,255,.5);font-size:28px;font-weight:700;text-decoration:none}
+.hva-pro-brand{text-align:center;min-width:0}.hva-pro-kicker{font-size:13px;font-weight:800;letter-spacing:.16em;color:#d9f5ff}.hva-pro-school{font-size:clamp(19px,2.6vw,31px);font-weight:850;margin-top:5px;letter-spacing:-.025em}.hva-pro-slogan{font-size:13px;font-weight:600;color:#dbf3ff;margin-top:5px}
+.hva-pro-tools{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+.hva-pro-online{display:flex;align-items:center;gap:7px;border-radius:22px;border:1.5px solid rgba(83,246,237,.88);background:rgba(2,77,119,.40);font-size:11px;font-weight:800;padding:11px 13px;white-space:nowrap}
+.hva-pro-online-dot{width:10px;height:10px;border-radius:50%;background:#19e98a;box-shadow:0 0 10px #19e98a;animation:hvaDotPulse 1.8s infinite}
+@keyframes hvaDotPulse{50%{opacity:.6;transform:scale(1.2)}}
+.hva-pro-user{display:flex;align-items:center;gap:10px;min-width:175px;max-width:260px}
+.hva-pro-avatar{display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;border-radius:50%;background:#f4fbff;color:#0c73bd;font-size:24px}
+.hva-pro-usertext{min-width:0;display:flex;flex-direction:column;gap:3px}
+.hva-pro-usertext strong{font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hva-pro-usertext small{font-size:11px;color:#e8f8ff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hva-page-heading{max-width:1200px;margin:16px auto 0;padding:0 15px}.hva-page-heading h1{margin:0;color:#073b78;font-size:clamp(21px,2.5vw,29px);font-weight:900}
+.hva-page-heading p{font-size:13px;color:#355e7e;margin:5px 0 0}
+@media(max-width:950px){.hva-pro-header-inner{grid-template-columns:46px minmax(0,1fr) auto;padding:10px}.hva-pro-back{width:43px;height:43px}.hva-pro-online{display:none}.hva-pro-user{min-width:0;max-width:170px}.hva-pro-school{font-size:20px}.hva-pro-kicker{font-size:10px}}
+@media(max-width:620px){.hva-pro-header-inner{grid-template-columns:35px minmax(0,1fr) 42px;gap:6px;min-height:81px}.hva-pro-back{width:34px;height:34px;font-size:21px}.hva-pro-school{font-size:13px}.hva-pro-kicker{font-size:8px;letter-spacing:0}.hva-pro-slogan{font-size:8px}.hva-pro-user{min-width:0}.hva-pro-avatar{width:34px;height:34px;flex-basis:34px;font-size:19px}.hva-pro-usertext{position:absolute;top:100%;right:7px;background:#075cad;color:#fff;padding:5px 8px;border-radius:7px;max-width:180px;box-shadow:0 4px 10px #073b7829}.hva-pro-usertext strong{font-size:10px}.hva-pro-usertext small{font-size:9px}.hva-page-heading{margin-top:34px}}
 </style></head>
-<body><header><a class="back" href="./DieuHanh.html">← ĐIỀU HÀNH – QUẢN TRỊ</a><h1>QUẢN LÝ NỀ NẾP HỌC SINH</h1>
-<p>HVA–EDOS · Tra cứu hồ sơ Trễ – Vắng – Vi phạm · BGH xác minh trước khi chuyển Thi đua</p></header>
+<body><header class="hva-pro-header">
+<div class="hva-pro-header-inner">
+<a class="hva-pro-back" href="./DieuHanh.html" title="Quay lại Điều hành" aria-label="Quay lại Điều hành">←</a>
+<div class="hva-pro-brand"><div class="hva-pro-kicker">NGHIỆP VỤ SỐ THÔNG MINH</div><div class="hva-pro-school">Trường THPT Hòa Vang</div><div class="hva-pro-slogan">Quản trị thông minh&nbsp; • &nbsp;Giáo dục sáng tạo</div></div>
+<div class="hva-pro-tools">
+<div class="hva-pro-online" title="Trạng thái giao diện; không thay thế xác minh Backend"><span class="hva-pro-online-dot"></span><span>TRỰC TUYẾN HVA</span></div>
+<div class="hva-pro-user" aria-label="Thông tin người đăng nhập EDOS"><span class="hva-pro-avatar" aria-hidden="true">●</span><span class="hva-pro-usertext"><strong id="hvaHeaderUserName">Chưa xác định</strong><small id="hvaHeaderUserRole">Chưa đăng nhập</small></span></div>
+</div></div></header>
+<div class="hva-page-heading"><h1>QUẢN LÝ NỀ NẾP HỌC SINH</h1><p>HVA–EDOS · Tra cứu hồ sơ Trễ – Vắng – Vi phạm · BGH xác minh trước khi chuyển Thi đua</p></div>
 <main><section class="panel"><div class="filters">
 <label>Loại hồ sơ<select id="kind"><option value="">Tất cả</option><option value="tre">Đi trễ</option><option value="vang">Vắng học</option><option value="vipham">Vi phạm</option></select></label>
 <label>Khối<select id="grade"><option value="">Tất cả</option><option>10</option><option>11</option><option>12</option></select></label>
@@ -40,6 +67,15 @@ th{background:#eaf5fe;color:#0a4a85;white-space:nowrap}.name{font-weight:800}.mu
 (()=>{'use strict';
 const API_URL="https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec";
 const $=id=>document.getElementById(id);
+function syncHeaderUser(){
+let u={};try{u=JSON.parse(sessionStorage.getItem('user')||localStorage.getItem('user')||'{}')||{}}catch(_){}
+const name=String(u.hoTen||u.hoten||u.fullName||u.name||u.displayName||u.username||'Chưa xác định').trim();
+const role=String(u.chucVu||u.chucvu||u.position||u.viTriViecLam||u.roleName||u.role||'Chưa xác định chức vụ').trim();
+$('hvaHeaderUserName').textContent=name;
+$('hvaHeaderUserRole').textContent=role;
+}
+syncHeaderUser();
+
 let records=[];
 function token(){for(const area of [sessionStorage,localStorage]){try{let t=area.getItem('hvaSessionToken')||'',until=Number(area.getItem('hvaSessionExpiresAt')||0);if(t&&until>Date.now())return t}catch(_){}}return ''}
 function msg(s,bad=false){$('message').textContent=s;$('message').classList.toggle('error',bad)}
