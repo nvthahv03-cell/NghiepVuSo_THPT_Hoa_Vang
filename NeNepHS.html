@@ -237,7 +237,7 @@ function noAccent(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u03
 function studentCandidates(){return app.roster;}
 function filterStudents(phrase){const el=$('student'), query=noAccent(phrase), all=studentCandidates(), matches=query?all.filter(x=>noAccent(x.name).includes(query)):all;el.innerHTML='<option value="">'+(all.length?'Chọn đúng học sinh':'Chọn lớp trước')+'</option>';
   for(const m of matches)el.add(new Option(m.caption,m.id));el.disabled=!all.length;
-  const msg=$('studentSearchInfo');msg.textContent=!all.length?'Đã nhập tên, nhưng chưa tải được danh sách từ Backend. Tên vừa gõ vẫn được giữ nguyên.':!query?'Gõ tên hoặc nhấn kính lúp để lọc trong lớp.':!matches.length?'Danh sách đã tải nhưng không thấy tên khớp. Hãy thử tên không dấu hoặc tìm lại.':'Tìm thấy '+matches.length+' kết quả. Hãy chọn đúng học sinh.';
+  const msg=$('studentSearchInfo');msg.textContent=!all.length?'Đã nhập tên, nhưng chưa tải được danh sách từ Backend. Tên vừa gõ vẫn được giữ nguyên.':!query?'Gõ tên hoặc nhấn kính lúp để lọc trong lớp.':!matches.length?'Danh sách đã tải nhưng không thấy tên khớp. Hãy thử tên không dấu hoặc tìm lại.':'Tìm thấy '+matches.length+' học sinh khớp tên trong lớp. Danh sách hiện đầy đủ kết quả kèm ngày sinh và mã định danh đã che; hãy đối chiếu trước khi chọn.';
   renderPreview();return matches.length;
 }
 function safeStudents(rows){
@@ -252,8 +252,9 @@ function safeStudents(rows){
    const suffix=x.idLast4&&/^\d{4}$/.test(String(x.idLast4))?String(x.idLast4):'';
    const born=x.birthday?String(x.birthday):'';
    return{id:x.key,name:x.name,birthday:born,duplicated,
-     caption:x.name+(born?' · Sinh '+born:'')+(duplicated&&suffix?' · Mã ••••'+suffix:'')+
-       (duplicated&&!born&&!suffix?' · TRÙNG TÊN: cần đối chiếu hồ sơ':'')};
+     caption:x.name+' · Ngày sinh: '+(born||'chưa có')+
+       ' · Số định danh: '+(suffix?'••••'+suffix:'chưa có dữ liệu đối chiếu')+
+       (duplicated?' · TRÙNG HỌ TÊN':'')};
  });
 }
 function showRosterForClass(cls,rows,isCache=false){
