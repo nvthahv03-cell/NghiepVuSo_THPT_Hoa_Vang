@@ -122,12 +122,15 @@ body{line-height:1.52;-webkit-font-smoothing:antialiased}
   .btn{font-size:13.5px}
 }
 
+/* NENEP MOBILE COMPACT V2 */
+.hero{padding-top:12px;padding-bottom:24px}.herotext{padding-top:7px}.herotext h1{font-size:clamp(24px,3vw,32px);margin:3px 0}.herotext p{font-size:12.5px;line-height:1.45}.shell{margin-top:-10px}.tabs{gap:7px;margin-bottom:10px}.tab{min-height:65px;padding:9px 10px;border-radius:12px}.tab-copy strong{font-size:15px}.tab-copy small{font-size:11.5px}.card{border-radius:15px;box-shadow:0 6px 22px #16467713}.cardhead{margin-bottom:10px}.cardhead h2{font-size:19px}.cardhead p{font-size:12px}.subhead{margin:12px 0 9px;font-size:14px}.fields{gap:10px}.field label{font-size:13.5px}.field small{font-size:11.5px;line-height:1.35}.ctrl{min-height:46px;font-size:15px;border-radius:10px}textarea.ctrl{min-height:68px}.mic{width:46px;min-width:46px;min-height:46px;border-radius:10px}.helper,.inlineStatus{font-size:12.5px;line-height:1.5;padding:10px 12px}.nenep-connection{background:#eff8fc;border:1px solid #d8e8f0;border-radius:10px}.nenep-home-login{display:inline-block;margin:4px 0 9px;color:#165d88;text-decoration:underline;font-size:12px}.actions{gap:8px;flex-wrap:wrap}.actions .btn{min-height:43px;border-radius:10px;font-size:13px}#submitRecordBtn{font-size:14px;font-weight:750}
+@media(max-width:720px){.hero{padding:12px 15px 22px}.topflags .flag:first-child{display:none}.herotext .eyebrow{display:none}.herotext{padding-top:6px}.herotext h1{font-size:24px}.herotext p{font-size:11.5px}.shell{width:calc(100% - 18px);margin:0 auto}.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:9px 0}.tab{min-width:0;min-height:62px;padding:7px 4px;display:flex;flex-direction:column;justify-content:center;text-align:center;gap:4px}.tab .symbol{width:28px;height:28px;flex:0 0 28px}.tab .symbol svg{width:17px;height:17px}.tab-copy strong{font-size:13px}.tab-copy small,.tab-indicator{display:none}.card{padding:13px;border-radius:12px}.cardhead{margin-bottom:8px}.cardhead h2{font-size:17px}.cardhead p{font-size:11px}#connectionTag{font-size:9px;max-width:126px;white-space:normal;text-align:center}.subhead{margin:11px 0 8px}.fields{gap:9px}.field small{display:none}.ctrl,.mic{min-height:47px}.helper{padding:9px}.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}#submitRecordBtn{grid-column:1/-1;grid-row:1;min-height:50px;font-size:14px}#checkBackendBtn,#previewBtn{min-width:0}#clearBtn{grid-column:1/-1;justify-self:center}.summary .statbox,.summary .preview{padding:10px}}
 </style>
 </head>
 <body>
 <header class="hero">
   <div class="headtop"><div class="brand"><div class="mark">HV</div><div><small>TRƯỜNG THPT HÒA VANG</small><strong>HVA–EDOS · Nghiệp vụ số</strong></div></div><div class="topflags"><span class="flag">NĂM HỌC 2026–2027</span><span class="flag gold">NỀ NẾP · KẾT NỐI CÓ XÁC THỰC</span></div></div>
-  <div class="herotext"><div class="eyebrow">HỆ THỐNG QUẢN LÝ NỀ NẾP</div><h1>NỀ NẾP HỌC SINH</h1><p>Ba thao tác trực quan: Trễ · Vắng · Vi phạm. Có thể viết hoặc đọc qua micro; dữ liệu chỉ được ghi sau khi BGH xác minh.</p></div>
+  <div class="herotext"><div class="eyebrow">HỆ THỐNG QUẢN LÝ NỀ NẾP</div><h1>NỀ NẾP HỌC SINH</h1><p>Chọn học sinh · Nói hoặc nhập nội dung · Gửi ghi nhận. BGH xác minh sau.</p></div>
 </header>
 <main class="shell">
   <nav class="tabs" aria-label="Ba nghiệp vụ nền nếp học sinh">
@@ -171,20 +174,10 @@ body{line-height:1.52;-webkit-font-smoothing:antialiased}
           <div class="field full"><label for="violationExplain">Giải trình của học sinh / ghi chú (viết hoặc micro)</label><div class="micfield"><textarea class="ctrl" id="violationExplain" rows="3" placeholder="Chỉ ghi lời trình bày, chưa kết luận vi phạm..."></textarea><button type="button" class="mic" data-mic="violationExplain" aria-label="Đọc lời trình bày bằng micro"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"></path></svg></button></div></div>
           <div class="field full"><div class="helper warning">Tên giáo viên, môn học và tiết học <b>chưa tự điền</b> trong bản này vì TKB chưa được kiểm định. Không suy đoán từ lời nói.</div></div>
         </div>
-        <div class="helper" id="micHint" role="status" aria-live="polite">🎤 Khối, Lớp, Học sinh và mọi ô nội dung đều có micro màu xanh. Bấm micro ở đúng ô cần tìm hoặc nhập. Chrome có thể yêu cầu cấp quyền micro; nếu không hỗ trợ, vẫn nhập bằng bàn phím bình thường.</div>
-        <div id="nenepLoginPanel" class="helper warning" style="margin-top:14px">
-  <div style="font-weight:800;margin-bottom:7px">Xác thực tài khoản với Backend Nề nếp</div>
-  <div style="font-size:12px;line-height:1.5;margin-bottom:10px">Trang EDOS hiện có thể dùng phiên đăng nhập từ Backend khác. Đăng nhập tại đây để xác thực trực tiếp với Backend Nề nếp của nhà trường.</div>
-  <div class="fields">
-    <div class="field"><label for="nenepUsername">Tên đăng nhập EDOS</label><input class="ctrl" id="nenepUsername" autocomplete="username" placeholder="Tên đăng nhập" /></div>
-    <div class="field"><label for="nenepPassword">Mật khẩu HVA</label><input class="ctrl" id="nenepPassword" type="password" inputmode="numeric" autocomplete="current-password" placeholder="4 chữ số mật khẩu" maxlength="8" /></div>
-  </div>
-  <button type="button" class="btn secondary" id="nenepLoginBtn" style="margin-top:10px">Xác thực để tải học sinh</button>
-  <div id="nenepLoginInfo" aria-live="polite" style="margin-top:8px;font-size:12px">Không lưu mật khẩu. Phiên xác thực riêng chỉ dùng trong tab trình duyệt này.</div>
-</div>
-        <div class="helper" id="backendHealth" role="status" aria-live="polite">Đang chờ kiểm tra kết nối Backend và phiên đăng nhập.</div>
+        <div class="helper" id="micHint" role="status" aria-live="polite">Chạm mic cạnh ô cần nhập; có thể dùng bàn phím nếu không tiện nói.</div>
+        <div class="helper nenep-connection" id="backendHealth" role="status" aria-live="polite">Đang kiểm tra phiên EDOS...</div><a class="nenep-home-login" href="./index.html">‹ Trang chủ EDOS</a>
         <div class="actions"><button class="btn secondary" id="checkBackendBtn" type="button">↻ Kiểm tra kết nối</button><button class="btn primary" id="submitRecordBtn" type="submit" disabled>🔒 Chưa kết nối Backend</button><button class="btn secondary" type="button" id="previewBtn">◉ Xem trước phiếu</button><button class="btn link" type="button" id="clearBtn">Làm mới nội dung</button></div>
-        <div class="inlineStatus" id="feedback" role="status" aria-live="polite">Trang đang chờ kết nối Web App của trường. Cần đăng nhập cùng miền và kiểm tra kết nối trước khi ghi.</div>
+        <div class="inlineStatus" id="feedback" role="status" aria-live="polite">Chọn học sinh, nhập nội dung và bấm Gửi. Chỉ lưu khi Backend xác nhận.</div>
       </form>
     </section>
     <aside class="card summary">
@@ -192,7 +185,7 @@ body{line-height:1.52;-webkit-font-smoothing:antialiased}
       <div class="statbox"><div><b id="count">0</b><span>Bản ghi chờ nghiệm thu</span></div><span class="pill">CHƯA GỬI</span></div>
       <div class="preview" id="preview" aria-live="polite"><div class="previewtitle">PHIẾU GHI NHẬN · BẢN NHÁP</div><h3 id="previewType">Học sinh đi trễ</h3><dl class="kv" id="previewFields"></dl><span class="pending">Đối chiếu TKB: <b>Chưa kết nối / chờ kiểm định</b>. Thao tác này không tạo hồ sơ thật.</span></div>
       <div class="recent"><div class="recenttop"><h3>Danh sách ghi nhận</h3><button class="btn link" id="clearAllBtn" type="button" style="font-size:11px; padding:4px">Xóa danh sách</button></div><div class="recentlist" id="recentList"><div class="empty">Chưa có lượt gửi thành công trong phiên này. Khi gửi, hãy đối chiếu kết quả trong tab Nề nếp tương ứng.</div></div></div>
-      <div class="helper warning">🔒 Đã tích hợp tuyến đọc và ghi qua Backend có xác thực. Dữ liệu chỉ ghi khi bấm Gửi và máy chủ chấp nhận; <b>không qua TTPhatHanh</b>.</div>
+      <div class="helper warning">🔒 Hồ sơ chỉ được lưu khi Backend xác nhận; <b>không qua TTPhatHanh</b>.</div>
     </aside>
   </div>
   <div class="bottom">HVA–EDOS · Nề nếp học sinh · Tra cứu có xác thực · Gửi thẳng về CSDL Nề nếp, không qua TTPhatHanh.</div>
@@ -220,32 +213,6 @@ const session=()=>{
   }
   return '';
 };
-function setNenepSession(token,expiresAt){
-  if(!token||!Number.isFinite(Number(expiresAt))||Number(expiresAt)<=Date.now())throw Error('Backend chưa trả phiên đăng nhập hợp lệ.');
-  sessionStorage.setItem('hvaNenepToken',String(token));
-  sessionStorage.setItem('hvaNenepExpiresAt',String(expiresAt));
-}
-async function loginNenep(){
-  const username=$('nenepUsername').value.trim(),pw=$('nenepPassword').value.trim();
-  const notice=$('nenepLoginInfo'),btn=$('nenepLoginBtn');
-  if(!username||!/^\d{4}$/.test(pw)){notice.textContent='Nhập tên tài khoản và mật khẩu HVA gồm 4 chữ số.';return;}
-  btn.disabled=true;btn.textContent='Đang xác thực...';notice.textContent='Đang xác thực với Backend Nề nếp của trường.';
-  try{
-    const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},
-       body:JSON.stringify({action:'login',tenDangNhap:username,matKhau:'HVA@'+pw})});
-    const raw=await r.text();
-    let o;try{o=JSON.parse(raw);}catch(_){throw Error('Web App không trả JSON. Kiểm tra quyền triển khai, URL hoặc CORS.');}
-    if(!r.ok||o.ok!==true||!o.sessionToken)throw Error(o.message||o.thongBao||'Đăng nhập không thành công.');
-    setNenepSession(o.sessionToken,o.hetHanLuc);
-    app.classCache.clear();app.inFlightStudents.clear();++app.rosterRequestSeq;app.roster=[];
-    $('nenepPassword').value='';
-    notice.textContent='Đã xác thực phiên Nề nếp. Đang đối chiếu nguồn học sinh...';
-    await checkBackend();
-    if(app.healthChecked){$('nenepLoginPanel').style.display='none';}
-  }catch(e){$('nenepPassword').value='';notice.textContent='Không kết nối được: '+String(e.message||e);healthMsg('Chưa xác thực với Backend: '+String(e.message||e),false);}
-  finally{btn.disabled=false;btn.textContent='Xác thực để tải học sinh';}
-}
-
 async function api(action,extra={}){
  if(!CONNECTED)throw Error('Chưa cấu hình URL Backend STAGING.');
  if(!session())throw Error('Chưa có phiên EDOS hợp lệ tại website này.');
@@ -255,9 +222,7 @@ async function api(action,extra={}){
 }
 const app={kind:'tre', records:[], listening:null, recognizer:null, roster:[], pendingSubmission:null, healthChecked:false,
   classCache:new Map(), inFlightStudents:new Map(), rosterRequestSeq:0, lastTimings:[]};
-$('nenepLoginBtn').addEventListener('click',loginNenep);
-$('nenepPassword').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();loginNenep();}});
-document.getElementById('connectionTag').textContent=CONNECTED?'STAGING · CHỜ ĐĂNG NHẬP':'CHỜ BACKEND · KHÔNG HS MẪU';
+document.getElementById('connectionTag').textContent=CONNECTED?'ĐANG KIỂM TRA EDOS':'CHỜ BACKEND';
 const names={tre:'Học sinh đi trễ',vang:'Học sinh vắng',vipham:'Sự việc về nội quy'};
 // Không nhúng danh sách học sinh thật hoặc học sinh mẫu vào HTML.
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -416,7 +381,7 @@ function healthMsg(t,success){
 }
 async function checkBackend(){
   const btn=$('checkBackendBtn');app.healthChecked=false;updateSendState();
-  if(!session()){healthMsg('Không có phiên hợp lệ. Hãy xác thực tài khoản ngay trong khung phía trên.',false);$('nenepLoginPanel').style.display='block';return;}
+  if(!session()){healthMsg('Chưa nhận phiên EDOS hợp lệ. Mở trang chủ EDOS để đăng nhập chung, sau đó quay lại.',false);$('connectionTag').textContent='CẦN PHIÊN EDOS';return;}
   btn.disabled=true;btn.textContent='Đang kiểm tra...';
   try{
     const res=await api('hvaNnHealth');
@@ -426,18 +391,16 @@ async function checkBackend(){
        throw Error('Backend chưa trả số lượng học sinh và lớp hợp lệ.');
     if(res.writeEnabled!==true)throw Error('Backend chưa bật quyền ghi.');
     app.healthChecked=true;
-    $('nenepLoginPanel').style.display='none';
-    $('connectionTag').textContent='BACKEND · SẴN SÀNG';
+    $('connectionTag').textContent='ĐÃ KẾT NỐI';
     healthMsg('Đã xác thực Backend: '+Number(res.studentCount).toLocaleString('vi-VN')+' học sinh / '+Number(res.classCount)+' lớp. Quyền ghi đang bật. Chọn Khối → Lớp → Học sinh để thử.',true);
   }catch(e){
-    $('connectionTag').textContent='BACKEND · CHƯA XÁC THỰC';
-    $('nenepLoginPanel').style.display='block';
-    healthMsg('Lỗi kết nối: '+String(e.message||e)+'. Nếu phiên cũ không hợp lệ, xác thực ngay trong khung bên trên.',false);
+    $('connectionTag').textContent='CHƯA XÁC THỰC';
+    healthMsg('Backend Nề nếp chưa chấp nhận phiên EDOS: '+String(e.message||e)+'. Cần đồng bộ xác thực giữa hai Backend; không đăng nhập lần hai.',false);
   }finally{btn.disabled=false;btn.textContent='↻ Kiểm tra kết nối';updateSendState();}
 }
 $('checkBackendBtn').addEventListener('click',checkBackend);
 updateSendState();
-if(session())checkBackend();else healthMsg('Chưa xác thực Backend Nề nếp. Đăng nhập trong khung phía trên (không chia sẻ mật khẩu hoặc token).',false);
+if(session())checkBackend();else healthMsg('Chưa có phiên EDOS hợp lệ. Mở trang chủ EDOS để đăng nhập chung rồi quay lại.',false);
 $('form').addEventListener('submit',async e=>{
  e.preventDefault();const d=data(),error=validate(d);
  if(error){status(error,true);return;}
