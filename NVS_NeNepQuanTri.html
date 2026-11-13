@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer"><title>Quản lý nề nếp học sinh | HVA–EDOS</title>
+<style>
+:root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#163653;background:#eff6fc}*{box-sizing:border-box}
+body{margin:0}header{background:linear-gradient(115deg,#073d80,#086db7 65%,#04aacb);color:#fff;padding:23px max(18px,calc((100vw - 1200px)/2))}
+header h1{margin:6px 0;font-size:clamp(23px,3vw,32px)}header p{margin:0;color:#e6f8ff;font-size:13px}
+a{color:inherit}.back{display:inline-block;text-decoration:none;font-size:13px;font-weight:750}
+main{max-width:1200px;margin:auto;padding:19px 15px 50px}.panel{background:#fff;border:1px solid #cbdfee;border-radius:17px;padding:19px;margin-bottom:14px;box-shadow:0 8px 24px #083d7510}
+.filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:end}
+label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:800;color:#244d73}
+input,select,textarea{width:100%;min-height:39px;border:1px solid #b8d2e8;border-radius:9px;padding:8px;color:#163653;background:white;font:inherit;font-size:13px}
+button{min-height:39px;border:0;background:#0867b2;color:#fff;border-radius:9px;padding:9px 14px;cursor:pointer;font-weight:800}
+button:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#e5f2fc;color:#07518c;border:1px solid #c1ddef}
+.status{font-size:13px;line-height:1.6;margin-top:10px;color:#225176}.error{color:#b42339}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{padding:13px;background:#eff7ff;border-radius:12px}.metric b{display:block;font-size:23px;color:#0759a3}.metric span{font-size:12px}
+.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:1000px;font-size:12px}th,td{border-bottom:1px solid #e2edf4;padding:10px 8px;text-align:left;vertical-align:top}
+th{background:#eaf5fe;color:#0a4a85;white-space:nowrap}.name{font-weight:800}.muted{color:#61788d}.tag{border-radius:8px;padding:5px 7px;background:#f1f5f9;display:inline-block}
+.actions{display:flex;flex-wrap:wrap;gap:5px}.actions button{font-size:11px;min-height:31px;padding:5px 8px}
+.toolbar{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.toolbar h2{font-size:18px;margin:0}
+.notice{font-size:12px;color:#58738b}.empty{text-align:center;padding:35px;color:#58738b}
+@media(max-width:1000px){.filters{grid-template-columns:repeat(3,1fr)}}@media(max-width:620px){.filters{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(2,1fr)}}
+</style></head>
+<body><header><a class="back" href="./DieuHanh.html">← ĐIỀU HÀNH – QUẢN TRỊ</a><h1>QUẢN LÝ NỀ NẾP HỌC SINH</h1>
+<p>HVA–EDOS · Tra cứu hồ sơ Trễ – Vắng – Vi phạm · BGH xác minh trước khi chuyển Thi đua</p></header>
+<main><section class="panel"><div class="filters">
+<label>Loại hồ sơ<select id="kind"><option value="">Tất cả</option><option value="tre">Đi trễ</option><option value="vang">Vắng học</option><option value="vipham">Vi phạm</option></select></label>
+<label>Khối<select id="grade"><option value="">Tất cả</option><option>10</option><option>11</option><option>12</option></select></label>
+<label>Lớp<input id="className" placeholder="VD: 12/12" maxlength="6"></label>
+<label>Từ ngày<input id="from" type="date"></label><label>Đến ngày<input id="to" type="date"></label>
+<button id="load" type="button">Tra cứu Backend</button></div>
+<div id="message" class="status" role="status" aria-live="polite">Chỉ truy xuất qua Backend sau khi kiểm tra phiên đăng nhập và quyền truy cập.</div>
+</section>
+<section class="panel"><div class="metrics"><div class="metric"><b id="total">—</b><span>Tổng hồ sơ</span></div><div class="metric"><b id="pending">—</b><span>Chờ xác minh</span></div><div class="metric"><b id="verified">—</b><span>Đã xác minh</span></div><div class="metric"><b id="other">—</b><span>Cần bổ sung / loại</span></div></div></section>
+<section class="panel"><div class="toolbar"><h2>Danh sách ghi nhận</h2><div><button id="export" type="button" class="secondary" disabled>Xuất CSV dữ liệu đang hiển thị</button></div></div>
+<p id="count" class="notice">Chưa truy xuất dữ liệu.</p>
+<div class="tablewrap"><table><thead><tr><th>Ngày – Giờ</th><th>Học sinh</th><th>Lớp</th><th>Loại</th><th>Nội dung ghi nhận</th><th>Người ghi</th><th>Trạng thái</th><th>Xác minh của BGH</th></tr></thead><tbody id="rows"><tr><td colspan="8" class="empty">Chọn điều kiện và nhấn Tra cứu Backend</td></tr></tbody></table></div>
+</section></main>
+<script>
+(()=>{'use strict';
+const API_URL="https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec";
+const $=id=>document.getElementById(id);
+let records=[];
+function token(){for(const area of [sessionStorage,localStorage]){try{let t=area.getItem('hvaSessionToken')||'',until=Number(area.getItem('hvaSessionExpiresAt')||0);if(t&&until>Date.now())return t}catch(_){}}return ''}
+function msg(s,bad=false){$('message').textContent=s;$('message').classList.toggle('error',bad)}
+async function api(action,payload={}){const sessionToken=token();if(!sessionToken)throw Error('Chưa có phiên HVA–EDOS hợp lệ. Vui lòng đăng nhập trên cùng tên miền.');
+const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action,sessionToken,...payload})});
+if(!response.ok)throw Error('Backend HTTP '+response.status);
+const data=await response.json();if(data.success!==true)throw Error(data.message||'Backend từ chối yêu cầu');return data}
+const text=v=>String(v==null?'':v);
+function cell(tr,v,cl){const td=document.createElement('td');td.textContent=text(v);if(cl)td.className=cl;tr.appendChild(td);return td}
+function typeName(v){return {tre:'Đi trễ',vang:'Vắng học',vipham:'Vi phạm'}[v]||v}
+function details(r){return [r.violationType,r.detail,r.minutes?String(r.minutes)+' phút':'',r.scope,r.periods?'Tiết '+r.periods:'',r.permission,r.reason].filter(Boolean).join(' · ')}
+function render(){
+$('total').textContent=records.length;$('pending').textContent=records.filter(x=>x.status==='CHỜ XÁC MINH').length;
+$('verified').textContent=records.filter(x=>x.status==='ĐÃ XÁC MINH').length;
+$('other').textContent=records.filter(x=>!['CHỜ XÁC MINH','ĐÃ XÁC MINH'].includes(x.status)).length;
+$('export').disabled=!records.length;
+const body=$('rows');body.replaceChildren();
+if(!records.length){const tr=document.createElement('tr'),td=cell(tr,'Không có hồ sơ phù hợp.');td.colSpan=8;td.className='empty';body.appendChild(tr);return}
+records.forEach(r=>{const tr=document.createElement('tr');cell(tr,r.date+' '+r.time);cell(tr,r.studentName,'name');cell(tr,r.className);cell(tr,typeName(r.type));
+cell(tr,details(r));cell(tr,r.reporter);cell(tr,r.status);
+const td=document.createElement('td');td.className='actions';const b=document.createElement('button');b.className='secondary';b.type='button';b.textContent='Xác minh';b.addEventListener('click',()=>verify(r));td.appendChild(b);tr.appendChild(td);body.appendChild(tr)})}
+async function load(){
+const b=$('load');b.disabled=true;msg('Đang truy xuất hồ sơ từ Backend…');
+try{const p={type:$('kind').value,grade:$('grade').value,className:$('className').value.trim(),from:$('from').value,to:$('to').value};
+if(p.className&&!/^(10|11|12)\/\d{1,2}$/.test(p.className))throw Error('Lớp phải có dạng 10/1, 11/5, 12/12.');
+if(p.from&&p.to&&p.from>p.to)throw Error('Ngày bắt đầu phải trước ngày kết thúc.');
+const data=await api('hvaNnAdminList',p);records=Array.isArray(data.records)?data.records:[];render();
+$('count').textContent='Backend trả '+records.length+'/'+(data.total??records.length)+' hồ sơ'+(data.truncated?' (giới hạn 300; thu hẹp thời gian để xem đầy đủ)':'')+'.';
+msg('Đã tải danh sách từ Backend. Chỉ BGH và đầu mối Thi đua có quyền xem; xác minh chỉ dành cho BGH.');
+}catch(e){records=[];render();$('count').textContent='Chưa có dữ liệu hợp lệ.';msg(e.message||String(e),true)}
+finally{b.disabled=false}}
+async function verify(r){
+const status=prompt('Xác minh hồ sơ '+r.recordId+' của '+r.studentName+'\nNhập đúng một trạng thái:\nĐÃ XÁC MINH\nCẦN BỔ SUNG\nLOẠI KHỎI TỔNG HỢP',r.status==='CHỜ XÁC MINH'?'ĐÃ XÁC MINH':r.status);
+if(status===null)return;if(!['ĐÃ XÁC MINH','CẦN BỔ SUNG','LOẠI KHỎI TỔNG HỢP'].includes(status)){msg('Trạng thái không hợp lệ; không có dữ liệu được ghi.',true);return}
+const note=prompt('Nhập ghi chú xác minh (có thể để trống):','');if(note===null)return;
+if(!confirm('Xác nhận thay đổi trạng thái hồ sơ '+r.recordId+' thành '+status+'?'))return;
+try{await api('hvaNnVerify',{type:r.type,recordId:r.recordId,status,note});msg('Đã cập nhật trạng thái qua Backend: '+r.recordId);await load()}catch(e){msg(e.message||String(e),true)}}
+function csvCell(v){return '"'+text(v).replace(/"/g,'""').replace(/^[=+@\-]/,'\' $&')+'"'}
+function exportCSV(){if(!records.length)return;const heads=['Ngày','Giờ','Học sinh','Khối','Lớp','Loại','Nội dung','Người ghi','Trạng thái','Người xác minh','Ghi chú'];
+const lines=[heads,...records.map(r=>[r.date,r.time,r.studentName,r.grade,r.className,typeName(r.type),details(r),r.reporter,r.status,r.verifiedBy,r.verifiedNote])];
+const blob=new Blob(['\uFEFF'+lines.map(a=>a.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='HVA_NENEP_HS_'+new Date().toISOString().slice(0,10)+'.csv';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
+$('load').addEventListener('click',load);$('export').addEventListener('click',exportCSV);
+})();
+</script></body></html>
