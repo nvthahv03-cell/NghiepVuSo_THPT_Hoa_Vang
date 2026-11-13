@@ -120,4 +120,4 @@ const blob=new Blob(['\uFEFF'+lines.map(a=>a.map(csvCell).join(',')).join('\r\n'
 const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='HVA_NENEP_HS_'+new Date().toISOString().slice(0,10)+'.csv';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
 $('load').addEventListener('click',load);$('export').addEventListener('click',exportCSV);
 })();
-</script></body></html>
+</script><script defer src="./HVA_EDOS_Identity_Bar.js?v=20261114_1"></script></body></html>
