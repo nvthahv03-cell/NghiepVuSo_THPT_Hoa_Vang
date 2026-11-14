@@ -1601,7 +1601,8 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
       sessionToken:token
     });
 
-    const target=body.signingMethod==='PAPER'?global.HVA_V5_BACKEND_URL:backendUrl();
+    // Dung chinh tuyen DTHT da ghi Sheet thanh cong; khong chuyen sang V5 endpoint khac.
+    const target=backendUrl();
     if(global.HVAAuthRequest){
       if(typeof global.HVAAuthRequest.postJson==='function'){
         const r=await global.HVAAuthRequest.postJson(target,body,{cache:'no-store'});
@@ -2267,7 +2268,7 @@ function hvaPrintPaper(){
 function hvaSwitchSignMethod(mode){
   state.signMethod=mode==='PAPER'?'PAPER':'ELECTRONIC';
   document.body.classList.toggle('hva-paper-mode',state.signMethod==='PAPER');
-  $('hvaSignMethodNote').textContent=state.signMethod==='PAPER'?'Bản gửi điện tử phải có trạng thái CHỜ KÝ TAY; cần in, ký và nộp bản giấy.':'Giữ nguyên cơ chế ký xác nhận hiện hành.';
+  $('hvaSignMethodNote').textContent=state.signMethod==='PAPER'?'Gửi hồ sơ trên EDOS trước, sau đó in, ký tay và nộp bản giấy.':'Xác thực CCCD, ký xác nhận và gửi trực tuyến trên EDOS.';
   const button=$('submitReportBtn');if(button&&!button.disabled)button.textContent=state.signMethod==='PAPER'?'Gửi hồ sơ chờ bản ký tay':'Xác nhận & gửi';
   refreshSignatureUI();
 }
@@ -2571,13 +2572,8 @@ async function submitReport(ev){
     state.signed=true;
   }
 
-  if(state.signMethod==='PAPER'){
-    try{await hvaCheckPaperSigning_(window.HVA_DTHT_RESOLVE_BACKEND());}catch(err){
-      const note=$('hvaSignMethodNote');if(note)note.textContent='Backend hiện tại chưa bật nộp ký tay. Thầy/Cô có thể dùng nút In / lưu PDF, ký tay và nộp bản giấy; hệ thống chưa ghi nhận hồ sơ điện tử.';
-      hvaShowPrintNotice();
-      return;
-    }
-  }
+  // Khong chan gui bang API tham do: Backend DTHT da ghi duoc ho so CHO BAN KY TAY.
+  // Ket qua nop van phai duoc xac nhan qua response submitDTHT.
   const btn = $('submitReportBtn');
   const originalHtml = btn ? btn.innerHTML : '';
   window.__dthtSubmitting = true;
@@ -2594,7 +2590,11 @@ async function submitReport(ev){
 
     const pData = payload();
     const res = await callAPI('submitReport', pData);
-    if(state.signMethod==='PAPER'&&res.signatureStatus!=='CHO_KY_TAY')throw Error('Backend chưa trả trạng thái CHỜ KÝ TAY; cần đối chiếu lịch sử trước khi thử nộp lại.');
+    if(state.signMethod==='PAPER'&&!(
+      res.signatureStatus==='CHO_KY_TAY' ||
+      /CHỜ\s*(BẢN\s*)?KÝ\s*TAY/i.test(String(res.status||res.trangThai||res.trangThaiTiepNhan||'')) ||
+      (Array.isArray(res.reports)&&res.reports.some(x=>/CHỜ\s*(BẢN\s*)?KÝ\s*TAY/i.test(String(x.trangThai||x.trangThaiTiepNhan||x.status||''))))
+    ))throw Error('Máy chủ chưa xác nhận trạng thái CHỜ BẢN KÝ TAY. Kiểm tra Sheet hoặc lịch sử trước khi gửi lại.');
 
     if($('apiStatus')) $('apiStatus').textContent = 'Đã lưu hồ sơ kê khai thành công.';
     if(btn){
