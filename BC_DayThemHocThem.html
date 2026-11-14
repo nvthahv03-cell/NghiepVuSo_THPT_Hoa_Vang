@@ -2204,7 +2204,8 @@ function refreshSignatureUI(){
   if(signBtn) signBtn.disabled=state.signMethod==='PAPER'||!(state.signatureData&&state.signerVerified);
   const st=$('signerStatus');
   if(st){
-    if(state.signed){ st.textContent='✓ Đã xác thực người ký · Đã ký xác nhận'; st.classList.add('ok'); }
+    if(state.signMethod==='PAPER'){st.textContent='Chọn ký tay: không cần xác thực CCCD hoặc tải chữ ký.';st.classList.remove('ok');}
+    else if(state.signed){ st.textContent='✓ Đã xác thực người ký · Đã ký xác nhận'; st.classList.add('ok'); }
     else if(state.signerVerified){ st.textContent='✓ Đã xác thực người ký. Mời Thầy/Cô bấm “Ký xác nhận”.'; st.classList.add('ok'); }
     else { st.textContent='Chưa xác thực người ký.'; st.classList.remove('ok'); }
   }
@@ -2372,7 +2373,7 @@ function payload(){
     // 9 trường nghiệp vụ của Backend Service 14
     namHoc: '2026-2027',
     nguoiNhan: 'Hiệu trưởng Trường THPT Hòa Vang',
-    cccd: cccd,
+    cccd: state.signMethod==='ELECTRONIC'?cccd:'',
 
     monHocDayThem:       participates ? (tutorSubject || 'Toán') : 'Không tham gia',
     ngayTrongTuan:       participates ? (tutorTime || 'Theo thỏa thuận') : 'Không tham gia',
