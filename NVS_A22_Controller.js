@@ -11,6 +11,34 @@ function namePart(){const u=currentUser();return String(u.username||u.tenDangNha
 function storageKey(){return 'HVA_A22_SESSION_'+namePart()+'_'+by('code').value}
 function notice(text,ok=false){const n=by('feedback');n.textContent=text;n.style.color=ok?'#087e56':'#a22532'}
 function clean(t){return String(t==null?'':t).replace(/\r/g,'').trim()}
+function a22SetConnection(status,message){
+ const box=by('a22Connection'),label=by('a22ConnectionText');
+ if(!box||!label)return;
+ box.dataset.status=status;label.textContent=message;
+}
+function a22RefreshPresentation(){
+ const plan=by('code').value==='A.1.3-KH';
+ const quick=by('a22QuickTools');
+ if(quick)quick.hidden=!plan;
+ const evidence=by('evidence'),evidenceLabel=document.querySelector('label[for="evidence"]');
+ if(evidenceLabel)evidenceLabel.textContent=plan?'Liên kết kế hoạch bồi dưỡng HSG đã hoàn thiện (Google Drive / Docs) *':'Liên kết minh chứng Google Drive / Docs (nếu có)';
+ if(evidence){evidence.required=plan;evidence.placeholder=plan?'https://docs.google.com/document/d/...':'https://drive.google.com/...';}
+ const btn=by('send');
+ if(btn && !btn.disabled && !submittedId)btn.textContent=plan?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM';
+}
+function a22DownloadPlanTemplate(){
+ const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+ const fields=['I. Căn cứ xây dựng kế hoạch','II. Mục tiêu bồi dưỡng','III. Đối tượng, số lượng, môn và khối lớp','IV. Nội dung, chuyên đề và tiến độ','V. Phân công giáo viên, phối hợp thực hiện','VI. Tổ chức kiểm tra, đánh giá và điều chỉnh','VII. Đề xuất, kiến nghị'];
+ const heading='KẾ HOẠCH BỒI DƯỠNG HỌC SINH GIỎI';
+ const year=esc(by('schoolYear').value||'2026–2027');
+ const html='<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:"Times New Roman";font-size:13pt;line-height:1.5;margin:2cm}h1,h2{text-align:center}h1{font-size:14pt}h2{font-size:13pt;text-align:left;margin-top:22px}p{margin:9px 0}header{text-align:center}footer{text-align:right;margin-top:40px}</style></head><body><header><div>SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div><b>TRƯỜNG THPT HÒA VANG</b><h1>'+heading+'</h1><div>Năm học '+year+'</div></header>'+fields.map(x=>'<h2>'+esc(x)+'</h2><p>............................................................................................................................</p><p>............................................................................................................................</p>').join('')+'<footer><b>NGƯỜI LẬP KẾ HOẠCH</b><p>(Ký, ghi rõ họ tên)</p></footer></body></html>';
+ const blob=new Blob(['\ufeff',html],{type:'application/msword;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='HVA_KeHoach_BoiDuong_HSG_Mau.doc';document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1600);
+ notice('Đã tải mẫu tham khảo định dạng Word (.doc). Sau khi hoàn thành, lưu trên Drive và dán liên kết vào ô kế hoạch.',true);
+}
+
 function safeUrl(value){if(!value)return true;try{const u=new URL(value);return u.protocol==='https:'&&!!u.hostname&&!u.username&&!u.password}catch(_){return false}}
 function validDrive(value){if(!value)return true;try{const u=new URL(value);return safeUrl(value)&&['drive.google.com','docs.google.com'].includes(u.hostname)}catch(_){return false}}
 function setDate(){const d=new Date();const pad=v=>String(v).padStart(2,'0');by('date').value=[d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())].join('-')}
@@ -43,6 +71,7 @@ function setCode(code,keepTitle=false){
  const holder=by('specialFields');holder.replaceChildren(...def.fields.map(makeField));
  if(!keepTitle||!by('title').value.trim())by('title').value=def.title;
  by('previewPanel').classList.add('hidden');
+ a22RefreshPresentation();
  const url=new URL(location.href);url.searchParams.set('code',code);history.replaceState(null,'',url.pathname+url.search+url.hash);
  return true;
 }
@@ -61,6 +90,7 @@ function validate(){
  if(!by('form').reportValidity())return false;
  const {base,extras}=collect();
  if(!validDrive(base.evidence)){notice('Minh chứng chung chỉ nhận liên kết Google Drive/Docs HTTPS.');by('evidence').focus();return false}
+ if(base.code==='A.1.3-KH'&&!base.evidence){notice('Vui lòng dán liên kết kế hoạch HSG đã hoàn thiện trước khi gửi.');by('evidence').focus();return false}
  for(const spec of D[base.code].fields){
    const v=extras[spec.key],input=by('a22_'+spec.key);
    if(spec.type==='url'&&v&&!safeUrl(v)){notice('Liên kết '+spec.label+' phải dùng HTTPS và có tên miền hợp lệ.');input.focus();return false}
@@ -110,6 +140,7 @@ function applyDraft(raw){
  by('previewPanel').classList.add('hidden');
  return raw.schema==='HVA-DRAFT-1';
 }
+by('a22DownloadPlan')?.addEventListener('click',a22DownloadPlanTemplate);
 by('form').addEventListener('submit',e=>{e.preventDefault();preview()});
 by('export').addEventListener('click',()=>{if(!validate())return;const data=draft();makeDownload('HVA_'+data.form.code.replaceAll('.','_')+'_DU_THAO.json',JSON.stringify(data,null,2));notice('Tệp JSON là bản sao dữ liệu để lưu và chỉnh sửa; không phải giấy biên nhận nộp hồ sơ.',true)});
 by('import').addEventListener('click',()=>by('file').click());
@@ -152,23 +183,24 @@ async function a22API(action,payload={}){
  return data;
 }
 async function probeBackend(){
- if(!token()){notice('Chưa có phiên EDOS; có thể chuẩn bị và tải bản nháp, chưa thể gửi hồ sơ.');return}
+ if(!token()){a22SetConnection('offline','Chưa đăng nhập EDOS · Có thể soạn và lưu nháp');notice('Chưa có phiên EDOS; có thể chuẩn bị và tải bản nháp, chưa thể gửi hồ sơ.');return}
  try{
   const r=await a22API('nvsA22Capabilities');
   if(r.supported!==true||r.version!=='A22-1'||!r.bghCount||!r.ccCount)throw Error('Backend chưa xác nhận tuyến tiếp nhận đủ BGH và TTCM.');
   canSubmit=true;
+  a22SetConnection('ready','Đã xác thực nơi nhận BGH / TTCM · Có thể nộp hồ sơ');
   by('send').disabled=false;
-  by('send').textContent='Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM';
+  a22RefreshPresentation();
   by('send').title='Chỉ báo đã tiếp nhận khi Backend trả mã hồ sơ';
   notice('Tuyến tiếp nhận A22 đã xác thực. Hãy kiểm tra và xem trước hồ sơ trước khi nộp.',true);
  }catch(err){
-  canSubmit=false;by('send').disabled=true;
+  canSubmit=false;a22SetConnection('offline','Chưa kết nối tuyến nộp · Vẫn có thể xem trước và lưu nháp');by('send').disabled=true;
   by('send').title='Chưa có tuyến Backend A22 được xác thực';
   notice('Chưa thể nộp hồ sơ: '+err.message+' Có thể lưu nháp và xuất JSON.');
  }
 }
-by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('previewPanel').classList.add('hidden');by('send').disabled=!canSubmit;if(canSubmit)by('send').textContent='Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM';});
-select.addEventListener('change',()=>{clientRequestId=null;submittedId='';if(canSubmit){by('send').disabled=false;by('send').textContent='Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM';}});
+by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('previewPanel').classList.add('hidden');by('send').disabled=!canSubmit;if(canSubmit)a22RefreshPresentation();});
+select.addEventListener('change',()=>{clientRequestId=null;submittedId='';if(canSubmit){by('send').disabled=false;a22RefreshPresentation();}});
 by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
 by('restoreSession').addEventListener('click',()=>{clientRequestId=null;submittedId=''});
 by('send').addEventListener('click',async()=>{
@@ -187,7 +219,7 @@ by('send').addEventListener('click',async()=>{
   by('previewPanel').classList.remove('hidden');by('previewPanel').scrollIntoView({behavior:'smooth'});
   submittedId=r.recordId;
  }catch(err){notice('CHƯA XÁC NHẬN NỘP HỒ SƠ: '+err.message+' Nếu mạng gián đoạn, hãy thử lại mà không sửa nội dung để tránh gửi trùng.')}
- finally{btn.disabled=!canSubmit||!!submittedId;btn.textContent=submittedId?'Đã tiếp nhận hồ sơ · '+submittedId:canSubmit?'Nộp hồ sơ vào hộp tiếp nhận BGH / TTCM':'Gửi BGH / Đồng gửi TTCM · Chưa kết nối'}
+ finally{btn.disabled=!canSubmit||!!submittedId;btn.textContent=submittedId?'Đã tiếp nhận hồ sơ · '+submittedId:canSubmit?(by('code').value==='A.1.3-KH'?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM'):'Gửi hồ sơ · Chờ kết nối'}
 });
 probeBackend();
 
