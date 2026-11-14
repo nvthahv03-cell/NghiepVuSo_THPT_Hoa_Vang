@@ -51,27 +51,51 @@
   .hva-a11-assistant-placeholder{opacity:.55;cursor:not-allowed!important;box-shadow:none!important}
 </style>
   <script src="./HVA_Assistant_Shared.js" defer></script>
-</head>
+<style id="hva-a11-design-v2">
+/* Tinh gọn A.1.1; không thay đổi hàm gửi Backend */
+.hva-pro-header{background:linear-gradient(110deg,#06396f,#075aa2 70%,#087dad)!important}
+.hva-pro-school{font-size:clamp(19px,2.8vw,26px)!important}
+.hero{border-radius:16px!important;background:linear-gradient(105deg,#eff8ff,#f9fcff)!important;border:1px solid #d8e9f5!important}
+.hero h1{font-size:clamp(21px,3vw,28px)!important;line-height:1.3!important;color:#124c7a!important}
+.hero p{color:#607b91!important;font-size:12px!important;line-height:1.6!important}
+.choice-grid{gap:11px!important}
+.choice{border:1.5px solid #d8e6f0!important;border-radius:13px!important;background:#fff!important;box-shadow:0 3px 11px #204f7908!important;transition:transform .18s,box-shadow .18s,border-color .18s!important}
+.choice:hover{transform:translateY(-2px)!important;border-color:#8cc1e4!important;box-shadow:0 8px 20px #075da119!important}
+.choice[aria-pressed="true"]{border-color:#0777bf!important;background:#f0f8ff!important;box-shadow:0 0 0 2px #1476ba12!important}
+.choice strong{font-size:14px!important;line-height:1.45!important;color:#174d7b!important}
+.choice small{color:#607b91!important;line-height:1.5!important}
+.choice .tag{font-size:10px!important;color:#0b6799!important;background:#e9f5ff!important;border-radius:7px!important;padding:5px 8px!important}
+#notice.status{border:1px solid #dce8f1!important;background:#f8fbff!important;color:#4e6f89!important;border-radius:11px!important;padding:12px 14px!important;font-size:12px!important;line-height:1.6!important}
+#notice.status[data-error="true"]{background:#fff8f1!important;color:#8c6024!important;border-color:#f4dfc1!important}
+#editor .warning{background:#f5f9fe!important;color:#56748a!important;border-color:#d6e7f4!important;font-size:12px!important;line-height:1.6!important}
+#editor .identity-cell{background:#f8fbfe!important}
+#previewSection #printActions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+#previewSection #a11Send{background:linear-gradient(110deg,#075ba6,#0781c0);font-weight:850;min-height:44px}
+#previewSection #a11Send:disabled{background:#e2e9ee;color:#6c8291;cursor:not-allowed}
+.hva-a11-assistant-placeholder{display:none!important}
+@media(max-width:720px){.choice-grid{grid-template-columns:1fr!important}.choice{min-height:90px!important;padding:13px!important}#previewSection #printActions>.btn{width:100%!important}#notice.status{margin-left:12px!important;margin-right:12px!important}}
+@media print{#notice.status{display:none!important}}
+</style></head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
   <a class="hva-pro-back" href="./NghiepVu.html" title="Về Nghiệp vụ số" aria-label="Về danh mục Nghiệp vụ số"><i class="bi bi-arrow-left" aria-hidden="true">←</i></a>
-  <div class="hva-pro-brand"><div class="hva-pro-kicker">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div><div class="hva-pro-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-pro-slogan">NGHIỆP VỤ SỐ THÔNG MINH</div></div>
+  <div class="hva-pro-brand"><div class="hva-pro-kicker">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div><div class="hva-pro-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-pro-slogan">HVA–EDOS · Nghiệp vụ số</div></div>
   <div class="hva-pro-online">A.1.1 · BÁO CÁO CHUYÊN MÔN</div>
 </div></header>
 <main>
-  <section class="hero"><div><div class="eyebrow">A.1.1 – Thực hiện nhiệm vụ, báo cáo khác</div><h1 id="heading">Báo cáo thực hiện nhiệm vụ – Báo cáo khác</h1><p>Chọn loại báo cáo để lập nội dung và xem trước theo thể thức hành chính.</p></div>
+  <section class="hero"><div><div class="eyebrow">A.1.1 – Thực hiện nhiệm vụ, báo cáo khác</div><h1 id="heading">Báo cáo thực hiện nhiệm vụ – Báo cáo khác</h1><p>Chọn đúng loại báo cáo, điền nội dung, xem trước rồi gửi khi hệ thống xác nhận tuyến tiếp nhận.</p></div>
   <div class="header-links"><a class="btn secondary" href="./NghiepVu.html">Danh mục nghiệp vụ</a><button class="btn ghost hva-a11-assistant-placeholder" id="assistantTop" data-nvs-nav="ai" disabled aria-disabled="true" title="Chưa kết nối Trợ lý AI tại biểu mẫu này; không có thao tác gửi dữ liệu" type="button">✦ Trợ lý (chờ kết nối)</button></div></section>
-  <section class="panel" id="choices" aria-labelledby="choicesHeading"><div class="panel-top"><div><h2 id="choicesHeading">Chọn loại báo cáo</h2><p class="muted">Bốn nghiệp vụ thuộc A.1.1; không lặp menu A.1.2–A.1.4 trong trang này.</p></div></div>
+  <section class="panel" id="choices" aria-labelledby="choicesHeading"><div class="panel-top"><div><h2 id="choicesHeading">Chọn loại báo cáo</h2><p class="muted">Ba loại báo cáo có thể gửi khi Backend sẵn sàng; “Báo cáo khác” dùng để soạn dự thảo.</p></div></div>
   <div class="choice-grid" id="choiceGrid">
-    <button type="button" class="choice" data-id="task" aria-pressed="false"><span class="choice-icon" aria-hidden="true">▤</span><span><strong>Báo cáo thực hiện nhiệm vụ được giao</strong><small>Kết quả thực hiện nhiệm vụ theo phân công.</small><span class="tag">Lập bản xem trước</span></span></button>
-    <button type="button" class="choice" data-id="deployment" aria-pressed="false"><span class="choice-icon" aria-hidden="true">▣</span><span><strong>Báo cáo công tác điều động</strong><small>Nội dung tham gia, kết quả và công việc tiếp theo.</small><span class="tag">Lập bản xem trước</span></span></button>
-    <button type="button" class="choice" data-id="training" aria-pressed="false"><span class="choice-icon" aria-hidden="true">◈</span><span><strong>Báo cáo tập huấn, bồi dưỡng, hội nghị, hội thảo</strong><small>Tiếp thu nội dung, khả năng vận dụng và đề xuất.</small><span class="tag">Lập bản xem trước</span></span></button>
+    <button type="button" class="choice" data-id="task" aria-pressed="false"><span class="choice-icon" aria-hidden="true">▤</span><span><strong>Báo cáo thực hiện nhiệm vụ được giao</strong><small>Kết quả thực hiện nhiệm vụ theo phân công.</small><span class="tag">Soạn và xem trước</span></span></button>
+    <button type="button" class="choice" data-id="deployment" aria-pressed="false"><span class="choice-icon" aria-hidden="true">▣</span><span><strong>Báo cáo công tác điều động</strong><small>Nội dung tham gia, kết quả và công việc tiếp theo.</small><span class="tag">Soạn và xem trước</span></span></button>
+    <button type="button" class="choice" data-id="training" aria-pressed="false"><span class="choice-icon" aria-hidden="true">◈</span><span><strong>Báo cáo tập huấn, bồi dưỡng, hội nghị, hội thảo</strong><small>Tiếp thu nội dung, khả năng vận dụng và đề xuất.</small><span class="tag">Soạn và xem trước</span></span></button>
     <button type="button" class="choice" data-id="other" aria-pressed="false"><span class="choice-icon" aria-hidden="true">▧</span><span><strong>Báo cáo khác theo yêu cầu</strong><small>Khung dự thảo linh hoạt, hoàn thiện khi có yêu cầu cụ thể.</small><span class="tag">Khung tham khảo · chưa duyệt</span></span></button>
   </div></section>
-  <p id="notice" class="status" data-error="false" role="status" aria-live="polite">Chọn một loại báo cáo để bắt đầu. Chưa có kết nối lưu, ký hoặc gửi báo cáo.</p>
+  <p id="notice" class="status" data-error="false" role="status" aria-live="polite">Chọn một loại báo cáo để bắt đầu. Trạng thái nộp hồ sơ sẽ được xác minh từ Backend.</p>
   <section class="panel" id="editor" hidden aria-labelledby="editorHeading">
     <div class="panel-top"><div><div class="eyebrow">Chuẩn bị nội dung</div><h2 id="editorHeading"></h2></div><button type="button" class="btn ghost" id="backToChoices">← Chọn báo cáo khác</button></div>
-    <p class="warning" id="developmentNote">Bản xem trước dùng để kiểm tra nội dung; chưa lưu, chưa ký, chưa gửi đến BGH. Không nhập dữ liệu học sinh nhạy cảm.</p>
+    <p class="warning" id="developmentNote">Bản xem trước giúp kiểm tra nội dung trước khi nộp. Chỉ hồ sơ có mã tiếp nhận của máy chủ mới được coi là đã gửi. Không nhập thông tin cá nhân nhạy cảm.</p>
     <div class="identity-grid" aria-label="Thông tin người lập">
       <div class="identity-cell"><small>NGƯỜI BÁO CÁO</small><strong id="identityName">Chưa đăng nhập</strong></div>
       <div class="identity-cell"><small>TỔ / BỘ PHẬN</small><strong id="identityTeam">Chưa xác định</strong></div>
@@ -79,14 +103,14 @@
     </div>
     <div id="loginWarning" class="warning" hidden>Phiên đăng nhập chưa hợp lệ. Vui lòng đăng nhập từ <a href="./index.html">Trang chủ NVS</a> để chuẩn bị báo cáo.</div>
     <form id="reportForm" novalidate><fieldset id="formFields"><div id="fields" class="grid"></div>
-      <div class="field full" style="margin-top:17px"><label for="driveLink">Liên kết tài liệu, minh chứng Google Drive (nếu có)</label><input type="url" id="driveLink" name="driveLink" placeholder="https://drive.google.com/..." autocomplete="off"><p class="muted">Chỉ ghi nhận liên kết trong bản xem trước. Không tải tệp lên NVS; không kiểm chứng quyền Drive tại đây.</p></div>
+      <div class="field full" style="margin-top:17px"><label for="driveLink">Liên kết tài liệu, minh chứng Google Drive (nếu có)</label><input type="url" id="driveLink" name="driveLink" placeholder="https://drive.google.com/..." autocomplete="off"><p class="muted">Gửi liên kết đến tài liệu Google Drive/Docs đã chia sẻ đúng quyền cho người tiếp nhận; hệ thống không tự kiểm tra quyền truy cập tệp.</p></div>
       <div class="actions"><button class="btn" type="submit" id="previewButton">Xem trước báo cáo</button><button class="btn secondary" type="button" id="clearButton">Làm mới</button><button class="btn secondary hva-a11-assistant-placeholder" type="button" data-nvs-nav="ai" disabled aria-disabled="true" title="Chưa kết nối Trợ lý AI tại biểu mẫu này; không có thao tác gửi dữ liệu">✦ Trợ lý (chờ kết nối)</button></div>
     </fieldset></form>
-    <p class="muted" style="margin-top:16px"><strong>Nơi nhận dự kiến:</strong> Ban Giám hiệu; tổ trưởng chuyên môn được thông tin theo quyền được duyệt. Chưa có kết nối gửi và phản hồi hồ sơ trong trang này.</p>
+    <p class="muted" style="margin-top:16px"><strong>Nơi nhận:</strong> Ban Giám hiệu và Tổ trưởng chuyên môn theo phân quyền, khi tuyến tiếp nhận được Backend xác nhận.</p>
   </section>
   <section class="panel" id="previewSection" hidden aria-labelledby="previewHeading"><h2 id="previewHeading">Bản xem trước báo cáo</h2>
     <div class="preview" id="previewPaper" aria-live="polite"></div>
-    <div class="actions" id="printActions"><button type="button" class="btn secondary" id="editButton">← Quay lại chỉnh sửa</button><button type="button" class="btn" id="printButton">In / Lưu PDF bản xem trước</button><button type="button" class="btn" id="a11Send" disabled>Gửi báo cáo tới BGH / TTCM</button><span class="muted">Không phải hồ sơ đã ký hoặc gửi.</span></div>
+    <div class="actions" id="printActions"><button type="button" class="btn secondary" id="editButton">← Quay lại chỉnh sửa</button><button type="button" class="btn" id="printButton">In / Lưu PDF bản xem trước</button><button type="button" class="btn" id="a11Send" disabled>Gửi báo cáo tới BGH / TTCM</button><span class="muted">Chỉ ghi nhận đã nộp khi có mã tiếp nhận.</span></div>
   </section>
 </main>
 <nav class="bottom-nav" aria-label="Điều hướng NVS"><a href="./index.html">Trang chủ</a><a href="./NghiepVu.html">Nghiệp vụ số</a><button type="button" data-nvs-nav="ai" class="hva-a11-assistant-placeholder" disabled aria-disabled="true" title="Chưa kết nối Trợ lý AI tại biểu mẫu này; không có thao tác gửi dữ liệu">✦ Trợ lý (chờ kết nối)</button></nav>
@@ -219,9 +243,9 @@
     const def=defs[id];$('editorHeading').textContent=def.name;
     $('fields').replaceChildren(...def.fields.map(field));$('driveLink').value='';
     $('editor').hidden=false;$('previewSection').hidden=true;
-    $('developmentNote').textContent=def.draft?'Khung Báo cáo khác chỉ để chuẩn bị và xem trước; chưa có mẫu theo yêu cầu được phê duyệt. Không được coi là báo cáo chính thức.':'Chỉ chuẩn bị và xem trước nội dung; chưa lưu, chưa ký, chưa gửi đến BGH. Không nhập dữ liệu học sinh nhạy cảm.';
+    $('developmentNote').textContent=def.draft?'Khung Báo cáo khác chỉ để chuẩn bị và xem trước; chưa có mẫu theo yêu cầu được phê duyệt. Không được coi là báo cáo chính thức.':'Xem trước và kiểm tra nội dung; khi hệ thống xác nhận tuyến tiếp nhận, có thể gửi sau khi xem trước.';
     try{history.replaceState(null,'',location.pathname+'?item='+encodeURIComponent(id));}catch(_){}
-    const a=verifySession();if(a)announce('Đang chuẩn bị: '+def.name+'. Có thể xem trước, chưa lưu / ký / gửi.');
+    const a=verifySession();if(a)announce('Đang soạn: '+def.name+'. Xem trước rồi gửi khi tuyến tiếp nhận sẵn sàng.');
     if(focus)$('editor').scrollIntoView({block:'start',behavior:'smooth'});
   }
   function appendLine(paper,label,value,asLink=false){if(!String(value||'').trim())return;const p=el('p',undefined,'report-line');p.append(el('strong',label+': '));
@@ -247,7 +271,7 @@
     paper.append(el('div',def.draft?'BẢN XEM TRƯỚC – MẪU CHƯA ĐƯỢC PHÊ DUYỆT – CHƯA LƯU, CHƯA GỬI':'BẢN XEM TRƯỚC – CHƯA LƯU, CHƯA KÝ, CHƯA GỬI','preview-stamp'));
     $('previewSection').hidden=false;a11UpdateSend();
     $('previewSection').scrollIntoView({block:'start',behavior:'smooth'});
-    announce('Đã tạo bản xem trước. Nội dung chỉ tồn tại trong trang hiện tại; chưa lưu, ký hoặc gửi.');
+    announce('Đã tạo bản xem trước. Có thể in hoặc gửi khi hệ thống xác nhận tuyến tiếp nhận.');
   }
   for(const btn of document.querySelectorAll('.choice'))btn.addEventListener('click',()=>setChoice(btn.dataset.id));
   $('reportForm').addEventListener('submit',renderPreview);
