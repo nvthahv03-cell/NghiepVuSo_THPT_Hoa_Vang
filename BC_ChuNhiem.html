@@ -785,8 +785,6 @@ async function submitReport(ev){
 
   const payload = {
     action: 'submitChuNhiem',
-    clientRequestId: window.__a1CNRequestId || (window.__a1CNRequestId =
-      'A1CN-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12)),
     username: userObj.tenDangNhap || userObj.username || '',
     sessionToken: token,
     teacherKey: userObj.tenDangNhap || userObj.username || '',
@@ -806,6 +804,12 @@ async function submitReport(ev){
     deXuat: $('suggestions').value.trim(),
     chuKyBase64: state.signMethod==='ELECTRONIC'?state.signatureData:''
   };
+  const fingerprint = JSON.stringify(payload);
+  if(window.__a1CNLastPayload !== fingerprint){
+    window.__a1CNLastPayload = fingerprint;
+    window.__a1CNRequestId = 'A1CN-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12);
+  }
+  payload.clientRequestId = window.__a1CNRequestId;
 
   try{
     const r = await fetch(DTHT_BACKEND_URL, {
