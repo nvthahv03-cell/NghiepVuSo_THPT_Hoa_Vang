@@ -183,23 +183,35 @@ function hvaBvDailyReport_(){
   if(old&&old[5]==='DA_GUI')return {skipped:true,reason:'Đã gửi ngày '+date};
   const folderId=hvaBvProp_('EDOS_BV_REPORT_FOLDER_ID'),emails=hvaBvUsers_('EDOS_BV_BGH_EMAILS').filter(x=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x));
   if(!folderId||!emails.length)throw Error('Chưa xác nhận thư mục báo cáo và email BGH.');
-  const end=new Date(now);end.setHours(6,0,0,0);
+  const day=Utilities.formatDate(now,HVA_BV_CFG_.TZ,'yyyy-MM-dd');
+  const end=new Date(day+'T06:00:00+07:00');
   const start=new Date(end.getTime()-86400000);
   const inRange=t=>{const x=t instanceof Date?t:new Date(t);return !isNaN(x)&&x>=start&&x<end};
   const records=hvaBvRows_('BV_NhatKy',10000).filter(r=>inRange(r[1]));
+  const gate=hvaBvRows_('BV_RaVao',10000).filter(r=>inRange(r[1]));
+  const handovers=hvaBvRows_('BV_BanGiao',10000).filter(r=>inRange(r[1]));
+  const items=hvaBvRows_('BV_TaiSan',10000).filter(r=>inRange(r[1]));
   const alerts=records.filter(r=>r[10]==='CHU_Y'||r[10]==='KHAN_CAP');
+  const gateAlerts=gate.filter(r=>r[15]==='CHU_Y');
   const open=records.filter(r=>r[11]!=='DA_XAC_NHAN');
-  const html=hvaBvReportHtml_(date,start,end,records,alerts,open);
+  const pendingHandover=handovers.filter(r=>r[11]!=='DA_NHAN');
+  const pendingItems=items.filter(r=>!['DA_NHAN','BGH_DA_XAC_NHAN'].includes(String(r[11])));
+  const extra='<h2>V. TÌNH HÌNH RA/VÀO, BÀN GIAO, TÀI SẢN</h2>'+
+    '<p>Khách/học sinh ra vào: '+gate.length+' lượt; bàn giao ca: '+handovers.length+' lượt; vật dụng tiếp nhận: '+items.length+'.</p>'+
+    '<p>Bàn giao chưa được nhận: '+pendingHandover.length+'; vật dụng đang giữ: '+pendingItems.length+'; lượt ra/vào cần lưu ý: '+gateAlerts.length+'.</p>'+
+    '<h2>VI. TÌNH TRẠNG ĐỦ DỮ LIỆU</h2><p>'+
+    ([...new Set(records.map(r=>r[3]))].length<3?'CHƯA ĐỦ NHẬT KÝ CẢ 3 CA; cần BGH kiểm tra.':'Đã có bản ghi từ đủ 3 ca; cần đối chiếu chất lượng nội dung.')+'</p>';
+  const html=hvaBvReportHtml_(date,start,end,records,alerts,open).replace('</body>',extra+'</body>');
   // Tạo PDF và lưu trạng thái TRƯỚC khi gửi, để khi lỗi không tạo nhiều báo cáo trùng.
   const folder=DriveApp.getFolderById(folderId);
   const filename='HVA_BAO_CAO_BAO_VE_'+date+'.pdf';
   let files=folder.getFilesByName(filename),file=files.hasNext()?files.next():null;
   if(!file)file=folder.createFile(Utilities.newBlob(html,'text/html',filename+'.html').getAs(MimeType.PDF).setName(filename));
   const url=file.getUrl(),index=old?all.indexOf(old)+2:sh.getLastRow()+1;
-  const row=['BV-BC-'+date,date,hvaBvClock_(start),hvaBvClock_(end),now,'CHO_GUI',records.length,alerts.length,open.length,url,old?Number(old[10]||0):0,'',emails.join(', '),''];
+  const row=['BV-BC-'+date,date,hvaBvClock_(start),hvaBvClock_(end),now,'CHO_GUI',records.length+gate.length+handovers.length+items.length,alerts.length+gateAlerts.length,open.length+pendingHandover.length+pendingItems.length,url,old?Number(old[10]||0):0,'',emails.join(', '),''];
   if(old)sh.getRange(index,1,1,14).setValues([row]);else sh.appendRow(row);
   const subject='[HVA–EDOS] Báo cáo trực Bảo vệ '+date+(alerts.length?' · CÓ '+alerts.length+' LƯU Ý':'');
-  const body='Kính gửi Ban Giám hiệu,\n\nBáo cáo trực Bảo vệ ngày '+date+' (06:00 hôm trước – 06:00 hôm nay).\nTổng hồ sơ: '+records.length+'; bất thường: '+alerts.length+'; chưa xác nhận: '+open.length+'.\nPDF: '+url+'\n\nCác sự việc khẩn cấp phải được thông báo ngay, không đợi báo cáo.';
+  const body='Kính gửi Ban Giám hiệu,\n\nBáo cáo trực Bảo vệ ngày '+date+' (06:00 hôm trước – 06:00 hôm nay).\nTổng hồ sơ: '+(records.length+gate.length+handovers.length+items.length)+'; bất thường: '+(alerts.length+gateAlerts.length)+'; chưa xác nhận: '+(open.length+pendingHandover.length+pendingItems.length)+'.\nPDF: '+url+'\n\nCác sự việc khẩn cấp phải được thông báo ngay, không đợi báo cáo.';
   // MailApp chỉ gửi sau khi được cấu hình email và cấp quyền Gmail trong GAS.
   MailApp.sendEmail({to:emails.join(','),subject,body,attachments:[file.getBlob()],name:'HVA–EDOS | THPT Hòa Vang'});
   sh.getRange(index,6).setValue('DA_GUI');sh.getRange(index,11,1,2).setValues([[row[10]+1,new Date()]]);
