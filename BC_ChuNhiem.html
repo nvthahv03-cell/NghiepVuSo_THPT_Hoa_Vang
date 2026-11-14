@@ -265,7 +265,18 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
 }
 @media(prefers-reduced-motion:reduce){#hvaSignMethodPanel label.hva-sign-choice{transition:none!important;transform:none!important}}
 @media print{#hvaSignMethodPanel{display:none!important}}
-</style></head>
+</style><style id="hva-notice-brand-v3">
+/* Nhận diện thống nhất HVA–EDOS cho thông báo, không tác động luồng nộp */
+#hvaNotice .hva-modal-head{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:0!important;background:linear-gradient(110deg,#075094,#087cba)!important;padding:19px 24px!important;min-height:88px!important}
+#hvaNotice .hva-notice-brand-wrap{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;min-width:0!important}
+#hvaNotice .hva-notice-identity{font-family:Inter,Arial,sans-serif!important;display:flex!important;align-items:baseline!important;white-space:nowrap!important;letter-spacing:-.035em!important;font-size:27px!important;line-height:1.1!important;font-weight:950!important}
+#hvaNotice .hva-notice-hva{color:#fff!important}
+#hvaNotice .hva-notice-edos{color:#ffb43d!important}
+#hvaNotice .hva-notice-school{font-size:11px!important;line-height:1.5!important;letter-spacing:.045em!important;color:#eaf5ff!important;font-weight:800!important}
+#hvaNotice .hva-notice-kind{font-size:10px!important;line-height:1.4!important;color:#d0e8f9!important;letter-spacing:.07em!important;font-weight:650!important}
+@media(max-width:480px){#hvaNotice .hva-modal-head{padding:16px 19px!important;min-height:78px!important}#hvaNotice .hva-notice-identity{font-size:24px!important}#hvaNotice .hva-notice-school{font-size:10px!important}}
+</style>
+</head>
 <body>
 
 <!-- MODAL CCCD -->
@@ -494,8 +505,11 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
 <div class="hva-modal-backdrop hidden" id="hvaNotice">
   <div class="hva-modal">
     <div class="hva-modal-head">
-      <i class="bi bi-cpu-fill" style="font-size:28px;"></i>
-      <div><div style="font-size:18px;font-weight:900;">THÔNG BÁO HỆ THỐNG</div><div style="font-size:12px;font-weight:800;opacity:.95;">TRƯỜNG THPT HÒA VANG</div><div style="font-size:11px;opacity:.85;margin-top:3px;">HVA–EDOS</div></div>
+      <div class="hva-notice-brand-wrap">
+        <div class="hva-notice-identity" aria-label="HVA–EDOS"><span class="hva-notice-hva">HVA–</span><span class="hva-notice-edos">EDOS</span></div>
+        <div class="hva-notice-school">TRƯỜNG THPT HÒA VANG</div>
+        <div class="hva-notice-kind">THÔNG BÁO HỆ THỐNG</div>
+      </div>
     </div>
     <div class="hva-modal-body">
       <div class="hva-modal-icon" id="hvaNoticeIcon"><i class="bi bi-info-lg"></i></div>
