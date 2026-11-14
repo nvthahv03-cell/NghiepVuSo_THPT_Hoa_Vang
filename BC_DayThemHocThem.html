@@ -1042,7 +1042,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 }
   
 </style>
-</head>
+<style id="hva-sign-method-v1">.hva-sign-method{padding:15px 18px;margin:0 0 16px;background:#f0f8ff;border:1px solid #badbf2;border-radius:13px;display:grid;gap:9px;color:#16476d;font:inherit;font-size:13px}.hva-sign-method strong{font-size:13px;color:#073b78}.hva-sign-method label{display:flex;gap:9px;align-items:center;cursor:pointer}.hva-sign-method input{accent-color:#075cad}.hva-sign-method small{color:#566e85;line-height:1.5}.hva-paper-mode .identity-col:nth-child(2),.hva-paper-mode .identity-col:nth-child(3){opacity:.45;pointer-events:none}.hva-paper-mode .hva-sign-method{background:#fff8e9;border-color:#efcf93}@media print{.hva-sign-method{display:none!important}}</style></head>
 <!-- 🔴 CORE PASS — SHELL/HVA PAGE FRAME — LOCK -->
 <body>
 
@@ -1136,6 +1136,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
     <h2 class="section-title">Kê khai dạy thêm ngoài nhà trường</h2>
     <p class="muted">Thông tin người kê khai được nhận diện tự động từ tài khoản HVA đang đăng nhập.</p>
 
+    <div class="hva-sign-method" id="hvaSignMethodPanel" role="group" aria-label="Lựa chọn hình thức ký"><strong>HÌNH THỨC KÝ BÁO CÁO</strong><label><input type="radio" name="hvaSignMethod" value="ELECTRONIC" checked onchange="hvaSwitchSignMethod('ELECTRONIC')"> Xác thực CCCD và ký xác nhận điện tử</label><label><input type="radio" name="hvaSignMethod" value="PAPER" onchange="hvaSwitchSignMethod('PAPER')"> In báo cáo, ký tay và nộp bản giấy</label><small id="hvaSignMethodNote">Hình thức ký điện tử hiện hành được giữ nguyên.</small></div>
     <div class="identity-card">
       <div class="identity-col">
         <div class="identity-person">
@@ -2128,7 +2129,7 @@ const TEAM_UNITS=[
  {label:'Sinh - GDTC - QPAN',query:'Sinh - GDTC - QPAN'}
 ];
 const TEAMS=TEAM_UNITS.map(x=>x.label);
-let state={allTeachers:[],teachers:[],reports:[],team:'',teacher:null,participates:null,signatureData:'',signerVerified:false,signed:false};
+let state={allTeachers:[],teachers:[],reports:[],team:'',teacher:null,participates:null,signatureData:'',signerVerified:false,signed:false,signMethod:'ELECTRONIC'};
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2185,6 +2186,13 @@ function signatureStorageKey(){
   const key=String(state.teacher?.key||dthtCurrentUser().username||'').trim().toLowerCase();
   return 'hvaDTHTSignature:'+key;
 }
+function hvaSwitchSignMethod(mode){
+  state.signMethod=mode==='PAPER'?'PAPER':'ELECTRONIC';
+  document.body.classList.toggle('hva-paper-mode',state.signMethod==='PAPER');
+  $('hvaSignMethodNote').textContent=state.signMethod==='PAPER'?'Bản gửi điện tử phải có trạng thái CHỜ KÝ TAY; cần in, ký và nộp bản giấy.':'Giữ nguyên cơ chế ký xác nhận hiện hành.';
+  const button=$('submitReportBtn');if(button&&!button.disabled)button.textContent=state.signMethod==='PAPER'?'Gửi hồ sơ chờ bản ký tay':'Xác nhận & gửi';
+  refreshSignatureUI();
+}
 function refreshSignatureUI(){
   const box=$('signaturePreview'), rm=$('removeSignatureBtn'), signBtn=$('signDocumentBtn');
   if(box){
@@ -2193,7 +2201,7 @@ function refreshSignatureUI(){
       : '<div class="signature-empty">Thầy/Cô vui lòng tải hình ảnh chữ ký.</div>';
   }
   if(rm) rm.disabled=!state.signatureData;
-  if(signBtn) signBtn.disabled=!(state.signatureData&&state.signerVerified);
+  if(signBtn) signBtn.disabled=state.signMethod==='PAPER'||!(state.signatureData&&state.signerVerified);
   const st=$('signerStatus');
   if(st){
     if(state.signed){ st.textContent='✓ Đã xác thực người ký · Đã ký xác nhận'; st.classList.add('ok'); }
@@ -2301,7 +2309,7 @@ function signDocument(){
 function applySignatureToPaper(){
   const paper=$('paperSignature'), guide=$('signGuide');
   if(!paper||!guide) return;
-  if(state.signed&&state.signatureData){
+  if(state.signMethod!=='PAPER'&&state.signed&&state.signatureData){
     paper.innerHTML='<img src="'+state.signatureData+'" alt="Chữ ký">';
     guide.classList.add('hidden-sign-guide');
   }else{
@@ -2345,8 +2353,9 @@ function payload(){
     teacherName: state.teacher?.name || '',
     team: state.teacher?.team || state.team || '',
     schoolYear: '2026-2027',
-    signerVerified: state.signerVerified === true,
-    signed: state.signed === true,
+    signingMethod: state.signMethod,
+    signerVerified: state.signMethod==='ELECTRONIC' && state.signerVerified === true,
+    signed: state.signMethod==='ELECTRONIC' && state.signed === true,
 
     // Khóa tham gia tương thích cả File 14 và File 15
     participates: participates,
@@ -2467,17 +2476,11 @@ async function submitReport(ev){
   if(window.__dthtSubmitting) return;
 
   // Tự động kiểm tra và phục hồi trạng thái ký nếu đã có chữ ký và CCCD hợp lệ
-  if(!state.signatureData){
-    showHvaNotice('error','Chưa có chữ ký','Thầy/Cô vui lòng tải hình ảnh chữ ký trước khi gửi.');
-    return;
+  if(state.signMethod==='ELECTRONIC'){
+    if(!state.signatureData){showHvaNotice('error','Chưa có chữ ký','Vui lòng tải hình ảnh chữ ký trước khi gửi.');return;}
+    if(!state.signerVerified){showHvaNotice('error','Chưa xác thực','Vui lòng xác thực CCCD người ký trước khi gửi.');return;}
+    state.signed=true;
   }
-  if(!state.signerVerified){
-    showHvaNotice('error','Chưa xác thực người ký','Thầy/Cô vui lòng xác thực người ký bằng CCCD trước khi gửi.');
-    return;
-  }
-  
-  // Đảm bảo cờ signed luôn bật nếu đã có chữ ký & đã xác thực
-  state.signed = true;
 
   const btn = $('submitReportBtn');
   const originalHtml = btn ? btn.innerHTML : '';
