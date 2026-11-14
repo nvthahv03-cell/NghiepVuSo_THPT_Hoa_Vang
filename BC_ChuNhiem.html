@@ -651,7 +651,7 @@ function hvaPrintPaper(){
 function hvaSwitchSignMethod(mode){
   state.signMethod=mode==='PAPER'?'PAPER':'ELECTRONIC';
   document.body.classList.toggle('hva-paper-mode',state.signMethod==='PAPER');
-  $('hvaSignMethodNote').textContent=state.signMethod==='PAPER'?'Bản gửi điện tử (nếu Backend đã hỗ trợ) phải ghi rõ CHỜ BẢN KÝ TAY; sau khi in, ký và nộp mới hoàn tất.':'Giữ nguyên cơ chế CCCD và ảnh chữ ký hiện hành.';
+  $('hvaSignMethodNote').textContent=state.signMethod==='PAPER'?'Gửi báo cáo trên EDOS, sau đó in, ký tay và nộp bản giấy.':'Xác thực CCCD và ký xác nhận trước khi gửi.';
   const button=$('submitReportBtn');if(button&&!button.disabled)button.textContent=state.signMethod==='PAPER'?'Gửi hồ sơ chờ bản ký tay':'Xác nhận & gửi BGH';
   refreshSignatureUI();
 }
@@ -760,13 +760,7 @@ async function submitReport(ev){
   }
   if(!$('reportForm').reportValidity()) return;
   if(!/^1[012]\/\d{1,2}$/.test($('assignedClass').value.trim())) {showHvaNotice('error','Chưa xác định lớp','Chưa xác minh được lớp chủ nhiệm từ hồ sơ nhân sự.');return;}
-  if(state.signMethod==='PAPER'){
-    try{await hvaCheckPaperSigning_(HVA_V5_BACKEND_URL)}catch(err){
-      const note=$('hvaSignMethodNote');if(note)note.textContent='Backend hiện tại chưa bật nộp ký tay. Thầy/Cô có thể dùng nút In / lưu PDF, ký tay và nộp bản giấy; hệ thống chưa ghi nhận hồ sơ điện tử.';
-      hvaShowPrintNotice();
-      return;
-    }
-  }
+  // Ho so ky tay gui truc tiep; Backend phai tra trang thai CHO KY TAY moi bao thanh cong.
   const btn = $('submitReportBtn');
   if(btn.disabled) return;
   btn.disabled = true;
@@ -798,7 +792,7 @@ async function submitReport(ev){
   };
 
   try{
-    const r = await fetch(state.signMethod==='PAPER'?HVA_V5_BACKEND_URL:DTHT_BACKEND_URL, {
+    const r = await fetch(DTHT_BACKEND_URL, {
       method: 'POST',
       headers: {'Content-Type': 'text/plain;charset=UTF-8'},
       body: JSON.stringify(payload),
