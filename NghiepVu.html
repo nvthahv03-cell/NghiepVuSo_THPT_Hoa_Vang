@@ -344,4 +344,20 @@ selector?.addEventListener('change',()=>{
  hint.textContent=current?'Giữ nguyên đường dẫn và chức năng báo cáo đã PASS.':'Phân loại báo cáo này đang phát triển; chưa kết nối biểu mẫu, không tự gửi dữ liệu.';
 });
 })();
+</script><script id="hva-a16-runtime-capability">
+(()=>{'use strict';
+ const url='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
+ function token(){for(const name of ['localStorage','sessionStorage'])try{const st=window[name],raw=st.getItem('hvaSessionExpiresAt'),v=Number(raw),t=st.getItem('hvaSessionToken');if(t&&v>Date.now())return t;}catch(e){}return ''}
+ async function probe(){
+  const t=token();if(!t)return;
+  try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'nvsA22Capabilities',sessionToken:t}),cache:'no-store'});
+   if(!r.ok)return;const d=await r.json();
+   if(d.success!==true||d.supported!==true||d.version!=='A22-1'||!d.bghCount||!d.ccCount)return;
+   document.querySelectorAll('#panel-0 a[href*="NVS_BieuMau_NghiepVu.html?code="]').forEach(a=>{const span=a.querySelector('.status');if(span){span.textContent='Có thể nộp hồ sơ ↗';span.classList.remove('hva-draft-status');span.classList.add('live-status')}else{const small=a.querySelector('small');if(small){small.textContent='Có tuyến tiếp nhận BGH/TTCM ↗';small.classList.add('nvs-a-live')}}});
+   const a11=document.querySelector('#panel-0 a[href*="A.1.1. NhiemVu_BaoCao.html"] .status');
+   if(a11){a11.textContent='Có thể nộp hồ sơ ↗';a11.classList.add('live-status')}
+  }catch(e){console.info('NVS A.1–A.6: chưa xác minh tuyến tiếp nhận',e.message||e);}
+ }
+ document.addEventListener('DOMContentLoaded',probe);
+})();
 </script><script defer src="./HVA_EDOS_Identity_Bar.js?v=20261114_1"></script></body></html>
