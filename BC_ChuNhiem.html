@@ -638,7 +638,7 @@ async function verifySignerIdentity(){
     const username = state.user?.tenDangNhap || state.user?.username || '';
     const response = await fetch(DTHT_BACKEND_URL, {
       method: 'POST', headers: {'Content-Type':'text/plain;charset=UTF-8'},
-      body: JSON.stringify({action:'verifyChuNhiemSigner',username,cccd})
+      body: JSON.stringify({action:'verifyChuNhiemSigner',username,cccd,sessionToken:String(localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'').trim()})
     });
     const result = await response.json();
     if(!result.ok) throw new Error(result.message || 'Không xác thực được CCCD.');
@@ -785,6 +785,8 @@ async function submitReport(ev){
 
   const payload = {
     action: 'submitChuNhiem',
+    clientRequestId: window.__a1CNRequestId || (window.__a1CNRequestId =
+      'A1CN-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12)),
     username: userObj.tenDangNhap || userObj.username || '',
     sessionToken: token,
     teacherKey: userObj.tenDangNhap || userObj.username || '',
@@ -814,10 +816,16 @@ async function submitReport(ev){
     });
     const res = await r.json();
 
-    if(res && (res.ok === true || res.success === true) && (state.signMethod!=='PAPER'||!res.signatureStatus||res.signatureStatus==='CHO_KY_TAY')){
+    if(res && (res.ok === true || res.success === true) &&
+       res.persisted===true && res.maHoSo && res.sheetName==='NVS_CHU_NHIEM' &&
+       (state.signMethod!=='PAPER'||!res.signatureStatus||res.signatureStatus==='CHO_KY_TAY')){
       setStep(3);
       btn.textContent = state.signMethod==='PAPER'?'Đã tiếp nhận · Chờ bản ký tay':'Đã gửi thành công';
-      showHvaNotice('success', 'Máy chủ đã tiếp nhận', state.signMethod==='PAPER'?'Đã tiếp nhận hồ sơ ở trạng thái CHỜ BẢN KÝ TAY. Thầy/Cô in, ký trực tiếp và nộp bản giấy theo quy định.':'Báo cáo công tác chủ nhiệm đã được máy chủ HVA ghi nhận thành công!');
+      $('apiStatus').textContent = 'Đã lưu vào NVS_CHU_NHIEM – Mã hồ sơ: ' + res.maHoSo + ' (dòng '+res.recordRow+').';
+      showHvaNotice('success', 'Đã ghi và xác minh báo cáo',
+        state.signMethod==='PAPER'
+          ? 'Hồ sơ '+res.maHoSo+' đã được lưu vào NVS_CHU_NHIEM ở trạng thái CHỜ BẢN KÝ TAY. Thầy/Cô in, ký và nộp bản giấy.'
+          : 'Hồ sơ '+res.maHoSo+' đã được lưu vào NVS_CHU_NHIEM.');
     } else {
       throw new Error((res && (res.thongBao || res.message)) || 'Máy chủ chưa xác nhận lưu hồ sơ. Kiểm tra trước khi thử gửi lại.');
     }
