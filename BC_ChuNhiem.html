@@ -683,7 +683,11 @@ async function submitReport(ev){
   if(!$('reportForm').reportValidity()) return;
   if(!/^1[012]\/\d{1,2}$/.test($('assignedClass').value.trim())) {showHvaNotice('error','Chưa xác định lớp','Chưa xác minh được lớp chủ nhiệm từ hồ sơ nhân sự.');return;}
   if(state.signMethod==='PAPER'){
-    try{await hvaCheckPaperSigning_(DTHT_BACKEND_URL)}catch(err){showHvaNotice('error','Chưa có tuyến nhận hồ sơ ký tay',err.message);return;}
+    try{await hvaCheckPaperSigning_(DTHT_BACKEND_URL)}catch(err){
+      const note=$('hvaSignMethodNote');if(note)note.textContent='Backend hiện tại chưa bật nộp ký tay. Thầy/Cô có thể dùng nút In / lưu PDF, ký tay và nộp bản giấy; hệ thống chưa ghi nhận hồ sơ điện tử.';
+      if(window.confirm('Backend chưa triển khai tuyến nộp ký tay. In hoặc lưu PDF ngay để ký trực tiếp?'))window.print();
+      return;
+    }
   }
   const btn = $('submitReportBtn');
   if(btn.disabled) return;
