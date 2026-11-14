@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Kế hoạch bồi dưỡng HSG · A1.3 · HVA–EDOS</title>
+<style>
+:root{font:15px/1.5 "Segoe UI",Arial,sans-serif;color:#163450;background:#f2f7fd}*{box-sizing:border-box}body{margin:0}
+header{background:linear-gradient(110deg,#08448f,#0877c9);color:#fff;padding:24px max(16px,calc((100vw - 920px)/2)) 46px}
+header a{color:white;text-decoration:none;font-weight:700;font-size:13px}h1{font-size:clamp(23px,3.2vw,30px);margin:16px 0 5px}header p{margin:0;color:#d9f1ff;font-size:13px}
+main{max-width:920px;margin:-27px auto 35px;padding:0 15px}.card{background:#fff;border:1px solid #d1e5f4;border-radius:18px;padding:23px;box-shadow:0 10px 34px #1646711c}
+.subtitle{font-size:13px;color:#627d94;margin:3px 0 22px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 15px;border:1px solid #0876c4;border-radius:13px;background:#096ec4;color:#fff;font:700 15px inherit;cursor:pointer;min-height:57px}
+button.secondary{background:#fff;color:#0864af}button:focus-visible,input:focus-visible{outline:3px solid #56b9f6;outline-offset:2px}button:disabled{opacity:.55;cursor:not-allowed}
+.help{color:#61788e;font-size:13px;line-height:1.7;margin:18px 0 0}
+#sendPanel{border-top:1px solid #dae9f5;padding-top:20px;margin-top:21px}#sendPanel[hidden]{display:none}
+label{font-weight:700;display:block;margin:10px 0 7px}input{width:100%;border:1px solid #abcde6;border-radius:10px;padding:13px 12px;font:inherit}
+#notice{min-height:23px;font-size:13px;font-weight:650;margin:12px 0 0;overflow-wrap:anywhere}
+.receipt{background:#e9f6ef;border:1px solid #a2d7b5;padding:14px;border-radius:12px;color:#17653b;margin-top:12px;overflow-wrap:anywhere}
+code{font-family:monospace}footer{text-align:center;color:#6b8399;font-size:12px;margin-top:17px}
+@media(max-width:580px){.actions{grid-template-columns:1fr}.card{padding:16px}}
+</style>
+</head>
+<body>
+<header><a href="./NghiepVu.html">← Nghiệp vụ số / A1.3</a><h1>KẾ HOẠCH BỒI DƯỠNG HỌC SINH GIỎI</h1><p>Trường THPT Hòa Vang · Năm học 2026–2027 · Mẫu HVA-A14-HSG-01</p></header>
+<main><section class="card">
+<strong>Thực hiện kế hoạch theo mẫu thống nhất</strong>
+<p class="subtitle">Hoàn thiện kế hoạch Word, tải lên Google Drive và gửi liên kết cho BGH/TTCM.</p>
+<div class="actions">
+  <button type="button" id="downloadBtn" class="secondary">↓ Tải kế hoạch mẫu</button>
+  <button type="button" id="openSendBtn">↗ Gửi link KH</button>
+</div>
+<p class="help">Chỉ tiếp nhận đường dẫn Google Drive/Google Docs. Bản gửi được ghi nhận là <b>đã tiếp nhận, chưa phê duyệt</b>. Không cần sao chép toàn bộ kế hoạch vào ô nhập EDOS.</p>
+<section id="sendPanel" hidden>
+  <form id="sendForm">
+    <label for="planUrl">Đường dẫn kế hoạch đã tải lên Google Drive *</label>
+    <input id="planUrl" type="url" required placeholder="https://drive.google.com/file/d/... hoặc https://docs.google.com/document/d/..." maxlength="1500" autocomplete="off">
+    <p class="help">Tệp kế hoạch phải được chia sẻ đúng quyền với BGH và TTCM. Không nên đặt quyền công khai nếu hồ sơ có thông tin nội bộ.</p>
+    <button type="submit" id="submitBtn">Xác nhận gửi link KH</button>
+  </form>
+</section>
+<p id="notice" role="status" aria-live="polite"></p>
+<div id="receipt" class="receipt" hidden></div>
+</section><footer>HVA–EDOS · Nghiệp vụ A1.3 · Gửi hồ sơ không đồng nghĩa phê duyệt kế hoạch</footer></main>
+<script>
+(function(){
+'use strict';
+const API='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
+const $=id=>document.getElementById(id), notice=$('notice');
+let requestId='',requestUrl='',submitting=false,confirmed=false;
+function token(){try{return String(localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'').trim()}catch(_){return ''}}
+function msg(t,ok){notice.textContent=t;notice.style.color=ok?'#17653b':'#ad2f33'}
+function validURL(raw){
+ try{const u=new URL(raw);return u.protocol==='https:'&&!u.username&&!u.password&&
+  (u.hostname==='drive.google.com'||u.hostname==='docs.google.com')&&u.pathname.length>2}
+ catch(_){return false}
+}
+async function call(action,more={}){
+ const sessionToken=token();if(!sessionToken)throw Error('Chưa có phiên đăng nhập HVA–EDOS.');
+ const response=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},cache:'no-store',
+  body:JSON.stringify({action,sessionToken,...more})});
+ if(!response.ok)throw Error('Không kết nối Backend (HTTP '+response.status+').');
+ let data;try{data=await response.json()}catch(_){throw Error('Backend trả phản hồi không hợp lệ.')}
+ if(!data||data.success!==true)throw Error(String(data&&data.message||'Backend chưa xác nhận.'));
+ return data;
+}
+async function openSend(){
+ $('sendPanel').hidden=false;$('planUrl').focus();
+ $('submitBtn').disabled=true;
+ try{
+  const r=await call('nvsA13KhCapabilities');
+  if(r.supported!==true||r.linkOnly!==true||r.sheetName!=='NVS_HO_SO_A22')throw Error('Tuyến nhận link KH chưa được triển khai trên Apps Script.');
+  $('submitBtn').disabled=false;msg('Đã kiểm tra tuyến tiếp nhận kế hoạch. Nhập liên kết và bấm xác nhận.',true)
+ }catch(e){msg(e.message,false)}
+}
+function downloadTemplate(){
+ // Tải tệp Word từ mẫu đã thống nhất; định dạng .doc chỉnh sửa được trong Word.
+ const html='<!doctype html><html lang="vi"><head><meta charset="utf-8"><style>'+
+ '@page{size:A4;margin:2cm}body{font-family:"Times New Roman";font-size:13pt;color:#111;line-height:1.4}'+
+ 'h1,h2{text-align:center;font-size:15pt;margin:10px 0}h3{font-size:13pt;margin:12px 0 5px}'+
+ 'table{width:100%;border-collapse:collapse;margin:9px 0}td,th{border:1px solid #333;padding:8px;vertical-align:top}'+
+ 'p{margin:6px 0}.heads{display:table;width:100%}.heads div{display:table-cell;width:50%;text-align:center}'+
+ '</style></head><body>'+
+ '<div class="heads"><div>SỞ GD&ĐT ĐÀ NẴNG<br><b>TRƯỜNG THPT HÒA VANG</b></div>'+
+ '<div><b>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>Độc lập - Tự do - Hạnh phúc</b></div></div>'+
+ '<p style="text-align:right">Đà Nẵng, ngày ...... tháng ...... năm 2026</p>'+
+ '<h1>KẾ HOẠCH<br>GIẢNG DẠY BỒI DƯỠNG HỌC SINH GIỎI</h1><h2>Năm học 2026–2027</h2>'+
+ '<p>Tổ chuyên môn: ...................................................................................</p>'+
+ '<p>Môn bồi dưỡng: ....................................... Khối/lớp: ....................</p>'+
+ '<p>Đội tuyển/nhóm: ...................................................................................</p>'+
+ '<p>Giáo viên phụ trách: .............................................................................</p>'+
+ '<p>Giáo viên phối hợp (nếu có): ............................................................</p>'+
+ '<p>Thời gian: Từ .............. đến ..............; tổng ........ tuần, ........ tiết.</p>'+
+ '<h3>I. MỤC TIÊU, CHỈ TIÊU VÀ PHƯƠNG PHÁP</h3>'+
+ '<p>1. Mục tiêu: ............................................................................................</p>'+
+ '<p>2. Chỉ tiêu: Số học sinh dự kiến: .........; số dự thi: .........; kết quả: ........</p>'+
+ '<p>3. Phương pháp: Bồi dưỡng chuyên đề, luyện tập, tự học, kiểm tra đánh giá định kỳ.</p>'+
+ '<h3>II. NỘI DUNG VÀ TIẾN ĐỘ BỒI DƯỠNG</h3>'+
+ '<p>1. Bồi dưỡng kiến thức, chuyên đề. Dự kiến: ....... tuần, ....... tiết.</p>'+
+ tableWord()+
+ '<p>2. Luyện tập, kiểm tra và hoàn thiện kỹ năng. Dự kiến: ....... tuần, ....... tiết.</p>'+
+ tableWord()+
+ '<p>Tổng thời lượng: ........ tuần, ........ tiết.</p>'+
+ '<h3>III. KIỂM TRA, ĐÁNH GIÁ</h3><p>Theo dõi kết quả từng giai đoạn; tổ chức kiểm tra, khảo sát; điều chỉnh phù hợp kết quả học tập của đội tuyển.</p>'+
+ '<p>Số đợt kiểm tra: .......; hình thức: ........................................................</p>'+
+ '<h3>IV. TỔ CHỨC THỰC HIỆN</h3><p>Giáo viên phụ trách tổ chức thực hiện; tổ chuyên môn theo dõi, góp ý; nội dung điều chỉnh báo cáo theo quy định.</p>'+
+ '<p style="margin-top:30px;text-align:center"><b>GIÁO VIÊN PHỤ TRÁCH　　　　　　　　　TỔ TRƯỞNG CHUYÊN MÔN</b><br><i>(Ký, ghi rõ họ tên)　　　　　　　　　　　 (Rà soát, xác nhận)</i></p>'+
+ '</body></html>';
+ const blob=new Blob(['\ufeff',html],{type:'application/msword;charset=utf-8'});
+ const href=URL.createObjectURL(blob),a=document.createElement('a');a.href=href;
+ a.download='HVA-A14-HSG-01_Mau_Ke_Hoach_BD_HSG_2026_2027.doc';
+ document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(href),1000);
+ msg('Đã tải mẫu có thể mở và chỉnh sửa trong Word. Sau khi hoàn thiện, tải lên Google Drive rồi gửi link.',true);
+}
+function tableWord(){
+ let t='<table><tr><th>Tuần / thời gian</th><th>Nội dung chuyên đề / hoạt động</th><th>Số tiết</th><th>Yêu cầu cần đạt / hình thức</th></tr>';
+ for(let i=0;i<4;i++)t+='<tr><td>Tuần ....</td><td>....................................</td><td>....</td><td>.....................................</td></tr>';
+ return t+'</table>';
+}
+$('downloadBtn').addEventListener('click',downloadTemplate);
+$('openSendBtn').addEventListener('click',openSend);
+$('planUrl').addEventListener('input',()=>{
+ const url=$('planUrl').value.trim();
+ if(url!==requestUrl){requestId='';requestUrl=url;confirmed=false;$('receipt').hidden=true}
+});
+$('sendForm').addEventListener('submit',async e=>{
+ e.preventDefault();if(submitting||confirmed)return;
+ const link=$('planUrl').value.trim();if(!validURL(link)){msg('Vui lòng nhập đúng liên kết Google Drive hoặc Google Docs.',false);return}
+ if(!confirm('Xác nhận gửi liên kết Kế hoạch bồi dưỡng HSG đến BGH/TTCM?'))return;
+ if(!requestId)requestId='A13KH-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,12);
+ submitting=true;$('submitBtn').disabled=true;msg('Đang ghi và xác minh hồ sơ...',true);
+ try{
+ const res=await call('nvsA13KhSubmit',{clientRequestId:requestId,keHoachUrl:link,schoolYear:'2026-2027'});
+ if(res.persisted!==true||res.sheetName!=='NVS_HO_SO_A22'||!res.recordId||!res.recordRow)throw Error('Chưa xác nhận được bản ghi trong Sheet. Chưa đánh dấu đã gửi.');
+ confirmed=true;
+ $('receipt').textContent='ĐÃ TIẾP NHẬN – Mã hồ sơ: '+res.recordId+' · Dòng '+res.recordRow+' · Trạng thái: '+res.status;
+ $('receipt').hidden=false;msg('Đã ghi và đọc lại đúng hồ sơ trên NVS_HO_SO_A22. Chờ BGH/TTCM xử lý.',true);
+ }catch(err){msg('CHƯA XÁC NHẬN ĐÃ GỬI: '+err.message+'. Không đổi link trước khi kiểm tra lịch sử để tránh trùng.',false)}
+ finally{submitting=false;$('submitBtn').disabled=confirmed?true:false}
+});
+})();
+</script>
+</body></html>
