@@ -23,8 +23,12 @@ function a22RefreshPresentation(){
  const evidence=by('evidence'),evidenceLabel=document.querySelector('label[for="evidence"]');
  if(evidenceLabel)evidenceLabel.textContent=plan?'Liên kết kế hoạch bồi dưỡng HSG đã hoàn thiện (Google Drive / Docs) *':'Liên kết minh chứng Google Drive / Docs (nếu có)';
  if(evidence){evidence.required=plan;evidence.placeholder=plan?'https://docs.google.com/document/d/...':'https://drive.google.com/...';}
- const btn=by('send');
- if(btn && !btn.disabled)btn.textContent=plan?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM';
+ const btn=by('send'),planBtn=by('a22PlanSend');
+ if(btn){
+   btn.classList.toggle('hidden',plan);
+   if(!btn.disabled)btn.textContent=plan?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM';
+ }
+ if(planBtn){planBtn.disabled=!btn||btn.disabled;planBtn.title=planBtn.disabled?'Chỉ nộp khi tuyến tiếp nhận BGH/TTCM đã được xác thực':'Gửi liên kết kế hoạch trên EDOS';}
 }
 function a22DownloadPlanTemplate(){
  const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
@@ -141,6 +145,11 @@ function applyDraft(raw){
  return raw.schema==='HVA-DRAFT-1';
 }
 by('a22DownloadPlan')?.addEventListener('click',a22DownloadPlanTemplate);
+by('a22PlanSend')?.addEventListener('click',()=>{
+ if(by('code').value!=='A.1.3-KH')return;
+ if(by('send').disabled){notice('Chưa có tuyến nhận kế hoạch được xác thực. Hãy lưu bản nháp để nộp sau.');return}
+ by('send').click();
+});
 by('form').addEventListener('submit',e=>{e.preventDefault();preview()});
 by('export').addEventListener('click',()=>{if(!validate())return;const data=draft();makeDownload('HVA_'+data.form.code.replaceAll('.','_')+'_DU_THAO.json',JSON.stringify(data,null,2));notice('Tệp JSON là bản sao dữ liệu để lưu và chỉnh sửa; không phải giấy biên nhận nộp hồ sơ.',true)});
 by('import').addEventListener('click',()=>by('file').click());
@@ -195,12 +204,13 @@ async function probeBackend(){
   notice('Tuyến tiếp nhận A22 đã xác thực. Hãy kiểm tra và xem trước hồ sơ trước khi nộp.',true);
  }catch(err){
   canSubmit=false;a22SetConnection('offline','Chưa kết nối tuyến nộp · Vẫn có thể xem trước và lưu nháp');by('send').disabled=true;
+  a22RefreshPresentation();
   by('send').title='Chưa có tuyến Backend A22 được xác thực';
   notice('Chưa thể nộp hồ sơ: '+err.message+' Có thể lưu nháp và xuất JSON.');
  }
 }
-by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('previewPanel').classList.add('hidden');by('send').disabled=!canSubmit;if(canSubmit)a22RefreshPresentation();});
-select.addEventListener('change',()=>{clientRequestId=null;submittedId='';if(canSubmit){by('send').disabled=false;a22RefreshPresentation();}});
+by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('previewPanel').classList.add('hidden');by('send').disabled=!canSubmit;a22RefreshPresentation();});
+select.addEventListener('change',()=>{clientRequestId=null;submittedId='';by('send').disabled=!canSubmit;a22RefreshPresentation();});
 by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
 by('restoreSession').addEventListener('click',()=>{clientRequestId=null;submittedId=''});
 by('send').addEventListener('click',async()=>{
@@ -209,6 +219,7 @@ by('send').addEventListener('click',async()=>{
  if(!validate())return;
  if(!window.confirm('Xác nhận nộp hồ sơ '+by('code').value+' vào hộp tiếp nhận BGH và đồng nhận TTCM?'))return;
  const btn=by('send');btn.disabled=true;btn.textContent='Đang kiểm tra tiếp nhận...';
+ if(by('a22PlanSend'))by('a22PlanSend').disabled=true;
  try{
   if(!clientRequestId)clientRequestId=newRequestId();
   const data=collect();
@@ -219,7 +230,7 @@ by('send').addEventListener('click',async()=>{
   by('previewPanel').classList.remove('hidden');by('previewPanel').scrollIntoView({behavior:'smooth'});
   submittedId=r.recordId;
  }catch(err){notice('CHƯA XÁC NHẬN NỘP HỒ SƠ: '+err.message+' Nếu mạng gián đoạn, hãy thử lại mà không sửa nội dung để tránh gửi trùng.')}
- finally{btn.disabled=!canSubmit||!!submittedId;btn.textContent=submittedId?'Đã tiếp nhận hồ sơ · '+submittedId:canSubmit?(by('code').value==='A.1.3-KH'?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM'):'Gửi hồ sơ · Chờ kết nối'}
+ finally{btn.disabled=!canSubmit||!!submittedId;btn.textContent=submittedId?'Đã tiếp nhận hồ sơ · '+submittedId:canSubmit?(by('code').value==='A.1.3-KH'?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM'):'Gửi hồ sơ · Chờ kết nối';a22RefreshPresentation()}
 });
 probeBackend();
 
