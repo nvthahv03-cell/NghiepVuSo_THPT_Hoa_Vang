@@ -119,6 +119,8 @@ function tableWord(){
 }
 $('downloadBtn').addEventListener('click',downloadTemplate);
 $('openSendBtn').addEventListener('click',openSend);
+if(location.hash==='#gui-link')openSend();
+if(location.hash==='#tai-mau')downloadTemplate();
 $('planUrl').addEventListener('input',()=>{
  const url=$('planUrl').value.trim();
  if(url!==requestUrl){requestId='';requestUrl=url;confirmed=false;$('receipt').hidden=true}
