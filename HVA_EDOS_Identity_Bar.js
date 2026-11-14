@@ -29,7 +29,11 @@
  '#'+ID+' .hva-id-role{font-size:11px;color:#5c7890}'+
  '#'+ID+' .hva-id-tag{font-size:11px;color:#547287}'+
  '#'+ID+' .hva-id-back{color:#09699a;text-decoration:none;font-weight:700}'+
- '@media(max-width:600px){#'+ID+'{margin:9px 12px;padding:9px 11px;font-size:12px}#'+ID+' .hva-id-tag{font-size:10px}}';
+ '#'+ID+'.hva-id-in-workspace{width:100%;max-width:none;margin:0 0 18px;padding:13px 15px;background:linear-gradient(105deg,#f1f9ff,#fff);border:1px solid #c9e0f2;box-shadow:0 3px 12px #173d600b;position:relative;z-index:0}'+
+ '#'+ID+'.hva-id-in-workspace .hva-id-avatar{width:42px;height:42px;flex-basis:42px;font-size:14px}'+
+ '#'+ID+'.hva-id-in-workspace .hva-id-name{font-size:15px;color:#154976}'+
+ '#'+ID+'.hva-id-in-workspace .hva-id-role{font-size:12px;line-height:1.5}'+
+ '@media(max-width:600px){#'+ID+'{margin:9px 12px;padding:9px 11px;font-size:12px}#'+ID+' .hva-id-tag{font-size:10px}#'+ID+'.hva-id-in-workspace{margin:0 0 17px;padding:12px;display:flex;align-items:flex-start;flex-direction:column;gap:7px}#'+ID+'.hva-id-in-workspace .hva-id-person{width:100%}#'+ID+'.hva-id-in-workspace .hva-id-name{font-size:14px}#'+ID+'.hva-id-in-workspace .hva-id-role{font-size:11px}#'+ID+'.hva-id-in-workspace .hva-id-tag{padding-left:51px;line-height:1.5}}';
  document.head.append(css);
  const bar=document.createElement('aside');bar.id=ID;bar.setAttribute('aria-label','Danh tính người truy cập theo phiên HVA–EDOS');
  const person=document.createElement('div');person.className='hva-id-person';
@@ -40,8 +44,15 @@
  fields.append(name,role);person.append(avatar,fields);
  const aside=document.createElement('div');aside.className='hva-id-tag';
  bar.append(person,aside);
+ const workspace=document.querySelector('body > main.shell > .workspace');
  const header=document.querySelector('body > header');
- if(header)header.insertAdjacentElement('afterend',bar);else document.body.insertBefore(bar,document.body.firstChild);
+ // Trang danh muc NVS co main.shell overlap header: dat danh tinh TRONG workspace
+ // de khong bi che phu va cho du cho ho ten, vai tro, to chuyen mon tren mobile.
+ if(workspace){
+  workspace.insertBefore(bar,workspace.firstChild);
+  bar.classList.add('hva-id-in-workspace');
+ }else if(header){header.insertAdjacentElement('afterend',bar)}
+ else{document.body.insertBefore(bar,document.body.firstChild)}
  function refresh(){
   const u=read();
   name.textContent=u?u.name:'Chưa đăng nhập HVA–EDOS';
