@@ -2601,8 +2601,11 @@ async function submitReport(ev){
 
     const pData = payload();
     // Một mã cho cùng lần nộp: retry do mất mạng không tăng phiên bản thêm lần nữa.
-    window.__a1DTHTRequestId = window.__a1DTHTRequestId ||
-      ('A1DTHT-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12));
+    const fingerprint = JSON.stringify(pData);
+    if(window.__a1DTHTLastPayload !== fingerprint){
+      window.__a1DTHTLastPayload = fingerprint;
+      window.__a1DTHTRequestId = 'A1DTHT-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12);
+    }
     pData.clientRequestId = window.__a1DTHTRequestId;
     const res = await callAPI('submitReport', pData);
     // May chu xac nhan thanh cong bang ok/success. Phien ban Backend cu
