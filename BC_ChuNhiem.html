@@ -461,6 +461,7 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
 <script>
 const DTHT_BACKEND_URL = "https://script.google.com/macros/s/AKfycbxXCprStGvh3iu_72ri1JoncQ6kTwqaytimvbLy5Sn02At-__9g07jot32yQ7xVeKRB/exec";
 
+const HVA_V5_BACKEND_URL = "https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec";
 let state = {
   user: null,
   signatureData: '',
@@ -711,7 +712,7 @@ async function submitReport(ev){
   if(!$('reportForm').reportValidity()) return;
   if(!/^1[012]\/\d{1,2}$/.test($('assignedClass').value.trim())) {showHvaNotice('error','Chưa xác định lớp','Chưa xác minh được lớp chủ nhiệm từ hồ sơ nhân sự.');return;}
   if(state.signMethod==='PAPER'){
-    try{await hvaCheckPaperSigning_(DTHT_BACKEND_URL)}catch(err){
+    try{await hvaCheckPaperSigning_(HVA_V5_BACKEND_URL)}catch(err){
       const note=$('hvaSignMethodNote');if(note)note.textContent='Backend hiện tại chưa bật nộp ký tay. Thầy/Cô có thể dùng nút In / lưu PDF, ký tay và nộp bản giấy; hệ thống chưa ghi nhận hồ sơ điện tử.';
       hvaShowPrintNotice();
       return;
@@ -748,7 +749,7 @@ async function submitReport(ev){
   };
 
   try{
-    const r = await fetch(DTHT_BACKEND_URL, {
+    const r = await fetch(state.signMethod==='PAPER'?HVA_V5_BACKEND_URL:DTHT_BACKEND_URL, {
       method: 'POST',
       headers: {'Content-Type': 'text/plain;charset=UTF-8'},
       body: JSON.stringify(payload),
