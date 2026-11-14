@@ -24,7 +24,7 @@ function a22RefreshPresentation(){
  if(evidenceLabel)evidenceLabel.textContent=plan?'Liên kết kế hoạch bồi dưỡng HSG đã hoàn thiện (Google Drive / Docs) *':'Liên kết minh chứng Google Drive / Docs (nếu có)';
  if(evidence){evidence.required=plan;evidence.placeholder=plan?'https://docs.google.com/document/d/...':'https://drive.google.com/...';}
  const btn=by('send');
- if(btn && !btn.disabled && !submittedId)btn.textContent=plan?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM';
+ if(btn && !btn.disabled)btn.textContent=plan?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM';
 }
 function a22DownloadPlanTemplate(){
  const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
