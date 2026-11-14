@@ -1042,7 +1042,18 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 }
   
 </style>
-<style id="hva-sign-method-v1">.hva-sign-method{padding:15px 18px;margin:0 0 16px;background:#f0f8ff;border:1px solid #badbf2;border-radius:13px;display:grid;gap:9px;color:#16476d;font:inherit;font-size:13px}.hva-sign-method strong{font-size:13px;color:#073b78}.hva-sign-method label{display:flex;gap:9px;align-items:center;cursor:pointer}.hva-sign-method input{accent-color:#075cad}.hva-sign-method small{color:#566e85;line-height:1.5}.hva-paper-mode .identity-col:nth-child(2),.hva-paper-mode .identity-col:nth-child(3){opacity:.45;pointer-events:none}.hva-paper-mode .hva-sign-method{background:#fff8e9;border-color:#efcf93}@media print{.hva-sign-method{display:none!important}}</style></head>
+<style id="hva-sign-method-v1">.hva-sign-method{padding:15px 18px;margin:0 0 16px;background:#f0f8ff;border:1px solid #badbf2;border-radius:13px;display:grid;gap:9px;color:#16476d;font:inherit;font-size:13px}.hva-sign-method strong{font-size:13px;color:#073b78}.hva-sign-method label{display:flex;gap:9px;align-items:center;cursor:pointer}.hva-sign-method input{accent-color:#075cad}.hva-sign-method small{color:#566e85;line-height:1.5}.hva-paper-mode .identity-col:nth-child(2),.hva-paper-mode .identity-col:nth-child(3){opacity:.45;pointer-events:none}.hva-paper-mode .hva-sign-method{background:#fff8e9;border-color:#efcf93}@media print{.hva-sign-method{display:none!important}}</style><style id="hva-paper-actions-polish">
+.hva-print-action{display:block;width:100%;min-height:49px;border:0;border-radius:12px;background:linear-gradient(110deg,#07539b,#0a83c3);color:#fff;font-size:13px;font-weight:850;letter-spacing:.015em;cursor:pointer;box-shadow:0 6px 15px rgba(8,97,168,.18);margin:0 0 10px}
+.hva-print-action[hidden]{display:none!important}
+.hva-print-action:hover{filter:brightness(1.08)}
+#hvaNotice:has(#hvaPrintPaperBtn:not([hidden])) .hva-modal-ok{height:43px;background:#e8f2fb;color:#15527a}
+#submitReportBtn:not(:disabled):not([aria-busy="true"]){transform-origin:center;animation:hvaSendBounce 2.8s ease-in-out infinite;box-shadow:0 6px 17px rgba(7,100,171,.19)}
+#submitReportBtn:not(:disabled):hover{animation-play-state:paused;transform:translateY(-2px) scale(1.025)}
+#submitReportBtn:not(:disabled):active{animation:none;transform:scale(.965)}
+@keyframes hvaSendBounce{0%,64%,100%{transform:translateY(0) scale(1)}72%{transform:translateY(-6px) scale(1.045)}78%{transform:translateY(1px) scale(.985)}84%{transform:translateY(-2px) scale(1.01)}91%{transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){#submitReportBtn{animation:none!important;transition:none!important}}
+@media print{#hvaNotice{display:none!important}#submitReportBtn{animation:none!important}}
+</style></head>
 <!-- 🔴 CORE PASS — SHELL/HVA PAGE FRAME — LOCK -->
 <body>
 
@@ -2187,6 +2198,15 @@ function signatureStorageKey(){
   const key=String(state.teacher?.key||dthtCurrentUser().username||'').trim().toLowerCase();
   return 'hvaDTHTSignature:'+key;
 }
+function hvaShowPrintNotice(){
+  showHvaNotice('info','In báo cáo để ký trực tiếp','Backend hiện tại chưa kích hoạt tiếp nhận hồ sơ ký tay qua EDOS. Thầy/Cô có thể in hoặc lưu PDF, ký trực tiếp và nộp bản giấy. Báo cáo chưa được ghi nhận là đã nộp trên hệ thống.');
+  const b=document.getElementById('hvaPrintPaperBtn');
+  if(b)b.hidden=false;
+}
+function hvaPrintPaper(){
+  closeHvaNotice();
+  window.print();
+}
 function hvaSwitchSignMethod(mode){
   state.signMethod=mode==='PAPER'?'PAPER':'ELECTRONIC';
   document.body.classList.toggle('hva-paper-mode',state.signMethod==='PAPER');
@@ -2497,7 +2517,7 @@ async function submitReport(ev){
   if(state.signMethod==='PAPER'){
     try{await hvaCheckPaperSigning_(window.HVA_DTHT_RESOLVE_BACKEND());}catch(err){
       const note=$('hvaSignMethodNote');if(note)note.textContent='Backend hiện tại chưa bật nộp ký tay. Thầy/Cô có thể dùng nút In / lưu PDF, ký tay và nộp bản giấy; hệ thống chưa ghi nhận hồ sơ điện tử.';
-      if(window.confirm('Backend chưa triển khai tuyến nộp ký tay. In hoặc lưu PDF ngay để ký trực tiếp?'))window.print();
+      hvaShowPrintNotice();
       return;
     }
   }
@@ -2836,6 +2856,7 @@ async function loadData(){
 
 function showHvaNotice(type,title,message){
   const box=$('hvaNotice');
+  const b=document.getElementById("hvaPrintPaperBtn");if(b)b.hidden=true;
   const icon=$('hvaNoticeIcon');
   $('hvaNoticeTitle').textContent=title||'Thông báo';
   $('hvaNoticeMessage').textContent=message||'';
@@ -2866,6 +2887,7 @@ function closeHvaNotice(){
       <div class="hva-modal-icon" id="hvaNoticeIcon"><i class="bi bi-info-lg"></i></div>
       <h3 id="hvaNoticeTitle">Thông báo</h3>
       <p id="hvaNoticeMessage"></p>
+      <button type="button" id="hvaPrintPaperBtn" class="hva-print-action" onclick="hvaPrintPaper()" hidden><i class="bi bi-printer"></i> IN / LƯU PDF ĐỂ KÝ TAY</button>
       <button type="button" class="hva-modal-ok" onclick="closeHvaNotice()">ĐÃ HIỂU</button>
     </div>
   </div>
