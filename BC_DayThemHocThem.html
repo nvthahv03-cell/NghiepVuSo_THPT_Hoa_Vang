@@ -2495,7 +2495,11 @@ async function submitReport(ev){
   }
 
   if(state.signMethod==='PAPER'){
-    try{await hvaCheckPaperSigning_(window.HVA_DTHT_RESOLVE_BACKEND());}catch(err){showHvaNotice('error','Chưa có tuyến nhận hồ sơ ký tay',err.message);return;}
+    try{await hvaCheckPaperSigning_(window.HVA_DTHT_RESOLVE_BACKEND());}catch(err){
+      const note=$('hvaSignMethodNote');if(note)note.textContent='Backend hiện tại chưa bật nộp ký tay. Thầy/Cô có thể dùng nút In / lưu PDF, ký tay và nộp bản giấy; hệ thống chưa ghi nhận hồ sơ điện tử.';
+      if(window.confirm('Backend chưa triển khai tuyến nộp ký tay. In hoặc lưu PDF ngay để ký trực tiếp?'))window.print();
+      return;
+    }
   }
   const btn = $('submitReportBtn');
   const originalHtml = btn ? btn.innerHTML : '';
