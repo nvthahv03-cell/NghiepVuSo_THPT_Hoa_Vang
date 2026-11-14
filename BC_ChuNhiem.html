@@ -583,7 +583,8 @@ function refreshSignatureUI(){
   $('removeSignatureBtn').disabled = !state.signatureData;
   signBtn.disabled = state.signMethod==='PAPER'||!(state.signatureData && state.signerVerified);
 
-  if(state.signed){ st.textContent = '✓ Đã xác thực CCCD · Đã ký duyệt'; st.classList.add('ok'); }
+  if(state.signMethod==='PAPER'){st.textContent='Chọn ký tay: không cần xác thực CCCD hoặc tải chữ ký.';st.classList.remove('ok');}
+  else if(state.signed){ st.textContent = '✓ Đã xác thực CCCD · Đã ký duyệt'; st.classList.add('ok'); }
   else if(state.signerVerified){ st.textContent = '✓ Đã xác thực CCCD. Mời bấm “Ký xác nhận”.'; st.classList.add('ok'); }
   else { st.textContent = 'Chưa xác thực CCCD.'; st.classList.remove('ok'); }
 
