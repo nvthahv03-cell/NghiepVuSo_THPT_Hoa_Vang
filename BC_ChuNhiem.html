@@ -814,12 +814,12 @@ async function submitReport(ev){
     });
     const res = await r.json();
 
-    if(res && (res.ok === true || res.success === true) && (state.signMethod!=='PAPER'||res.signatureStatus==='CHO_KY_TAY')){
+    if(res && (res.ok === true || res.success === true) && (state.signMethod!=='PAPER'||!res.signatureStatus||res.signatureStatus==='CHO_KY_TAY')){
       setStep(3);
       btn.textContent = state.signMethod==='PAPER'?'Đã tiếp nhận · Chờ bản ký tay':'Đã gửi thành công';
       showHvaNotice('success', 'Máy chủ đã tiếp nhận', state.signMethod==='PAPER'?'Đã tiếp nhận hồ sơ ở trạng thái CHỜ BẢN KÝ TAY. Thầy/Cô in, ký trực tiếp và nộp bản giấy theo quy định.':'Báo cáo công tác chủ nhiệm đã được máy chủ HVA ghi nhận thành công!');
     } else {
-      throw new Error(state.signMethod==='PAPER'?'Máy chủ chưa xác nhận trạng thái CHỜ KÝ TAY. Kiểm tra lịch sử hồ sơ trước khi gửi lại.':((res && (res.thongBao || res.message)) || 'Lỗi lưu dữ liệu máy chủ.'));
+      throw new Error((res && (res.thongBao || res.message)) || 'Máy chủ chưa xác nhận lưu hồ sơ. Kiểm tra trước khi thử gửi lại.');
     }
   }catch(e){
     btn.disabled = false;
