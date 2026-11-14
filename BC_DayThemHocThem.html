@@ -1552,20 +1552,21 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
       sessionToken:token
     });
 
+    const target=body.signingMethod==='PAPER'?global.HVA_V5_BACKEND_URL:backendUrl();
     if(global.HVAAuthRequest){
       if(typeof global.HVAAuthRequest.postJson==='function'){
-        const r=await global.HVAAuthRequest.postJson(backendUrl(),body,{cache:'no-store'});
+        const r=await global.HVAAuthRequest.postJson(target,body,{cache:'no-store'});
         return await parseResponse(r);
       }
       if(typeof global.HVAAuthRequest.post==='function'){
-        const r=await global.HVAAuthRequest.post(backendUrl(),body,{cache:'no-store'});
+        const r=await global.HVAAuthRequest.post(target,body,{cache:'no-store'});
         return await parseResponse(r);
       }
     }
 
     // DTHT standalone: giữ request là CORS-simple như chính luồng Login HVA.
     // Gateway đọc sessionToken trong JSON body, KHÔNG cần Authorization header/cookie.
-    const r=await fetch(body.signingMethod==='PAPER'?global.HVA_V5_BACKEND_URL:backendUrl(),{
+    const r=await fetch(target,{
       method:'POST',
       headers:{'Content-Type':'text/plain;charset=UTF-8'},
       body:JSON.stringify(body),
