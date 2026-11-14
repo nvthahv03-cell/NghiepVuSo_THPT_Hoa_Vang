@@ -172,7 +172,7 @@
       const form={code:'A.1.1',title:def.name+(data.task?' – '+data.task:data.activity?' – '+data.activity:''),schoolYear:data.year.replace('–','-'),content:text,result:data.results||'',evidence:$('driveLink').value.trim()};
       const extras={loaiBaoCao:def.name,noiDungChiTiet:text,tuNgay:data.from||'',denNgay:data.to||''};
       const res=await a11API('nvsA22Submit',{document:{clientRequestId:a11RequestId,form,extras}});
-      if(!res.recordId||!res.bghCount||!res.ccCount)throw Error('Thiếu mã tiếp nhận hoặc nơi nhận.');
+      if(res.persisted!==true||!res.recordId||!res.bghCount||!res.ccCount)throw Error('Máy chủ chưa xác minh lưu báo cáo A.1.1 vào Sheet. Chưa được coi là đã gửi.');
       a11SubmittedId=res.recordId;
       dirty=false;
       announce('ĐÃ TIẾP NHẬN hồ sơ '+res.recordId+' · Chờ BGH/TTCM xử lý. Chưa ký số, chưa phê duyệt.',false);
