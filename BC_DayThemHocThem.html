@@ -2600,11 +2600,16 @@ async function submitReport(ev){
     if($('apiStatus')) $('apiStatus').textContent = 'Đang gửi hồ sơ vào máy chủ HVA...';
 
     const pData = payload();
+    // Một mã cho cùng lần nộp: retry do mất mạng không tăng phiên bản thêm lần nữa.
+    window.__a1DTHTRequestId = window.__a1DTHTRequestId ||
+      ('A1DTHT-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12));
+    pData.clientRequestId = window.__a1DTHTRequestId;
     const res = await callAPI('submitReport', pData);
     // May chu xac nhan thanh cong bang ok/success. Phien ban Backend cu
     // co the khong tra signatureStatus; KHONG coi thieu truong la gui that bai.
-    if(!res || (res.ok!==true && res.success!==true)){
-      throw Error('Máy chủ chưa xác nhận đã tiếp nhận bản kê khai.');
+    if(!res || (res.ok!==true && res.success!==true) ||
+       res.persisted!==true || !res.maHoSo || res.sheetName!=='NVS_DTHT'){
+      throw Error('Máy chủ chưa cung cấp biên nhận ghi dữ liệu đã kiểm chứng vào NVS_DTHT. Không đánh dấu đã gửi; kiểm tra lịch sử trước khi thử lại.');
     }
     if(state.signMethod==='PAPER' && res.signatureStatus &&
        res.signatureStatus!=='CHO_KY_TAY'){
@@ -2613,7 +2618,7 @@ async function submitReport(ev){
 
     // Tu day: da co xac nhan tu action submitDTHT, khong duoc bao loi gui
     // chi vi tai lai bang lich su gap loi.
-    if($('apiStatus')) $('apiStatus').textContent = 'Hồ sơ đã được máy chủ ghi nhận.';
+    if($('apiStatus')) $('apiStatus').textContent = 'Đã lưu vào NVS_DTHT – Mã hồ sơ: ' + res.maHoSo + ' (dòng ' + res.recordRow + ').';
     if(btn){
       btn.disabled = true;
       btn.removeAttribute('aria-busy');
@@ -2622,8 +2627,8 @@ async function submitReport(ev){
     showSubmitAcknowledgement();
     showHvaNotice('success','Gửi bản kê khai thành công',
       state.signMethod==='PAPER'
-        ? 'Hồ sơ đã được máy chủ tiếp nhận. Thầy/Cô in, ký tay và nộp bản giấy để hoàn tất.'
-        : 'Hồ sơ kê khai đã được hệ thống ghi nhận.');
+        ? 'Hồ sơ đã ghi vào NVS_DTHT (mã '+res.maHoSo+'). Thầy/Cô in, ký tay và nộp bản giấy để hoàn tất.'
+        : 'Hồ sơ đã ghi vào NVS_DTHT (mã '+res.maHoSo+').');
 
     // Nạp lịch sử chỉ là bước hậu xử lý, không thể đảo kết quả đã gửi.
     try{
