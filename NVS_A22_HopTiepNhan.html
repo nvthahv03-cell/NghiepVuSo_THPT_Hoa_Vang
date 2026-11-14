@@ -13,7 +13,7 @@
 <script src="./NVS_A22_Definitions.js"></script>
 <script>
 (function(){'use strict';
-const url='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
+const url='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
 const by=id=>document.getElementById(id);
 const token=()=>{for(const s of ['localStorage','sessionStorage'])try{const v=window[s].getItem('hvaSessionToken');if(v)return v}catch(_){}return ''};
 const say=(txt,error=false)=>{by('status').textContent=txt;by('status').classList.toggle('error',error)};
