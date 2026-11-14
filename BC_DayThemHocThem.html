@@ -2601,29 +2601,41 @@ async function submitReport(ev){
 
     const pData = payload();
     const res = await callAPI('submitReport', pData);
-    if(state.signMethod==='PAPER'&&!(
-      res.signatureStatus==='CHO_KY_TAY' ||
-      /CHỜ\s*(BẢN\s*)?KÝ\s*TAY/i.test(String(res.status||res.trangThai||res.trangThaiTiepNhan||'')) ||
-      (Array.isArray(res.reports)&&res.reports.some(x=>/CHỜ\s*(BẢN\s*)?KÝ\s*TAY/i.test(String(x.trangThai||x.trangThaiTiepNhan||x.status||''))))
-    ))throw Error('Máy chủ chưa xác nhận trạng thái CHỜ BẢN KÝ TAY. Kiểm tra Sheet hoặc lịch sử trước khi gửi lại.');
+    // May chu xac nhan thanh cong bang ok/success. Phien ban Backend cu
+    // co the khong tra signatureStatus; KHONG coi thieu truong la gui that bai.
+    if(!res || (res.ok!==true && res.success!==true)){
+      throw Error('Máy chủ chưa xác nhận đã tiếp nhận bản kê khai.');
+    }
+    if(state.signMethod==='PAPER' && res.signatureStatus &&
+       res.signatureStatus!=='CHO_KY_TAY'){
+      throw Error('Máy chủ trả trạng thái ký không đúng yêu cầu. Kiểm tra hồ sơ trước khi gửi lại.');
+    }
 
-    if($('apiStatus')) $('apiStatus').textContent = 'Đã lưu hồ sơ kê khai thành công.';
+    // Tu day: da co xac nhan tu action submitDTHT, khong duoc bao loi gui
+    // chi vi tai lai bang lich su gap loi.
+    if($('apiStatus')) $('apiStatus').textContent = 'Hồ sơ đã được máy chủ ghi nhận.';
     if(btn){
       btn.disabled = true;
       btn.removeAttribute('aria-busy');
       btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Đã gửi thành công';
     }
-
-    // Cập nhật ngay mảng reports vào bảng lịch sử
-    if (res && Array.isArray(res.reports) && res.reports.length > 0) {
-      state.reports = res.reports;
-      if (typeof renderHistory === 'function') renderHistory();
-    } else {
-      if (typeof loadData === 'function') await loadData();
-    }
-
     showSubmitAcknowledgement();
-    showHvaNotice('success','Gửi bản kê khai thành công','Hồ sơ kê khai đã được hệ thống ghi nhận.');
+    showHvaNotice('success','Gửi bản kê khai thành công',
+      state.signMethod==='PAPER'
+        ? 'Hồ sơ đã được máy chủ tiếp nhận. Thầy/Cô in, ký tay và nộp bản giấy để hoàn tất.'
+        : 'Hồ sơ kê khai đã được hệ thống ghi nhận.');
+
+    // Nạp lịch sử chỉ là bước hậu xử lý, không thể đảo kết quả đã gửi.
+    try{
+      if(Array.isArray(res.reports)){
+        state.reports = res.reports;
+        if(typeof renderHistory==='function')renderHistory();
+      }else if(typeof loadData==='function'){
+        await loadData();
+      }
+    }catch(historyErr){
+      console.warn('[DTHT] Đã gửi thành công, nhưng chưa làm mới lịch sử:',historyErr);
+    }
   }catch(e){
     console.error('[Submit Error]', e);
     window.__dthtSubmitting = false; // Giải phóng cờ ngay lập tức nếu lỗi
