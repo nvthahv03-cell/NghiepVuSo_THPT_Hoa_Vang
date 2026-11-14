@@ -86,14 +86,14 @@
   </section>
   <section class="panel" id="previewSection" hidden aria-labelledby="previewHeading"><h2 id="previewHeading">Bản xem trước báo cáo</h2>
     <div class="preview" id="previewPaper" aria-live="polite"></div>
-    <div class="actions" id="printActions"><button type="button" class="btn secondary" id="editButton">← Quay lại chỉnh sửa</button><button type="button" class="btn" id="printButton">In / Lưu PDF bản xem trước</button><span class="muted">Không phải hồ sơ đã ký hoặc gửi.</span></div>
+    <div class="actions" id="printActions"><button type="button" class="btn secondary" id="editButton">← Quay lại chỉnh sửa</button><button type="button" class="btn" id="printButton">In / Lưu PDF bản xem trước</button><button type="button" class="btn" id="a11Send" disabled>Gửi báo cáo tới BGH / TTCM</button><span class="muted">Không phải hồ sơ đã ký hoặc gửi.</span></div>
   </section>
 </main>
 <nav class="bottom-nav" aria-label="Điều hướng NVS"><a href="./index.html">Trang chủ</a><a href="./NghiepVu.html">Nghiệp vụ số</a><button type="button" data-nvs-nav="ai" class="hva-a11-assistant-placeholder" disabled aria-disabled="true" title="Chưa kết nối Trợ lý AI tại biểu mẫu này; không có thao tác gửi dữ liệu">✦ Trợ lý (chờ kết nối)</button></nav>
 <script>
 (() => {
   'use strict';
-  // Độc lập với NVS_A1.js và schemas/sources.json; không tạo API ghi hoặc giả lập gửi.
+  // A.1.1 nối hộp tiếp nhận hồ sơ Nhóm A; mã tiếp nhận từ Backend, không tạo kết quả giả.
   const $ = (id) => document.getElementById(id);
   const defs = {
     task: { name:'Báo cáo thực hiện nhiệm vụ được giao', fields:[
@@ -129,6 +129,58 @@
     }
     return '';
   };
+  const A11_BACKEND_URL='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
+  let a11Enabled=false,a11RequestId='',a11SubmittedId='';
+  function a11NewRequestId(){
+    if(crypto&&crypto.randomUUID)return 'A11-'+crypto.randomUUID();
+    const a=new Uint8Array(20);crypto.getRandomValues(a);return 'A11-'+Array.from(a,x=>x.toString(16).padStart(2,'0')).join('');
+  }
+  async function a11API(action,extra={}){
+    const sessionToken=safeRead('hvaSessionToken');
+    if(!sessionToken)throw Error('Chưa có phiên đăng nhập EDOS.');
+    const r=await fetch(A11_BACKEND_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action,sessionToken,...extra}),cache:'no-store'});
+    if(!r.ok)throw Error('Backend không phản hồi hợp lệ: HTTP '+r.status);
+    const data=await r.json();if(data.success!==true)throw Error(data.message||'Máy chủ chưa tiếp nhận yêu cầu.');return data;
+  }
+  async function a11Check(){
+    try{
+      account();
+      const response=await a11API('nvsA22Capabilities');
+      if(response.supported!==true||response.version!=='A22-1'||!response.bghCount||!response.ccCount)throw Error('Chưa xác định tuyến BGH/TTCM.');
+      a11Enabled=true;announce('Đã xác thực tuyến tiếp nhận hồ sơ Nhóm A. Có thể xem trước và nộp bản báo cáo.',false);
+    }catch(err){a11Enabled=false;announce('Chưa thể nộp hồ sơ A.1.1: '+err.message+' Có thể in bản nháp.',true);}
+    a11UpdateSend();
+  }
+  function a11UpdateSend(){
+    const btn=$('a11Send');
+    if(!btn)return;
+    btn.hidden=!!(current&&defs[current]&&defs[current].draft);
+    btn.disabled=!(a11Enabled&&!a11SubmittedId&&!$('previewSection').hidden&&!btn.hidden);
+    btn.textContent=a11SubmittedId?'Đã tiếp nhận: '+a11SubmittedId:'Gửi báo cáo tới BGH / TTCM';
+  }
+  async function a11Submit(){
+    if(!a11Enabled||a11SubmittedId||$('previewSection').hidden||!current||defs[current].draft)return;
+    const actor=verifySession();if(!actor||!$('reportForm').reportValidity())return;
+    const def=defs[current],data=Object.fromEntries(def.fields.map(([key])=>[key,$('field-'+key).value.trim()]));
+    if(!validDrive($('driveLink').value.trim())){announce('Liên kết Drive không hợp lệ.',true);return;}
+    const text=def.fields.map(([key,label])=>label+': '+data[key]).join('\n');
+    if(text.length>7000){announce('Nội dung vượt giới hạn 7.000 ký tự. Hãy dùng liên kết Drive cho phụ lục.',true);return;}
+    if(!a11RequestId)a11RequestId=a11NewRequestId();
+    if(!window.confirm('Xác nhận gửi '+def.name+' đến BGH/TTCM? Báo cáo được tiếp nhận, chưa ký số hoặc phê duyệt.'))return;
+    const btn=$('a11Send');btn.disabled=true;btn.textContent='Đang gửi...';
+    try{
+      const form={code:'A.1.1',title:def.name+(data.task?' – '+data.task:data.activity?' – '+data.activity:''),schoolYear:data.year.replace('–','-'),content:text,result:data.results||'',evidence:$('driveLink').value.trim()};
+      const extras={loaiBaoCao:def.name,noiDungChiTiet:text,tuNgay:data.from||'',denNgay:data.to||''};
+      const res=await a11API('nvsA22Submit',{document:{clientRequestId:a11RequestId,form,extras}});
+      if(!res.recordId||!res.bghCount||!res.ccCount)throw Error('Thiếu mã tiếp nhận hoặc nơi nhận.');
+      a11SubmittedId=res.recordId;
+      dirty=false;
+      announce('ĐÃ TIẾP NHẬN hồ sơ '+res.recordId+' · Chờ BGH/TTCM xử lý. Chưa ký số, chưa phê duyệt.',false);
+      const stamp=$('previewPaper').querySelector('.preview-stamp');
+      if(stamp)stamp.textContent='ĐÃ TIẾP NHẬN · '+res.recordId+' · CHỜ XỬ LÝ · CHƯA KÝ SỐ';
+    }catch(e){announce('CHƯA XÁC NHẬN NỘP: '+e.message+'. Nếu gián đoạn mạng, thử lại mà không sửa nội dung.',true);}
+    finally{a11UpdateSend();}
+  }
   function account(){
     let u={};try{u=JSON.parse(safeRead('user')||'{}')||{}}catch(_){}
     const username=String(u.tenDangNhap||u.username||u.userName||'').trim();
@@ -162,7 +214,7 @@
   function setChoice(id,focus=true){
     if(!Object.hasOwn(defs,id))return;
     if(dirty&&id!==current&&!window.confirm('Nội dung đang nhập chưa được lưu. Chuyển loại báo cáo và bỏ nội dung này?'))return;
-    current=id;dirty=false;
+    current=id;dirty=false;a11SubmittedId='';a11RequestId='';a11UpdateSend();
     document.querySelectorAll('.choice').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));
     const def=defs[id];$('editorHeading').textContent=def.name;
     $('fields').replaceChildren(...def.fields.map(field));$('driveLink').value='';
@@ -193,19 +245,21 @@
     def.fields.forEach(([id,label])=>appendLine(paper,label,data[id]));appendLine(paper,'Tài liệu, minh chứng',drive,true);
     const sign=el('div',undefined,'sign');sign.append(el('b','NGƯỜI BÁO CÁO'),el('p','(Chưa ký)'),el('strong',a.name));paper.append(sign);
     paper.append(el('div',def.draft?'BẢN XEM TRƯỚC – MẪU CHƯA ĐƯỢC PHÊ DUYỆT – CHƯA LƯU, CHƯA GỬI':'BẢN XEM TRƯỚC – CHƯA LƯU, CHƯA KÝ, CHƯA GỬI','preview-stamp'));
-    $('previewSection').hidden=false;
+    $('previewSection').hidden=false;a11UpdateSend();
     $('previewSection').scrollIntoView({block:'start',behavior:'smooth'});
     announce('Đã tạo bản xem trước. Nội dung chỉ tồn tại trong trang hiện tại; chưa lưu, ký hoặc gửi.');
   }
   for(const btn of document.querySelectorAll('.choice'))btn.addEventListener('click',()=>setChoice(btn.dataset.id));
   $('reportForm').addEventListener('submit',renderPreview);
-  $('reportForm').addEventListener('input',()=>{dirty=true;$('previewSection').hidden=true;});
+  $('reportForm').addEventListener('input',()=>{dirty=true;a11SubmittedId='';a11RequestId='';$('previewSection').hidden=true;a11UpdateSend();});
   $('backToChoices').addEventListener('click',()=>{$('choices').scrollIntoView({block:'start',behavior:'smooth'});});
   $('editButton').addEventListener('click',()=>{$('editor').scrollIntoView({block:'start',behavior:'smooth'});});
   $('clearButton').addEventListener('click',()=>{if(dirty&&!confirm('Xóa nội dung chưa lưu của báo cáo này?'))return;const id=current;dirty=false;setChoice(id,false);announce('Đã làm mới biểu mẫu. Không thay đổi dữ liệu thật.');});
+  $('a11Send').addEventListener('click',a11Submit);
   $('printButton').addEventListener('click',()=>{if(!verifySession()){return;}if($('previewSection').hidden){announce('Cần xem trước báo cáo trước khi in.',true);return;}window.print();});
   window.addEventListener('beforeunload',e=>{if(!dirty)return;e.preventDefault();e.returnValue='';});
   const initial=new URL(location.href).searchParams.get('item');if(initial&&Object.hasOwn(defs,initial))setChoice(initial,false);
+  a11Check();
   // Trợ lý dùng chung theo hệ thống NVS hiện hành; không tạo dịch vụ AI thứ hai.
 })();
 </script>
