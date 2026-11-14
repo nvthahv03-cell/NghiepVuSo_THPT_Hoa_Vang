@@ -1609,7 +1609,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
       sessionToken:token
     });
 
-    // Dung chinh tuyen DTHT da ghi Sheet thanh cong; khong chuyen sang V5 endpoint khac.
+    // A1 V2: gửi tới Web App V5 trung tâm; Backend phải trả persisted:true sau khi đọc lại Sheet.
     const target=backendUrl();
     if(global.HVAAuthRequest){
       if(typeof global.HVAAuthRequest.postJson==='function'){
