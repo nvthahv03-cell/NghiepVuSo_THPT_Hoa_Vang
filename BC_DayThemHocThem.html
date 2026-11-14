@@ -1558,6 +1558,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
     return await parseResponse(r);
   }
 
+  global.HVA_DTHT_RESOLVE_BACKEND=backendUrl;
   global.HVA_API=global.HVA_API||{};
   global.HVA_API.dtht={
     getInitial: async ()=>await get('getDTHTInitial'),
@@ -2494,7 +2495,7 @@ async function submitReport(ev){
   }
 
   if(state.signMethod==='PAPER'){
-    try{await hvaCheckPaperSigning_(String(window.HVA_API_URL||window.PERSONNEL_SEARCH_API||DTHT_BACKEND_URL));}catch(err){showHvaNotice('error','Chưa có tuyến nhận hồ sơ ký tay',err.message);return;}
+    try{await hvaCheckPaperSigning_(window.HVA_DTHT_RESOLVE_BACKEND());}catch(err){showHvaNotice('error','Chưa có tuyến nhận hồ sơ ký tay',err.message);return;}
   }
   const btn = $('submitReportBtn');
   const originalHtml = btn ? btn.innerHTML : '';
