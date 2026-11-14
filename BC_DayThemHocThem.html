@@ -1565,7 +1565,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 
     // DTHT standalone: giữ request là CORS-simple như chính luồng Login HVA.
     // Gateway đọc sessionToken trong JSON body, KHÔNG cần Authorization header/cookie.
-    const r=await fetch(backendUrl(),{
+    const r=await fetch(body.signingMethod==='PAPER'?global.HVA_V5_BACKEND_URL:backendUrl(),{
       method:'POST',
       headers:{'Content-Type':'text/plain;charset=UTF-8'},
       body:JSON.stringify(body),
@@ -1575,7 +1575,8 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
     return await parseResponse(r);
   }
 
-  global.HVA_DTHT_RESOLVE_BACKEND=backendUrl;
+  global.HVA_V5_BACKEND_URL="https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec";
+  global.HVA_DTHT_RESOLVE_BACKEND=()=>global.HVA_V5_BACKEND_URL;
   global.HVA_API=global.HVA_API||{};
   global.HVA_API.dtht={
     getInitial: async ()=>await get('getDTHTInitial'),
