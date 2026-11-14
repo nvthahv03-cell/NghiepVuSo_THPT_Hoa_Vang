@@ -136,7 +136,7 @@ by('edit').addEventListener('click',()=>by('form').scrollIntoView({behavior:'smo
 select.addEventListener('change',()=>{setCode(select.value);notice('Đã chuyển mẫu. Hãy kiểm tra lại thông tin trước khi xuất.')});
 by('send').disabled=true;
 /* Tuyến tiếp nhận dùng chung chỉ mở khi Backend đã triển khai action A22 và trả chứng nhận hỗ trợ. */
-const A22_BACKEND_URL='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
+const A22_BACKEND_URL='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
 let canSubmit=false,clientRequestId=null,submittedId="";
 const token=()=>storeRead('hvaSessionToken');
 function newRequestId(){
