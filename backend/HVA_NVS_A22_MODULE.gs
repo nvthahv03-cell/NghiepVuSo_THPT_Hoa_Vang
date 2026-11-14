@@ -5,6 +5,14 @@
  * Không ghi khóa API, địa chỉ email, dữ liệu nhân sự vào mã nguồn.
  */
 const NVS_A22_RULES_={
+  "A.1.1": {
+    "required":["loaiBaoCao","noiDungChiTiet"],
+    "url":[],
+    "fields":["loaiBaoCao","noiDungChiTiet","tuNgay","denNgay"],
+    "number":[],
+    "date":["tuNgay","denNgay"],
+    "select":{"loaiBaoCao":["Báo cáo thực hiện nhiệm vụ được giao","Báo cáo công tác điều động","Báo cáo tập huấn, bồi dưỡng, hội nghị, hội thảo"]}
+  },
   "A.1.3-KH": {
     "required": [
       "monBD",
