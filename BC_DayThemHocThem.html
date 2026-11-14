@@ -1059,6 +1059,38 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 @keyframes hvaSendBounce{0%,64%,100%{transform:translateY(0) scale(1)}72%{transform:translateY(-6px) scale(1.045)}78%{transform:translateY(1px) scale(.985)}84%{transform:translateY(-2px) scale(1.01)}91%{transform:translateY(0) scale(1)}}
 @media(prefers-reduced-motion:reduce){#submitReportBtn{animation:none!important;transition:none!important}}
 @media print{#hvaNotice{display:none!important}#submitReportBtn{animation:none!important}}
+</style><style id="hva-sign-choice-cards-v2">
+/* HVA–EDOS: kiểu thẻ lựa chọn; cô lập khỏi các quy tắc label/input toàn trang */
+#hvaSignMethodPanel.hva-sign-method{display:block!important;background:#f8fbff!important;border:1px solid #d9e6f2!important;border-radius:16px!important;padding:16px!important;margin:0 0 17px!important;min-width:0!important;color:#193e5a!important}
+#hvaSignMethodPanel .hva-sign-method-heading{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;margin:0 0 12px!important}
+#hvaSignMethodPanel .hva-sign-method-eyebrow{display:inline-flex!important;align-items:center!important;gap:7px!important;color:#3a719a!important;font-size:10px!important;letter-spacing:.07em!important;font-weight:850!important;line-height:1.4!important}
+#hvaSignMethodPanel .hva-sign-method-heading>strong{font-size:15px!important;line-height:1.35!important;color:#123f62!important;letter-spacing:normal!important}
+#hvaSignMethodPanel .hva-sign-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch!important;gap:12px!important}
+#hvaSignMethodPanel label.hva-sign-choice{box-sizing:border-box!important;position:relative!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;margin:0!important;padding:16px 14px!important;min-width:0!important;min-height:94px!important;width:100%!important;background:#fff!important;border:1.5px solid #d8e4ef!important;border-radius:13px!important;box-shadow:0 2px 8px rgba(20,67,111,.035)!important;cursor:pointer!important;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease!important;text-align:left!important}
+#hvaSignMethodPanel .hva-sign-choice>input[type="radio"]{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;overflow:hidden!important;pointer-events:none!important;margin:0!important;padding:0!important}
+#hvaSignMethodPanel .hva-sign-choice-icon{display:grid!important;flex:0 0 42px!important;width:42px!important;height:42px!important;place-items:center!important;border-radius:12px!important;background:#edf5fd!important;color:#19679d!important;font-size:19px!important}
+#hvaSignMethodPanel .hva-sign-choice-copy{display:flex!important;flex:1 1 auto!important;min-width:0!important;flex-direction:column!important;align-items:flex-start!important;gap:5px!important}
+#hvaSignMethodPanel .hva-sign-choice-copy>b{font-size:14px!important;font-weight:850!important;color:#174465!important;line-height:1.25!important;white-space:normal!important}
+#hvaSignMethodPanel .hva-sign-choice-copy>small{font-size:11.5px!important;color:#667d90!important;font-weight:500!important;line-height:1.55!important;white-space:normal!important;overflow-wrap:anywhere!important}
+#hvaSignMethodPanel .hva-sign-choice-check{display:grid!important;flex:0 0 23px!important;width:23px!important;height:23px!important;place-items:center!important;border:1.5px solid #bfcede!important;border-radius:50%!important;background:#fff!important;color:transparent!important;font-size:18px!important}
+#hvaSignMethodPanel .hva-sign-choice:has(input:checked){background:#f0f7ff!important;border-color:#0875c8!important;box-shadow:0 0 0 2px rgba(8,117,200,.09),0 6px 17px rgba(8,73,132,.08)!important}
+#hvaSignMethodPanel .hva-sign-choice:has(input:checked) .hva-sign-choice-check{background:#086bb5!important;border-color:#086bb5!important;color:#fff!important}
+#hvaSignMethodPanel .hva-sign-choice:has(input:checked) .hva-sign-choice-icon{background:#dcefff!important;color:#075a9a!important}
+#hvaSignMethodPanel .hva-sign-choice:focus-within{outline:3px solid rgba(7,112,191,.28)!important;outline-offset:2px!important}
+#hvaSignMethodPanel .hva-sign-choice:hover{border-color:#7db6dc!important;transform:translateY(-1px)!important}
+#hvaSignMethodPanel .hva-sign-method-note{display:flex!important;align-items:flex-start!important;gap:6px!important;margin:12px 2px 0!important;font-size:11px!important;line-height:1.6!important;color:#5b7386!important;max-width:100%!important;white-space:normal!important}
+.hva-paper-mode #hvaSignMethodPanel.hva-sign-method{background:#f8fbff!important;border-color:#d9e6f2!important}
+@media(max-width:680px){
+ #hvaSignMethodPanel.hva-sign-method{padding:13px!important;border-radius:13px!important}
+ #hvaSignMethodPanel .hva-sign-options{grid-template-columns:minmax(0,1fr)!important;gap:9px!important}
+ #hvaSignMethodPanel label.hva-sign-choice{min-height:77px!important;padding:11px 12px!important;gap:11px!important}
+ #hvaSignMethodPanel .hva-sign-choice-icon{flex-basis:38px!important;width:38px!important;height:38px!important;font-size:17px!important}
+ #hvaSignMethodPanel .hva-sign-choice-copy>b{font-size:13px!important}
+ #hvaSignMethodPanel .hva-sign-choice-copy>small{font-size:11px!important}
+ #hvaSignMethodPanel .hva-sign-method-heading>strong{font-size:14px!important}
+}
+@media(prefers-reduced-motion:reduce){#hvaSignMethodPanel label.hva-sign-choice{transition:none!important;transform:none!important}}
+@media print{#hvaSignMethodPanel{display:none!important}}
 </style></head>
 <!-- 🔴 CORE PASS — SHELL/HVA PAGE FRAME — LOCK -->
 <body>
@@ -1153,7 +1185,24 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
     <h2 class="section-title">Kê khai dạy thêm ngoài nhà trường</h2>
     <p class="muted">Thông tin người kê khai được nhận diện tự động từ tài khoản HVA đang đăng nhập.</p>
 
-    <div class="hva-sign-method" id="hvaSignMethodPanel" role="group" aria-label="Lựa chọn hình thức ký"><strong>HÌNH THỨC KÝ BÁO CÁO</strong><label><input type="radio" name="hvaSignMethod" value="ELECTRONIC" checked onchange="hvaSwitchSignMethod('ELECTRONIC')"> Xác thực CCCD và ký xác nhận điện tử</label><label><input type="radio" name="hvaSignMethod" value="PAPER" onchange="hvaSwitchSignMethod('PAPER')"> In báo cáo, ký tay và nộp bản giấy</label><small id="hvaSignMethodNote">Hình thức ký điện tử hiện hành được giữ nguyên.</small></div>
+    <div class="hva-sign-method" id="hvaSignMethodPanel" role="group" aria-labelledby="hvaSignMethodTitle">
+      <div class="hva-sign-method-heading"><span class="hva-sign-method-eyebrow"><i class="bi bi-pen" aria-hidden="true"></i> PHƯƠNG THỨC XÁC NHẬN</span><strong id="hvaSignMethodTitle">Chọn hình thức ký báo cáo</strong></div>
+      <div class="hva-sign-options">
+        <label class="hva-sign-choice">
+          <input type="radio" name="hvaSignMethod" value="ELECTRONIC" checked onchange="hvaSwitchSignMethod('ELECTRONIC')">
+          <span class="hva-sign-choice-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
+          <span class="hva-sign-choice-copy"><b>Ký điện tử</b><small>Xác thực CCCD và ký xác nhận trên hệ thống</small></span>
+          <span class="hva-sign-choice-check" aria-hidden="true"><i class="bi bi-check"></i></span>
+        </label>
+        <label class="hva-sign-choice">
+          <input type="radio" name="hvaSignMethod" value="PAPER" onchange="hvaSwitchSignMethod('PAPER')">
+          <span class="hva-sign-choice-icon"><i class="bi bi-printer" aria-hidden="true"></i></span>
+          <span class="hva-sign-choice-copy"><b>Ký tay</b><small>Gửi báo cáo, in và nộp bản giấy đã ký</small></span>
+          <span class="hva-sign-choice-check" aria-hidden="true"><i class="bi bi-check"></i></span>
+        </label>
+      </div>
+      <p class="hva-sign-method-note" id="hvaSignMethodNote" role="status" aria-live="polite">Báo cáo được xác thực và gửi trực tuyến qua HVA–EDOS.</p>
+    </div>
     <div class="identity-card">
       <div class="identity-col">
         <div class="identity-person">
