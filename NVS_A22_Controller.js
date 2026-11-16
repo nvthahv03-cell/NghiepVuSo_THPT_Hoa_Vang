@@ -35,6 +35,7 @@ function makeField(spec){
  wrap.append(label,input);return wrap;
 }
 function setCode(code,keepTitle=false){
+ if(lockToCode&&code!==lockToCode)return false;
  if(!Object.prototype.hasOwnProperty.call(D,code))return false;
  by('code').value=code;const def=D[code];
  by('heading').textContent=code+' – '+def.title;
@@ -47,7 +48,18 @@ function setCode(code,keepTitle=false){
  return true;
 }
 const select=by('code');for(const code of names){const op=new Option(code+' — '+D[code].title,code);select.add(op)}
-const selected=new URL(location.href).searchParams.get('code');const defaultCode=Object.prototype.hasOwnProperty.call(D,selected)?selected:names[0];
+const routeParams=new URL(location.href).searchParams;
+const selected=routeParams.get('code');
+const defaultCode=Object.prototype.hasOwnProperty.call(D,selected)?selected:names[0];
+const lockToCode=routeParams.get('lock')==='1'&&Object.prototype.hasOwnProperty.call(D,selected)?selected:'';
+if(lockToCode){
+  // Trang A1.3 báo cáo đội tuyển và A1.4 mở đúng một nghiệp vụ; không lẫn 22 biểu mẫu.
+  select.replaceChildren(new Option(lockToCode+' — '+D[lockToCode].title,lockToCode));
+  select.value=lockToCode;
+  select.disabled=true;
+  const label=select.closest('div');
+  if(label)label.hidden=true;
+}
 setDate();const u=currentUser();
 by('owner').value=clean(u.hoTen||u.fullName||u.name||'');
 by('team').value=clean(u.toBoPhan||u.tenTo||u.to||'');
