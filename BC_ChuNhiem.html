@@ -294,7 +294,27 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
 @media(max-width:640px){.hva-a1-master .hva-a1-head-inner{grid-template-columns:43px 1fr;gap:9px;min-height:92px;padding:12px}.hva-a1-master .hva-a1-back{width:40px;height:40px}.hva-a1-master .hva-a1-meta{grid-column:1/-1;text-align:center;font-size:11px}.hva-a1-master .hva-a1-meta small{display:inline;margin-left:8px}.hva-a1-master .hva-a1-school{font-size:19px}.hva-a1-master .hva-a1-kicker{font-size:9px;letter-spacing:0}.hva-a1-master .hva-a1-sub{font-size:10px}}
 @media print{.hva-a1-master,.hva-a1-page-title{display:none!important}}
 </style>
-</head>
+
+<style id="hva-cn-a12-approval-ui">
+/* A1.2: responsive and visual polish, no changes to A1.1/DTHT */
+#hvaNotice .hva-modal{max-width:min(560px,calc(100vw - 24px));width:100%;overflow:hidden}
+#hvaNotice .hva-modal-body{padding:24px clamp(16px,4vw,28px);text-align:center}
+#hvaNotice #hvaNoticeMessage{overflow-wrap:anywhere;white-space:pre-line;line-height:1.65}
+#hvaNotice .hva-modal-ok{min-height:48px}
+#submitReportBtn[aria-busy="true"]{pointer-events:none;animation:none!important}
+#previewSignBtn[hidden]{display:none!important}
+#declareCard,#previewCard,.shell,.identity-card,.grid{min-width:0;max-width:100%}
+#declareCard .field,#declareCard .field input,#declareCard .field select,#declareCard .field textarea{min-width:0;max-width:100%}
+@media(max-width:720px){
+  #declareCard,#previewCard{padding:clamp(12px,3vw,20px)}
+  #previewCard .preview-toolbar{gap:10px;flex-wrap:wrap}
+  #previewCard .preview-toolbar>div{flex-wrap:wrap}
+  #previewCard>.actions{flex-wrap:wrap!important;justify-content:center!important}
+  #previewCard>.actions .btn{min-width:min(100%,200px)}
+  #hvaNotice .hva-modal-body{padding:18px}
+}
+@media print{#hvaNotice{display:none!important}}
+</style></head>
 <body>
 
 <!-- MODAL CCCD -->
@@ -340,19 +360,19 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
       <div class="hva-sign-method-heading"><span class="hva-sign-method-eyebrow"><i class="bi bi-pen" aria-hidden="true"></i> PHƯƠNG THỨC XÁC NHẬN</span><strong id="hvaSignMethodTitle">Chọn hình thức ký báo cáo</strong></div>
       <div class="hva-sign-options">
         <label class="hva-sign-choice">
-          <input type="radio" name="hvaSignMethod" value="ELECTRONIC" checked onchange="hvaSwitchSignMethod('ELECTRONIC')">
+          <input type="radio" name="hvaSignMethod" value="ELECTRONIC" onchange="hvaSwitchSignMethod('ELECTRONIC')">
           <span class="hva-sign-choice-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
           <span class="hva-sign-choice-copy"><b>Ký điện tử</b><small>Xác thực CCCD và ký xác nhận trên hệ thống</small></span>
           <span class="hva-sign-choice-check" aria-hidden="true"><i class="bi bi-check"></i></span>
         </label>
         <label class="hva-sign-choice">
-          <input type="radio" name="hvaSignMethod" value="PAPER" onchange="hvaSwitchSignMethod('PAPER')">
+          <input type="radio" name="hvaSignMethod" value="PAPER" checked onchange="hvaSwitchSignMethod('PAPER')">
           <span class="hva-sign-choice-icon"><i class="bi bi-printer" aria-hidden="true"></i></span>
           <span class="hva-sign-choice-copy"><b>Ký tay</b><small>Gửi báo cáo, in và nộp bản giấy đã ký</small></span>
           <span class="hva-sign-choice-check" aria-hidden="true"><i class="bi bi-check"></i></span>
         </label>
       </div>
-      <p class="hva-sign-method-note" id="hvaSignMethodNote" role="status" aria-live="polite">Báo cáo được xác thực và gửi trực tuyến qua HVA–EDOS.</p>
+      <p class="hva-sign-method-note" id="hvaSignMethodNote" role="status" aria-live="polite">Chế độ ký tay: gửi trước, in và nộp bản ký tay; không cần xác thực CCCD khi gửi.</p>
     </div>
     <div class="identity-card">
       <div class="identity-col">
@@ -535,7 +555,7 @@ let state = {
   signatureData: '',
   signerVerified: false,
   signed: false,
-  signMethod: 'ELECTRONIC'
+  signMethod: 'PAPER'
 };
 
 const $ = id => document.getElementById(id);
@@ -621,6 +641,7 @@ function initApp(){
   loadCnProfile(username);
 
   try{ state.signatureData = localStorage.getItem('hvaCNSignature:' + username.toLowerCase()) || ''; }catch(e){}
+  hvaSwitchSignMethod('PAPER');
   refreshSignatureUI();
 }
 
@@ -669,9 +690,16 @@ function hvaPrintPaper(){
 }
 function hvaSwitchSignMethod(mode){
   state.signMethod=mode==='PAPER'?'PAPER':'ELECTRONIC';
+  const methodRadio=document.querySelector('input[name="hvaSignMethod"][value="'+state.signMethod+'"]');
+  if(methodRadio)methodRadio.checked=true;
   document.body.classList.toggle('hva-paper-mode',state.signMethod==='PAPER');
   $('hvaSignMethodNote').textContent=state.signMethod==='PAPER'?'Gửi báo cáo trên EDOS, sau đó in, ký tay và nộp bản giấy.':'Xác thực CCCD và ký xác nhận trước khi gửi.';
-  const button=$('submitReportBtn');if(button&&!button.disabled)button.textContent=state.signMethod==='PAPER'?'Gửi hồ sơ chờ bản ký tay':'Xác nhận & gửi BGH';
+  const button=$('submitReportBtn');
+  if(button&&!button.disabled)button.innerHTML=state.signMethod==='PAPER'
+    ? '<i class="bi bi-send-check"></i> Gửi hồ sơ chờ bản ký tay'
+    : '<i class="bi bi-send-check"></i> Xác nhận & gửi BGH';
+  const previewSign=$('previewSignBtn');
+  if(previewSign)previewSign.hidden=state.signMethod==='PAPER';
   refreshSignatureUI();
 }
 function refreshSignatureUI(){
@@ -722,6 +750,7 @@ function signDocument(){
 }
 
 function previewSignerAction(){
+  if(state.signMethod==='PAPER')return;
   if(state.signed) return;
   if(!state.signerVerified){ openSignerVerify(); return; }
   signDocument();
@@ -779,10 +808,13 @@ async function submitReport(ev){
   }
   if(!$('reportForm').reportValidity()) return;
   if(!/^1[012]\/\d{1,2}$/.test($('assignedClass').value.trim())) {showHvaNotice('error','Chưa xác định lớp','Chưa xác minh được lớp chủ nhiệm từ hồ sơ nhân sự.');return;}
+  const loginSession=String(localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'').trim();
+  if(!loginSession){showHvaNotice('error','Phiên đăng nhập đã hết hạn','Vui lòng đăng nhập lại HVA–EDOS trước khi gửi.');return;}
   // Ho so ky tay gui truc tiep; Backend phai tra trang thai CHO KY TAY moi bao thanh cong.
   const btn = $('submitReportBtn');
   if(btn.disabled) return;
   btn.disabled = true;
+  btn.setAttribute('aria-busy','true');
   btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Đang gửi dữ liệu...';
 
   const userObj = dthtCurrentUser();
@@ -823,24 +855,35 @@ async function submitReport(ev){
       body: JSON.stringify(payload),
       cache: 'no-store'
     });
-    const res = await r.json();
-
+    if(!r.ok)throw new Error('Không kết nối được máy chủ (HTTP '+r.status+').');
+    let res;
+    try{res=await r.json()}catch(_){throw new Error('Máy chủ không trả phản hồi JSON hợp lệ.')}
     if(res && (res.ok === true || res.success === true) &&
        res.persisted===true && res.maHoSo && res.sheetName==='NVS_CHU_NHIEM' &&
        (state.signMethod!=='PAPER'||!res.signatureStatus||res.signatureStatus==='CHO_KY_TAY')){
       setStep(3);
+      btn.removeAttribute('aria-busy');
       btn.textContent = state.signMethod==='PAPER'?'Đã tiếp nhận · Chờ bản ký tay':'Đã gửi thành công';
-      $('apiStatus').textContent = 'Đã lưu vào NVS_CHU_NHIEM – Mã hồ sơ: ' + res.maHoSo + ' (dòng '+res.recordRow+').';
-      showHvaNotice('success', 'Đã ghi và xác minh báo cáo',
+      $('apiStatus').textContent = 'Đã lưu NVS_CHU_NHIEM · Mã '+res.maHoSo+
+        ' · Dòng '+res.recordRow+(res.reportSavedAt?' · '+res.reportSavedAt:'');
+      showHvaNotice('success', state.signMethod==='PAPER'?'Gửi báo cáo thành công · Chờ bản ký tay':'Gửi báo cáo thành công',
         state.signMethod==='PAPER'
           ? 'Hồ sơ '+res.maHoSo+' đã được lưu vào NVS_CHU_NHIEM ở trạng thái CHỜ BẢN KÝ TAY. Thầy/Cô in, ký và nộp bản giấy.'
           : 'Hồ sơ '+res.maHoSo+' đã được lưu vào NVS_CHU_NHIEM.');
+      // Chỉ thực hiện việc in khi hồ sơ đã có biên nhận từ Backend.
+      if(state.signMethod==='PAPER'){
+        const printBtn=$('hvaPrintPaperBtn');
+        if(printBtn)printBtn.hidden=false;
+      }
     } else {
       throw new Error((res && (res.thongBao || res.message)) || 'Máy chủ chưa xác nhận lưu hồ sơ. Kiểm tra trước khi thử gửi lại.');
     }
   }catch(e){
     btn.disabled = false;
-    btn.textContent = state.signMethod==='PAPER'?'Gửi hồ sơ chờ bản ký tay':'Xác nhận & gửi BGH';
+    btn.removeAttribute('aria-busy');
+    btn.innerHTML = state.signMethod==='PAPER'
+      ? '<i class="bi bi-send-check"></i> Gửi hồ sơ chờ bản ký tay'
+      : '<i class="bi bi-send-check"></i> Xác nhận & gửi BGH';
     showHvaNotice('error', 'Chưa gửi được báo cáo', 'Chi tiết: ' + (e.message || e));
   }
 }
