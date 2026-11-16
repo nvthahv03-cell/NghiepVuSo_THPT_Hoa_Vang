@@ -51,13 +51,31 @@
   .hva-a11-assistant-placeholder{opacity:.55;cursor:not-allowed!important;box-shadow:none!important}
 </style>
   <script src="./HVA_Assistant_Shared.js" defer></script>
+
+<style id="hva-a1-head-style">
+/* HVA EDOS A1 HEAD v1 - độc lập; không tác động nghiệp vụ/form */
+.hva-a1-master{position:relative!important;top:auto!important;z-index:20!important;isolation:isolate;margin:0!important;padding:0!important;width:100%!important;min-height:0!important;border:0!important;border-radius:0 0 18px 18px!important;background:linear-gradient(110deg,#073d80 0%,#075daf 57%,#0795c9 100%)!important;box-shadow:0 5px 20px #09477b24!important;color:#fff!important;overflow:visible!important;font-family:Inter,"Segoe UI",Arial,sans-serif!important;}
+.hva-a1-master .hva-a1-head-inner{max-width:1200px;min-height:105px;margin:auto;padding:16px 20px;display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:18px}
+.hva-a1-master .hva-a1-back{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:11px;border:1px solid #b8e2ff75;background:#ffffff1b;color:#fff!important;text-decoration:none!important;font-size:25px;font-weight:700}
+.hva-a1-master .hva-a1-brand{text-align:center;min-width:0;line-height:1.35}
+.hva-a1-master .hva-a1-kicker{font-size:11px;font-weight:750;letter-spacing:1.3px;color:#d2ecff}
+.hva-a1-master .hva-a1-school{font-size:clamp(19px,2.5vw,27px);font-weight:850;color:#fff;letter-spacing:.3px}
+.hva-a1-master .hva-a1-sub{font-size:12px;color:#e0f2ff;font-weight:600}
+.hva-a1-master .hva-a1-meta{font-size:12px;font-weight:750;text-align:right;color:#fff;line-height:1.5}
+.hva-a1-master .hva-a1-meta small{display:block;color:#e0f2ff;font-weight:600}
+.hva-a1-master .hva-a1-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#40ef9d;box-shadow:0 0 0 3px #40ef9d22,0 0 9px #35ffab88;margin-right:7px;vertical-align:middle}
+.hva-a1-page-title{max-width:1200px;margin:13px auto 0;padding:0 18px;font:750 13px/1.5 Inter,"Segoe UI",Arial,sans-serif;color:#155887;}
+.hva-a1-page-title strong{color:#0d4d83}
+@media(max-width:640px){.hva-a1-master .hva-a1-head-inner{grid-template-columns:43px 1fr;gap:9px;min-height:92px;padding:12px}.hva-a1-master .hva-a1-back{width:40px;height:40px}.hva-a1-master .hva-a1-meta{grid-column:1/-1;text-align:center;font-size:11px}.hva-a1-master .hva-a1-meta small{display:inline;margin-left:8px}.hva-a1-master .hva-a1-school{font-size:19px}.hva-a1-master .hva-a1-kicker{font-size:9px;letter-spacing:0}.hva-a1-master .hva-a1-sub{font-size:10px}}
+@media print{.hva-a1-master,.hva-a1-page-title{display:none!important}}
+</style>
 </head>
 <body>
-<header class="hva-pro-header"><div class="hva-pro-header-inner">
-  <a class="hva-pro-back" href="./NghiepVu.html" title="Về Nghiệp vụ số" aria-label="Về danh mục Nghiệp vụ số"><i class="bi bi-arrow-left" aria-hidden="true">←</i></a>
-  <div class="hva-pro-brand"><div class="hva-pro-kicker">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div><div class="hva-pro-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-pro-slogan">NGHIỆP VỤ SỐ THÔNG MINH</div></div>
-  <div class="hva-pro-online">A.1.1 · BÁO CÁO CHUYÊN MÔN</div>
-</div></header>
+<header class="hva-a1-master" role="banner"><div class="hva-a1-head-inner">
+<a class="hva-a1-back" href="./NghiepVu.html" aria-label="Về danh mục Nghiệp vụ số" title="Trở về Nghiệp vụ số">←</a>
+<div class="hva-a1-brand"><div class="hva-a1-kicker">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div><div class="hva-a1-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a1-sub">HVA–EDOS · NGHIỆP VỤ SỐ</div></div>
+<div class="hva-a1-meta"><span class="hva-a1-dot" aria-hidden="true"></span>A1.1 <span>· TRỰC TUYẾN</span><small>Năm học 2026–2027</small></div>
+</div></header><div class="hva-a1-page-title"><strong>A1.1</strong> · THỰC HIỆN NHIỆM VỤ – BÁO CÁO KHÁC</div>
 <main>
   <section class="hero"><div><div class="eyebrow">A.1.1 – Thực hiện nhiệm vụ, báo cáo khác</div><h1 id="heading">Báo cáo thực hiện nhiệm vụ – Báo cáo khác</h1><p>Chọn loại báo cáo để lập nội dung và xem trước theo thể thức hành chính.</p></div>
   <div class="header-links"><a class="btn secondary" href="./NghiepVu.html">Danh mục nghiệp vụ</a><button class="btn ghost hva-a11-assistant-placeholder" id="assistantTop" data-nvs-nav="ai" disabled aria-disabled="true" title="Chưa kết nối Trợ lý AI tại biểu mẫu này; không có thao tác gửi dữ liệu" type="button">✦ Trợ lý (chờ kết nối)</button></div></section>
