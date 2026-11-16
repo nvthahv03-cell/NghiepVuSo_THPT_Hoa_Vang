@@ -264,6 +264,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
  #previewSection .preview .official-head>div{font-size:11pt!important}
 }
 </style>
+  <link rel="stylesheet" href="./HVA_User_Identity_Standard.css?v=20261117" media="all">
 </head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
@@ -285,11 +286,18 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   <section class="panel" id="editor" hidden aria-labelledby="editorHeading">
     <div class="panel-top"><div><div class="eyebrow">BƯỚC 02 · KÊ KHAI NỘI DUNG</div><h2 id="editorHeading"></h2></div><button type="button" class="btn ghost" id="backToChoices"><i class="bi bi-arrow-left" aria-hidden="true"></i> Đổi loại báo cáo</button></div>
     <p class="warning" id="developmentNote">Bản xem trước giúp kiểm tra nội dung trước khi nộp. Chỉ hồ sơ có mã tiếp nhận của máy chủ mới được coi là đã gửi. Không nhập thông tin cá nhân nhạy cảm.</p>
-    <div class="identity-grid" aria-label="Thông tin người lập">
-      <div class="identity-cell"><small>NGƯỜI BÁO CÁO</small><strong id="identityName">Chưa đăng nhập</strong></div>
-      <div class="identity-cell"><small>TỔ / BỘ PHẬN</small><strong id="identityTeam">Chưa xác định</strong></div>
-      <div class="identity-cell"><small>CHỨC VỤ</small><strong id="identityRole">Chưa xác định</strong></div>
-    </div>
+    <section class="identity-grid hva-user-ident" aria-labelledby="hvaUserIdentityTitle">
+      <div class="hva-user-ident__top">
+        <span class="hva-user-ident__title" id="hvaUserIdentityTitle"><i class="bi bi-person-vcard" aria-hidden="true"></i> THÔNG TIN NGƯỜI BÁO CÁO</span>
+        <span class="hva-user-ident__chip" id="hvaUserIdentityStatus"><i class="bi bi-patch-check"></i> Tài khoản EDOS</span>
+      </div>
+      <div class="hva-user-ident__values">
+        <div class="identity-cell hva-user-ident__value"><small>Họ và tên</small><strong id="identityName">Chưa đăng nhập</strong></div>
+        <div class="identity-cell hva-user-ident__value"><small>Tổ / Bộ phận</small><strong id="identityTeam">Chưa xác định</strong></div>
+        <div class="identity-cell hva-user-ident__value"><small>Chức vụ</small><strong id="identityRole">Chưa xác định</strong></div>
+      </div>
+      <div class="hva-user-ident__note"><i class="bi bi-shield-lock" aria-hidden="true"></i> Thông tin được đồng bộ từ tài khoản HVA–EDOS; không nhập lại trong biểu mẫu.</div>
+    </section>
     <div id="loginWarning" class="warning" hidden>Phiên đăng nhập chưa hợp lệ. Vui lòng đăng nhập từ <a href="./index.html">Trang chủ NVS</a> để chuẩn bị báo cáo.</div>
     <section class="a11-sign-method" id="a11SignMethod" aria-labelledby="a11SignTitle">
  <div class="a11-sign-eyebrow"><i class="bi bi-pen"></i> PHƯƠNG THỨC XÁC NHẬN</div>
@@ -528,9 +536,9 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   }
   function verifySession(){
     try{const a=account();$('identityName').textContent=a.name;$('identityTeam').textContent=a.team;$('identityRole').textContent=a.role;
-      $('formFields').disabled=false;$('loginWarning').hidden=true;return a;
+      $('hvaUserIdentityStatus').textContent='Đã nhận diện tài khoản';$('formFields').disabled=false;$('loginWarning').hidden=true;return a;
     }catch(error){$('identityName').textContent='Chưa xác thực';$('identityTeam').textContent='Chưa xác định';$('identityRole').textContent='Chưa xác định';
-      $('formFields').disabled=true;$('loginWarning').hidden=false;announce(error.message+' Vui lòng đăng nhập từ Trang chủ.',true);return null;
+      $('hvaUserIdentityStatus').textContent='Chưa đăng nhập';$('formFields').disabled=true;$('loginWarning').hidden=false;announce(error.message+' Vui lòng đăng nhập từ Trang chủ.',true);return null;
     }
   }
   function setChoice(id,focus=true){
