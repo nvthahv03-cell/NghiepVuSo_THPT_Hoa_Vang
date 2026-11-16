@@ -314,6 +314,14 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
   #hvaNotice .hva-modal-body{padding:18px}
 }
 @media print{#hvaNotice{display:none!important}}
+</style><style id="hva-cn-history-ui">
+.hva-cn-history{margin-top:18px;padding:17px;border:1px solid #cde3f4;border-radius:14px;background:#f8fcff;min-width:0}
+.hva-cn-history h3{font-size:16px;margin:0 0 9px;color:#084b87}.hva-cn-history p{font-size:12px;color:#5d7893;margin:4px 0 11px}
+.hva-cn-history-scroll{max-width:100%;overflow-x:auto}.hva-cn-history table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}
+.hva-cn-history th,.hva-cn-history td{padding:10px;border-bottom:1px solid #d8e7f4;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+.hva-cn-history th{background:#eaf4ff;color:#12528b;white-space:nowrap}
+.hva-cn-history #cnHistoryReload{margin-top:12px;padding:8px 13px;font-size:12px}
+@media print{.hva-cn-history{display:none!important}}
 </style></head>
 <body>
 
@@ -450,6 +458,14 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
       </div>
     </form>
     <div id="apiStatus" class="status">Sẵn sàng lập báo cáo công tác chủ nhiệm.</div>
+    <section class="hva-cn-history" id="cnHistorySection" aria-labelledby="cnHistoryTitle">
+      <h3 id="cnHistoryTitle"><i class="bi bi-clock-history"></i> Báo cáo đã gửi của tôi</h3>
+      <p id="cnHistoryStatus">Đang tải lịch sử hồ sơ…</p>
+      <div class="hva-cn-history-scroll"><table id="cnHistoryTable" hidden>
+        <thead><tr><th>Mã hồ sơ</th><th>Kỳ báo cáo</th><th>Lớp</th><th>Ngày giờ nộp</th><th>Trạng thái</th></tr></thead>
+        <tbody id="cnHistoryRows"></tbody></table></div>
+      <button type="button" class="btn secondary" id="cnHistoryReload" onclick="loadCnProfile(state.user?.tenDangNhap||state.user?.username||'')">Làm mới lịch sử</button>
+    </section>
   </section>
 
   <!-- BƯỚC 2: BẢN IN A4 CHUẨN NGHỊ ĐỊNH 30 NGUYÊN BẢN -->
@@ -597,9 +613,13 @@ async function loadCnProfile(username){
     url.searchParams.set('action','getChuNhiemInitial');
     url.searchParams.set('username',username);
     url.searchParams.set('namHoc','2026-2027');
+    const sessionToken=String(localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'').trim();
+    if(!sessionToken)throw new Error('Phiên EDOS chưa hợp lệ.');
+    url.searchParams.set('sessionToken',sessionToken);
     const response = await fetch(url.toString(), {cache:'no-store'});
     const result = await response.json();
     if(!result.ok) throw new Error(result.message || 'Không đọc được hồ sơ.');
+    hvaCNRenderHistory(result.reports||[]);
     const cls = parseHvaClassVal(result.lopChuNhiem || result.nguoiDung?.lopChuNhiem || '');
     if(result.nguoiDung){
       $('identityName').textContent = result.nguoiDung.hoTen || $('identityName').textContent;
@@ -617,9 +637,26 @@ async function loadCnProfile(username){
   }catch(e){
     if (!$('assignedClass').value) $('identityClass').textContent='Chưa xác minh';
     $('apiStatus').textContent='Chưa xác minh được lớp với Backend: '+e.message+'; vui lòng kiểm tra kết nối trước khi gửi.';
+    if($('cnHistoryStatus'))$('cnHistoryStatus').textContent='Không tải được lịch sử: '+e.message;
   }
 }
 
+function hvaCNRenderHistory(reports){
+  const rows=$('cnHistoryRows'),table=$('cnHistoryTable'),status=$('cnHistoryStatus');
+  if(!rows||!table||!status)return;
+  rows.replaceChildren();
+  const items=Array.isArray(reports)?reports.slice(-30).reverse():[];
+  if(items.length===0){table.hidden=true;status.textContent='Chưa có báo cáo đã nộp.';return;}
+  for(const item of items){
+    const tr=document.createElement('tr');
+    for(const val of [item.id,item.kyBaoCao,item.lopChuNhiem,item.updatedAt,item.trangThaiTiepNhan||item.status]){
+      const td=document.createElement('td');
+      td.textContent=String(val||'—');tr.appendChild(td);
+    }
+    rows.appendChild(tr);
+  }
+  table.hidden=false;status.textContent='Có '+items.length+' hồ sơ gần nhất.';
+}
 function initApp(){
   const me = dthtCurrentUser();
   const username = me.tenDangNhap || me.username || '';
@@ -875,6 +912,8 @@ async function submitReport(ev){
         const printBtn=$('hvaPrintPaperBtn');
         if(printBtn)printBtn.hidden=false;
       }
+      // Lịch sử là thao tác phụ; không đảo kết quả gửi thành công.
+      try{await loadCnProfile(payload.username)}catch(historyErr){console.warn('[CN] Reload history:',historyErr)}
     } else {
       throw new Error((res && (res.thongBao || res.message)) || 'Máy chủ chưa xác nhận lưu hồ sơ. Kiểm tra trước khi thử gửi lại.');
     }
