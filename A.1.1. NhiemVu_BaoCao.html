@@ -320,7 +320,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   const A11_BACKEND_URL='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
   let a11Enabled=false,a11RequestId='',a11SubmittedId='';
   // A1.1 – dùng chung hai hình thức ký như DTHT/Chủ nhiệm.
-  let a11SignMethod='PAPER',a11SignerVerified=false,a11SignatureData='',a11Signed=false;
+  let a11SignMethod='PAPER',a11SignerVerified=false,a11SignatureData='',a11Signed=false,a11VerificationToken='';
   let a11SigningSupported={paper:false,electronic:false};
   const a11SignFingerprint=()=>[a11SignMethod,a11SignerVerified,a11Signed,!!a11SignatureData].join('|');
   function a11SelectSign(mode){
@@ -330,26 +330,28 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     $('a11SignHint').textContent=a11SignMethod==='PAPER'
       ?'Gửi báo cáo qua EDOS, in báo cáo, ký trực tiếp và nộp bản giấy.'
       :'Xác thực CCCD bằng máy chủ, tải ảnh chữ ký rồi ký xác nhận trước khi gửi.';
-    a11Signed=false;a11SignerVerified=false;a11RequestId='';a11SubmittedId='';
+    a11Signed=false;a11SignerVerified=false;a11VerificationToken='';a11RequestId='';a11SubmittedId='';
     $('a11ConfirmSign').disabled=true;
     $('a11SignerStatus').textContent='Chưa xác thực CCCD và chữ ký.';
     if(!$('previewSection').hidden)renderPreview();
     a11UpdateSend();
   }
   async function a11VerifySigner(){
-    const cccd=$('a11Cccd').value.replace(/\\D/g,'');
-    if(!/^\\d{12}$/.test(cccd)){announce('CCCD phải đủ 12 chữ số.',true);return;}
+    const cccd=$('a11Cccd').value.replace(/\D/g,'');
+    if(!/^\d{12}$/.test(cccd)){announce('CCCD phải đủ 12 chữ số.',true);return;}
     const btn=$('a11VerifyCccd');btn.disabled=true;
     try{
       const actor=account();
       // Dùng tuyến đối chiếu CCCD nhân sự đang có trong V5; không xác thực tại trình duyệt.
-      const r=await a11API('verifyChuNhiemSigner',{username:actor.username,cccd});
+      const r=await a11API('nvsA11VerifySigner',{username:actor.username,cccd});
       if(r.ok!==true&&r.success!==true)throw Error(r.message||'Không xác thực được CCCD.');
+      if(!r.verificationToken)throw Error('Backend chưa cấp mã xác minh CCCD.');
+      a11VerificationToken=String(r.verificationToken);
       a11SignerVerified=true;a11Signed=false;
       $('a11SignerStatus').textContent='Đã xác thực CCCD. Chọn ảnh chữ ký và bấm Ký xác nhận.';
       $('a11ConfirmSign').disabled=!a11SignatureData;
       announce('Xác thực CCCD thành công.',false);
-    }catch(e){a11SignerVerified=false;a11Signed=false;announce('Xác thực không thành công: '+e.message,true)}
+    }catch(e){a11SignerVerified=false;a11Signed=false;a11VerificationToken='';announce('Xác thực không thành công: '+e.message,true)}
     finally{btn.disabled=false;a11UpdateSend();}
   }
   function a11LoadSignature(file){
@@ -424,7 +426,8 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       const extras={loaiBaoCao:def.name,noiDungChiTiet:text,tuNgay:data.from||'',denNgay:data.to||'',
         signingMethod:a11SignMethod,signerVerified:a11SignMethod==='ELECTRONIC'&&a11SignerVerified,
         signed:a11SignMethod==='ELECTRONIC'&&a11Signed,
-        chuKyBase64:a11SignMethod==='ELECTRONIC'?a11SignatureData:''};
+        chuKyBase64:a11SignMethod==='ELECTRONIC'?a11SignatureData:'',
+        verificationToken:a11SignMethod==='ELECTRONIC'?a11VerificationToken:''};
       form.signingMethod=a11SignMethod;
       form.signatureStatus=a11SignMethod==='PAPER'?'CHO_KY_TAY':'DA_KY_DIEN_TU';
       const res=await a11API('nvsA22Submit',{document:{clientRequestId:a11RequestId,form,extras}});
@@ -473,7 +476,9 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   function setChoice(id,focus=true){
     if(!Object.hasOwn(defs,id))return;
     if(dirty&&id!==current&&!window.confirm('Nội dung đang nhập chưa được lưu. Chuyển loại báo cáo và bỏ nội dung này?'))return;
-    current=id;dirty=false;a11SubmittedId='';a11RequestId='';a11UpdateSend();
+    current=id;dirty=false;a11SubmittedId='';a11RequestId='';a11Signed=false;a11VerificationToken='';a11SignerVerified=false;
+    $('a11ConfirmSign').disabled=true;
+    a11UpdateSend();
     document.querySelectorAll('.choice').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));
     const def=defs[id];$('editorHeading').textContent=def.name;
     $('fields').replaceChildren(...def.fields.map(field));$('driveLink').value='';
