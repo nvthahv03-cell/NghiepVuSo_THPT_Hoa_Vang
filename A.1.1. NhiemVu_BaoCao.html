@@ -265,6 +265,31 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 }
 </style>
   <link rel="stylesheet" href="./HVA_User_Identity_Standard.css?v=20261117" media="all">
+<style id="hva-a11-dynamic-ui-20261117">
+#choices[hidden],#editor[hidden],#previewSection[hidden],#a11Dynamic[hidden]{display:none!important}
+#a11Dynamic{border:1.5px solid #b9d9ed;border-radius:15px;background:#f5fbff;overflow:hidden;margin:18px 0 22px}
+#a11Dynamic .a11-dynamic-head{background:linear-gradient(110deg,#e5f3ff,#effaff);padding:16px 18px;border-bottom:1px solid #d1e3f2}
+#a11Dynamic .a11-dynamic-head b{font-size:11px;letter-spacing:.06em;color:#0b699f}
+#a11Dynamic h3{margin:4px 0 7px;color:#124e7c;font-size:17px}
+#a11Dynamic p{font-size:12px;color:#57788e;line-height:1.5;margin:0}
+#a11Dynamic .a11-dynamic-items{padding:15px;display:grid;gap:11px}
+#a11Dynamic details{border:1px solid #c8dbea;border-radius:12px;background:white;overflow:hidden}
+#a11Dynamic summary{padding:14px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:800;color:#124e7c;cursor:pointer;list-style:none}
+#a11Dynamic summary::-webkit-details-marker{display:none}
+#a11Dynamic .a11-count{display:inline-grid;place-items:center;border-radius:8px;background:#e6f3fe;color:#0a6ea9;width:27px;height:27px;flex:none}
+#a11Dynamic .a11-dynamic-body{padding:0 14px 14px}
+#a11Dynamic textarea{min-height:110px;width:100%;box-sizing:border-box;background:white;border:1.5px solid #b2d0e4;color:#1a405e;border-radius:10px;padding:12px;resize:vertical;font:500 14px/1.55 Arial,sans-serif}
+#a11Dynamic .a11-dynamic-body button{display:block;margin:9px 0 0 auto;background:#fff1f1;color:#a4373b;border:0;border-radius:7px;padding:7px 10px;cursor:pointer}
+#a11Dynamic .a11-dynamic-add{padding:14px 16px;background:#ebf6ff;border-top:1px solid #d2e5f4}
+#a11Dynamic .a11-dynamic-add label{display:block;font-size:12px;font-weight:800;color:#245b7d;margin-bottom:8px}
+#a11Dynamic .a11-dynamic-addrow{display:flex;gap:9px;flex-wrap:wrap}
+#a11Dynamic .a11-dynamic-addrow select{flex:1 1 180px;min-width:0}
+#a11Dynamic .a11-dynamic-addrow input{flex:1 1 160px;min-width:0}
+#a11Dynamic .a11-dynamic-note{padding:0 16px 14px}
+#editor .field label{font-weight:800!important;color:#205071!important}
+#editor .field input,#editor .field textarea,#editor .field select{border:1.5px solid #b9d2e5!important;background:#fff!important;color:#183f5e!important}
+@media(max-width:600px){#a11Dynamic .a11-dynamic-addrow button{width:100%}}
+</style>
 </head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
@@ -280,7 +305,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     <button type="button" class="choice" data-id="task" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-clipboard2-check"></i></span><span><strong>Báo cáo thực hiện nhiệm vụ được giao</strong><small>Kết quả thực hiện nhiệm vụ theo phân công.</small><span class="tag">Soạn và xem trước</span></span></button>
     <button type="button" class="choice" data-id="deployment" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-briefcase"></i></span><span><strong>Báo cáo công tác điều động</strong><small>Nội dung tham gia, kết quả và công việc tiếp theo.</small><span class="tag">Soạn và xem trước</span></span></button>
     <button type="button" class="choice" data-id="training" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-mortarboard"></i></span><span><strong>Báo cáo tập huấn, bồi dưỡng, hội nghị, hội thảo</strong><small>Tiếp thu nội dung, khả năng vận dụng và đề xuất.</small><span class="tag">Soạn và xem trước</span></span></button>
-    <button type="button" class="choice" data-id="other" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-file-earmark-plus"></i></span><span><strong>Báo cáo khác theo yêu cầu</strong><small>Khung dự thảo linh hoạt, hoàn thiện khi có yêu cầu cụ thể.</small><span class="tag">Gửi theo yêu cầu</span></span></button>
+    <button type="button" class="choice" data-id="other" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-file-earmark-plus"></i></span><span><strong>Báo cáo khác theo yêu cầu</strong><small>Chọn mục cần viết, mở rộng hoặc thu gọn nội dung.</small><span class="tag">Gửi theo yêu cầu</span></span></button>
   </div></section>
   <p id="notice" class="status" data-error="false" role="status" aria-live="polite">Chọn một loại báo cáo để bắt đầu. Trạng thái nộp hồ sơ sẽ được xác minh từ Backend.</p>
   <section class="panel" id="editor" hidden aria-labelledby="editorHeading">
@@ -325,7 +350,25 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
  </div>
 </section>
     <form id="reportForm" novalidate><fieldset id="formFields"><div id="fields" class="grid"></div>
-      <div class="field full" style="margin-top:17px"><label for="driveLink">Liên kết tài liệu, minh chứng Google Drive (nếu có)</label><input type="url" id="driveLink" name="driveLink" placeholder="https://drive.google.com/..." autocomplete="off"><p class="muted">Gửi liên kết đến tài liệu Google Drive/Docs đã chia sẻ đúng quyền cho người tiếp nhận; hệ thống không tự kiểm tra quyền truy cập tệp.</p></div>
+      <section id="a11Dynamic" class="a11-dynamic" hidden>
+ <div class="a11-dynamic-head"><b>NỘI DUNG LINH HOẠT</b><h3>Chọn các mục trong báo cáo</h3><p>Thêm mục phù hợp, mở ra để nhập hoặc thu gọn sau khi viết.</p></div>
+ <div id="a11DynamicItems" class="a11-dynamic-items"></div>
+ <div class="a11-dynamic-add">
+  <label for="a11DynamicType">Thêm mục nội dung</label>
+  <div class="a11-dynamic-addrow">
+   <select id="a11DynamicType">
+    <option>Nội dung triển khai</option><option>Kết quả, số liệu</option><option>Thực trạng, tình hình</option>
+    <option>Thuận lợi, khó khăn</option><option>Nguyên nhân</option><option>Biện pháp, giải pháp</option>
+    <option>Tiến độ thực hiện</option><option>Đánh giá, nhận xét</option><option>Kiến nghị, đề xuất</option>
+    <option>Khác</option>
+   </select>
+   <input id="a11DynamicCustom" maxlength="90" placeholder="Đặt tên mục khác..." aria-label="Tên mục tùy chỉnh" hidden>
+   <button type="button" class="btn secondary" id="a11DynamicAdd"><i class="bi bi-plus-circle"></i> Thêm mục</button>
+  </div>
+ </div>
+ <p class="a11-dynamic-note" id="a11DynamicStatus" role="status">Các mục đã nhập được đưa vào bản xem trước và lưu cùng hồ sơ gửi.</p>
+</section>
+<div class="field full" style="margin-top:17px"><label for="driveLink">Liên kết tài liệu, minh chứng Google Drive (nếu có)</label><input type="url" id="driveLink" name="driveLink" placeholder="https://drive.google.com/..." autocomplete="off"><p class="muted">Gửi liên kết đến tài liệu Google Drive/Docs đã chia sẻ đúng quyền cho người tiếp nhận; hệ thống không tự kiểm tra quyền truy cập tệp.</p></div>
       <div class="actions"><button class="btn" type="submit" id="previewButton">Xem trước báo cáo</button><button class="btn secondary" type="button" id="clearButton">Làm mới</button> </div>
     </fieldset></form>
     <p class="muted" style="margin-top:16px"><strong>Nơi nhận:</strong> Ban Giám hiệu và Tổ trưởng chuyên môn theo phân quyền, khi tuyến tiếp nhận được Backend xác nhận.</p>
@@ -339,7 +382,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       <button type="button" class="btn secondary" id="printButton"><i class="bi bi-printer"></i> In / Lưu PDF</button>
       <span class="muted" id="a11SendHint">Chỉ ghi nhận đã nộp khi Backend cấp mã tiếp nhận và xác nhận trạng thái ký.</span>
     </div>
-    <div id="a11SubmitAck" hidden role="status"><i class="bi bi-check-circle-fill"></i><div><strong id="a11SubmitAckTitle">Báo cáo đã được hệ thống tiếp nhận</strong><div id="a11SubmitAckText"></div></div></div>
+    <div id="a11SubmitAck" hidden role="status"><i class="bi bi-check-circle-fill"></i><div><strong id="a11SubmitAckTitle">Báo cáo đã được hệ thống tiếp nhận</strong><div id="a11SubmitAckText"></div><button type="button" id="a11FinishButton" class="btn secondary" style="display:block;margin-top:12px">Hoàn tất – Về danh mục 4 báo cáo</button></div></div>
   </section>
 </main>
 <footer class="hva-a11-footer"><span class="hva-footer-logo">HVA–<em>EDOS</em></span><span>Trường THPT Hòa Vang · Báo cáo chuyên môn A.1.1</span></footer>
@@ -351,8 +394,8 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   const defs = {
     task: { name:'Báo cáo thực hiện nhiệm vụ được giao', fields:[
       ['year','Năm học','text',true], ['task','Nhiệm vụ được giao','text',true],
-      ['assignedBy','Người / đơn vị giao nhiệm vụ','text',true], ['from','Từ ngày','date',true], ['to','Đến ngày','date',true],
-      ['content','Nội dung thực hiện','textarea',true], ['results','Kết quả thực hiện','textarea',true],
+      ['assignedBy','Người / đơn vị giao nhiệm vụ','text',true], ['dueDate','Thời hạn hoàn thành (nếu có)','date',false],
+      ['results','Kết quả thực hiện','textarea',true],
       ['difficulties','Khó khăn, vướng mắc','textarea',false], ['recommendations','Kiến nghị, đề xuất','textarea',false]
     ]},
     deployment: { name:'Báo cáo công tác điều động', fields:[
@@ -371,8 +414,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     other: { name:'Báo cáo khác theo yêu cầu', fields:[
       ['year','Năm học','text',true], ['subject','Tên báo cáo / nội dung được yêu cầu','text',true],
       ['requestedBy','Đơn vị / người yêu cầu','text',true], ['dueDate','Thời hạn yêu cầu (nếu có)','date',false],
-      ['content','Nội dung báo cáo','textarea',true], ['results','Kết quả hoặc thông tin cần báo cáo','textarea',true],
-      ['recommendations','Kiến nghị, đề xuất','textarea',false]
+      ['summary','Tóm tắt vấn đề / mục đích báo cáo','textarea',true]
     ]}
   };
   let current = null, actorKey = '', dirty = false;
@@ -481,13 +523,15 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     const actor=verifySession();if(!actor||!$('reportForm').reportValidity())return;
     const def=defs[current],data=Object.fromEntries(def.fields.map(([key])=>[key,$('field-'+key).value.trim()]));
     if(!validDrive($('driveLink').value.trim())){announce('Liên kết Drive không hợp lệ.',true);return;}
-    const text=def.fields.map(([key,label])=>label+': '+data[key]).join('\n');
+    const dynamic=current==='other'?a11DynamicSections():[];
+    if(current==='other'&&!dynamic.some(x=>x.value)){announce('Cần nhập ít nhất một mục nội dung báo cáo.',true);return;}
+    const text=def.fields.map(([key,label])=>label+': '+data[key]).concat(dynamic.filter(x=>x.value).map(x=>x.title+': '+x.value)).join('\n');
     if(text.length>7000){announce('Nội dung vượt giới hạn 7.000 ký tự. Hãy dùng liên kết Drive cho phụ lục.',true);return;}
     if(!a11RequestId)a11RequestId=a11NewRequestId();
     if(!window.confirm('Xác nhận gửi '+def.name+' đến BGH/TTCM theo hình thức '+(a11SignMethod==='PAPER'?'ký tay, chờ nộp bản giấy':'ký điện tử')+'?'))return;
     const btn=$('a11Send');btn.disabled=true;btn.textContent='Đang gửi...';
     try{
-      const form={code:'A.1.1',title:def.name+(data.task?' – '+data.task:data.activity?' – '+data.activity:''),schoolYear:data.year.replace('–','-'),content:text,result:data.results||'',evidence:$('driveLink').value.trim()};
+      const form={code:'A.1.1',title:def.name+' – '+(data.task||data.subject||data.activity||data.deployment||'Báo cáo'),schoolYear:data.year.replace('–','-'),content:text,result:data.results||dynamic.find(x=>x.title==='Kết quả, số liệu')?.value||'',evidence:$('driveLink').value.trim()};
       const extras={loaiBaoCao:def.name,noiDungChiTiet:text,tuNgay:data.from||'',denNgay:data.to||'',donViYeuCau:data.requestedBy||'',
         signingMethod:a11SignMethod,signerVerified:a11SignMethod==='ELECTRONIC'&&a11SignerVerified,
         signed:a11SignMethod==='ELECTRONIC'&&a11Signed,
@@ -541,6 +585,48 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       $('hvaUserIdentityStatus').textContent='Chưa đăng nhập';$('formFields').disabled=true;$('loginWarning').hidden=false;announce(error.message+' Vui lòng đăng nhập từ Trang chủ.',true);return null;
     }
   }
+  // Báo cáo khác: các mục linh hoạt được lưu thành văn bản chung, Backend A1.1 không cần đổi schema.
+  function a11DynamicSections(){
+    return [...$('a11DynamicItems').querySelectorAll('details')].map(d=>({title:d.dataset.title,value:d.querySelector('textarea').value.trim()}));
+  }
+  function a11DynamicCount(){
+    const n=a11DynamicSections().length;
+    $('a11DynamicStatus').textContent=n+' / 12 mục. Các mục có nội dung sẽ xuất hiện trong bản xem trước và hồ sơ gửi.';
+  }
+  function a11AddDynamic(title,initial=false){
+    title=String(title||'').trim().slice(0,90);
+    if(!title){announce('Cần nhập tên mục.',true);return;}
+    const list=a11DynamicSections();
+    if(list.length>=12){announce('Tối đa 12 mục.',true);return;}
+    if(list.some(x=>x.title.toLowerCase()===title.toLowerCase())){announce('Mục này đã có.',true);return;}
+    const detail=el('details');detail.open=true;detail.dataset.title=title;
+    const head=el('summary');head.append(el('span',String(list.length+1),'a11-count'),el('span',title));
+    const body=el('div',undefined,'a11-dynamic-body');
+    const input=el('textarea');input.maxLength=5500;input.placeholder='Nhập '+title.toLowerCase()+'...';input.setAttribute('aria-label',title);
+    const del=el('button','Xóa mục');del.type='button';del.addEventListener('click',()=>{
+      if(input.value.trim()&&!confirm('Xóa mục đã nhập?'))return;
+      detail.remove();[...$('a11DynamicItems').children].forEach((x,i)=>x.querySelector('.a11-count').textContent=String(i+1));
+      a11DynamicCount();a11MarkChanged();
+    });
+    body.append(input,del);detail.append(head,body);$('a11DynamicItems').append(detail);a11DynamicCount();
+    if(!initial){a11MarkChanged();input.focus();}
+  }
+  function a11MarkChanged(){
+    dirty=true;a11SubmittedId='';a11RequestId='';a11Signed=false;
+    $('previewSection').hidden=true;$('a11SubmitAck').hidden=true;a11UpdateSend();
+  }
+  function a11ReturnToChoices(force=false){
+    if(!force&&dirty&&!confirm('Nội dung chưa gửi sẽ bị bỏ. Về danh mục bốn báo cáo?'))return;
+    current=null;dirty=false;a11SubmittedId='';a11RequestId='';a11Signed=false;a11SignerVerified=false;a11VerificationToken='';
+    $('a11Cccd').value='';$('a11SignatureFile').value='';a11SignatureData='';
+    $('a11SignaturePreview').textContent='Chưa chọn ảnh chữ ký';$('a11SignerStatus').textContent='Chưa xác thực CCCD và chữ ký.';
+    $('a11ConfirmSign').disabled=true;$('choices').hidden=false;$('editor').hidden=true;
+    $('previewSection').hidden=true;$('a11SubmitAck').hidden=true;$('a11Dynamic').hidden=true;$('a11DynamicItems').replaceChildren();
+    document.querySelectorAll('#choiceGrid .choice').forEach(b=>b.setAttribute('aria-pressed','false'));
+    try{history.replaceState(null,'',location.pathname)}catch(_){}
+    a11UpdateSend();announce('Chọn một trong bốn loại báo cáo để bắt đầu.');
+    $('choices').scrollIntoView({block:'start',behavior:'smooth'});
+  }
   function setChoice(id,focus=true){
     if(!Object.hasOwn(defs,id))return;
     if(dirty&&id!==current&&!window.confirm('Nội dung đang nhập chưa được lưu. Chuyển loại báo cáo và bỏ nội dung này?'))return;
@@ -550,6 +636,9 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     document.querySelectorAll('.choice').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));
     const def=defs[id];$('editorHeading').textContent=def.name;
     $('fields').replaceChildren(...def.fields.map(field));$('driveLink').value='';
+    $('a11Dynamic').hidden=id!=='other';$('a11DynamicItems').replaceChildren();
+    if(id==='other'){a11AddDynamic('Nội dung triển khai',true);a11AddDynamic('Kết quả, số liệu',true);}
+    $('choices').hidden=true;
     $('editor').hidden=false;$('previewSection').hidden=true;
     $('developmentNote').textContent=def.draft?'Khung Báo cáo khác chỉ để chuẩn bị và xem trước; chưa có mẫu theo yêu cầu được phê duyệt. Không được coi là báo cáo chính thức.':'Xem trước và kiểm tra nội dung; khi hệ thống xác nhận tuyến tiếp nhận, có thể gửi sau khi xem trước.';
     try{history.replaceState(null,'',location.pathname+'?item='+encodeURIComponent(id));}catch(_){}
@@ -574,7 +663,13 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     paper.append(el('div','BÁO CÁO','report-title'),el('div',def.name,'report-subtitle'));
     paper.append(el('p','Kính gửi: Ban Giám hiệu Trường THPT Hòa Vang'));
     appendLine(paper,'Người báo cáo',a.name);appendLine(paper,'Tổ / bộ phận',a.team);appendLine(paper,'Chức vụ',a.role);
-    def.fields.forEach(([id,label])=>appendLine(paper,label,data[id]));appendLine(paper,'Tài liệu, minh chứng',drive,true);
+    def.fields.forEach(([id,label])=>appendLine(paper,label,data[id]));
+    if(current==='other'){
+      const sections=a11DynamicSections().filter(x=>x.value);
+      if(!sections.length){announce('Cần nhập ít nhất một mục nội dung báo cáo.',true);return;}
+      sections.forEach(x=>appendLine(paper,x.title,x.value));
+    }
+    appendLine(paper,'Tài liệu, minh chứng',drive,true);
     const sign=el('div',undefined,'sign');
     sign.append(el('b','NGƯỜI BÁO CÁO'));
     if(a11SignMethod==='ELECTRONIC'&&a11Signed&&a11SignatureData){
@@ -604,14 +699,23 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   });
   for(const btn of document.querySelectorAll('.choice'))btn.addEventListener('click',()=>setChoice(btn.dataset.id));
   $('reportForm').addEventListener('submit',renderPreview);
-  $('reportForm').addEventListener('input',()=>{dirty=true;a11SubmittedId='';a11RequestId='';$('previewSection').hidden=true;a11UpdateSend();});
-  $('backToChoices').addEventListener('click',()=>{$('choices').scrollIntoView({block:'start',behavior:'smooth'});});
+  $('reportForm').addEventListener('input',a11MarkChanged);
+  $('backToChoices').addEventListener('click',()=>a11ReturnToChoices());
   $('editButton').addEventListener('click',()=>{$('editor').scrollIntoView({block:'start',behavior:'smooth'});});
   $('clearButton').addEventListener('click',()=>{if(dirty&&!confirm('Xóa nội dung chưa lưu của báo cáo này?'))return;const id=current;dirty=false;setChoice(id,false);announce('Đã làm mới biểu mẫu. Không thay đổi dữ liệu thật.');});
   $('a11Send').addEventListener('click',a11Submit);
+  $('a11FinishButton').addEventListener('click',()=>a11ReturnToChoices(true));
+  $('a11DynamicType').addEventListener('change',()=>$('a11DynamicCustom').hidden=$('a11DynamicType').value!=='Khác');
+  $('a11DynamicAdd').addEventListener('click',()=>{
+    const custom=$('a11DynamicType').value==='Khác';
+    a11AddDynamic(custom?$('a11DynamicCustom').value:$('a11DynamicType').value);
+    if(custom)$('a11DynamicCustom').value='';
+  });
+  $('a11DynamicItems').addEventListener('input',a11MarkChanged);
   $('printButton').addEventListener('click',()=>{if(!verifySession()){return;}if($('previewSection').hidden){announce('Cần xem trước báo cáo trước khi in.',true);return;}window.print();});
   window.addEventListener('beforeunload',e=>{if(!dirty)return;e.preventDefault();e.returnValue='';});
-  const initial=new URL(location.href).searchParams.get('item');if(initial&&Object.hasOwn(defs,initial))setChoice(initial,false);
+  // Luôn vào đúng giao diện gốc bốn ô, không tự mở biểu mẫu cũ từ URL.
+  $('choices').hidden=false;$('editor').hidden=true;$('previewSection').hidden=true;
   a11Check();
   // Trợ lý dùng chung theo hệ thống NVS hiện hành; không tạo dịch vụ AI thứ hai.
 })();
