@@ -35,18 +35,45 @@ function a22SetConnection(status,message){
  box.dataset.status=status;label.textContent=message;
 }
 function a22RefreshPresentation(){
- const plan=by('code').value==='A.1.3-KH';
+ const code=by('code').value,plan=code==='A.1.3-KH',def=D[code];
+ const landing=by('a22LandingTitle');
+ if(landing&&def)landing.textContent=code+' · '+def.title;
  const quick=by('a22QuickTools');
- if(quick)quick.hidden=!plan;
+ // Các nút tải và nộp đã nằm ở màn hình chọn. Không lặp lại trong form.
+ if(quick)quick.hidden=true;
  const evidence=by('evidence'),evidenceLabel=document.querySelector('label[for="evidence"]');
- if(evidenceLabel)evidenceLabel.textContent=plan?'Liên kết kế hoạch bồi dưỡng HSG đã hoàn thiện (Google Drive / Docs) *':'Liên kết minh chứng Google Drive / Docs (nếu có)';
- if(evidence){evidence.required=plan;evidence.placeholder=plan?'https://docs.google.com/document/d/...':'https://drive.google.com/...';}
+ if(evidenceLabel)evidenceLabel.textContent=plan?'Liên kết kế hoạch bồi dưỡng HSG trên Google Drive / Docs *':'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *';
+ if(evidence){evidence.required=true;evidence.placeholder='https://drive.google.com/...';}
  const btn=by('send'),planBtn=by('a22PlanSend');
  if(btn){
-   btn.classList.toggle('hidden',plan);
-   if(!btn.disabled)btn.textContent=plan?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM';
+  btn.classList.remove('hidden');
+  if(!btn.disabled)btn.textContent='Xác nhận nộp liên kết hồ sơ';
  }
- if(planBtn){planBtn.disabled=!btn||btn.disabled;planBtn.title=planBtn.disabled?'Chỉ nộp khi tuyến tiếp nhận BGH/TTCM đã được xác thực':'Gửi liên kết kế hoạch trên EDOS';}
+ if(planBtn)planBtn.disabled=true;
+}
+function a22OpenSubmission(){
+ const editor=by('a22SubmissionEditor');if(!editor)return;
+ editor.classList.remove('hidden');
+ const evidence=by('evidence');
+ // Đặt ô liên kết lên đầu thông tin chung, không bắt GV tìm trong biểu mẫu dài.
+ const grid=evidence?.closest('.cols'),wrap=evidence?.closest('.hva-a-link-field');
+ if(grid&&wrap&&grid.firstElementChild!==wrap)grid.prepend(wrap);
+ editor.scrollIntoView({behavior:'smooth',block:'start'});
+ if(evidence)window.setTimeout(()=>evidence.focus({preventScroll:true}),250);
+}
+function a22DownloadAnyTemplate(){
+ if(by('code').value==='A.1.3-KH'){a22DownloadPlanTemplate();return}
+ const def=D[by('code').value];if(!def)return;
+ const esc=t=>String(t??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+ const fields=def.fields||[];
+ const body=fields.map((f,i)=>'<h2>'+(i+1)+'. '+esc(f.label)+'</h2><p>...................................................................................................................</p>').join('');
+ const html='<!doctype html><html lang="vi"><head><meta charset="utf-8"><style>body{font-family:"Times New Roman",serif;font-size:13pt;line-height:1.5;margin:2cm;color:#111}header{text-align:center}h1{font-size:14pt;text-align:center}h2{font-size:13pt;margin-top:18px}footer{text-align:right;margin-top:36px}</style></head><body><header><b>TRƯỜNG THPT HÒA VANG</b><p>Năm học: '+esc(by('schoolYear').value||'2026–2027')+'</p></header><h1>'+esc(def.title.toUpperCase())+'</h1><p>Người thực hiện: ..........................................................</p><p>Tổ / bộ phận: ............................................................</p><p>Ngày lập: .....................................................................</p>'+body+'<footer>NGƯỜI LẬP<br>(Ký, ghi rõ họ tên)</footer></body></html>';
+ const blob=new Blob(['\\ufeff',html],{type:'application/msword;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='HVA_MAU_'+def.code.replace(/[^A-Za-z0-9.-]/g,'_')+'.doc';
+ document.body.append(a);a.click();a.remove();
+ window.setTimeout(()=>URL.revokeObjectURL(url),1600);
+ notice('Đã tải mẫu tham khảo. Hoàn thiện trên máy, lưu lên Google Drive rồi bấm Nộp hồ sơ để dán liên kết.',true);
 }
 function a22DownloadPlanTemplate(){
  const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
@@ -93,6 +120,8 @@ function setCode(code,keepTitle=false){
  const holder=by('specialFields');holder.replaceChildren(...def.fields.map(makeField));
  if(!keepTitle||!by('title').value.trim())by('title').value=def.title;
  by('previewPanel').classList.add('hidden');
+ const more=by('a22MoreFields');if(more)more.open=false;
+ for(const spec of def.fields){const field=by('a22_'+spec.key);if(field)field.required=false;}
  a22RefreshPresentation();
  const url=new URL(location.href);url.searchParams.set('code',code);history.replaceState(null,'',url.pathname+url.search+url.hash);
  return true;
@@ -109,10 +138,17 @@ function collect(){
  return {base,extras};
 }
 function validate(){
+ // Khi chỉ nộp liên kết: trường chi tiết trong phần thu gọn là thông tin bổ sung,
+ // không ép giáo viên nhập lại toàn bộ nội dung đã có trong tài liệu.
+ const more=by('a22MoreFields');
+ for(const spec of D[by('code').value].fields){
+  const field=by('a22_'+spec.key);
+  if(field)field.required=!!spec.required&&!!more?.open;
+ }
  if(!by('form').reportValidity())return false;
  const {base,extras}=collect();
  if(!validDrive(base.evidence)){notice('Minh chứng chung chỉ nhận liên kết Google Drive/Docs HTTPS.');by('evidence').focus();return false}
- if(base.code==='A.1.3-KH'&&!base.evidence){notice('Vui lòng dán liên kết kế hoạch HSG đã hoàn thiện trước khi gửi.');by('evidence').focus();return false}
+ if(!base.evidence){notice('Vui lòng dán đường liên kết hồ sơ đã hoàn thiện trên Google Drive trước khi gửi.');by('evidence').focus();return false}
  for(const spec of D[base.code].fields){
    const v=extras[spec.key],input=by('a22_'+spec.key);
    if(spec.type==='url'&&v&&!safeUrl(v)){notice('Liên kết '+spec.label+' phải dùng HTTPS và có tên miền hợp lệ.');input.focus();return false}
@@ -162,6 +198,8 @@ function applyDraft(raw){
  by('previewPanel').classList.add('hidden');
  return raw.schema==='HVA-DRAFT-1';
 }
+by('a22TemplateDownload')?.addEventListener('click',a22DownloadAnyTemplate);
+by('a22OpenSubmission')?.addEventListener('click',a22OpenSubmission);
 by('a22DownloadPlan')?.addEventListener('click',a22DownloadPlanTemplate);
 by('a22PlanSend')?.addEventListener('click',()=>{
  if(by('code').value!=='A.1.3-KH')return;
@@ -234,6 +272,9 @@ async function probeBackend(){
  }
 }
 by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('previewPanel').classList.add('hidden');by('send').disabled=!canSubmit;a22RefreshPresentation();});
+by('a22MoreFields')?.addEventListener('toggle',()=>{
+ const more=by('a22MoreFields');for(const spec of D[by('code').value].fields){const el=by('a22_'+spec.key);if(el)el.required=!!spec.required&&more.open;}
+});
 select.addEventListener('change',()=>{clientRequestId=null;submittedId='';by('send').disabled=!canSubmit;a22RefreshPresentation();});
 by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
 by('restoreSession').addEventListener('click',()=>{clientRequestId=null;submittedId=''});
