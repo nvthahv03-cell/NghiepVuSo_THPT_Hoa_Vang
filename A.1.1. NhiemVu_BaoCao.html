@@ -290,16 +290,87 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 #editor .field input,#editor .field textarea,#editor .field select{border:1.5px solid #b9d2e5!important;background:#fff!important;color:#183f5e!important}
 @media(max-width:600px){#a11Dynamic .a11-dynamic-addrow button{width:100%}}
 </style>
+<style id="hva-a11-release-quality-20261117">
+/* HVA-EDOS A1.1 | chuẩn trực quan 17/11: Header, nhận diện, biểu mẫu, ngày, điều hướng */
+.hva-pro-header{position:relative!important;isolation:isolate;overflow:hidden!important;
+ background:linear-gradient(112deg,#07559a 0%,#087cbe 58%,#0db7dd 100%)!important;
+ border-bottom:1px solid #63dafa!important;border-radius:0 0 16px 16px!important}
+.hva-pro-header::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.38;
+ background-image:radial-gradient(circle,#fff 1.6px,transparent 2.6px),
+ radial-gradient(circle,#fff 1px,transparent 2px),
+ repeating-linear-gradient(29deg,transparent 0 62px,rgba(255,255,255,.15) 63px,transparent 64px 130px),
+ repeating-linear-gradient(151deg,transparent 0 87px,rgba(255,255,255,.11) 88px,transparent 89px 174px);
+ background-size:96px 84px,141px 110px,100% 100%,100% 100%;background-position:15px 18px,76px 55px,0 0,0 0}
+.hva-pro-header::after{content:"";position:absolute;right:-50px;top:-180px;width:380px;height:380px;border-radius:50%;
+ border:1px solid rgba(255,255,255,.23);box-shadow:0 0 0 45px rgba(255,255,255,.035),0 0 0 100px rgba(255,255,255,.025);pointer-events:none}
+.hva-pro-header-inner{position:relative!important;z-index:1}
+.hva-pro-header .hva-pro-online{color:#fff!important;background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.55)!important}
+.hero .eyebrow{font-weight:850!important;color:#0876b6!important}
+.hero h1{font-size:clamp(21px,2.5vw,26px)!important;line-height:1.25!important}
+#editor .panel-top{background:linear-gradient(110deg,#edf8ff,#f8fcff)!important;border:1px solid #c9e4f4!important;
+ border-radius:14px!important;padding:15px 17px!important;margin-bottom:17px!important;align-items:center!important}
+#editor #editorHeading{font-size:clamp(18px,2.2vw,22px)!important;line-height:1.3!important;font-weight:900!important;
+ color:#074c84!important;margin:6px 0!important}
+#editor .hva-a11-active-description{font-size:12px!important;color:#436e8d!important;margin:0!important;line-height:1.5!important}
+#editor .hva-a11-back-menu{color:#fff!important;background:linear-gradient(110deg,#086bb9,#0c8dd0)!important;
+ border:1px solid #0874c1!important;box-shadow:0 3px 11px rgba(7,95,166,.17)!important;font-weight:850!important;
+ white-space:normal!important;text-align:center!important;min-height:45px}
+#editor .hva-a11-back-menu:hover{filter:brightness(.94)}
+/* Thanh người đăng nhập: một hàng duy nhất kể cả trên điện thoại; không nhầm với ô kê khai. */
+#editor .hva-a11-identity-inline{margin:15px 0 23px!important;display:block!important;background:linear-gradient(106deg,#08549c,#086fb6 62%,#0b92bd)!important;
+ color:white!important;border:1px solid #147cb8!important;border-left:5px solid #45d5f6!important;box-shadow:0 7px 18px rgba(8,85,155,.15)!important}
+#editor .hva-a11-identity-inline .hva-user-ident__top{background:rgba(255,255,255,.09)!important;
+ border-bottom:1px solid rgba(255,255,255,.22)!important;padding:9px 15px!important}
+#editor .hva-a11-identity-inline .hva-user-ident__title{color:#fff!important;font-size:11px!important;font-weight:850!important}
+#editor .hva-a11-identity-inline .hva-user-ident__chip{color:#fff!important;border-color:rgba(255,255,255,.6)!important;background:rgba(255,255,255,.14)!important}
+#editor .hva-a11-identity-inline .hva-user-ident__values{display:grid!important;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,.85fr)!important;gap:0!important}
+#editor .hva-a11-identity-inline .hva-user-ident__value{min-width:0!important;padding:10px 14px 12px!important;border:0!important;
+ background:transparent!important;box-shadow:none!important}
+#editor .hva-a11-identity-inline .hva-user-ident__value+.hva-user-ident__value{border-left:1px solid rgba(255,255,255,.22)!important}
+#editor .hva-a11-identity-inline .hva-user-ident__value small{color:#d9effe!important;font-size:10px!important;margin-bottom:5px!important;line-height:1.3!important}
+#editor .hva-a11-identity-inline .hva-user-ident__value strong{color:#fff!important;font-size:clamp(11px,1.45vw,15px)!important;
+ font-weight:850!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;line-height:1.35!important}
+#editor .hva-a11-identity-inline .hva-user-ident__note{color:#e4f4ff!important;background:rgba(0,45,90,.11)!important;
+ border-top:1px solid rgba(255,255,255,.2)!important;padding:7px 14px!important;font-size:10px!important}
+/* Ngày luôn cùng một dòng. */
+#editor #fields .hva-a11-date-pair{grid-column:1/-1!important;display:grid!important;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:12px!important;min-width:0}
+#editor #fields .hva-a11-date-pair .field{min-width:0!important;grid-column:auto!important}
+#editor #fields .hva-a11-date-pair input[type=date]{display:block;width:100%!important;min-width:0!important;
+ max-width:100%!important;box-sizing:border-box!important;padding:10px 6px!important;font-size:clamp(11px,1.4vw,14px)!important}
+#editor #fields .hva-a11-date-pair .field label{white-space:nowrap!important;font-size:clamp(11px,1.4vw,13px)!important}
+#editor #fields .field label{display:block!important;font-weight:850!important;transition:color .15s}
+#editor #fields .field:focus-within label{color:#046ab5!important}
+#editor #fields .field input:focus,#editor #fields .field textarea:focus,#editor #fields .field select:focus{outline:none!important;
+ border:2px solid #047ecb!important;box-shadow:0 0 0 3px rgba(6,129,209,.15)!important;background:#fff!important}
+#editor #fields input::placeholder,#editor #fields textarea::placeholder,#editor #driveLink::placeholder{color:#8298aa!important;opacity:1!important;font-weight:450!important;font-size:12px!important}
+@media(max-width:720px){
+ .hva-pro-header .hva-pro-online{display:none!important}
+ #editor .panel-top{gap:12px!important;padding:13px!important}
+ #editor .hva-a11-back-menu{width:100%!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__top{padding:8px 9px!important;gap:6px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__title{font-size:9px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__chip{font-size:9px!important;padding:4px 7px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__values{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,.8fr)!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__value{padding:9px 6px 10px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__value small{font-size:8px!important;letter-spacing:0!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__value strong{font-size:10px!important}
+ #editor #fields .hva-a11-date-pair{gap:8px!important}
+ #editor #fields .hva-a11-date-pair input[type=date]{font-size:11px!important;padding:8px 3px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__note{font-size:9px!important;padding:7px 9px!important}
+}
+@media print{.hva-pro-header::before,.hva-pro-header::after{display:none!important}}
+</style>
 </head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
   <a class="hva-pro-back" href="./NghiepVu.html" title="Về Nghiệp vụ số" aria-label="Về danh mục Nghiệp vụ số"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
   <div class="hva-pro-brand"><div class="hva-pro-kicker">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div><div class="hva-pro-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-pro-slogan hva-pro-edos">HVA–EDOS</div></div>
-  <div class="hva-pro-online">A.1.1 · BÁO CÁO CHUYÊN MÔN</div>
+  <div class="hva-pro-online">A.1 · BÁO CÁO CHUYÊN MÔN</div>
 </div></header>
 <main>
-  <section class="hero"><div><div class="eyebrow">A.1.1 – Thực hiện nhiệm vụ, báo cáo khác</div><h1 id="heading">Báo cáo thực hiện nhiệm vụ – Báo cáo khác</h1><p>Chọn đúng loại báo cáo, điền nội dung, xem trước rồi gửi khi hệ thống xác nhận tuyến tiếp nhận.</p></div>
-  <div class="hero-mark" aria-hidden="true"><i class="bi bi-file-earmark-text"></i><span>A.1.1</span></div></section>
+  <section class="hero"><div><div class="eyebrow">HỒ SƠ BÁO CÁO · HVA–EDOS</div><h1 id="heading">Báo cáo thực hiện nhiệm vụ – Báo cáo khác</h1><p>Chọn đúng loại báo cáo, điền nội dung, xem trước rồi gửi khi hệ thống xác nhận tuyến tiếp nhận.</p></div>
+  <div class="hero-mark" aria-hidden="true"><i class="bi bi-file-earmark-text"></i><span>4 HÌNH THỨC</span></div></section>
   <section class="panel" id="choices" aria-labelledby="choicesHeading"><div class="panel-top"><div><div class="eyebrow hva-step-label">BƯỚC 01 · CHỌN BIỂU MẪU</div><h2 id="choicesHeading">Chọn loại báo cáo</h2><p class="muted">Bốn loại báo cáo dùng chung quy trình xem trước, chọn hình thức ký và gửi đến BGH/TTCM.</p></div></div>
   <div class="choice-grid" id="choiceGrid">
     <button type="button" class="choice" data-id="task" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-clipboard2-check"></i></span><span><strong>Báo cáo thực hiện nhiệm vụ được giao</strong><small>Kết quả thực hiện nhiệm vụ theo phân công.</small><span class="tag">Soạn và xem trước</span></span></button>
@@ -309,9 +380,9 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   </div></section>
   <p id="notice" class="status" data-error="false" role="status" aria-live="polite">Chọn một loại báo cáo để bắt đầu. Trạng thái nộp hồ sơ sẽ được xác minh từ Backend.</p>
   <section class="panel" id="editor" hidden aria-labelledby="editorHeading">
-    <div class="panel-top"><div><div class="eyebrow">BƯỚC 02 · KÊ KHAI NỘI DUNG</div><h2 id="editorHeading"></h2></div><button type="button" class="btn ghost" id="backToChoices"><i class="bi bi-arrow-left" aria-hidden="true"></i> Đổi loại báo cáo</button></div>
+    <div class="panel-top"><div><div class="eyebrow">ĐANG THỰC HIỆN · BƯỚC 02</div><h2 id="editorHeading"></h2><p class="hva-a11-active-description" id="a11ActiveDescription">Kê khai theo đúng loại báo cáo đã chọn.</p></div><button type="button" class="btn ghost hva-a11-back-menu" id="backToChoices"><i class="bi bi-arrow-left" aria-hidden="true"></i> Quay lại 4 hình thức báo cáo</button></div>
     <p class="warning" id="developmentNote">Bản xem trước giúp kiểm tra nội dung trước khi nộp. Chỉ hồ sơ có mã tiếp nhận của máy chủ mới được coi là đã gửi. Không nhập thông tin cá nhân nhạy cảm.</p>
-    <section class="identity-grid hva-user-ident" aria-labelledby="hvaUserIdentityTitle">
+    <section class="identity-grid hva-user-ident hva-a11-identity-inline" aria-labelledby="hvaUserIdentityTitle">
       <div class="hva-user-ident__top">
         <span class="hva-user-ident__title" id="hvaUserIdentityTitle"><i class="bi bi-person-vcard" aria-hidden="true"></i> THÔNG TIN NGƯỜI BÁO CÁO</span>
         <span class="hva-user-ident__chip" id="hvaUserIdentityStatus"><i class="bi bi-patch-check"></i> Tài khoản EDOS</span>
@@ -368,7 +439,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
  </div>
  <p class="a11-dynamic-note" id="a11DynamicStatus" role="status">Các mục đã nhập được đưa vào bản xem trước và lưu cùng hồ sơ gửi.</p>
 </section>
-<div class="field full" style="margin-top:17px"><label for="driveLink">Liên kết tài liệu, minh chứng Google Drive (nếu có)</label><input type="url" id="driveLink" name="driveLink" placeholder="https://drive.google.com/..." autocomplete="off"><p class="muted">Gửi liên kết đến tài liệu Google Drive/Docs đã chia sẻ đúng quyền cho người tiếp nhận; hệ thống không tự kiểm tra quyền truy cập tệp.</p></div>
+<div class="field full" style="margin-top:17px"><label for="driveLink">Liên kết tài liệu, minh chứng Google Drive (nếu có)</label><input type="url" id="driveLink" name="driveLink" placeholder="Dán đường dẫn Google Drive hoặc Docs chứa tài liệu minh chứng (nếu có)…" autocomplete="off"><p class="muted">Gửi liên kết đến tài liệu Google Drive/Docs đã chia sẻ đúng quyền cho người tiếp nhận; hệ thống không tự kiểm tra quyền truy cập tệp.</p></div>
       <div class="actions"><button class="btn" type="submit" id="previewButton">Xem trước báo cáo</button><button class="btn secondary" type="button" id="clearButton">Làm mới</button> </div>
     </fieldset></form>
     <p class="muted" style="margin-top:16px"><strong>Nơi nhận:</strong> Ban Giám hiệu và Tổ trưởng chuyên môn theo phân quyền, khi tuyến tiếp nhận được Backend xác nhận.</p>
@@ -570,12 +641,57 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     if(!value.trim())return true;
     try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&['drive.google.com','docs.google.com'].includes(u.hostname)&&/^\/(file\/d\/|drive\/folders\/|document\/d\/|spreadsheets\/d\/|presentation\/d\/)[A-Za-z0-9_-]+(?:\/|$)/.test(u.pathname)}catch(_){return false;}
   }
+  const a11Hints={
+    year:'Ví dụ: 2026–2027',task:'Ghi rõ nhiệm vụ thầy/cô được phân công thực hiện…',
+    assignedBy:'Ví dụ: Hiệu trưởng, Ban Giám hiệu, Tổ trưởng chuyên môn…',
+    results:'Nêu kết quả cụ thể, sản phẩm hoàn thành và số liệu minh chứng (nếu có)…',
+    difficulties:'Nêu khó khăn, vướng mắc trong quá trình thực hiện (nếu có)…',
+    recommendations:'Nêu kiến nghị hoặc hỗ trợ cần thiết; không có thì để trống…',
+    deployment:'Ví dụ: Tham gia coi thi, kiểm tra, công tác theo quyết định…',
+    basis:'Ví dụ: Theo Kế hoạch số…, Quyết định số… hoặc phân công ngày…',
+    location:'Ghi địa điểm thực hiện nhiệm vụ…',
+    followup:'Ghi các công việc cần tiếp tục triển khai sau khi kết thúc điều động…',
+    activity:'Ghi đầy đủ tên lớp tập huấn, hội nghị hoặc hội thảo…',
+    organizer:'Ghi tên đơn vị, cơ quan tổ chức…',
+    content:'Tóm tắt các nội dung chính đã được triển khai hoặc tham gia…',
+    knowledge:'Nêu kiến thức, kỹ năng mới tiếp thu được qua hoạt động…',
+    application:'Nêu cụ thể cách vận dụng vào dạy học, quản lý hoặc công tác chuyên môn…',
+    proposals:'Đề xuất nội dung áp dụng, chia sẻ hoặc triển khai tại nhà trường…',
+    subject:'Ghi tên báo cáo theo yêu cầu của người/đơn vị giao việc…',
+    requestedBy:'Ví dụ: Ban Giám hiệu, Tổ chuyên môn, Sở GD&ĐT…',
+    summary:'Tóm tắt vấn đề, phạm vi và mục đích của báo cáo (2–4 câu)…'
+  };
+  const a11TaskNotes={
+    task:'Báo cáo ngắn gọn nhiệm vụ được giao, kết quả hoàn thành, khó khăn và kiến nghị.',
+    deployment:'Báo cáo công tác điều động, thời gian, nhiệm vụ tham gia và kết quả thực hiện.',
+    training:'Báo cáo hoạt động tập huấn, nội dung tiếp thu và khả năng áp dụng vào thực tế.',
+    other:'Tạo báo cáo linh hoạt: chọn mục, mở rộng để nhập và bổ sung các mục cần thiết.'
+  };
+  function a11BuildFields(def){
+    const nodes=[];
+    for(let i=0;i<def.fields.length;i++){
+      const part=def.fields[i];
+      if(part[0]==='from' && def.fields[i+1]?.[0]==='to'){
+        const group=el('div',undefined,'hva-a11-date-pair');
+        group.setAttribute('role','group');group.setAttribute('aria-label','Khoảng thời gian thực hiện');
+        group.append(field(part),field(def.fields[i+1]));
+        nodes.push(group);i++;continue;
+      }
+      nodes.push(field(part));
+    }
+    return nodes;
+  }
   function field([id,label,type,required]){
     const wrap=el('div',undefined,'field'+(type==='textarea'?' full':''));
     const text=el('label',label);text.htmlFor='field-'+id;if(required)text.append(el('em',' *'));
     const input=el(type==='textarea'?'textarea':'input');input.id='field-'+id;input.name=id;input.required=required;
     if(type!=='textarea')input.type=type;input.maxLength=type==='textarea'?10000:1000;
     if(id==='year')input.value='2026–2027';
+    if(type!=='date')input.placeholder=a11Hints[id]||'Nhập nội dung phù hợp…';
+    if(type==='date')input.setAttribute('aria-label',label);
+    if(type==='textarea')input.rows=3;
+    input.addEventListener('focus',()=>wrap.classList.add('hva-a11-field-focused'));
+    input.addEventListener('blur',()=>wrap.classList.remove('hva-a11-field-focused'));
     wrap.append(text,input);return wrap;
   }
   function verifySession(){
@@ -635,7 +751,8 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     a11UpdateSend();
     document.querySelectorAll('.choice').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));
     const def=defs[id];$('editorHeading').textContent=def.name;
-    $('fields').replaceChildren(...def.fields.map(field));$('driveLink').value='';
+    $('a11ActiveDescription').textContent=a11TaskNotes[id]||'Kê khai nội dung báo cáo.';
+    $('fields').replaceChildren(...a11BuildFields(def));$('driveLink').value='';
     $('a11Dynamic').hidden=id!=='other';$('a11DynamicItems').replaceChildren();
     if(id==='other'){a11AddDynamic('Nội dung triển khai',true);a11AddDynamic('Kết quả, số liệu',true);}
     $('choices').hidden=true;
