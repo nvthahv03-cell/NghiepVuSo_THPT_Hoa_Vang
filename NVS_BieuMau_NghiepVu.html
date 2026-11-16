@@ -98,9 +98,9 @@ main{margin:-25px auto 0;position:relative}
 <section class="panel hva-a-template-landing" id="a22TemplateLanding" aria-label="Quy trình tải mẫu và nộp liên kết">
  <div class="hva-a-kicker">BIỂU MẪU NGHIỆP VỤ</div>
  <h2 id="a22LandingTitle">Chọn nghiệp vụ</h2>
- <p class="hva-a-landing-intro">Tải mẫu, hoàn thiện trên máy tính, lưu vào Google Drive. Khi sẵn sàng, chọn <strong>Nộp hồ sơ</strong> để nhập đường liên kết.</p>
+ <p class="hva-a-landing-intro">Tải khung tham khảo (chưa được phê duyệt làm mẫu chính thức), hoàn thiện trên máy tính và lưu vào Google Drive. Khi sẵn sàng, chọn <strong>Nộp hồ sơ</strong> để nhập đường liên kết.</p>
  <div class="hva-a-landing-actions">
-  <button type="button" class="hva-a-download" id="a22TemplateDownload"><i aria-hidden="true">↓</i><span><strong>Tải mẫu</strong><small>Nhận tệp mẫu để hoàn thiện</small></span></button>
+  <button type="button" class="hva-a-download" id="a22TemplateDownload"><i aria-hidden="true">↓</i><span><strong>Tải khung tham khảo</strong><small>Tệp Word do hệ thống tạo · chưa phải mẫu chính thức</small></span></button>
   <button type="button" class="hva-a-submit-entry" id="a22OpenSubmission"><i aria-hidden="true">↗</i><span><strong>Nộp hồ sơ</strong><small>Nhập đường liên kết Google Drive</small></span></button>
  </div>
  <p class="hva-a-landing-note">Mẫu tải về là mẫu tham khảo theo nghiệp vụ. Nộp hồ sơ chỉ thành công khi hệ thống trả mã tiếp nhận.</p>
@@ -120,7 +120,7 @@ main{margin:-25px auto 0;position:relative}
 <div id="specialFields" class="cols" aria-live="polite"></div>
 <p class="a22-hint">Liên kết tài liệu phải sử dụng HTTPS. Với đề kiểm tra và thông tin nội bộ, chỉ chia sẻ tệp cho người có thẩm quyền.</p>
 </section></details>
-<div class="hva-a-quick-tools" id="a22QuickTools" hidden><div><strong>Kế hoạch bồi dưỡng HSG</strong><small>Tải kế hoạch tham khảo hoặc kê khai và gửi liên kết kế hoạch đã hoàn thành.</small></div><div class="hva-a-plan-actions"><button type="button" class="secondary" id="a22DownloadPlan"><span aria-hidden="true">↓</span> Tải kế hoạch mẫu</button><button type="button" id="a22PlanSend" disabled title="Chỉ mở khi Backend xác nhận nơi nhận">Gửi liên kết kế hoạch</button></div></div>
+<div class="hva-a-quick-tools" id="a22QuickTools" hidden><div><strong>Kế hoạch bồi dưỡng HSG</strong><small>Khung do ứng dụng tạo, không phải mẫu chính thức đã được nhà trường phê duyệt.</small></div><div class="hva-a-plan-actions"><button type="button" class="secondary" id="a22DownloadPlan"><span aria-hidden="true">↓</span> Tải khung tham khảo</button><button type="button" id="a22PlanSend" disabled title="Chỉ mở khi Backend xác nhận nơi nhận">Gửi liên kết kế hoạch</button></div></div>
 <div class="hva-a-section-name">03 · Kiểm tra và gửi</div>
 <div class="hva-a-primary-actions"><button type="submit" id="a22PreviewBtn">Xem trước hồ sơ</button><button type="button" id="send" disabled title="Chỉ kích hoạt khi Backend xác nhận nơi nhận">Gửi hồ sơ · Chờ kết nối</button></div>
 <details class="hva-a-draft-tools"><summary>Tiện ích bản nháp <span>▾</span></summary><div class="actions"><button type="button" class="secondary" id="export">Tải bản nháp JSON</button><button type="button" class="secondary" id="import">Nạp bản nháp JSON</button><button type="button" class="secondary" id="saveSession">Lưu nháp trong phiên</button><button type="button" class="secondary" id="restoreSession">Khôi phục bản nháp</button></div></details>
@@ -129,5 +129,5 @@ main{margin:-25px auto 0;position:relative}
 <section class="panel hidden" id="previewPanel"><div class="hva-a-kicker">KIỂM TRA NỘI DUNG TRƯỚC KHI GỬI</div><h2>Bản xem trước hồ sơ</h2><div class="report" id="preview"></div><div class="actions"><button type="button" id="print">In / lưu PDF bản nháp</button><button type="button" class="secondary" id="edit">Quay lại chỉnh sửa</button></div></section>
 <footer>HVA–EDOS · Trường THPT Hòa Vang · Hồ sơ được ghi nhận theo phản hồi của hệ thống, không tự động được coi là đã phê duyệt.</footer></main>
 <script defer src="./NVS_A22_Definitions.js?v=20261114_A1A6_UI_V2"></script>
-<script defer src="./NVS_A22_Controller.js?v=20261116_linkfirst1"></script>
+<script defer src="./NVS_A22_Controller.js?v=20261116_template-disclosure2"></script>
 </body></html>
