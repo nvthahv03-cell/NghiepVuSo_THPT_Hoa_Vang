@@ -224,12 +224,12 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 <main>
   <section class="hero"><div><div class="eyebrow">A.1.1 – Thực hiện nhiệm vụ, báo cáo khác</div><h1 id="heading">Báo cáo thực hiện nhiệm vụ – Báo cáo khác</h1><p>Chọn đúng loại báo cáo, điền nội dung, xem trước rồi gửi khi hệ thống xác nhận tuyến tiếp nhận.</p></div>
   <div class="hero-mark" aria-hidden="true"><i class="bi bi-file-earmark-text"></i><span>A.1.1</span></div></section>
-  <section class="panel" id="choices" aria-labelledby="choicesHeading"><div class="panel-top"><div><div class="eyebrow hva-step-label">BƯỚC 01 · CHỌN BIỂU MẪU</div><h2 id="choicesHeading">Chọn loại báo cáo</h2><p class="muted">Ba loại báo cáo có thể gửi khi Backend sẵn sàng; “Báo cáo khác” dùng để soạn dự thảo.</p></div></div>
+  <section class="panel" id="choices" aria-labelledby="choicesHeading"><div class="panel-top"><div><div class="eyebrow hva-step-label">BƯỚC 01 · CHỌN BIỂU MẪU</div><h2 id="choicesHeading">Chọn loại báo cáo</h2><p class="muted">Bốn loại báo cáo dùng chung quy trình xem trước, chọn hình thức ký và gửi đến BGH/TTCM.</p></div></div>
   <div class="choice-grid" id="choiceGrid">
     <button type="button" class="choice" data-id="task" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-clipboard2-check"></i></span><span><strong>Báo cáo thực hiện nhiệm vụ được giao</strong><small>Kết quả thực hiện nhiệm vụ theo phân công.</small><span class="tag">Soạn và xem trước</span></span></button>
     <button type="button" class="choice" data-id="deployment" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-briefcase"></i></span><span><strong>Báo cáo công tác điều động</strong><small>Nội dung tham gia, kết quả và công việc tiếp theo.</small><span class="tag">Soạn và xem trước</span></span></button>
     <button type="button" class="choice" data-id="training" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-mortarboard"></i></span><span><strong>Báo cáo tập huấn, bồi dưỡng, hội nghị, hội thảo</strong><small>Tiếp thu nội dung, khả năng vận dụng và đề xuất.</small><span class="tag">Soạn và xem trước</span></span></button>
-    <button type="button" class="choice" data-id="other" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-file-earmark-plus"></i></span><span><strong>Báo cáo khác theo yêu cầu</strong><small>Khung dự thảo linh hoạt, hoàn thiện khi có yêu cầu cụ thể.</small><span class="tag">Khung tham khảo · chưa duyệt</span></span></button>
+    <button type="button" class="choice" data-id="other" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-file-earmark-plus"></i></span><span><strong>Báo cáo khác theo yêu cầu</strong><small>Khung dự thảo linh hoạt, hoàn thiện khi có yêu cầu cụ thể.</small><span class="tag">Gửi theo yêu cầu</span></span></button>
   </div></section>
   <p id="notice" class="status" data-error="false" role="status" aria-live="polite">Chọn một loại báo cáo để bắt đầu. Trạng thái nộp hồ sơ sẽ được xác minh từ Backend.</p>
   <section class="panel" id="editor" hidden aria-labelledby="editorHeading">
@@ -302,8 +302,8 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       ['content','Nội dung chính','textarea',true], ['knowledge','Kiến thức, kỹ năng tiếp thu','textarea',true],
       ['application','Khả năng vận dụng vào công việc','textarea',true], ['proposals','Đề xuất triển khai tại trường','textarea',false]
     ]},
-    // Chức năng "khác" mới có khung chuẩn bị; chưa công nhận là biểu mẫu được duyệt.
-    other: { name:'Báo cáo khác theo yêu cầu', draft:true, fields:[
+    // Báo cáo khác: yêu cầu nêu rõ người hoặc đơn vị giao báo cáo.
+    other: { name:'Báo cáo khác theo yêu cầu', fields:[
       ['year','Năm học','text',true], ['subject','Tên báo cáo / nội dung được yêu cầu','text',true],
       ['requestedBy','Đơn vị / người yêu cầu','text',true], ['dueDate','Thời hạn yêu cầu (nếu có)','date',false],
       ['content','Nội dung báo cáo','textarea',true], ['results','Kết quả hoặc thông tin cần báo cáo','textarea',true],
@@ -423,7 +423,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     const btn=$('a11Send');btn.disabled=true;btn.textContent='Đang gửi...';
     try{
       const form={code:'A.1.1',title:def.name+(data.task?' – '+data.task:data.activity?' – '+data.activity:''),schoolYear:data.year.replace('–','-'),content:text,result:data.results||'',evidence:$('driveLink').value.trim()};
-      const extras={loaiBaoCao:def.name,noiDungChiTiet:text,tuNgay:data.from||'',denNgay:data.to||'',
+      const extras={loaiBaoCao:def.name,noiDungChiTiet:text,tuNgay:data.from||'',denNgay:data.to||'',donViYeuCau:data.requestedBy||'',
         signingMethod:a11SignMethod,signerVerified:a11SignMethod==='ELECTRONIC'&&a11SignerVerified,
         signed:a11SignMethod==='ELECTRONIC'&&a11Signed,
         chuKyBase64:a11SignMethod==='ELECTRONIC'?a11SignatureData:'',
