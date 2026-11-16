@@ -214,6 +214,20 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 @media(max-width:720px){#a11SignMethod .a11-sign-options,#a11SignMethod .a11-electronic-grid{grid-template-columns:1fr}}
 @media print{#a11SignMethod{display:none!important}}
 </style>
+<style id="hva-a11-preview-actions-mobile-20261116">
+/* A1.1 – Nút bản xem trước trên điện thoại: không ép chữ đứng dọc. */
+#printActions{display:flex;align-items:stretch;justify-content:flex-start;flex-wrap:wrap;gap:12px;min-width:0}
+#printActions>.btn{box-sizing:border-box;flex:0 1 auto;min-width:174px;max-width:100%;width:auto;white-space:normal;word-break:normal;overflow-wrap:normal;text-align:center;padding:12px 17px;line-height:1.4}
+#printActions>.muted{flex:1 0 100%;margin:0;line-height:1.5}
+@media(max-width:720px){
+  #printActions{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;align-items:stretch!important;width:100%!important}
+  #printActions>.btn{display:flex!important;flex:none!important;min-width:0!important;max-width:none!important;width:100%!important;min-height:49px!important;padding:11px 14px!important;white-space:normal!important;word-break:normal!important;overflow-wrap:break-word!important;font-size:14px!important;line-height:1.4!important}
+  #printActions>.muted{width:100%!important;min-width:0!important;text-align:center!important;overflow-wrap:break-word!important;padding:1px 4px}
+  #previewSection{min-width:0!important;overflow:hidden}
+  #previewSection .preview{box-sizing:border-box;width:100%!important;max-width:100%!important;min-width:0!important}
+}
+@media print{#printActions{display:none!important}}
+</style>
 </head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
