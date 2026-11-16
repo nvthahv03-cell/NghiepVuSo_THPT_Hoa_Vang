@@ -68,7 +68,7 @@ function a22DownloadAnyTemplate(){
  const fields=def.fields||[];
  const body=fields.map((f,i)=>'<h2>'+(i+1)+'. '+esc(f.label)+'</h2><p>...................................................................................................................</p>').join('');
  const html='<!doctype html><html lang="vi"><head><meta charset="utf-8"><style>body{font-family:"Times New Roman",serif;font-size:13pt;line-height:1.5;margin:2cm;color:#111}header{text-align:center}h1{font-size:14pt;text-align:center}h2{font-size:13pt;margin-top:18px}footer{text-align:right;margin-top:36px}</style></head><body><header><b>TRƯỜNG THPT HÒA VANG</b><p>Năm học: '+esc(by('schoolYear').value||'2026–2027')+'</p></header><h1>'+esc(def.title.toUpperCase())+'</h1><p>Người thực hiện: ..........................................................</p><p>Tổ / bộ phận: ............................................................</p><p>Ngày lập: .....................................................................</p>'+body+'<footer>NGƯỜI LẬP<br>(Ký, ghi rõ họ tên)</footer></body></html>';
- const blob=new Blob(['\\ufeff',html],{type:'application/msword;charset=utf-8'});
+ const blob=new Blob(['\ufeff',html],{type:'application/msword;charset=utf-8'});
  const url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='HVA_MAU_'+def.code.replace(/[^A-Za-z0-9.-]/g,'_')+'.doc';
  document.body.append(a);a.click();a.remove();
