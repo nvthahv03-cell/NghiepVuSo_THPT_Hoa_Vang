@@ -94,8 +94,8 @@ const rows=[
   ],
   [
     "A.1.4",
-    "Thi – Kiểm tra khác, ôn thi và phụ đạo",
-    "Lập hồ sơ tổ chức, kế hoạch, báo cáo các hoạt động ôn tập, kiểm tra hoặc phụ đạo.",
+    "Bồi dưỡng, ôn thi và phụ đạo học sinh",
+    "Báo cáo kế hoạch, tiến độ, kết quả và minh chứng các hoạt động bồi dưỡng (ngoài bồi dưỡng HSG, DTHT đã thuộc A.1.3), ôn thi, ôn tập và phụ đạo. Không tiếp nhận hồ sơ kiểm tra, đánh giá chính khóa; thực hiện tại A.2.",
     [
       [
         "loaiHoatDong",
@@ -103,11 +103,11 @@ const rows=[
         "select",
         1,
         [
+          "Bồi dưỡng kiến thức, kỹ năng (khác HSG/DTHT)",
           "Ôn thi tốt nghiệp THPT",
+          "Ôn tập, củng cố kiến thức",
           "Phụ đạo học sinh",
-          "Kiểm tra khác",
-          "Thi thử",
-          "Khác"
+          "Khác (ngoài chính khóa)"
         ]
       ],
       [
@@ -151,7 +151,7 @@ const rows=[
   [
     "A.2.2",
     "Nộp ma trận, bản đặc tả và đề kiểm tra",
-    "Hồ sơ đề gồm đủ ma trận, bản đặc tả, đề và đáp án/hướng dẫn chấm; chỉ dùng liên kết được phân quyền.",
+    "Chỉ tiếp nhận hồ sơ kiểm tra, đánh giá chính khóa theo kế hoạch giáo dục: ma trận, bản đặc tả, đề, đáp án/hướng dẫn chấm; dùng liên kết phân quyền.",
     [
       [
         "dotKiemTra",
@@ -216,7 +216,7 @@ const rows=[
   [
     "A.2.3",
     "Nộp đề kiểm tra bổ sung, đề kiểm tra lại",
-    "Hồ sơ đề bổ sung/kiểm tra lại cần nêu lý do, đối tượng và đủ tài liệu chuyên môn.",
+    "Chỉ tiếp nhận hồ sơ kiểm tra bổ sung, kiểm tra lại thuộc kiểm tra, đánh giá chính khóa; nêu lý do, đối tượng và đủ tài liệu chuyên môn.",
     [
       [
         "lyDoToChuc",
@@ -282,7 +282,7 @@ const rows=[
   [
     "A.2.4",
     "Báo cáo, đề nghị về kiểm tra, đánh giá",
-    "Tổng hợp vụ việc, kết quả và đề xuất giải pháp thuộc công tác kiểm tra, đánh giá.",
+    "Báo cáo vụ việc, kết quả và kiến nghị thuộc kiểm tra, đánh giá chính khóa. Không nhận báo cáo bồi dưỡng, ôn thi, phụ đạo (A.1).",
     [
       [
         "loaiBaoCao",
