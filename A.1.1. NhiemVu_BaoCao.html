@@ -228,6 +228,42 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 }
 @media print{#printActions{display:none!important}}
 </style>
+<style id="hva-a11-dtht-preview-20261116">
+/* A1.1 – Trình bày Bước 03 kế thừa bố cục xem trước DTHT, không thay mẫu A1.1. */
+#previewSection{max-width:100%;min-width:0}
+#previewSection .a11-preview-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;margin:16px 0 0;background:#f1f8fe;border:1px solid #d4e6f5;border-radius:12px;color:#164f81}
+#previewSection .a11-preview-toolbar b{display:block;font-weight:850;font-size:14px}
+#previewSection .a11-preview-toolbar span{display:block;font-size:12px;color:#60809a;margin-top:3px}
+#previewSection .preview{width:min(100%,850px);margin:17px auto 0;box-sizing:border-box;padding:30px 38px;box-shadow:0 4px 18px #123f6117;border:1px solid #cfdce7;line-height:1.53;overflow-wrap:break-word}
+#previewSection .preview .official-head{margin-bottom:26px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+#previewSection .preview .official-head>div{min-width:0;font-size:12px;line-height:1.4}
+#previewSection .preview .official-head>div:first-child strong{margin-top:6px}
+#previewSection .preview .official-head .under{margin-top:4px}
+#previewSection .preview .report-title{font-size:21px;font-weight:800;letter-spacing:.02em}
+#previewSection .preview .report-subtitle{font-size:16px;line-height:1.4;margin-bottom:23px}
+#previewSection .preview .report-line{margin:10px 0;white-space:pre-wrap;line-height:1.5}
+#previewSection .preview .sign{margin:28px 0 12px auto}
+#printActions{margin-top:17px!important}
+#printActions #a11Send{background:#0869b4;color:#fff;border:1px solid #0861a4}
+#printActions #a11Send:disabled{background:#e4edf5;color:#6c8498;border:1px solid #c0d2e1;opacity:1}
+#a11SubmitAck{display:flex;align-items:flex-start;gap:11px;margin-top:16px;padding:14px;border:1px solid #b8dfce;background:#eefbf5;color:#145a43;border-radius:12px;font-size:13px;line-height:1.5}
+#a11SubmitAck i{font-size:20px;flex:none}
+@media(max-width:720px){
+ #previewSection .a11-preview-toolbar{display:block;padding:12px 13px}
+ #previewSection .preview{width:100%!important;padding:18px 14px!important;font-size:14px!important;line-height:1.4}
+ #previewSection .preview .official-head{gap:7px!important;font-size:9px!important;margin-bottom:24px}
+ #previewSection .preview .official-head>div{font-size:9.5px!important;line-height:1.4}
+ #previewSection .preview .official-head>div strong{font-size:9.5px}
+ #previewSection .preview .report-title{font-size:20px}
+ #previewSection .preview .report-subtitle{font-size:15px}
+ #previewSection .preview .sign{width:58%;min-width:0}
+}
+@media print{
+ #previewSection .a11-preview-toolbar,#a11SubmitAck{display:none!important}
+ #previewSection .preview{padding:0!important;box-shadow:none!important;border:0!important;max-width:none!important}
+ #previewSection .preview .official-head>div{font-size:11pt!important}
+}
+</style>
 </head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
@@ -287,8 +323,15 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     <p class="muted" style="margin-top:16px"><strong>Nơi nhận:</strong> Ban Giám hiệu và Tổ trưởng chuyên môn theo phân quyền, khi tuyến tiếp nhận được Backend xác nhận.</p>
   </section>
   <section class="panel" id="previewSection" hidden aria-labelledby="previewHeading"><div class="eyebrow">BƯỚC 03 · KIỂM TRA TRƯỚC KHI GỬI</div><h2 id="previewHeading">Bản xem trước báo cáo</h2>
-    <div class="preview" id="previewPaper" aria-live="polite"></div>
-    <div class="actions" id="printActions"><button type="button" class="btn secondary" id="editButton"><i class="bi bi-pencil-square" aria-hidden="true"></i> Chỉnh sửa</button><button type="button" class="btn" id="printButton">In / Lưu PDF bản xem trước</button><button type="button" class="btn" id="a11Send" disabled>Gửi báo cáo tới BGH / TTCM</button><span class="muted">Chỉ ghi nhận đã nộp khi có mã tiếp nhận.</span></div>
+    <div class="a11-preview-toolbar" aria-label="Thanh xem trước DTHT"><div><b>BẢN XEM TRƯỚC</b><span>Kiểm tra nội dung, xác nhận hình thức ký rồi gửi đến hệ thống</span></div></div>
+    <article class="preview official-paper" id="previewPaper" aria-live="polite"></article>
+    <div class="actions" id="printActions">
+      <button type="button" class="btn secondary" id="editButton"><i class="bi bi-arrow-left"></i> Quay lại chỉnh sửa</button>
+      <button type="button" class="btn" id="a11Send" disabled><i class="bi bi-send-check"></i> Xác nhận &amp; gửi</button>
+      <button type="button" class="btn secondary" id="printButton"><i class="bi bi-printer"></i> In / Lưu PDF</button>
+      <span class="muted" id="a11SendHint">Chỉ ghi nhận đã nộp khi Backend cấp mã tiếp nhận và xác nhận trạng thái ký.</span>
+    </div>
+    <div id="a11SubmitAck" hidden role="status"><i class="bi bi-check-circle-fill"></i><div><strong id="a11SubmitAckTitle">Báo cáo đã được hệ thống tiếp nhận</strong><div id="a11SubmitAckText"></div></div></div>
   </section>
 </main>
 <footer class="hva-a11-footer"><span class="hva-footer-logo">HVA–<em>EDOS</em></span><span>Trường THPT Hòa Vang · Báo cáo chuyên môn A.1.1</span></footer>
@@ -450,6 +493,9 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       const got=String(res.signatureStatus||res.data?.signatureStatus||'');
       if(got!==expected)throw Error('Backend chưa xác nhận trạng thái ký '+expected+'. Mã tiếp nhận nếu có: '+res.recordId+'. KHÔNG gửi lại trước khi đối chiếu.');
       a11SubmittedId=res.recordId;
+      $('a11SubmitAck').hidden=false;
+      $('a11SubmitAckTitle').textContent='Báo cáo đã được hệ thống tiếp nhận';
+      $('a11SubmitAckText').textContent='Mã hồ sơ: '+res.recordId+' · '+(a11SignMethod==='PAPER'?'Chờ bản ký tay':'Đã xác nhận ký điện tử')+' · Chờ BGH/TTCM xử lý.';
       dirty=false;
       announce('ĐÃ TIẾP NHẬN hồ sơ '+res.recordId+' · '+(a11SignMethod==='PAPER'?'Chờ bản ký tay':'Đã ký điện tử')+' · Chờ BGH/TTCM xử lý.',false);
       const stamp=$('previewPaper').querySelector('.preview-stamp');
@@ -529,8 +575,12 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       sign.append(img);
     }else sign.append(el('p',a11SignMethod==='PAPER'?'(Ký, ghi rõ họ tên sau khi in)':'(Chưa ký điện tử)'));
     sign.append(el('strong',a.name));paper.append(sign);
-    paper.append(el('div',def.draft?'BẢN XEM TRƯỚC – MẪU CHƯA ĐƯỢC PHÊ DUYỆT – CHƯA LƯU, CHƯA GỬI':'BẢN XEM TRƯỚC – CHƯA LƯU, CHƯA KÝ, CHƯA GỬI','preview-stamp'));
-    $('previewSection').hidden=false;a11UpdateSend();
+    paper.append(el('div',a11SubmittedId?'ĐÃ TIẾP NHẬN · '+a11SubmittedId:
+      (a11SignMethod==='PAPER'?'BẢN XEM TRƯỚC – CHỜ GỬI, CHỜ KÝ TAY':
+       a11Signed?'BẢN XEM TRƯỚC – ĐÃ XÁC NHẬN CHỮ KÝ, CHƯA GỬI':'BẢN XEM TRƯỚC – CHƯA KÝ, CHƯA GỬI'),'preview-stamp'));
+    $('previewSection').hidden=false;
+    $('a11SubmitAck').hidden=!a11SubmittedId;
+    a11UpdateSend();
     $('previewSection').scrollIntoView({block:'start',behavior:'smooth'});
     announce('Đã tạo bản xem trước. Có thể in hoặc gửi khi hệ thống xác nhận tuyến tiếp nhận.');
   }
