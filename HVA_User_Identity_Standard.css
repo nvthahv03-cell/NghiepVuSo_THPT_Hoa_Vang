@@ -1,0 +1,53 @@
+/* HVA–EDOS | CHUẨN NHẬN DIỆN NGƯỜI DÙNG V1 | 17/11/2026
+ * Mục đích: tách dữ liệu người dùng (chỉ đọc) khỏi biểu mẫu nghiệp vụ.
+ * Không can thiệp phân quyền, phiên đăng nhập hay chữ ký.
+ * Áp dụng cho A1.1, DTHT, Chủ nhiệm; dùng chung cho các mẫu tiếp theo.
+ */
+:root{--hva-id-ink:#113b60;--hva-id-primary:#0a5e9f;--hva-id-muted:#55738b;--hva-id-border:#bfd9ea;--hva-field-border:#b9d3e5}
+.hva-user-ident{position:relative!important;isolation:isolate;display:block!important;margin:18px 0 24px!important;padding:0!important;overflow:hidden!important;
+ background:linear-gradient(105deg,#eaf5fd 0%,#e3f0fc 66%,#edf8fb 100%)!important;
+ border:1.5px solid var(--hva-id-border)!important;border-left:5px solid #0a83bd!important;
+ border-radius:16px!important;box-shadow:0 5px 16px rgba(8,77,128,.065)!important;color:var(--hva-id-ink)!important}
+.hva-user-ident__top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+ padding:12px 18px!important;border-bottom:1px solid #c5dded;background:rgba(255,255,255,.35)}
+.hva-user-ident__title{display:flex;align-items:center;gap:9px;font-size:12px!important;letter-spacing:.055em;font-weight:900!important;color:#075e9e!important}
+.hva-user-ident__title i{font-size:18px}
+.hva-user-ident__chip{border:1px solid #a4d7c5;background:#e9faf2;color:#187251;font-size:10.5px!important;
+ padding:5px 10px;border-radius:999px;font-weight:800!important;letter-spacing:.01em}
+.hva-user-ident__values{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:0!important;align-items:stretch!important}
+.hva-user-ident__value{display:block!important;min-width:0!important;padding:15px 20px 17px!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.hva-user-ident__value+.hva-user-ident__value{border-left:1px solid #c7ddeb!important}
+.hva-user-ident__value small,.hva-user-ident__value .hva-user-ident__label{display:block!important;margin:0 0 7px!important;color:#47718d!important;
+ font-size:10.5px!important;font-weight:800!important;letter-spacing:.035em!important;text-transform:uppercase!important;line-height:1.35}
+.hva-user-ident__value strong{display:block!important;color:#113f69!important;font-size:15px!important;font-weight:850!important;
+ line-height:1.4!important;overflow-wrap:anywhere!important}
+.hva-user-ident__note{display:flex;align-items:center;gap:7px;padding:8px 18px;border-top:1px solid #d2e4f0;
+ font-size:11px;color:#4d7190;background:rgba(255,255,255,.28)}
+/* Đối với DTHT và Chủ nhiệm: nhận diện đồng nhất, giữ nguyên khu vực ký riêng. */
+.identity-card.hva-user-ident{display:grid!important;grid-template-columns:minmax(0,1.35fr) minmax(0,.95fr) minmax(0,.95fr)!important}
+.identity-card.hva-user-ident>.identity-col{min-width:0!important;background:#fff!important}
+.identity-card.hva-user-ident>.identity-col:first-child{background:linear-gradient(112deg,#eaf5fd,#e4f2fb)!important;padding:20px 18px!important;border-right:2px solid #b8dbe9!important}
+.identity-card.hva-user-ident .identity-person{display:flex!important;gap:12px;align-items:flex-start;min-width:0}
+.identity-card.hva-user-ident .identity-person>div:last-child{min-width:0}
+.identity-card.hva-user-ident .identity-avatar{background:#d2eafd!important;color:#08639c!important;border-radius:13px!important;flex-shrink:0}
+.identity-card.hva-user-ident .identity-name{font-size:18px!important;font-weight:900!important;line-height:1.35!important;color:#123f6b!important}
+.identity-card.hva-user-ident .identity-meta{font-size:12px!important;line-height:1.6!important;color:#496f8b!important}
+.identity-card.hva-user-ident .identity-meta b{color:#1a567d!important}
+.identity-card.hva-user-ident .identity-section-title{font-size:11px!important;letter-spacing:.035em!important;color:#326489!important}
+/* Trường dữ liệu: đường viền rõ, chữ đậm nét, nền trắng. Không ảnh hưởng bản in A4. */
+body:has(.hva-user-ident) .field input:not([type=radio]):not([type=checkbox]):not([type=file]),
+body:has(.hva-user-ident) .field select,body:has(.hva-user-ident) .field textarea{
+ background:#fff!important;color:#163a58!important;border:1.5px solid var(--hva-field-border)!important;
+ font-weight:500!important;box-shadow:none!important}
+body:has(.hva-user-ident) .field label{color:#214d70!important;font-weight:800!important}
+body:has(.hva-user-ident) .field input:focus,body:has(.hva-user-ident) .field textarea:focus,
+body:has(.hva-user-ident) .field select:focus{border-color:#0873bb!important;box-shadow:0 0 0 3px rgba(6,112,187,.13)!important}
+@media(max-width:780px){
+ .hva-user-ident__values{grid-template-columns:minmax(0,1fr)!important}
+ .hva-user-ident__value{padding:12px 16px!important}
+ .hva-user-ident__value+.hva-user-ident__value{border-left:0!important;border-top:1px solid #c7ddeb!important}
+ .hva-user-ident__top{padding:12px 15px!important}
+ .identity-card.hva-user-ident{grid-template-columns:minmax(0,1fr)!important}
+ .identity-card.hva-user-ident>.identity-col:first-child{border-right:0!important;border-bottom:2px solid #b8dbe9!important}
+}
+@media print{.hva-user-ident{display:none!important}}
