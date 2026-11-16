@@ -2611,9 +2611,37 @@ async function submitReport(ev){
       throw Error('Máy chủ trả trạng thái ký không đúng yêu cầu. Kiểm tra hồ sơ trước khi gửi lại.');
     }
 
-    // Tu day: da co xac nhan tu action submitDTHT, khong duoc bao loi gui
-    // chi vi tai lai bang lich su gap loi.
-    if($('apiStatus')) $('apiStatus').textContent = 'Hồ sơ đã được máy chủ ghi nhận.';
+    // DTHT: OK/SUCCESS chi xac nhan action tra loi, KHONG chung minh ghi Sheet.
+    // Doc lai ID tren Backend. Neu chua du chung cu, giu trang thai cho doi chieu,
+    // KHONG tu gui lai (tranh tao ho so trung).
+    const receiptId=String(res.recordId||res.maHoSo||res.id||res.data?.recordId||res.data?.maHoSo||res.data?.id||'').trim();
+    let verified=false,verifyReason='';
+    if(!receiptId)verifyReason='Backend trả thành công nhưng không cấp mã hồ sơ.';
+    else{
+      try{
+        const read=await callAPI('getInitial');
+        const history=read?.reports||read?.danhSach||read?.history||read?.data?.reports;
+        if(Array.isArray(history)){
+          verified=history.some(row=>String(row?.recordId||row?.maHoSo||row?.id||'').trim()===receiptId);
+          if(verified){state.reports=history;if(typeof renderHistory==='function')renderHistory();}
+          else verifyReason='Chưa tìm thấy mã hồ sơ khi đọc lại danh sách từ Backend.';
+        }else verifyReason='Backend chưa trả danh sách hồ sơ để đối chiếu.';
+      }catch(err){verifyReason='Không đọc lại được hồ sơ: '+(err?.message||String(err));}
+    }
+    if(!verified){
+      window.__dthtUnverifiedReceipt={id:receiptId,at:new Date().toISOString()};
+      if($('apiStatus'))$('apiStatus').textContent='CHƯA XÁC MINH LƯU SHEET: '+verifyReason;
+      if(btn){
+        btn.disabled=true;btn.removeAttribute('aria-busy');
+        btn.innerHTML='<i class="bi bi-exclamation-triangle"></i> Chờ kiểm tra lưu dữ liệu';
+      }
+      showHvaNotice('info','Chưa xác minh hồ sơ đã lưu',
+        'Máy chủ có phản hồi nhưng chưa chứng minh dữ liệu đã được lưu và đọc lại. '+
+        (receiptId?'Mã trả về: '+receiptId+'. ':'')+
+        verifyReason+' KHÔNG bấm gửi lại trước khi đối chiếu để tránh hồ sơ trùng.');
+      return;
+    }
+    if($('apiStatus')) $('apiStatus').textContent = 'Hồ sơ '+receiptId+' đã được máy chủ ghi nhận và đọc lại.';
     if(btn){
       btn.disabled = true;
       btn.removeAttribute('aria-busy');
