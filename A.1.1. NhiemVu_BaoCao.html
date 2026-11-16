@@ -155,7 +155,40 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 .hva-pro-header .hva-pro-back{display:grid!important;place-items:center!important;flex:none!important}
 .hva-pro-header .hva-pro-back i{font-size:22px!important}
 @media(max-width:720px){.hva-pro-header .hva-pro-kicker{font-size:9px!important}.hva-pro-header .hva-pro-school{font-size:16px!important}.hva-pro-header .hva-pro-slogan.hva-pro-edos{font-size:24px!important}}
-</style></head>
+</style><style id="hva-a11-digital-choice-20261116">
+/* A1.1 – Chỉ thẻ được chọn dùng màu xanh Digital AI; thẻ khác nền trắng. */
+#choiceGrid{align-items:stretch;gap:16px}
+#choiceGrid .choice{position:relative;isolation:isolate;min-height:138px;display:flex;align-items:flex-start;gap:16px;
+ border:1.5px solid #cddff0!important;border-radius:17px!important;background:#fff!important;
+ padding:20px 22px!important;color:#153e66!important;box-shadow:0 3px 12px rgba(20,84,140,.055)!important;
+ text-align:left;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s}
+#choiceGrid .choice:hover{border-color:#2b99e5!important;transform:translateY(-2px);box-shadow:0 9px 23px rgba(12,91,162,.12)!important}
+#choiceGrid .choice strong{color:#104675!important;font-size:15px;font-weight:850;line-height:1.43}
+#choiceGrid .choice small{display:block;color:#587b98!important;font-size:12.5px;line-height:1.6}
+#choiceGrid .choice .choice-icon{flex:0 0 52px;width:52px;height:52px;border-radius:14px;background:#e7f4ff!important;color:#0869b3!important;display:grid;place-items:center;font-size:24px}
+#choiceGrid .choice .tag{display:inline-block;width:max-content;max-width:100%;padding:6px 11px;margin-top:13px;
+ border-radius:99px;background:#edf7ff!important;color:#16649d!important;font-size:11px;font-weight:800}
+#choiceGrid .choice[aria-pressed="true"]{background:linear-gradient(112deg,#0752a5 0%,#067cce 65%,#05a6db 100%)!important;
+ border:2px solid #0573d6!important;padding:19.5px 21.5px!important;color:#fff!important;
+ box-shadow:0 9px 24px rgba(2,102,190,.24),inset 0 1px rgba(255,255,255,.18)!important;transform:none}
+#choiceGrid .choice[aria-pressed="true"] strong{color:#fff!important}
+#choiceGrid .choice[aria-pressed="true"] small{color:#e5f4ff!important}
+#choiceGrid .choice[aria-pressed="true"] .choice-icon{color:#fff!important;background:rgba(255,255,255,.2)!important;border:1px solid rgba(255,255,255,.24)}
+#choiceGrid .choice[aria-pressed="true"] .tag{background:rgba(255,255,255,.18)!important;color:#fff!important}
+#choiceGrid .choice[aria-pressed="true"]::after{content:"✓ ĐANG CHỌN";position:absolute;right:14px;top:12px;
+ color:#fff;font-size:10px;font-weight:850;letter-spacing:.03em;background:rgba(0,47,110,.3);
+ border:1px solid rgba(255,255,255,.3);padding:5px 9px;border-radius:99px}
+#choiceGrid .choice[aria-pressed="true"]>span:nth-child(2){padding-right:25px}
+#choiceGrid .choice:focus-visible{outline:3px solid #f8b92e!important;outline-offset:3px}
+@media(max-width:720px){#choiceGrid .choice{padding:16px!important;min-height:118px;gap:12px}
+ #choiceGrid .choice[aria-pressed="true"]{padding:15.5px!important}
+ #choiceGrid .choice[aria-pressed="true"]::after{position:static;order:3;align-self:flex-start;white-space:nowrap}
+ #choiceGrid .choice[aria-pressed="true"]>span:nth-child(2){padding-right:0}
+ #choiceGrid .choice .choice-icon{width:42px;height:42px;flex-basis:42px;font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){#choiceGrid .choice{transition:none}}
+</style>
+</head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
   <a class="hva-pro-back" href="./NghiepVu.html" title="Về Nghiệp vụ số" aria-label="Về danh mục Nghiệp vụ số"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
