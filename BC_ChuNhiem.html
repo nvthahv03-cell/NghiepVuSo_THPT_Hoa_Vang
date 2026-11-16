@@ -578,7 +578,12 @@ function showHvaNotice(type, title, message){
   const b=document.getElementById("hvaPrintPaperBtn");if(b)b.hidden=true;
   $('hvaNoticeTitle').textContent = title || 'Thông báo';
   $('hvaNoticeMessage').textContent = message || '';
-  icon.innerHTML = type === 'success' ? '<i class="bi bi-check-lg" style="color:#16a34a;"></i>' : '<i class="bi bi-exclamation-lg" style="color:#dc2626;"></i>';
+  box.dataset.type=type||'info';
+  icon.innerHTML = type === 'success'
+    ? '<i class="bi bi-check-lg" style="color:#16a34a;"></i>'
+    : type === 'info'
+      ? '<i class="bi bi-info-lg" style="color:#1a74ae;"></i>'
+      : '<i class="bi bi-exclamation-lg" style="color:#dc2626;"></i>';
   box.classList.remove('hidden');
 }
 function closeHvaNotice(){ $('hvaNotice').classList.add('hidden'); }
@@ -603,7 +608,12 @@ async function loadCnProfile(username){
     url.searchParams.set('action','getChuNhiemInitial');
     url.searchParams.set('username',username);
     url.searchParams.set('namHoc','2026-2027');
-    const response = await fetch(url.toString(), {cache:'no-store'});
+    const sessionToken=cnUserToken_();
+    if(!sessionToken)throw Error('Phiên EDOS không hợp lệ.');
+    url.searchParams.set('sessionToken',sessionToken);
+    const response=window.HVAAuthRequest?.get
+      ? await window.HVAAuthRequest.get(url.toString(),{cache:'no-store'})
+      : await fetch(url.toString(),{cache:'no-store',redirect:'follow'});
     const result = await response.json();
     if(!result.ok) throw new Error(result.message || 'Không đọc được hồ sơ.');
     const cls = parseHvaClassVal(result.lopChuNhiem || result.nguoiDung?.lopChuNhiem || '');
@@ -670,7 +680,7 @@ async function verifySignerIdentity(){
     const username = state.user?.tenDangNhap || state.user?.username || '';
     const response = await fetch(DTHT_BACKEND_URL, {
       method: 'POST', headers: {'Content-Type':'text/plain;charset=UTF-8'},
-      body: JSON.stringify({action:'verifyChuNhiemSigner',username,cccd})
+      body: JSON.stringify({action:'verifyChuNhiemSigner',username,cccd,sessionToken:cnUserToken_()})
     });
     const result = await response.json();
     if(!result.ok) throw new Error(result.message || 'Không xác thực được CCCD.');
@@ -805,81 +815,144 @@ async function hvaCheckPaperSigning_(endpoint){
  return true;
 }
 
-async function submitReport(ev){
-  if(ev) ev.preventDefault();
-  if(state.signMethod!=='PAPER'){
-    if(!state.signatureData){ showHvaNotice('error', 'Chưa có chữ ký', 'Vui lòng tải ảnh chữ ký trước khi gửi.'); return; }
-    if(!state.signerVerified){ showHvaNotice('error', 'Chưa xác thực', 'Vui lòng xác thực người ký bằng CCCD.'); return; }
-    if(!state.signed){ showHvaNotice('error','Chưa ký xác nhận','Vui lòng bấm Ký xác nhận trước khi gửi.'); return; }
+/* A1.2 - Kế thừa lõi gửi DTHT: cùng gateway, session, xử lý phản hồi,
+   mã yêu cầu lặp lại và đọc lại hồ sơ. Chỉ đặc tả CN là khác. */
+let __cnSending=false, __cnRequestId='', __cnFingerprint='', __cnSaved=false;
+function cnUserToken_(){
+  const me=dthtCurrentUser();
+  return String(localStorage.getItem('hvaSessionToken')||
+    sessionStorage.getItem('hvaSessionToken')||me.sessionToken||me.token||'').trim();
+}
+function cnUserName_(){
+  const me=dthtCurrentUser();
+  return String(me.tenDangNhap||me.username||me.userName||me.maGV||'').trim();
+}
+async function cnAPI_(action,payload={},method='POST'){
+  const username=cnUserName_(),sessionToken=cnUserToken_();
+  if(!username||!sessionToken)throw Error('Phiên EDOS không hợp lệ. Vui lòng đăng nhập lại.');
+  let res;
+  if(method==='GET'){
+    const u=new URL(HVA_V5_BACKEND_URL);
+    u.searchParams.set('action',action);u.searchParams.set('username',username);
+    u.searchParams.set('sessionToken',sessionToken);u.searchParams.set('namHoc','2026-2027');
+    u.searchParams.set('_',String(Date.now()));
+    if(window.HVAAuthRequest&&typeof window.HVAAuthRequest.get==='function'){
+      res=await window.HVAAuthRequest.get(u.toString(),{cache:'no-store'});
+    }else res=await fetch(u.toString(),{cache:'no-store',redirect:'follow'});
+  }else{
+    const body=Object.assign({},payload,{action,username,sessionToken});
+    if(window.HVAAuthRequest&&typeof window.HVAAuthRequest.postJson==='function'){
+      res=await window.HVAAuthRequest.postJson(HVA_V5_BACKEND_URL,body,{cache:'no-store'});
+    }else if(window.HVAAuthRequest&&typeof window.HVAAuthRequest.post==='function'){
+      res=await window.HVAAuthRequest.post(HVA_V5_BACKEND_URL,body,{cache:'no-store'});
+    }else{
+      res=await fetch(HVA_V5_BACKEND_URL,{
+        method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},
+        body:JSON.stringify(body),cache:'no-store',redirect:'follow'
+      });
+    }
   }
-  if(!$('reportForm').reportValidity()) return;
-  if(!/^1[012]\/\d{1,2}$/.test($('assignedClass').value.trim())) {showHvaNotice('error','Chưa xác định lớp','Chưa xác minh được lớp chủ nhiệm từ hồ sơ nhân sự.');return;}
-  const activeSession=String(localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'').trim();
-  if(!activeSession){showHvaNotice('error','Chưa đăng nhập hợp lệ','Vui lòng đăng nhập HVA–EDOS trước khi gửi.');return;}
-  // Ho so ky tay gui truc tiep; Backend phai tra trang thai CHO KY TAY moi bao thanh cong.
-  const btn = $('submitReportBtn');
-  if(btn.disabled) return;
-  btn.disabled = true;
-  btn.setAttribute('aria-busy','true');
-  btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Đang gửi dữ liệu...';
-
-  const userObj = dthtCurrentUser();
-  const token = String(localStorage.getItem('hvaSessionToken') || sessionStorage.getItem('hvaSessionToken') || userObj.sessionToken || '').trim();
-
-  const payload = {
-    action: 'submitChuNhiem',
-    username: userObj.tenDangNhap || userObj.username || '',
-    sessionToken: token,
-    teacherKey: userObj.tenDangNhap || userObj.username || '',
-    teacherName: userObj.hoTen || userObj.fullName || '',
-    team: userObj.toBoPhan || userObj.tenTo || '',
-    schoolYear: '2026-2027',
-    namHoc: '2026-2027',
-    signingMethod: state.signMethod,
-    signerVerified: state.signMethod==='ELECTRONIC',
-    signed: state.signMethod==='ELECTRONIC',
-    kyBaoCao: $('reportPeriod').value,
-    lopChuNhiem: $('assignedClass').value.trim(),
-    siSo: $('classSize').value.trim(),
-    chuyenCan: $('attendance').value.trim(),
-    nenNep: $('discipline').value.trim(),
-    phoiHop: $('cooperation').value.trim(),
-    deXuat: $('suggestions').value.trim(),
-    chuKyBase64: state.signMethod==='ELECTRONIC'?state.signatureData:''
+  let data;
+  try{data=await res.json()}catch(_){throw Error('Backend không trả dữ liệu JSON hợp lệ.')}
+  if(!res.ok||data?.ok===false||data?.success===false){
+    throw Error(String(data?.thongBao||data?.message||('Backend HTTP '+res.status)));
+  }
+  return data;
+}
+function cnPayload_(){
+  const me=dthtCurrentUser();
+  const paper=state.signMethod==='PAPER';
+  const payload={
+    teacherKey:cnUserName_(),
+    teacherName:me.hoTen||me.fullName||'',
+    team:me.toBoPhan||me.tenTo||'',
+    schoolYear:'2026-2027',namHoc:'2026-2027',
+    signingMethod:paper?'PAPER':'ELECTRONIC',
+    signerVerified:!paper&&state.signerVerified===true,
+    signed:!paper&&state.signed===true,
+    kyBaoCao:$('reportPeriod').value,
+    lopChuNhiem:$('assignedClass').value.trim(),
+    siSo:$('classSize').value.trim(),
+    chuyenCan:$('attendance').value.trim(),
+    nenNep:$('discipline').value.trim(),
+    phoiHop:$('cooperation').value.trim(),
+    deXuat:$('suggestions').value.trim(),
+    chuKyBase64:paper?'':state.signatureData
   };
-
+  const fingerprint=JSON.stringify(payload);
+  if(fingerprint!==__cnFingerprint){
+    __cnFingerprint=fingerprint;__cnRequestId='CN-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,12);
+  }
+  payload.clientRequestId=__cnRequestId;
+  return payload;
+}
+async function submitReport(ev){
+  if(ev&&typeof ev.preventDefault==='function')ev.preventDefault();
+  if(__cnSending||__cnSaved)return;
+  if(state.signMethod==='ELECTRONIC'){
+    if(!state.signatureData){showHvaNotice('error','Chưa có chữ ký','Vui lòng tải hình ảnh chữ ký trước khi gửi.');return;}
+    if(!state.signerVerified){showHvaNotice('error','Chưa xác thực','Vui lòng xác thực CCCD người ký.');return;}
+    // Cơ chế giống DTHT: đã xác thực CCCD và có chữ ký thì xác nhận trạng thái ký.
+    state.signed=true;
+  }
+  if(!$('reportForm').reportValidity())return;
+  if(!/^1[012]\/\d{1,2}$/.test($('assignedClass').value.trim())){
+    showHvaNotice('error','Chưa xác định lớp','Chưa xác minh được lớp chủ nhiệm từ dữ liệu nhân sự.');return;
+  }
+  const btn=$('submitReportBtn');
+  if(!btn||btn.disabled)return;
+  const previous=btn.innerHTML;
+  __cnSending=true;btn.disabled=true;btn.setAttribute('aria-busy','true');
+  btn.innerHTML='<i class="bi bi-arrow-repeat"></i> Đang gửi dữ liệu...';
   try{
-    const r = await fetch(DTHT_BACKEND_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'text/plain;charset=UTF-8'},
-      body: JSON.stringify(payload),
-      cache: 'no-store'
-    });
-    if(!r.ok)throw new Error('Không kết nối được máy chủ (HTTP '+r.status+').');
-    let res;
-    try{res=await r.json()}catch(_){throw new Error('Máy chủ không trả JSON hợp lệ.')}
-    if(res && (res.ok === true || res.success === true) && (state.signMethod!=='PAPER'||!res.signatureStatus||res.signatureStatus==='CHO_KY_TAY')){
-      setStep(3);
-      btn.removeAttribute('aria-busy');
-      btn.textContent = state.signMethod==='PAPER'?'Đã tiếp nhận · Chờ bản ký tay':'Đã gửi thành công';
-      showHvaNotice('success', state.signMethod==='PAPER'?'Đã tiếp nhận · Chờ bản ký tay':'Đã gửi báo cáo',
-        state.signMethod==='PAPER'
-          ? 'Máy chủ đã tiếp nhận hồ sơ chờ bản ký tay. Thầy/Cô in báo cáo, ký và nộp bản giấy.'
-          : 'Máy chủ đã tiếp nhận báo cáo công tác chủ nhiệm.');
-      if(state.signMethod==='PAPER'){
-        const printBtn=$('hvaPrintPaperBtn');
-        if(printBtn)printBtn.hidden=false;
-      }
-    } else {
-      throw new Error((res && (res.thongBao || res.message)) || 'Máy chủ chưa xác nhận lưu hồ sơ. Kiểm tra trước khi thử gửi lại.');
+    const payload=cnPayload_();
+    if($('apiStatus'))$('apiStatus').textContent='Đang gửi Báo cáo chủ nhiệm đến HVA–EDOS...';
+    const res=await cnAPI_('submitChuNhiem',payload);
+    if(res?.ok!==true&&res?.success!==true)throw Error('Máy chủ chưa xác nhận tiếp nhận.');
+    if(payload.signingMethod==='PAPER'&&res.signatureStatus&&res.signatureStatus!=='CHO_KY_TAY'){
+      throw Error('Phản hồi có trạng thái ký không khớp chế độ ký tay.');
+    }
+    const receiptId=String(res.maHoSo||res.recordId||res.id||'').trim();
+    let verified=false,reason='';
+    if(!receiptId)reason='Máy chủ chưa trả mã hồ sơ.';
+    else{
+      try{
+        const read=await cnAPI_('getChuNhiemInitial',{},'GET');
+        const history=read?.reports||read?.danhSach||read?.history||read?.data?.reports;
+        if(!Array.isArray(history))reason='Không có danh sách hồ sơ để đối chiếu.';
+        else{
+          verified=history.some(x=>String(x?.maHoSo||x?.recordId||x?.id||'').trim()===receiptId);
+          if(!verified)reason='Không tìm thấy mã hồ sơ trong lịch sử sau khi gửi.';
+        }
+      }catch(e){reason='Không đọc lại được lịch sử: '+String(e.message||e);}
+    }
+    if(!verified){
+      btn.innerHTML='<i class="bi bi-exclamation-triangle"></i> Chờ đối chiếu hồ sơ';
+      if($('apiStatus'))$('apiStatus').textContent='Chưa xác minh lưu Sheet: '+reason;
+      showHvaNotice('info','Chờ xác minh hồ sơ đã gửi',
+        'Backend đã phản hồi'+(receiptId?' (mã '+receiptId+')':'')+
+        ' nhưng chưa đọc lại được bản ghi. '+reason+
+        ' Không bấm gửi lại trước khi kiểm tra Sheet NVS_CHU_NHIEM.');
+      return;
+    }
+    __cnSaved=true;
+    setStep(3);
+    btn.innerHTML='<i class="bi bi-check-circle-fill"></i> Đã tiếp nhận';
+    if($('apiStatus'))$('apiStatus').textContent='ĐÃ LƯU NVS_CHU_NHIEM · Mã hồ sơ: '+receiptId;
+    showHvaNotice('success',payload.signingMethod==='PAPER'?'Gửi báo cáo thành công · Chờ bản ký tay':'Gửi báo cáo thành công',
+      'Báo cáo mã '+receiptId+' đã ghi nhận trong NVS_CHU_NHIEM.'+
+      (payload.signingMethod==='PAPER'?' Thầy/Cô in, ký tay và nộp bản giấy.':''));
+    if(payload.signingMethod==='PAPER'){
+      const print=$('hvaPrintPaperBtn');if(print)print.hidden=false;
     }
   }catch(e){
-    btn.disabled = false;
-    btn.removeAttribute('aria-busy');
-    btn.innerHTML=state.signMethod==='PAPER'
-      ? '<i class="bi bi-send-check"></i> Gửi hồ sơ chờ bản ký tay'
-      : '<i class="bi bi-send-check"></i> Xác nhận & gửi BGH';
-    showHvaNotice('error', 'Chưa gửi được báo cáo', 'Chi tiết: ' + (e.message || e));
+    btn.innerHTML=previous;
+    if($('apiStatus'))$('apiStatus').textContent='Chưa gửi thành công: '+String(e.message||e);
+    showHvaNotice('error','Chưa gửi được báo cáo',String(e.message||e));
+  }finally{
+    __cnSending=false;btn.removeAttribute('aria-busy');
+    // Khi máy chủ đã tiếp nhận nhưng chưa đọc được, khóa gửi lại tránh nhân bản.
+    btn.disabled=__cnSaved||btn.textContent.includes('Chờ đối chiếu');
   }
 }
 
