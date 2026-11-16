@@ -26,8 +26,8 @@
 <header class="hva-a1-master" role="banner"><div class="hva-a1-head-inner">
 <a class="hva-a1-back" href="./NghiepVu.html" aria-label="Về danh mục Nghiệp vụ số" title="Trở về Nghiệp vụ số">←</a>
 <div class="hva-a1-brand"><div class="hva-a1-kicker">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div><div class="hva-a1-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a1-sub">HVA–EDOS · NGHIỆP VỤ SỐ</div></div>
-<div class="hva-a1-meta"><span class="hva-a1-dot" aria-hidden="true"></span>A1.4 <span>· TRỰC TUYẾN</span><small>Năm học 2026–2027</small></div>
-</div></header><div class="hva-a1-page-title"><strong>A1.4</strong> · THI – KIỂM TRA KHÁC, ÔN THI VÀ PHỤ ĐẠO</div>
+<div class="hva-a1-meta"><span class="hva-a1-dot" aria-hidden="true"></span><span id="hvaHeaderCode">A1.4</span> <span>· TRỰC TUYẾN</span><small>Năm học 2026–2027</small></div>
+</div></header><div class="hva-a1-page-title"><strong id="hvaPageCode">A1.4</strong> · <span id="hvaPageTitle">THI – KIỂM TRA KHÁC, ÔN THI VÀ PHỤ ĐẠO</span></div>
 <main><div class="note"><strong>22 biểu mẫu nghiệp vụ đã có trường nhập chuyên biệt.</strong> Trước khi nhận được mã tiếp nhận từ Backend, nội dung chỉ là dự thảo trên thiết bị, chưa phải hồ sơ đã nộp, ký số hoặc phê duyệt. Không nhập dữ liệu cá nhân nhạy cảm của học sinh. Nút nộp chỉ kích hoạt khi Backend xác thực được tuyến tiếp nhận BGH và TTCM.</div>
 <section class="panel edit"><h2 id="heading">Thi – kiểm tra khác, ôn thi và phụ đạo</h2><form id="form">
 <div class="cols"><div><label for="code">Nghiệp vụ</label><select id="code" required></select></div><div><label for="schoolYear">Năm học</label><input id="schoolYear" value="2026–2027" required maxlength="20"></div>
@@ -51,4 +51,22 @@
 <footer>HVA–EDOS · Chỉ dùng để chuẩn bị hồ sơ; không thay thế quy trình tiếp nhận và phê duyệt.</footer></main>
 <script defer src="./NVS_A22_Definitions.js"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261114_A16"></script>
+<script>
+/* HVA head: nhãn đúng theo biểu mẫu A22, không gắn A1.4 lên các A khác. */
+document.addEventListener('DOMContentLoaded',function(){
+ const raw=new URLSearchParams(location.search).get('code')||'A.1.4';
+ const defs=window.HVA_A22_DEFS||{};
+ const name=defs[raw]&&defs[raw].title ? defs[raw].title : 'Biểu mẫu nghiệp vụ';
+ const short=raw.replace(/^A\./,'A');
+ const a=document.getElementById('hvaHeaderCode'),b=document.getElementById('hvaPageCode'),c=document.getElementById('hvaPageTitle');
+ if(a)a.textContent=short;if(b)b.textContent=short;if(c)c.textContent=name.toUpperCase();
+ const select=document.getElementById('code');
+ if(select)select.addEventListener('change',function(){
+  const k=select.value,def=defs[k],n=def&&def.title?def.title:'Biểu mẫu nghiệp vụ';
+  if(a)a.textContent=k.replace(/^A\./,'A');
+  if(b)b.textContent=k.replace(/^A\./,'A');
+  if(c)c.textContent=n.toUpperCase();
+ });
+});
+</script>
 </body></html>
