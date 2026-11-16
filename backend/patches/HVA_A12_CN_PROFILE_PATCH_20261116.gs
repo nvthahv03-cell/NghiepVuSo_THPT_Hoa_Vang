@@ -48,6 +48,17 @@ function cnProfile_(username){
     var u=String(display[i][cols.username]||raw[i][cols.username]||'').trim().toLowerCase();
     if(u===target)matches.push(i);
   }
+  if(matches.length===0){
+    // Chỉ dự phòng khi chính cột tài khoản không tìm ra; không nhận bừa
+    // một ô có giá trị trùng tên tài khoản ở các cột khác.
+    var fallback=[];
+    for(var ri=0;ri<display.length;ri++){
+      var ids=display[ri].map(function(x){return String(x||'').trim().toLowerCase();});
+      if(ids.indexOf(target)>=0)fallback.push(ri);
+    }
+    if(fallback.length===1)matches=fallback;
+    if(fallback.length>1)throw Error('Tài khoản xuất hiện ở nhiều dòng nhân sự.');
+  }
   if(matches.length!==1){
     if(matches.length>1)throw Error('Tài khoản trùng trong CSDL nhân sự.');
     return null;
