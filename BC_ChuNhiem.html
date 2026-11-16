@@ -292,7 +292,29 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
  #previewCard>.actions{flex-wrap:wrap!important;justify-content:center!important}
 }
 @media print{#hvaNotice{display:none!important}}
-</style></head>
+</style><style id="hva-a12-master-header-20261116">
+/* Header dùng chuẩn A1.1; tách khỏi banner V3, không chạm xử lý báo cáo */
+.hva-a12-master-header{position:relative;isolation:isolate;color:#fff;background:linear-gradient(110deg,#073d7e,#0867b6 63%,#079ac9);margin:0;border:0;border-radius:0 0 18px 18px;box-shadow:0 8px 22px #124e8125;z-index:10}
+.hva-a12-master-inner{box-sizing:border-box;max-width:1220px;min-height:106px;margin:0 auto;padding:17px 22px;display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:20px;align-items:center}
+.hva-a12-master-back{display:grid;place-items:center;width:54px;height:54px;border:1px solid #84c4ed;border-radius:14px;background:#ffffff14;color:#fff;text-decoration:none;font-size:23px}
+.hva-a12-master-brand{min-width:0;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:3px;font-family:Inter,"Segoe UI",Arial,sans-serif}
+.hva-a12-master-kicker{font-size:10px;font-weight:750;letter-spacing:.08em;color:#d5ecfa;line-height:1.35}
+.hva-a12-master-school{font-size:clamp(17px,2.4vw,23px);font-weight:900;line-height:1.25;color:white}
+.hva-a12-master-system{font-size:clamp(23px,3vw,30px);font-weight:950;letter-spacing:-.035em;line-height:1.1;color:#ffbf45}
+.hva-a12-master-module{border:1px solid #8fe1f1;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:800;color:#fff;line-height:1.45;white-space:nowrap}
+.hva-a12-master-back:hover{background:#ffffff26}
+.hva-a12-master-back:focus-visible{outline:3px solid #f3c250;outline-offset:3px}
+@media(max-width:720px){
+ .hva-a12-master-inner{padding:13px 12px;min-height:96px;grid-template-columns:43px minmax(0,1fr);gap:9px}
+ .hva-a12-master-back{width:40px;height:40px;font-size:18px}
+ .hva-a12-master-kicker{font-size:9px}
+ .hva-a12-master-school{font-size:16px}
+ .hva-a12-master-system{font-size:24px}
+ .hva-a12-master-module{grid-column:1/-1;justify-self:center;font-size:11px;padding:5px 11px}
+}
+@media print{.hva-a12-master-header{display:none!important}}
+</style>
+</head>
 <body>
 
 <!-- MODAL CCCD -->
@@ -314,22 +336,15 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
 </div>
 
 <!-- HEADER -->
-<header class="hva-pro-header">
-  <div class="hva-pro-header-inner">
-    <button type="button" class="hva-pro-back" onclick="goBackHVA()"><i class="bi bi-arrow-left"></i></button>
-    <div class="hva-pro-brand">
-      <span class="hva-pro-divider"></span>
-      <div class="hva-pro-brandtext">
-        <div class="hva-pro-kicker">TRUNG TÂM QUẢN TRỊ SỐ HVA</div>
-        <div class="hva-pro-school">Trường THPT Hòa Vang</div>
-        <div class="hva-pro-slogan">Quản trị thông minh <b>•</b> Giáo dục sáng tạo</div>
-      </div>
+<header class="hva-a12-master-header" role="banner">
+  <div class="hva-a12-master-inner">
+    <a class="hva-a12-master-back" href="./NghiepVu.html" aria-label="Về danh mục Nghiệp vụ số" title="Về Nghiệp vụ số"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
+    <div class="hva-a12-master-brand">
+      <div class="hva-a12-master-kicker">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div>
+      <div class="hva-a12-master-school">TRƯỜNG THPT HÒA VANG</div>
+      <div class="hva-a12-master-system">HVA–EDOS</div>
     </div>
-    <div class="hva-pro-tools">
-      <div class="hva-pro-online-wrap">
-        <div class="hva-pro-online"><span class="hva-pro-online-dot"></span><span>TRỰC TUYẾN</span><span class="hva-pro-version" id="hvaVersionLabel">V1</span></div>
-      </div>
-    </div>
+    <div class="hva-a12-master-module">A1.2 · CÔNG TÁC CHỦ NHIỆM</div>
   </div>
 </header>
 
