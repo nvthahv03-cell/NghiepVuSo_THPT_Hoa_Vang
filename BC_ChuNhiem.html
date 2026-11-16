@@ -629,14 +629,14 @@ async function loadCnProfile(username){
       $('assignedClass').value=cls;
       $('assignedClass').readOnly=true;
       $('identityClass').textContent=cls;
-      $('apiStatus').textContent='Đã đối chiếu lớp chủ nhiệm '+cls+' từ dữ liệu nhân sự.';
+      if(!window.__hvaCNConfirmedReceipt)$('apiStatus').textContent='Đã đối chiếu lớp chủ nhiệm '+cls+' từ dữ liệu nhân sự.';
     }else{
       if (!$('assignedClass').value) $('identityClass').textContent='Chưa phân công';
       $('apiStatus').textContent='Tài khoản chưa có phân công GVCN tại cột W. Liên hệ bộ phận quản trị dữ liệu, không tự nhập lớp.';
     }
   }catch(e){
     if (!$('assignedClass').value) $('identityClass').textContent='Chưa xác minh';
-    $('apiStatus').textContent='Chưa xác minh được lớp với Backend: '+e.message+'; vui lòng kiểm tra kết nối trước khi gửi.';
+    if(!window.__hvaCNConfirmedReceipt)$('apiStatus').textContent='Chưa xác minh được lớp với Backend: '+e.message+'; vui lòng kiểm tra kết nối trước khi gửi.';
     if($('cnHistoryStatus'))$('cnHistoryStatus').textContent='Không tải được lịch sử: '+e.message;
   }
 }
@@ -901,6 +901,7 @@ async function submitReport(ev){
       setStep(3);
       btn.removeAttribute('aria-busy');
       btn.textContent = state.signMethod==='PAPER'?'Đã tiếp nhận · Chờ bản ký tay':'Đã gửi thành công';
+      window.__hvaCNConfirmedReceipt=true;
       $('apiStatus').textContent = 'Đã lưu NVS_CHU_NHIEM · Mã '+res.maHoSo+
         ' · Dòng '+res.recordRow+(res.reportSavedAt?' · '+res.reportSavedAt:'');
       showHvaNotice('success', state.signMethod==='PAPER'?'Gửi báo cáo thành công · Chờ bản ký tay':'Gửi báo cáo thành công',
