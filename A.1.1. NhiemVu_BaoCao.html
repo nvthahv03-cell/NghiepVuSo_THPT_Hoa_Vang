@@ -188,6 +188,32 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 }
 @media(prefers-reduced-motion:reduce){#choiceGrid .choice{transition:none}}
 </style>
+<style id="hva-a11-sign-method-v1">
+#a11SignMethod{margin:16px 0 20px;padding:17px;border:1px solid #d7e6f4;background:#f7fbff;border-radius:16px;color:#173e61}
+#a11SignMethod .a11-sign-eyebrow{font-size:11px;font-weight:850;letter-spacing:.07em;color:#1265a3;margin-bottom:5px}
+#a11SignMethod h3{margin:0 0 13px;font-size:16px}
+#a11SignMethod .a11-sign-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#a11SignMethod .a11-sign-choice{margin:0;cursor:pointer;display:flex;align-items:center;gap:12px;padding:16px 15px;border-radius:14px;border:1.5px solid #d2e3f1;background:#fff;min-height:84px;position:relative}
+#a11SignMethod .a11-sign-choice:has(input:checked){background:#e9f5ff;border-color:#0879d8;box-shadow:0 0 0 1px #0879d8}
+#a11SignMethod .a11-sign-choice input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+#a11SignMethod .a11-sign-choice:has(input:focus-visible){outline:3px solid #f6ba3c;outline-offset:3px}
+#a11SignMethod .a11-sign-icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:12px;background:#eaf4fd;color:#0870b9;font-size:21px}
+#a11SignMethod .a11-sign-copy{display:grid;gap:5px;min-width:0;flex:1}
+#a11SignMethod .a11-sign-copy strong{font-size:14px;color:#0e4b82}
+#a11SignMethod .a11-sign-copy small{font-size:12px;color:#618099;font-weight:450;line-height:1.45}
+#a11SignMethod .a11-sign-check{color:#0874c4;opacity:0;font-size:20px}
+#a11SignMethod .a11-sign-choice:has(input:checked) .a11-sign-check{opacity:1}
+#a11SignMethod #a11SignHint{margin:10px 0 0}
+#a11SignMethod .a11-electronic-fields{margin-top:16px;border-top:1px solid #d9e8f5;padding-top:16px}
+#a11SignMethod .a11-electronic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#a11SignMethod .a11-electronic-grid>div{min-width:0}
+#a11SignMethod input[type=password],#a11SignMethod input[type=file]{display:block;box-sizing:border-box;width:100%;margin:5px 0 10px;padding:10px;border:1px solid #b9d4e8;border-radius:9px;background:white;color:#173950}
+#a11SignMethod .a11-signature-preview{min-height:45px;border:1px dashed #96bfdd;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#fff;font-size:12px;color:#526e85;padding:8px}
+#a11SignMethod .a11-signature-preview img{max-height:85px;max-width:100%;object-fit:contain}
+#a11SignMethod #a11SignerStatus{margin-bottom:10px}
+@media(max-width:720px){#a11SignMethod .a11-sign-options,#a11SignMethod .a11-electronic-grid{grid-template-columns:1fr}}
+@media print{#a11SignMethod{display:none!important}}
+</style>
 </head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
@@ -215,6 +241,31 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       <div class="identity-cell"><small>CHỨC VỤ</small><strong id="identityRole">Chưa xác định</strong></div>
     </div>
     <div id="loginWarning" class="warning" hidden>Phiên đăng nhập chưa hợp lệ. Vui lòng đăng nhập từ <a href="./index.html">Trang chủ NVS</a> để chuẩn bị báo cáo.</div>
+    <section class="a11-sign-method" id="a11SignMethod" aria-labelledby="a11SignTitle">
+ <div class="a11-sign-eyebrow"><i class="bi bi-pen"></i> PHƯƠNG THỨC XÁC NHẬN</div>
+ <h3 id="a11SignTitle">Chọn hình thức ký báo cáo</h3>
+ <div class="a11-sign-options" role="radiogroup" aria-label="Hình thức ký báo cáo">
+   <label class="a11-sign-choice"><input type="radio" name="a11SigningMethod" value="ELECTRONIC">
+     <span class="a11-sign-icon"><i class="bi bi-shield-check"></i></span>
+     <span class="a11-sign-copy"><strong>Ký điện tử</strong><small>Xác thực CCCD, tải chữ ký và ký xác nhận</small></span>
+     <i class="bi bi-check-circle-fill a11-sign-check" aria-hidden="true"></i>
+   </label>
+   <label class="a11-sign-choice"><input type="radio" name="a11SigningMethod" value="PAPER" checked>
+     <span class="a11-sign-icon"><i class="bi bi-printer"></i></span>
+     <span class="a11-sign-copy"><strong>Ký tay</strong><small>Gửi hồ sơ, in báo cáo và nộp bản giấy đã ký</small></span>
+     <i class="bi bi-check-circle-fill a11-sign-check" aria-hidden="true"></i>
+   </label>
+ </div>
+ <p id="a11SignHint" class="muted">Ký tay: không cần xác thực CCCD hoặc tải chữ ký.</p>
+ <div class="a11-electronic-fields" id="a11ElectronicFields" hidden>
+  <div class="a11-electronic-grid">
+   <div><label for="a11Cccd">CCCD của người báo cáo</label><input id="a11Cccd" type="password" maxlength="12" inputmode="numeric" autocomplete="off" placeholder="12 chữ số CCCD"><button type="button" class="btn secondary" id="a11VerifyCccd"><i class="bi bi-shield-lock"></i> Xác thực CCCD</button></div>
+   <div><label for="a11SignatureFile">Hình ảnh chữ ký của người báo cáo</label><input id="a11SignatureFile" type="file" accept="image/png,image/jpeg,image/webp"><div id="a11SignaturePreview" class="a11-signature-preview">Chưa chọn ảnh chữ ký</div></div>
+  </div>
+  <p id="a11SignerStatus" class="muted" role="status">Chưa xác thực CCCD và chữ ký.</p>
+  <button type="button" id="a11ConfirmSign" class="btn secondary" disabled><i class="bi bi-pen"></i> Ký xác nhận</button>
+ </div>
+</section>
     <form id="reportForm" novalidate><fieldset id="formFields"><div id="fields" class="grid"></div>
       <div class="field full" style="margin-top:17px"><label for="driveLink">Liên kết tài liệu, minh chứng Google Drive (nếu có)</label><input type="url" id="driveLink" name="driveLink" placeholder="https://drive.google.com/..." autocomplete="off"><p class="muted">Gửi liên kết đến tài liệu Google Drive/Docs đã chia sẻ đúng quyền cho người tiếp nhận; hệ thống không tự kiểm tra quyền truy cập tệp.</p></div>
       <div class="actions"><button class="btn" type="submit" id="previewButton">Xem trước báo cáo</button><button class="btn secondary" type="button" id="clearButton">Làm mới</button> </div>
@@ -268,6 +319,55 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   };
   const A11_BACKEND_URL='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
   let a11Enabled=false,a11RequestId='',a11SubmittedId='';
+  // A1.1 – dùng chung hai hình thức ký như DTHT/Chủ nhiệm.
+  let a11SignMethod='PAPER',a11SignerVerified=false,a11SignatureData='',a11Signed=false;
+  let a11SigningSupported={paper:false,electronic:false};
+  const a11SignFingerprint=()=>[a11SignMethod,a11SignerVerified,a11Signed,!!a11SignatureData].join('|');
+  function a11SelectSign(mode){
+    a11SignMethod=mode==='ELECTRONIC'?'ELECTRONIC':'PAPER';
+    document.querySelector('input[name="a11SigningMethod"][value="'+a11SignMethod+'"]').checked=true;
+    $('a11ElectronicFields').hidden=a11SignMethod!=='ELECTRONIC';
+    $('a11SignHint').textContent=a11SignMethod==='PAPER'
+      ?'Gửi báo cáo qua EDOS, in báo cáo, ký trực tiếp và nộp bản giấy.'
+      :'Xác thực CCCD bằng máy chủ, tải ảnh chữ ký rồi ký xác nhận trước khi gửi.';
+    a11Signed=false;a11SignerVerified=false;a11RequestId='';a11SubmittedId='';
+    $('a11ConfirmSign').disabled=true;
+    $('a11SignerStatus').textContent='Chưa xác thực CCCD và chữ ký.';
+    if(!$('previewSection').hidden)renderPreview();
+    a11UpdateSend();
+  }
+  async function a11VerifySigner(){
+    const cccd=$('a11Cccd').value.replace(/\\D/g,'');
+    if(!/^\\d{12}$/.test(cccd)){announce('CCCD phải đủ 12 chữ số.',true);return;}
+    const btn=$('a11VerifyCccd');btn.disabled=true;
+    try{
+      const actor=account();
+      // Dùng tuyến đối chiếu CCCD nhân sự đang có trong V5; không xác thực tại trình duyệt.
+      const r=await a11API('verifyChuNhiemSigner',{username:actor.username,cccd});
+      if(r.ok!==true&&r.success!==true)throw Error(r.message||'Không xác thực được CCCD.');
+      a11SignerVerified=true;a11Signed=false;
+      $('a11SignerStatus').textContent='Đã xác thực CCCD. Chọn ảnh chữ ký và bấm Ký xác nhận.';
+      $('a11ConfirmSign').disabled=!a11SignatureData;
+      announce('Xác thực CCCD thành công.',false);
+    }catch(e){a11SignerVerified=false;a11Signed=false;announce('Xác thực không thành công: '+e.message,true)}
+    finally{btn.disabled=false;a11UpdateSend();}
+  }
+  function a11LoadSignature(file){
+    a11Signed=false;a11SignatureData='';$('a11ConfirmSign').disabled=true;
+    $('a11SignaturePreview').textContent='Chưa chọn ảnh chữ ký';
+    if(!file)return;
+    if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>1024*1024){
+      announce('Chỉ chấp nhận ảnh PNG/JPEG/WebP tối đa 1 MB.',true);$('a11SignatureFile').value='';return;
+    }
+    const reader=new FileReader();
+    reader.onload=()=>{
+      a11SignatureData=String(reader.result||'');
+      const img=document.createElement('img');img.alt='Chữ ký sẽ dùng cho báo cáo';
+      img.src=a11SignatureData;$('a11SignaturePreview').replaceChildren(img);
+      $('a11ConfirmSign').disabled=!a11SignerVerified;
+      a11UpdateSend();
+    };reader.readAsDataURL(file);
+  }
   function a11NewRequestId(){
     if(crypto&&crypto.randomUUID)return 'A11-'+crypto.randomUUID();
     const a=new Uint8Array(20);crypto.getRandomValues(a);return 'A11-'+Array.from(a,x=>x.toString(16).padStart(2,'0')).join('');
@@ -284,7 +384,13 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       account();
       const response=await a11API('nvsA22Capabilities');
       if(response.supported!==true||response.version!=='A22-1'||!response.bghCount||!response.ccCount)throw Error('Chưa xác định tuyến BGH/TTCM.');
-      a11Enabled=true;announce('Đã xác thực tuyến tiếp nhận hồ sơ Nhóm A. Có thể xem trước và nộp bản báo cáo.',false);
+      // Chỉ mở gửi theo từng kiểu ký khi Backend công khai năng lực tương ứng.
+      a11SigningSupported={
+        paper:response.paperSigning===true || response.signingMethods?.includes?.('PAPER')===true,
+        electronic:response.electronicSigning===true || response.signingMethods?.includes?.('ELECTRONIC')===true
+      };
+      a11Enabled=true;
+      announce('Đã kết nối tuyến Nhóm A. Kiểu ký chỉ được gửi khi Backend xác nhận hỗ trợ.',false);
     }catch(err){a11Enabled=false;announce('Chưa thể nộp hồ sơ A.1.1: '+err.message+' Có thể in bản nháp.',true);}
     a11UpdateSend();
   }
@@ -292,29 +398,45 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     const btn=$('a11Send');
     if(!btn)return;
     btn.hidden=!!(current&&defs[current]&&defs[current].draft);
-    btn.disabled=!(a11Enabled&&!a11SubmittedId&&!$('previewSection').hidden&&!btn.hidden);
-    btn.textContent=a11SubmittedId?'Đã tiếp nhận: '+a11SubmittedId:'Gửi báo cáo tới BGH / TTCM';
+    const ready=a11SignMethod==='PAPER'?a11SigningSupported.paper:(a11SigningSupported.electronic&&a11SignerVerified&&a11Signed&&!!a11SignatureData);
+    btn.disabled=!(a11Enabled&&ready&&!a11SubmittedId&&!$('previewSection').hidden&&!btn.hidden);
+    btn.textContent=a11SubmittedId?'Đã tiếp nhận: '+a11SubmittedId
+      :a11SignMethod==='PAPER'?'Gửi hồ sơ chờ bản ký tay':'Gửi báo cáo đã ký điện tử';
+    const hint=$('a11SignHint');
+    if(hint&&a11Enabled&&!a11SigningSupported[a11SignMethod==='PAPER'?'paper':'electronic'])
+      hint.textContent='Backend A1.1 chưa xác nhận hỗ trợ hình thức ký này; có thể xem trước và in, chưa thể nộp.';
+
   }
   async function a11Submit(){
     if(!a11Enabled||a11SubmittedId||$('previewSection').hidden||!current||defs[current].draft)return;
+    if(!a11SigningSupported[a11SignMethod==='PAPER'?'paper':'electronic']){announce('Backend chưa kích hoạt hình thức ký đã chọn.',true);return;}
+    if(a11SignMethod==='ELECTRONIC'&&!(a11SignerVerified&&a11Signed&&a11SignatureData)){announce('Chưa hoàn thành xác thực và ký điện tử.',true);return;}
     const actor=verifySession();if(!actor||!$('reportForm').reportValidity())return;
     const def=defs[current],data=Object.fromEntries(def.fields.map(([key])=>[key,$('field-'+key).value.trim()]));
     if(!validDrive($('driveLink').value.trim())){announce('Liên kết Drive không hợp lệ.',true);return;}
     const text=def.fields.map(([key,label])=>label+': '+data[key]).join('\n');
     if(text.length>7000){announce('Nội dung vượt giới hạn 7.000 ký tự. Hãy dùng liên kết Drive cho phụ lục.',true);return;}
     if(!a11RequestId)a11RequestId=a11NewRequestId();
-    if(!window.confirm('Xác nhận gửi '+def.name+' đến BGH/TTCM? Báo cáo được tiếp nhận, chưa ký số hoặc phê duyệt.'))return;
+    if(!window.confirm('Xác nhận gửi '+def.name+' đến BGH/TTCM theo hình thức '+(a11SignMethod==='PAPER'?'ký tay, chờ nộp bản giấy':'ký điện tử')+'?'))return;
     const btn=$('a11Send');btn.disabled=true;btn.textContent='Đang gửi...';
     try{
       const form={code:'A.1.1',title:def.name+(data.task?' – '+data.task:data.activity?' – '+data.activity:''),schoolYear:data.year.replace('–','-'),content:text,result:data.results||'',evidence:$('driveLink').value.trim()};
-      const extras={loaiBaoCao:def.name,noiDungChiTiet:text,tuNgay:data.from||'',denNgay:data.to||''};
+      const extras={loaiBaoCao:def.name,noiDungChiTiet:text,tuNgay:data.from||'',denNgay:data.to||'',
+        signingMethod:a11SignMethod,signerVerified:a11SignMethod==='ELECTRONIC'&&a11SignerVerified,
+        signed:a11SignMethod==='ELECTRONIC'&&a11Signed,
+        chuKyBase64:a11SignMethod==='ELECTRONIC'?a11SignatureData:''};
+      form.signingMethod=a11SignMethod;
+      form.signatureStatus=a11SignMethod==='PAPER'?'CHO_KY_TAY':'DA_KY_DIEN_TU';
       const res=await a11API('nvsA22Submit',{document:{clientRequestId:a11RequestId,form,extras}});
       if(!res.recordId||!res.bghCount||!res.ccCount)throw Error('Thiếu mã tiếp nhận hoặc nơi nhận.');
+      const expected=a11SignMethod==='PAPER'?'CHO_KY_TAY':'DA_KY_DIEN_TU';
+      const got=String(res.signatureStatus||res.data?.signatureStatus||'');
+      if(got!==expected)throw Error('Backend chưa xác nhận trạng thái ký '+expected+'. Mã tiếp nhận nếu có: '+res.recordId+'. KHÔNG gửi lại trước khi đối chiếu.');
       a11SubmittedId=res.recordId;
       dirty=false;
-      announce('ĐÃ TIẾP NHẬN hồ sơ '+res.recordId+' · Chờ BGH/TTCM xử lý. Chưa ký số, chưa phê duyệt.',false);
+      announce('ĐÃ TIẾP NHẬN hồ sơ '+res.recordId+' · '+(a11SignMethod==='PAPER'?'Chờ bản ký tay':'Đã ký điện tử')+' · Chờ BGH/TTCM xử lý.',false);
       const stamp=$('previewPaper').querySelector('.preview-stamp');
-      if(stamp)stamp.textContent='ĐÃ TIẾP NHẬN · '+res.recordId+' · CHỜ XỬ LÝ · CHƯA KÝ SỐ';
+      if(stamp)stamp.textContent='ĐÃ TIẾP NHẬN · '+res.recordId+' · '+(a11SignMethod==='PAPER'?'CHỜ BẢN KÝ TAY':'ĐÃ KÝ ĐIỆN TỬ')+' · CHỜ XỬ LÝ';
     }catch(e){announce('CHƯA XÁC NHẬN NỘP: '+e.message+'. Nếu gián đoạn mạng, thử lại mà không sửa nội dung.',true);}
     finally{a11UpdateSend();}
   }
@@ -380,12 +502,29 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     paper.append(el('p','Kính gửi: Ban Giám hiệu Trường THPT Hòa Vang'));
     appendLine(paper,'Người báo cáo',a.name);appendLine(paper,'Tổ / bộ phận',a.team);appendLine(paper,'Chức vụ',a.role);
     def.fields.forEach(([id,label])=>appendLine(paper,label,data[id]));appendLine(paper,'Tài liệu, minh chứng',drive,true);
-    const sign=el('div',undefined,'sign');sign.append(el('b','NGƯỜI BÁO CÁO'),el('p','(Chưa ký)'),el('strong',a.name));paper.append(sign);
+    const sign=el('div',undefined,'sign');
+    sign.append(el('b','NGƯỜI BÁO CÁO'));
+    if(a11SignMethod==='ELECTRONIC'&&a11Signed&&a11SignatureData){
+      const img=document.createElement('img');img.alt='Chữ ký người báo cáo';img.src=a11SignatureData;
+      img.style.cssText='display:block;max-height:75px;max-width:180px;object-fit:contain;margin:8px auto';
+      sign.append(img);
+    }else sign.append(el('p',a11SignMethod==='PAPER'?'(Ký, ghi rõ họ tên sau khi in)':'(Chưa ký điện tử)'));
+    sign.append(el('strong',a.name));paper.append(sign);
     paper.append(el('div',def.draft?'BẢN XEM TRƯỚC – MẪU CHƯA ĐƯỢC PHÊ DUYỆT – CHƯA LƯU, CHƯA GỬI':'BẢN XEM TRƯỚC – CHƯA LƯU, CHƯA KÝ, CHƯA GỬI','preview-stamp'));
     $('previewSection').hidden=false;a11UpdateSend();
     $('previewSection').scrollIntoView({block:'start',behavior:'smooth'});
     announce('Đã tạo bản xem trước. Có thể in hoặc gửi khi hệ thống xác nhận tuyến tiếp nhận.');
   }
+  document.querySelectorAll('input[name="a11SigningMethod"]').forEach(input=>
+    input.addEventListener('change',()=>a11SelectSign(input.value)));
+  $('a11VerifyCccd').addEventListener('click',a11VerifySigner);
+  $('a11SignatureFile').addEventListener('change',e=>a11LoadSignature(e.target.files?.[0]));
+  $('a11ConfirmSign').addEventListener('click',()=>{
+    if(!a11SignerVerified||!a11SignatureData)return;
+    a11Signed=true;$('a11SignerStatus').textContent='Đã xác thực CCCD và ký xác nhận bằng ảnh chữ ký.';
+    if(!$('previewSection').hidden)renderPreview();
+    a11UpdateSend();
+  });
   for(const btn of document.querySelectorAll('.choice'))btn.addEventListener('click',()=>setChoice(btn.dataset.id));
   $('reportForm').addEventListener('submit',renderPreview);
   $('reportForm').addEventListener('input',()=>{dirty=true;a11SubmittedId='';a11RequestId='';$('previewSection').hidden=true;a11UpdateSend();});
