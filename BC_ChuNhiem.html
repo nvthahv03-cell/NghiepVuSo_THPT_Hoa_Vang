@@ -466,6 +466,17 @@ textarea{height:auto;min-height:86px;padding:12px 14px 12px 18px!important;resiz
         <tbody id="cnHistoryRows"></tbody></table></div>
       <button type="button" class="btn secondary" id="cnHistoryReload" onclick="loadCnProfile(state.user?.tenDangNhap||state.user?.username||'')">Làm mới lịch sử</button>
     </section>
+    <section class="hva-cn-history" id="cnManagedSection" hidden aria-labelledby="cnManagedTitle">
+      <h3 id="cnManagedTitle"><i class="bi bi-people"></i> Tra cứu báo cáo theo quyền quản lý</h3>
+      <button type="button" class="btn secondary" onclick="hvaCNLoadManaged()">Tải báo cáo GVCN</button>
+      <p id="cnManagedStatus">Chỉ BGH và TTCM được truy cập dữ liệu theo phạm vi phân quyền.</p>
+      <div class="hva-cn-history-scroll">
+        <table id="cnManagedTable" hidden>
+          <thead><tr><th>Mã hồ sơ</th><th>Giáo viên</th><th>Tổ/Bộ phận</th><th>Lớp</th><th>Kỳ</th><th>Ngày giờ</th><th>Trạng thái</th></tr></thead>
+          <tbody id="cnManagedRows"></tbody>
+        </table>
+      </div>
+    </section>
   </section>
 
   <!-- BƯỚC 2: BẢN IN A4 CHUẨN NGHỊ ĐỊNH 30 NGUYÊN BẢN -->
@@ -657,6 +668,33 @@ function hvaCNRenderHistory(reports){
   }
   table.hidden=false;status.textContent='Có '+items.length+' hồ sơ gần nhất.';
 }
+async function hvaCNLoadManaged(){
+  const note=$('cnManagedStatus'),tb=$('cnManagedTable'),body=$('cnManagedRows');
+  if(!note||!tb||!body)return;
+  note.textContent='Đang tra cứu hồ sơ theo quyền…';
+  try{
+    const sessionToken=String(localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'').trim();
+    if(!sessionToken)throw Error('Phiên đăng nhập không hợp lệ.');
+    const url=new URL(DTHT_BACKEND_URL);
+    url.searchParams.set('action','getChuNhiemManaged');
+    url.searchParams.set('sessionToken',sessionToken);
+    const r=await fetch(url.toString(),{cache:'no-store'});
+    if(!r.ok)throw Error('Backend HTTP '+r.status);
+    const data=await r.json();
+    if(!data||data.ok!==true||data.success!==true)throw Error(data&&data.message||'Không có quyền tra cứu.');
+    body.replaceChildren();
+    const reports=Array.isArray(data.reports)?data.reports:[];
+    for(const item of reports.slice().reverse()){
+      const tr=document.createElement('tr');
+      for(const value of [item.maHoSo,item.nguoiNop,item.toBoPhan,item.lopChuNhiem,item.kyBaoCao,item.ngayGui,item.trangThaiTiepNhan||item.trangThai]){
+        const td=document.createElement('td');td.textContent=String(value||'—');tr.appendChild(td);
+      }
+      body.appendChild(tr);
+    }
+    tb.hidden=!reports.length;
+    note.textContent='Phạm vi '+String(data.scope||'')+' · '+reports.length+' hồ sơ.';
+  }catch(err){tb.hidden=true;body.replaceChildren();note.textContent='Không tải được danh sách: '+err.message;}
+}
 function initApp(){
   const me = dthtCurrentUser();
   const username = me.tenDangNhap || me.username || '';
@@ -666,6 +704,9 @@ function initApp(){
     return;
   }
   state.user = me;
+  const role=String(me.chucVu||me.vaiTro||me.role||'');
+  const manager=/(hiệu trưởng|hiệu phó|phó hiệu trưởng|ban giám hiệu|tổ trưởng|ttcm)/i.test(role);
+  if($('cnManagedSection'))$('cnManagedSection').hidden=!manager;
   $('identityName').textContent = me.hoTen || me.fullName || username;
   $('identityTeam').textContent = me.toBoPhan || me.tenTo || 'Hòa Vang';
 
