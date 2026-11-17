@@ -202,6 +202,9 @@ function setCode(code,keepTitle=false){
  document.body.classList.toggle('hva-a1-mode',a1);
  for(const id of ['a22A1Top','a22UserBar'])if(by(id))by(id).hidden=!a1;
  a1BaseDate(a1);
+ if(by('a22CodeCell'))by('a22CodeCell').hidden=a1;
+ if(by('owner'))by('owner').required=!a1;
+ if(by('team'))by('team').required=!a1;
  if(by('a22OwnerCell'))by('a22OwnerCell').hidden=a1;
  if(by('a22TeamCell'))by('a22TeamCell').hidden=a1;
  if(by('a22HeaderTitle'))by('a22HeaderTitle').textContent=a1?def.title:'Biểu mẫu nghiệp vụ số';
@@ -211,6 +214,8 @@ function setCode(code,keepTitle=false){
  if(by('a22PreviewTitle'))by('a22PreviewTitle').textContent=a1?'Bản xem trước – '+def.title:'Bản xem trước hồ sơ';
  if(a1){
   const user=currentUser();
+  if(by('owner'))by('owner').value=clean(user.hoTen||user.fullName||user.name);
+  if(by('team'))by('team').value=clean(user.toBoPhan||user.tenTo||user.to);
   if(by('a22UserName'))by('a22UserName').textContent=clean(user.hoTen||user.fullName||user.name)||'Chưa xác định';
   if(by('a22UserTeam'))by('a22UserTeam').textContent=clean(user.toBoPhan||user.tenTo||user.to)||'Chưa xác định';
   if(by('a22UserRole'))by('a22UserRole').textContent=clean(user.chucVu||user.viTriViecLam||user.role)||'Chưa xác định';
