@@ -475,7 +475,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 .pcdk-auth-box button{background:#086dba;color:#fff;border:0;border-radius:10px;padding:13px;font-weight:800}.pcdk-auth-box button:disabled{opacity:.6}
 .pcdk-auth-box a{font-size:13px;text-align:center;color:#0864a7;font-weight:700}
 #pcdkAuthError{color:#b4233a;font-weight:650}
-</style><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="./HVA_Personnel.js"></script></head><body><header class="hva-pro-header">
+.pcdk-kt01-source{border:1px solid #8dd4bb;border-left:4px solid #078d66;border-radius:11px;padding:12px 14px;margin:10px 0;background:#effcf6;color:#125f4c;font-size:13px;font-weight:700;line-height:1.55}</style><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="./HVA_Personnel.js"></script></head><body><header class="hva-pro-header">
   <div class="hva-pro-header-inner">
 
     <button type="button"
@@ -526,7 +526,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 <div class="grid" style="display:none"><label>Giáo viên đăng nhập<input id="user" readonly></label><label>Tổ chuyên môn<input id="team" readonly></label><label>Số nhân sự tổ<input id="count" readonly></label></div>
 
 <div class="pcdk-team-picker"><label for="pcdkTeamSelect">Tổ chuyên môn phụ trách (TTCM chỉ xem tổ của mình)</label><select id="pcdkTeamSelect" disabled><option value="">Đang tải tổ chuyên môn...</option></select><div class="pcdk-member-head"><b>Danh sách nhân sự tổ</b><span id="pcdkRosterCount">Chưa tải</span></div><div id="pcdkTeamMembers" class="pcdk-members" aria-live="polite">Đang xác thực dữ liệu nhân sự tổ...</div></div><div class="actions"><button id="reload" class="outline">Tải lại nhân sự tổ</button><button class="pcdk-login" id="pcdkRelogin" type="button" hidden>Đăng nhập lại NVS</button></div></section>
-<section class="panel"><h2>2. Thông tin đợt kiểm tra</h2><div class="grid"><label class="field">Môn kiểm tra <span style="color:#c22">*</span><select id="subject"><option value="">Chọn môn theo tổ chuyên môn</option></select></label><label class="field">Khối<select id="grade"><option value="">Chọn khối</option><option>10</option><option>11</option><option>12</option></select></label><label class="field">Kỳ kiểm tra<select id="exam"><option>Cuối kỳ I</option><option>Giữa kỳ I</option><option>Giữa kỳ II</option><option>Cuối kỳ II</option></select></label><label class="field">Năm học<input value="2026–2027" readonly></label></div><div class="plan-ref" id="planRef">Căn cứ dự thảo Kế hoạch tổ chức kiểm tra cuối kì I năm học 2026–2027 (dự kiến ban hành 18/11/2026). Chưa đồng bộ dữ liệu KT01; đây là dự thảo phân công để TTCM tham mưu.</div><div class="pcdk-exam-policy" role="note">Cuối kì I: bốn môn Ngữ văn, Tiếng Anh, Toán, Lịch sử kiểm tra tập trung; các môn còn lại kiểm tra tại lớp hoặc đánh giá phù hợp. Đối chiếu lịch theo từng khối.</div><label class="field" style="margin-top:12px;max-width:600px">Hình thức đánh giá<select id="pcdkAssessmentType"><option value="WRITTEN">Đề kiểm tra viết</option><option value="OTHER">Thực hành / dự án / sản phẩm học tập</option></select></label></section>
+<section class="panel"><h2>2. Thông tin đợt kiểm tra</h2><div class="grid"><label class="field">Môn kiểm tra <span style="color:#c22">*</span><select id="subject"><option value="">Chọn môn theo tổ chuyên môn</option></select></label><label class="field">Khối<select id="grade"><option value="">Chọn khối</option><option>10</option><option>11</option><option>12</option></select></label><label class="field">Kỳ kiểm tra<select id="exam"><option>Cuối kỳ I</option><option>Giữa kỳ I</option><option>Giữa kỳ II</option><option>Cuối kỳ II</option></select></label><label class="field">Năm học<input value="2026–2027" readonly></label></div><div class="pcdk-kt01-source" id="pcdkKT01Source" hidden role="status"></div><div class="plan-ref" id="planRef">Căn cứ dự thảo Kế hoạch tổ chức kiểm tra cuối kì I năm học 2026–2027 (dự kiến ban hành 18/11/2026). Chưa đồng bộ dữ liệu KT01; đây là dự thảo phân công để TTCM tham mưu.</div><div class="pcdk-exam-policy" role="note">Cuối kì I: bốn môn Ngữ văn, Tiếng Anh, Toán, Lịch sử kiểm tra tập trung; các môn còn lại kiểm tra tại lớp hoặc đánh giá phù hợp. Đối chiếu lịch theo từng khối.</div><label class="field" style="margin-top:12px;max-width:600px">Hình thức đánh giá<select id="pcdkAssessmentType"><option value="WRITTEN">Đề kiểm tra viết</option><option value="OTHER">Thực hành / dự án / sản phẩm học tập</option></select></label></section>
 <section class="panel" id="reviewSection" hidden><h2>3. Phân công bộ tài liệu hướng dẫn ôn tập</h2><label class="review-choice"><input type="checkbox" id="reviewEnabled" checked> Áp dụng bộ tài liệu hướng dẫn ôn tập (04 loại) cho môn kiểm tra này</label><div id="reviewRows"></div><p class="note">Bộ tài liệu gồm ma trận, bản đặc tả, đề tham khảo và đề cương ôn tập. Bốn môn kiểm tra tập trung phải hoàn thành trước 16h00 ngày 27/11/2026; TTCM kiểm tra, xác nhận trước khi trình PHT chuyên môn.</p></section>
 <section class="panel"><h2>4. Phân công và thời hạn từng công đoạn</h2><p class="note">Theo kế hoạch cuối kì I, mỗi môn/khối dùng đề viết cần ít nhất 02 bộ đề tương đương: chính thức và dự phòng, có đáp án/hướng dẫn chấm. Đánh giá bằng sản phẩm/thực hành cần nhiệm vụ và tiêu chí tương đương. Ngày tháng hiển thị dd/MM/yyyy.</p><div class="pcdk-exam-policy" role="note">Ra đề, phản biện, nghiệm thu: <b>trước 16h00 ngày 09/12/2026</b>. Bàn giao đề tập trung bằng <b>hồ sơ giấy niêm phong trước 11h00 ngày 11/12/2026</b>. Đề chính thức, dự phòng và đáp án được đóng gói riêng. <b>Không nộp, chuyển đề mật qua Drive/EDOS trước khi hết yêu cầu bảo mật.</b></div><label class="pcdk-conflict"><input type="checkbox" id="pcdkConflictReview"> Đã rà soát nguy cơ xung đột lợi ích (có con, em ruột dự kiểm tra ở khối được phân công hoặc tình huống ảnh hưởng tính khách quan); báo cáo người có thẩm quyền khi có phát sinh.</label><div id="assignments"></div><div class="actions" style="margin-top:10px"><button id="add" class="outline">＋ Thêm đề</button><button id="remove" class="outline" hidden>− Bỏ đề cuối</button><button id="check" class="outline">Kiểm tra</button><button id="preview" class="outline">Xem trước</button><button id="assign">Ký xác nhận → TT Phát hành</button></div><div id="result" class="banner" aria-live="polite">Kiểm tra dữ liệu trước khi xem trước. Xác thực chữ ký và chuyển phát hành chỉ hoạt động khi Backend hỗ trợ đúng nghiệp vụ.</div></section>
 <section class="panel preview-panel" id="previewPanel" hidden>
@@ -623,6 +623,44 @@ function pcdkMember(m){return {username:String(m.username||m.tenDangNhap||'').tr
  hoTen:String(m.hoTen||m.fullName||m.name||'').trim(),
  monDay:String(m.monDay||m.mon||m.raw?.monDay||'').trim(),
  chucVu:String(m.viTriViecLam||m.chucVu||m.vaiTro||'').trim()};}
+
+const pcdkHandoffKey='HVA_KT01_TO_KT02_V1';
+let pcdkPendingHandoff=null;
+function pcdkConsumeHandoff(){
+ if(new URLSearchParams(location.search).get('from')!=='KT01')return;
+ try{
+  const raw=sessionStorage.getItem(pcdkHandoffKey);
+  if(!raw)return;
+  const data=JSON.parse(raw);
+  if(data?.schema!=='KT01_TO_KT02_V1'||!['TRUONG','TO'].includes(data.source))return;
+  if(!['10','11','12'].includes(data.grade)||!['Kiểm tra giữa kỳ','Kiểm tra cuối kỳ'].includes(data.type))return;
+  pcdkPendingHandoff=data;
+  // Chỉ một lần chuyển; không lưu tên đợt vào URL và không dùng dữ liệu này để cấp quyền.
+  sessionStorage.removeItem(pcdkHandoffKey);
+  const cycle=data.type==='Kiểm tra giữa kỳ'?'Giữa kỳ':'Cuối kỳ';
+  const term=data.semester==='Học kỳ II'?'II':'I';
+  const exam=cycle+' '+term;
+  if([...$('exam').options].some(o=>o.value===exam))$('exam').value=exam;
+  if([...$('grade').options].some(o=>o.value===data.grade))$('grade').value=data.grade;
+  $('pcdkKT01Source').hidden=false;
+  $('pcdkKT01Source').textContent='Đang tham chiếu bản nháp KT01: '+data.name+' · '+data.planNumber+'. Môn '+data.subject+' · Khối '+data.grade+' · '+exam+'. Đây là dữ liệu chuyển tiếp, chưa phải kế hoạch được Backend phê duyệt.';
+  // Kế hoạch CKI 2026–2027 tại trang này là nhắc việc; không tự ghi đè số/ngày ban hành.
+  renderReview();
+ }catch(e){$('pcdkKT01Source').hidden=false;$('pcdkKT01Source').textContent='Không đọc được bản chuyển tiếp KT01: '+e.message}
+}
+function pcdkApplyHandoffSubject(){
+ const data=pcdkPendingHandoff;if(!data||!team)return;
+ const choice=[...$('subject').options].find(o=>norm(o.value)===norm(data.subject));
+ if(choice){
+  $('subject').value=choice.value;
+  pcdkPendingHandoff=null;
+  renderReview();render();
+  $('result').textContent='Đã nhận thông tin KT01 để lập phân công. Kiểm tra giáo viên, thời hạn và các bộ đề trước khi chuyển TT Phát hành.';
+ }else{
+  $('result').textContent='KT01 yêu cầu môn '+data.subject+' nhưng tổ '+team+' không quản lý môn đó. Vui lòng chuyển đúng tổ chuyên môn; không tự đổi môn phân công.';
+ }
+}
+
 function pcdkSetTeam(key){
  const group=personnelGroups.find(g=>String(g.groupKey||g.tenTo)===String(key));
  if(!group)return;
@@ -637,7 +675,7 @@ function pcdkSetTeam(key){
  $('identityRole').textContent=actorIsBGH?'Ban Giám hiệu':actorIsTTCM?'Tổ trưởng chuyên môn':(myself?.chucVu||'Chức danh chưa được xác thực');
  $('team').value=team;$('count').value=members.length+' người';
  $('identityTeam').textContent=team;$('identityCount').textContent=members.length+' người';
- refreshSubjects();render();renderReview();
+ refreshSubjects();render();renderReview();pcdkApplyHandoffSubject();
  $('msg').textContent='Đã tải '+members.length+' nhân sự thuộc '+team+'. '+(personnelTrusted?'Đã xác thực danh sách từ tuyến phân công.':'Danh sách tham khảo; tuyến phân công chưa xác thực, không thể phát hành.');
 }
 function pcdkLoadTeamSelect(groups,preferred){
