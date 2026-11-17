@@ -1,0 +1,74 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>A1.2 – Kê khai tiết dạy hòa nhập | HVA–EDOS</title>
+<style>
+:root{font-family:"Segoe UI",Arial,sans-serif;color:#173e60;background:#f1f7fc}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.52;cursor:not-allowed}
+header{background:linear-gradient(115deg,#073d80,#087fc3 70%,#0bbbd3);padding:20px max(15px,calc((100vw - 1080px)/2)) 36px;color:white}
+a{color:#086cb1}header a{color:white;text-decoration:none;border:1px solid #ffffff70;padding:9px 13px;border-radius:10px;display:inline-block}
+header h1{font-size:clamp(20px,3vw,28px);margin:15px 0 6px}header p{font-size:13px;color:#e1f3ff}
+main{max-width:1080px;margin:-20px auto 30px;padding:0 14px;position:relative}.panel{background:white;border:1px solid #c8deed;border-radius:15px;padding:20px;margin-bottom:15px;box-shadow:0 7px 18px #12497613}
+h2{font-size:17px;color:#09548a;margin:3px 0 13px}.hint{font-size:12px;line-height:1.6;color:#55758b}.ident{display:grid;grid-template-columns:1.4fr 1fr 1fr;background:linear-gradient(115deg,#0957a0,#0786bb);color:#fff;border-radius:10px;margin:10px 0;overflow:hidden}.ident>div{padding:12px 14px;min-width:0}.ident>div+div{border-left:1px solid #ffffff40}.ident small{display:block;font-size:10px;color:#e4f5ff}.ident strong{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}label{display:block;color:#1c5179;font-size:12px;font-weight:800;margin-bottom:5px}input,select,textarea{width:100%;min-width:0;border:1px solid #b6d2e5;padding:10px;border-radius:9px;min-height:42px;background:#fff;color:#183f62}input:focus,select:focus,textarea:focus{outline:2px solid #42a3d5}
+.rowform{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;align-items:end}.f3{grid-column:span 3}.f2{grid-column:span 2}.f4{grid-column:span 4}.f6{grid-column:span 6}.f12{grid-column:1/-1}
+.buttons{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.btn{background:#0a65ac;color:#fff;border:1px solid #0a65ac;padding:11px 15px;border-radius:10px;min-height:43px;font-weight:750}.btn.sub{background:#eef8ff;color:#075a93;border-color:#a7d2ea}
+.tablewrap{overflow-x:auto;border:1px solid #d0e2ef;border-radius:10px}table{border-collapse:collapse;width:100%;min-width:900px;font-size:12px}td,th{padding:10px;border-bottom:1px solid #e1eaf2;text-align:left;vertical-align:top}th{background:#eaf5fc;color:#124c77}td.num{text-align:right;font-variant-numeric:tabular-nums}tfoot td{font-weight:850;background:#f1f8fc}.warning{border:1px solid #efd398;border-radius:10px;background:#fff9e9;color:#7b5820;padding:12px;font-size:12px;line-height:1.7}.ok{color:#137349}
+#paper{font:15px/1.75 "Times New Roman",serif;white-space:pre-wrap;border:1px solid #c9deef;padding:30px;color:#111}
+@media(max-width:650px){.panel{padding:14px}.filters{grid-template-columns:1fr 1fr}.rowform{grid-template-columns:1fr 1fr}.rowform>div{grid-column:span 1!important}.rowform .f12{grid-column:1/-1!important}.ident{grid-template-columns:1.2fr 1fr 1fr}.ident>div{padding:10px 5px}.ident strong{font-size:11px}.ident small{font-size:9px}.buttons .btn{flex:1}}
+@media print{header,.controls,.buttons,#state,footer{display:none!important}body{background:#fff}main{margin:0;padding:0}.panel{border:0;box-shadow:none;padding:0}.tablewrap{overflow:visible}table{min-width:0;font-size:10px}#paper{border:0}}
+</style></head><body>
+<header><a href="./NghiepVu.html">← Nghiệp vụ số</a><h1>A1.2 · Kê khai tiết dạy giáo dục hòa nhập</h1><p>Trường THPT Hòa Vang · Kê khai thực dạy để chuyên môn đối chiếu và xác nhận</p></header>
+<main><section class="panel"><h2>Thông tin người kê khai</h2><div class="ident"><div><small>Giáo viên</small><strong id="name">Chưa xác định</strong></div><div><small>Tổ / bộ phận</small><strong id="team">—</strong></div><div><small>Chức vụ</small><strong id="role">—</strong></div></div><div class="filters controls"><div><label for="year">Năm học</label><input id="year" value="2026–2027" maxlength="15"></div><div><label for="month">Tháng kê khai</label><input id="month" type="month" value="2026-11"></div><div><label for="subject">Môn dạy</label><input id="subject" placeholder="Ví dụ: Toán" maxlength="80"></div></div><p class="hint">Giáo viên kê khai từng buổi/tiết thực dạy, kể cả dạy bù, dạy thay và các trường hợp nghỉ để đối chiếu. Tiết nghỉ không tự tính vào số tiết đủ điều kiện.</p></section>
+<section class="panel controls"><h2>Thêm dòng kê khai</h2><form id="addForm"><div class="rowform">
+<div class="f3"><label for="date">Ngày dạy (dd/mm/yyyy)</label><input id="date" placeholder="dd/mm/yyyy" inputmode="numeric" maxlength="10" required></div>
+<div class="f2"><label for="className">Lớp</label><input id="className" placeholder="10/2" maxlength="15" required></div>
+<div class="f2"><label for="session">Buổi</label><select id="session"><option>Sáng</option><option>Chiều</option></select></div>
+<div class="f2"><label for="period">Tiết theo buổi</label><input id="period" placeholder="1–2" maxlength="20" required></div>
+<div class="f3"><label for="count">Số tiết thực dạy</label><input id="count" type="number" min="0" max="15" step="1" value="1" required></div>
+<div class="f4"><label for="type">Loại hoạt động</label><select id="type"><option value="REGULAR">Dạy theo TKB</option><option value="MAKEUP">Dạy bù</option><option value="SUBSTITUTE">Dạy thay</option><option value="SWAP">Đổi tiết / hoán đổi</option><option value="ABSENT">Nghỉ / không dạy</option></select></div>
+<div class="f4"><label for="ref">Tham chiếu sổ đầu bài (nếu có)</label><input id="ref" maxlength="120" placeholder="Ngày / trang / mã bản ghi…"></div>
+<div class="f4"><label for="note">Ghi chú</label><input id="note" maxlength="350" placeholder="Lý do nghỉ, dạy bù, dạy thay…"></div>
+</div><div class="buttons"><button class="btn" type="submit">+ Thêm dòng kê khai</button><button class="btn sub" type="button" id="clear">Xóa tất cả dòng</button></div></form></section>
+<section class="panel"><h2>Bảng kê chi tiết theo từng tiết / buổi</h2><div class="tablewrap"><table><thead><tr><th>STT</th><th>Ngày</th><th>Lớp</th><th>Buổi</th><th>Tiết</th><th>Số tiết</th><th>Hình thức</th><th>Tham chiếu</th><th>Ghi chú</th><th class="controls">Thao tác</th></tr></thead><tbody id="rows"><tr><td colspan="10">Chưa có dữ liệu kê khai.</td></tr></tbody><tfoot><tr><td colspan="5">Tổng số tiết thực dạy đã kê khai (chưa đối chiếu)</td><td class="num" id="total">0</td><td colspan="4">Chưa xác nhận đủ điều kiện hưởng phụ cấp</td></tr></tfoot></table></div><div class="buttons controls"><button class="btn sub" id="save" type="button">Lưu nháp trên thiết bị</button><button class="btn sub" id="export" type="button">Xuất CSV bản kê khai</button><button class="btn sub" id="preview" type="button">Xem trước / in</button><button class="btn" id="submit" type="button" disabled>Gửi kê khai · Chờ kết nối Backend</button></div><p class="warning" id="state">Bản kê khai này chỉ lưu trên trình duyệt hoặc tải tệp CSV. Chưa có tuyến Backend xác thực cho nghiệp vụ tiết dạy hòa nhập, nên chưa thể gửi và chưa được xem là hồ sơ chính thức.</p></section>
+<section class="panel" id="printSection" hidden><h2>Xem trước bản kê khai</h2><div id="paper"></div><div class="buttons controls"><button class="btn sub" type="button" id="doPrint">In / lưu PDF</button></div></section>
+<footer class="hint">Dữ liệu chi tiết chỉ dùng để đối chiếu. Hồ sơ học sinh và giấy xác nhận khuyết tật không được đưa vào bảng kê tiết dạy.</footer></main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),key='HVA_A12_TIET_DU_THAO_V1';
+const read=k=>{for(const t of ['sessionStorage','localStorage'])try{const v=window[t].getItem(k);if(v)return v}catch(e){}return ''};
+let u={};try{u=JSON.parse(read('user')||'{}')||{}}catch(e){}
+const usr=String(u.username||u.tenDangNhap||'').trim();
+$('name').textContent=u.hoTen||u.fullName||u.name||'Chưa đăng nhập';$('team').textContent=u.toBoPhan||u.tenTo||u.to||'—';$('role').textContent=u.chucVu||u.viTriViecLam||'—';
+let rows=[],saveKey=()=>key+'_'+usr.replace(/[^a-z0-9_.-]/gi,'').slice(0,60);
+const forms={REGULAR:'Dạy theo TKB',MAKEUP:'Dạy bù',SUBSTITUTE:'Dạy thay',SWAP:'Đổi tiết',ABSENT:'Nghỉ / không dạy'};
+const validDate=d=>{const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(d);if(!m)return false;const y=+m[3],mo=+m[2],da=+m[1],x=new Date(Date.UTC(y,mo-1,da));return y>=2000&&y<=2100&&x.getUTCFullYear()===y&&x.getUTCMonth()===mo-1&&x.getUTCDate()===da};
+const esc=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+function render(){
+ const tbody=$('rows');tbody.replaceChildren();
+ if(!rows.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=10;td.textContent='Chưa có dữ liệu kê khai.';tr.append(td);tbody.append(tr)}
+ rows.forEach((r,i)=>{
+  const tr=document.createElement('tr'),data=[i+1,r.date,r.className,r.session,r.period,r.count,forms[r.type],r.ref,r.note];
+  data.forEach((val,j)=>{const td=document.createElement('td');td.textContent=val;if(j===5)td.className='num';tr.append(td)});
+  const td=document.createElement('td'),btn=document.createElement('button');btn.className='btn sub controls';btn.type='button';btn.textContent='Sửa / Xóa';btn.addEventListener('click',()=>{if(!confirm('Xóa dòng này để kê khai lại?'))return;rows.splice(i,1);render()});td.append(btn);tr.append(td);tbody.append(tr)
+ });
+ $('total').textContent=rows.reduce((n,r)=>n+(r.type==='ABSENT'?0:r.count),0);
+}
+$('addForm').addEventListener('submit',e=>{
+ e.preventDefault();const date=$('date').value.trim(),period=$('period').value.trim(),count=Number($('count').value),type=$('type').value,className=$('className').value.trim();
+ if(!validDate(date)){alert('Nhập ngày hợp lệ theo dd/mm/yyyy.');$('date').focus();return}
+ const m=$('month').value;if(m&&date.slice(-4)+'-'+date.slice(3,5)!==m){alert('Ngày kê khai không thuộc tháng đang chọn.');return}
+ if(!/^[1-5](\s*[-–,]\s*[1-5])*$/.test(period)){alert('Ghi tiết theo buổi, ví dụ 1 hoặc 1–2.');return}
+ const nums=period.split(/[–,-]/).map(x=>Number(x.trim()));const expected=nums.length===2&&period.includes('–')?Math.abs(nums[1]-nums[0])+1:nums.length;
+ if(type==='ABSENT'&&count!==0){alert('Tiết nghỉ phải khai 0 tiết thực dạy.');return}
+ if(type!=='ABSENT'&&(!Number.isInteger(count)||count<1||count>5)){alert('Số tiết thực dạy trong buổi phải từ 1 đến 5.');return}
+ if(type!=='ABSENT'&&expected!==count){alert('Số tiết không khớp ô Tiết. Hãy ghi đúng số tiết thực dạy.');return}
+ rows.push({date,className,session:$('session').value,period,count,type,ref:$('ref').value.trim(),note:$('note').value.trim()});
+ $('period').value='';$('count').value=1;$('ref').value='';$('note').value='';render()
+});
+$('type').addEventListener('change',()=>{if($('type').value==='ABSENT')$('count').value='0'});
+$('clear').addEventListener('click',()=>{if(rows.length&&confirm('Xóa toàn bộ dòng kê khai trên màn hình?')){rows=[];render()}});
+$('save').addEventListener('click',()=>{if(!usr){alert('Chỉ lưu nháp theo tài khoản đã đăng nhập EDOS.');return}sessionStorage.setItem(saveKey(),JSON.stringify({year:$('year').value,month:$('month').value,subject:$('subject').value,rows}));alert('Đã lưu nháp trong phiên trình duyệt; chưa gửi máy chủ.')});
+try{if(usr){const old=JSON.parse(sessionStorage.getItem(saveKey())||'null');if(old&&Array.isArray(old.rows)){rows=old.rows;$('year').value=old.year||'2026–2027';$('month').value=old.month||'2026-11';$('subject').value=old.subject||''}}}catch(e){}render();
+function csv(cells){return cells.map(x=>'"'+String(x??'').replaceAll('"','""')+'"').join(',')}
+$('export').addEventListener('click',()=>{if(!rows.length){alert('Chưa có dòng kê khai.');return}const header=['STT','Tài khoản GV','Họ tên GV','Tổ','Môn','Năm học','Tháng','Lớp','Ngày dạy','Buổi','Tiết','Số tiết thực dạy','Loại hoạt động','Tham chiếu sổ đầu bài','Ghi chú','Trạng thái đối chiếu'];const data=rows.map((r,i)=>[i+1,usr,u.hoTen||u.fullName||u.name||'',u.toBoPhan||u.tenTo||u.to||'',$('subject').value,$('year').value,$('month').value,r.className,r.date,r.session,r.period,r.count,forms[r.type],r.ref,r.note,'CHƯA ĐỐI CHIẾU']);const content='\uFEFF'+[header,...data].map(csv).join('\r\n');const blob=new Blob([content],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='A12_KE_KHAI_TIET_'+$('month').value+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+$('preview').addEventListener('click',()=>{const lines=['TRƯỜNG THPT HÒA VANG','BẢN KÊ KHAI TIẾT DẠY GIÁO DỤC HÒA NHẬP – DỰ THẢO, CHƯA XÁC NHẬN','', 'Giáo viên: '+$('name').textContent,'Tổ: '+$('team').textContent,'Môn: '+$('subject').value,'Năm học: '+$('year').value,'Tháng: '+$('month').value,''];rows.forEach((r,i)=>lines.push((i+1)+'. '+r.date+' | '+r.className+' | '+r.session+', tiết '+r.period+' | '+r.count+' tiết | '+forms[r.type]+' | '+r.note));lines.push('','Tổng số tiết thực dạy đã kê khai: '+$('total').textContent,'Chưa đối chiếu sổ ghi đầu bài / chưa xác định đủ điều kiện thanh toán','','NGƯỜI KÊ KHAI','(Ký, ghi rõ họ tên)');$('paper').textContent=lines.join('\n');$('printSection').hidden=false;$('printSection').scrollIntoView({block:'start'})});
+$('doPrint').addEventListener('click',()=>window.print());
+})();
+</script></body></html>
