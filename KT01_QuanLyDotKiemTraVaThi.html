@@ -69,6 +69,14 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 .kt01-subject-confirm{grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px solid #bfdcf1;border-radius:12px;padding:12px;background:#f4faff}
 .kt01-confirm-note{font-size:12px;font-weight:700;color:#35688d}
 .kt01-subject-confirm button[hidden]{display:none!important}
+
+.kt01-subject-options[hidden],.kt01-confirmed-list[hidden]{display:none!important}
+.kt01-confirmed-list{margin-top:10px}
+.kt01-confirmed-subjects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none;counter-reset:kt01mon}
+.kt01-confirmed-subjects li{counter-increment:kt01mon;display:flex;align-items:center;gap:9px;padding:10px 12px;min-width:0;border:1px solid #b8def2;border-radius:10px;background:#e9f7ff;color:#07528a;font-size:12px;font-weight:800}
+.kt01-confirmed-subjects li::before{content:counter(kt01mon);display:grid;place-items:center;flex:0 0 23px;width:23px;height:23px;border-radius:7px;background:#0b76bb;color:#fff;font-size:11px}
+.kt01-list-empty{padding:10px 12px;color:#697f91;font-size:12px}
+@media(max-width:480px){.kt01-confirmed-subjects{grid-template-columns:1fr}}
 </style><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><style>
 /* KT01: header exact CuocHop appearance, self-contained, independent of external CSS */
 .hva-edos-standard-head{position:relative!important;z-index:40!important;display:block!important;margin:5px 6px 0!important;padding:0!important;min-height:94px!important;overflow:hidden!important;border-radius:10px!important;isolation:isolate!important;color:#f8fdff!important;background:radial-gradient(circle at 86% 22%,rgba(8,221,228,.34),transparent 26%),linear-gradient(105deg,#064482 0%,#0757a8 45%,#058bbd 75%,#06bccc 100%)!important;box-shadow:0 10px 28px rgba(3,43,84,.18)!important}
@@ -144,8 +152,8 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 <label>Đơn vị/bộ phận phụ trách *<input id="unit" required maxlength="150" placeholder="BGH / Hội đồng kiểm tra / Tổ chuyên môn..."></label>
 <label>Tài liệu/lịch kèm theo (nếu có)<input id="scheduleUrl" type="url" maxlength="1500" placeholder="Liên kết lịch kiểm tra đã ban hành"></label>
 <div class="span2 kt01-subject-layout">
-<div class="kt01-subject-panel"><div class="kt01-subject-head"><strong>1. Môn kiểm tra tập trung</strong><small>Được chọn nhiều môn</small></div><div class="kt01-subject-options" role="group" aria-label="Môn kiểm tra tập trung"><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Toán"><span>Toán</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Ngữ văn"><span>Ngữ văn</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Tiếng Anh"><span>Tiếng Anh</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Vật lí"><span>Vật lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Hóa học"><span>Hóa học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Sinh học"><span>Sinh học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Lịch sử"><span>Lịch sử</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Địa lí"><span>Địa lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục kinh tế và pháp luật"><span>Giáo dục kinh tế và pháp luật</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Tin học"><span>Tin học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Công nghệ"><span>Công nghệ</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục thể chất"><span>Giáo dục thể chất</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục quốc phòng và an ninh"><span>Giáo dục quốc phòng và an ninh</span></label></div><div class="kt01-subject-count" id="centralCount">Chưa chọn môn</div></div>
-<div class="kt01-subject-panel"><div class="kt01-subject-head"><strong>2. Môn kiểm tra tại lớp</strong><small>Tự động chọn các môn còn lại; môn tập trung sẽ ẩn khỏi danh sách</small></div><div class="kt01-subject-options" role="group" aria-label="Môn kiểm tra tại lớp"><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Toán"><span>Toán</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Ngữ văn"><span>Ngữ văn</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tiếng Anh"><span>Tiếng Anh</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Vật lí"><span>Vật lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Hóa học"><span>Hóa học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Sinh học"><span>Sinh học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Lịch sử"><span>Lịch sử</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Địa lí"><span>Địa lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục kinh tế và pháp luật"><span>Giáo dục kinh tế và pháp luật</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tin học"><span>Tin học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Công nghệ"><span>Công nghệ</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục thể chất"><span>Giáo dục thể chất</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục quốc phòng và an ninh"><span>Giáo dục quốc phòng và an ninh</span></label></div><div class="kt01-subject-count" id="classCount">Chưa chọn môn</div></div>
+<div class="kt01-subject-panel"><div class="kt01-subject-head"><strong>1. Môn kiểm tra tập trung</strong><small>Được chọn nhiều môn</small></div><div class="kt01-subject-options" role="group" aria-label="Môn kiểm tra tập trung"><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Toán"><span>Toán</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Ngữ văn"><span>Ngữ văn</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Tiếng Anh"><span>Tiếng Anh</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Vật lí"><span>Vật lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Hóa học"><span>Hóa học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Sinh học"><span>Sinh học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Lịch sử"><span>Lịch sử</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Địa lí"><span>Địa lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục kinh tế và pháp luật"><span>Giáo dục kinh tế và pháp luật</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Tin học"><span>Tin học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Công nghệ"><span>Công nghệ</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục thể chất"><span>Giáo dục thể chất</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục quốc phòng và an ninh"><span>Giáo dục quốc phòng và an ninh</span></label></div><div class="kt01-subject-count" id="centralCount">Chưa chọn môn</div><div id="centralConfirmedList" class="kt01-confirmed-list" hidden></div></div>
+<div class="kt01-subject-panel"><div class="kt01-subject-head"><strong>2. Môn kiểm tra tại lớp</strong><small>Tự động chọn các môn còn lại; môn tập trung sẽ ẩn khỏi danh sách</small></div><div class="kt01-subject-options" role="group" aria-label="Môn kiểm tra tại lớp"><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Toán"><span>Toán</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Ngữ văn"><span>Ngữ văn</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tiếng Anh"><span>Tiếng Anh</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Vật lí"><span>Vật lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Hóa học"><span>Hóa học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Sinh học"><span>Sinh học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Lịch sử"><span>Lịch sử</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Địa lí"><span>Địa lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục kinh tế và pháp luật"><span>Giáo dục kinh tế và pháp luật</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tin học"><span>Tin học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Công nghệ"><span>Công nghệ</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục thể chất"><span>Giáo dục thể chất</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục quốc phòng và an ninh"><span>Giáo dục quốc phòng và an ninh</span></label></div><div class="kt01-subject-count" id="classCount">Chưa chọn môn</div><div id="classConfirmedList" class="kt01-confirmed-list" hidden></div></div>
 <div class="kt01-subject-confirm">
 <button type="button" id="confirmSubjects" class="btn">✓ Xác nhận phân loại môn</button>
 <button type="button" id="editSubjects" class="btn light" hidden>Chỉnh sửa phân loại</button>
@@ -202,6 +210,13 @@ function refreshSubjectCount(){
  el('centralCount').textContent=n1?n1+' môn đã chọn':'Chưa chọn môn';
  el('classCount').textContent=n2?n2+' môn đã chọn':'Chưa chọn môn';
 }
+function fillConfirmedList(id,names){
+ const box=el(id);box.replaceChildren();
+ if(!names.length){const empty=document.createElement('p');empty.className='kt01-list-empty';empty.textContent='Không có môn thuộc hình thức này.';box.append(empty);return;}
+ const ul=document.createElement('ol');ul.className='kt01-confirmed-subjects';
+ names.forEach(name=>{const li=document.createElement('li');li.textContent=name;ul.append(li)});
+ box.append(ul);
+}
 function renderSubjectClassification(autofill){
  const central=new Set(selectedSubjects('subjectsCentral'));
  for(const box of classBoxes){
@@ -209,10 +224,16 @@ function renderSubjectClassification(autofill){
   box.closest('.kt01-subject-choice').hidden=isCentral;
   if(autofill)box.checked=!isCentral;
   else if(isCentral)box.checked=false;
-  // Kiểm tra tại lớp là phần bù của môn tập trung, không chỉnh riêng từng ô.
   box.disabled=true;
  }
  for(const box of centralBoxes)box.disabled=subjectConfirmed;
+ document.querySelectorAll('.kt01-subject-options').forEach(x=>x.hidden=subjectConfirmed);
+ el('centralConfirmedList').hidden=!subjectConfirmed;
+ el('classConfirmedList').hidden=!subjectConfirmed;
+ if(subjectConfirmed){
+  fillConfirmedList('centralConfirmedList',selectedSubjects('subjectsCentral'));
+  fillConfirmedList('classConfirmedList',selectedSubjects('subjectsClass'));
+ }
  el('confirmSubjects').hidden=subjectConfirmed;
  el('editSubjects').hidden=!subjectConfirmed;
  el('subjectConfirmation').textContent=subjectConfirmed
@@ -220,32 +241,23 @@ function renderSubjectClassification(autofill){
   :'Chưa xác nhận phân loại môn.';
  refreshSubjectCount();
 }
-centralBoxes.forEach(box=>box.addEventListener('change',()=>{
- subjectConfirmed=false;
- renderSubjectClassification(true);
-}));
+centralBoxes.forEach(box=>box.addEventListener('change',()=>{subjectConfirmed=false;renderSubjectClassification(true)}));
 el('confirmSubjects').addEventListener('click',()=>{
- // Nếu không chọn môn tập trung, toàn bộ môn còn lại được xem là kiểm tra tại lớp.
  renderSubjectClassification(true);
- if(!subjectConfirmed){el('feedback').textContent='Cần bấm Xác nhận phân loại môn trước khi xem trước bản nháp.';el('confirmSubjects').focus();return false}
  if(!selectedSubjects('subjectsCentral').length&&!selectedSubjects('subjectsClass').length){
   el('subjectConfirmation').textContent='Không có môn nào để xác nhận.';return;
  }
  subjectConfirmed=true;
  renderSubjectClassification(false);
 });
-el('editSubjects').addEventListener('click',()=>{
- subjectConfirmed=false;
- renderSubjectClassification(true);
-});
+el('editSubjects').addEventListener('click',()=>{subjectConfirmed=false;renderSubjectClassification(true)});
 function setSubjectSelections(d){
  const central=Array.isArray(d.subjectsCentral)?d.subjectsCentral:[];
  centralBoxes.forEach(x=>x.checked=central.includes(x.value));
  subjectConfirmed=false;
  renderSubjectClassification(true);
- // Bản nháp cũ được mở để chỉnh sửa, cần xác nhận lại trước khi xem trước.
 }
-renderSubjectClassification(false);
+renderSubjectClassification(true);
 
 function htmlSafeUrl(value){if(!value)return true;try{let u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!!u.hostname}catch(_){return false}}
 function refreshSource(){
@@ -267,6 +279,7 @@ function validate(){
  for(const input of required){if(!input.value.trim()){input.reportValidity();input.focus();return false}}
  if(!el('schoolYear').checkValidity()){el('schoolYear').reportValidity();return false}
  if(!document.querySelector('input[name="grade"]:checked')){el('feedback').textContent='Cần chọn ít nhất một khối hoặc đối tượng.';return false}
+ if(!subjectConfirmed){el('feedback').textContent='Cần xác nhận phân loại môn trước khi xem trước.';el('confirmSubjects').focus();return false}
  if(!selectedSubjects('subjectsCentral').length&&!selectedSubjects('subjectsClass').length){el('feedback').textContent='Chọn ít nhất một môn kiểm tra tập trung hoặc tại lớp.';document.querySelector('.kt01-subject-layout').scrollIntoView({block:'center'});return false}
  if(el('end').value<el('start').value){el('end').setCustomValidity('Ngày kết thúc không được trước ngày bắt đầu.');el('end').reportValidity();return false}
  el('end').setCustomValidity('');
