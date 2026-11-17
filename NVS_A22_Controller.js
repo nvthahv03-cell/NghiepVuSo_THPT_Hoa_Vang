@@ -38,37 +38,30 @@ function a22RefreshPresentation(){
  const code=by('code').value,plan=code==='A.1.3-KH',a1=/^A[.]1[.](?:3|4)(?:-|$)/.test(code),def=D[code];
  const official=a22OfficialTemplateUrl(code),templateButton=by('a22TemplateDownload');
  if(templateButton){
-  templateButton.title=official?'Mở mẫu chính thức trên Google Drive':'Chưa có mẫu Drive được phê duyệt';
-  templateButton.disabled=!official;
-  templateButton.dataset.templateStatus=official?'ready':'pending';
- }
- const landing=by('a22LandingTitle');
- if(landing&&def)landing.textContent=code+' · '+def.title;
- const intro=document.querySelector('.hva-a-landing-intro');
- if(intro&&a1)intro.textContent='Chọn “Kê khai trực tiếp” để lập hồ sơ, điền các trường bắt buộc, xem trước và gửi khi hệ thống xác nhận tuyến nhận. Liên kết minh chứng Drive là tùy chọn.';
- const note=document.querySelector('.hva-a-landing-note');
- if(note&&a1)note.textContent='Các nghiệp vụ này đang hoàn thiện kết nối. Mẫu Drive chỉ mở khi trường cung cấp liên kết chính thức; chức năng gửi chỉ kích hoạt sau khi Backend xác nhận.';
-
- const quick=by('a22QuickTools');
- // Các nút tải và nộp đã nằm ở màn hình chọn. Không lặp lại trong form.
- if(quick)quick.hidden=true;
- const evidence=by('evidence'),evidenceLabel=document.querySelector('label[for="evidence"]');
- if(evidenceLabel)evidenceLabel.textContent=a1?'Tài liệu, minh chứng Google Drive / Docs (nếu có)':plan?'Liên kết kế hoạch bồi dưỡng HSG trên Google Drive / Docs *':'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *';
- if(evidence){evidence.required=!a1;evidence.placeholder=a1?'Dán liên kết minh chứng nếu có…':'https://drive.google.com/...';}
- const openLabel=by('a22OpenSubmission');if(openLabel&&a1){
-  const strong=openLabel.querySelector('strong'),small=openLabel.querySelector('small');
-  if(strong)strong.textContent='Kê khai trực tiếp';if(small)small.textContent='Nhập nội dung · Xem trước · Gửi khi kết nối';
- }
- if(templateButton&&a1){
+  const downloadable=plan||!!official;
+  templateButton.disabled=!downloadable;
+  templateButton.dataset.templateStatus=downloadable?'ready':'pending';
+  templateButton.title=plan?'Tải mẫu kế hoạch Word – dự thảo chờ duyệt':official?'Mở mẫu trên Google Drive':'Chưa có mẫu được xác nhận';
   const strong=templateButton.querySelector('strong'),small=templateButton.querySelector('small');
-  if(strong)strong.textContent=official?'Mở mẫu chính thức':'Chưa có mẫu Drive';
-  if(small)small.textContent=official?'Mở tài liệu do trường cung cấp':'Có thể kê khai trực tiếp tại EDOS';
+  if(strong)strong.textContent='Tải mẫu';
+  if(small)small.textContent=plan?'Mẫu Word chỉnh sửa được · Dự thảo':official?'Mở mẫu do nhà trường cung cấp':'Đang cập nhật mẫu';
+ }
+ const landing=by('a22LandingTitle');if(landing&&def)landing.textContent=code+' · '+def.title;
+ const intro=document.querySelector('.hva-a-landing-intro');
+ if(intro&&a1)intro.textContent='Tải mẫu, hoàn thiện hồ sơ và lưu trên Google Drive. Sau đó chọn “Nộp hồ sơ”, dán liên kết và gửi đến BGH/TTCM.';
+ const note=document.querySelector('.hva-a-landing-note');
+ if(note&&a1)note.textContent=plan?'Mẫu Word hiện là bản dự thảo để nhà trường duyệt. Hồ sơ chỉ được ghi nhận khi Backend cấp mã tiếp nhận.':'Nộp liên kết tài liệu đã hoàn thiện và chia sẻ đúng quyền. Hệ thống chỉ xác nhận nộp khi Backend trả mã hồ sơ.';
+ const quick=by('a22QuickTools');if(quick)quick.hidden=true;
+ const evidence=by('evidence'),evidenceLabel=document.querySelector('label[for="evidence"]');
+ if(evidenceLabel)evidenceLabel.textContent=a1?'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *':'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *';
+ if(evidence){evidence.required=true;evidence.placeholder='https://drive.google.com/...';}
+ const openLabel=by('a22OpenSubmission');
+ if(openLabel){const strong=openLabel.querySelector('strong'),small=openLabel.querySelector('small');
+  if(strong)strong.textContent='Nộp hồ sơ';
+  if(small)small.textContent='Dán liên kết · Xem trước · Gửi';
  }
  const btn=by('send'),planBtn=by('a22PlanSend');
- if(btn){
-  btn.classList.remove('hidden');
-  if(!btn.disabled)btn.textContent='Xác nhận nộp liên kết hồ sơ';
- }
+ if(btn){btn.classList.remove('hidden');if(!btn.disabled)btn.textContent='Xác nhận nộp liên kết hồ sơ';}
  if(planBtn)planBtn.disabled=true;
 }
 function a22OpenSubmission(){
@@ -103,16 +96,37 @@ function a22OfficialTemplateUrl(code){
   return u.href;
  }catch(_){return ''}
 }
+function a22DownloadHSGPlanDraft(){
+ const word='<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:"Times New Roman";font-size:13pt;line-height:1.4;margin:2cm}h1{text-align:center;font-size:16pt}h2{font-size:13pt;margin-top:18pt}p{margin:6pt 0}table{border-collapse:collapse;width:100%}th,td{border:1px solid #333;padding:7px;text-align:left}th{font-weight:bold;background:#eee}.center{text-align:center}</style></head><body>'+
+ '<p class="center"><b>SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</b><br><b>TRƯỜNG THPT HÒA VANG</b></p>'+
+ '<p class="center"><b>MẪU DỰ THẢO – CHỜ NHÀ TRƯỜNG PHÊ DUYỆT</b></p>'+
+ '<h1>KẾ HOẠCH BỒI DƯỠNG HỌC SINH GIỎI</h1>'+
+ '<p class="center">Năm học: .................</p>'+
+ '<p><b>Môn:</b> .................... &nbsp; <b>Đội tuyển:</b> .................... &nbsp; <b>Giáo viên phụ trách:</b> ....................</p>'+
+ '<h2>I. CĂN CỨ XÂY DỰNG KẾ HOẠCH</h2><p>Văn bản chỉ đạo, kế hoạch giáo dục nhà trường, phân công chuyên môn, kết quả khảo sát năng lực học sinh…</p>'+
+ '<h2>II. ĐẶC ĐIỂM TÌNH HÌNH</h2><p>Số lượng học sinh, năng lực đầu vào, thuận lợi, khó khăn và điều kiện tổ chức.</p>'+
+ '<h2>III. MỤC TIÊU VÀ YÊU CẦU</h2><p>Mục tiêu kiến thức, năng lực, phẩm chất; mục tiêu và chỉ tiêu dự kiến theo kế hoạch nhà trường.</p>'+
+ '<h2>IV. NỘI DUNG, TIẾN ĐỘ VÀ TỔ CHỨC BỒI DƯỠNG</h2>'+
+ '<table><tr><th>STT</th><th>Chủ đề/chuyên đề</th><th>Yêu cầu cần đạt</th><th>Số tiết</th><th>Thời gian</th><th>Giáo viên</th><th>Minh chứng/đánh giá</th></tr>'+
+ '<tr><td>1</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>'+
+ '<tr><td>2</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr></table>'+
+ '<h2>V. PHƯƠNG PHÁP VÀ KIỂM TRA, ĐÁNH GIÁ</h2><p>Tổ chức chuyên đề; bài tập luyện tập; kiểm tra định kỳ; điều chỉnh kế hoạch theo tiến độ và năng lực học sinh.</p>'+
+ '<h2>VI. PHÂN CÔNG VÀ TỔ CHỨC THỰC HIỆN</h2><p>Trách nhiệm giáo viên, tổ chuyên môn, phối hợp với nhà trường và học sinh.</p>'+
+ '<h2>VII. KIẾN NGHỊ, ĐỀ XUẤT</h2><p>.....................................................................................</p>'+
+ '<table style="margin-top:25px;border:0"><tr><td style="border:0;text-align:center;width:50%"><b>TỔ TRƯỞNG CHUYÊN MÔN</b><br>(Ký, ghi rõ họ tên)</td><td style="border:0;text-align:center"><b>NGƯỜI LẬP KẾ HOẠCH</b><br>(Ký, ghi rõ họ tên)</td></tr></table>'+
+ '</body></html>';
+ const blob=new Blob(['\\uFEFF'+word],{type:'application/msword;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='A1_3_KH_Boi_duong_HSG_MAU_DU_THAO.doc';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+ notice('Đã tải mẫu kế hoạch Word (dự thảo). Sau khi hoàn thiện, lưu lên Drive và chọn “Nộp hồ sơ” để gửi liên kết.',true);
+}
 function a22OpenOfficialTemplate(){
- const code=by('code').value,url=a22OfficialTemplateUrl(code);
- if(!url){
-  notice('Chưa cập nhật mẫu chính thức cho '+code+'. Nhà trường sẽ bổ sung liên kết Google Drive sau khi phê duyệt. Không sử dụng mẫu tự tạo.',false);
-  return;
- }
- const link=document.createElement('a');
- link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';
+ const code=by('code').value;
+ if(code==='A.1.3-KH'){a22DownloadHSGPlanDraft();return;}
+ const url=a22OfficialTemplateUrl(code);
+ if(!url){notice('Chưa có mẫu được nhà trường xác nhận cho '+code+'.',false);return;}
+ const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';
  document.body.append(link);link.click();link.remove();
- notice('Đang mở mẫu chính thức trên Google Drive. Sau khi hoàn thiện, lưu vào Drive của thầy/cô và chọn Nộp hồ sơ để gửi liên kết.',true);
+ notice('Đã mở mẫu. Sau khi hoàn thiện, lưu vào Drive và chọn Nộp hồ sơ.',true);
 }
 function safeUrl(value){if(!value)return true;try{const u=new URL(value);return u.protocol==='https:'&&!!u.hostname&&!u.username&&!u.password}catch(_){return false}}
 function validDrive(value){if(!value)return true;try{const u=new URL(value);return safeUrl(value)&&['drive.google.com','docs.google.com'].includes(u.hostname)}catch(_){return false}}
@@ -226,8 +240,8 @@ function setCode(code,keepTitle=false){
  const holder=by('specialFields');holder.replaceChildren(...def.fields.map(makeField));
  if(!keepTitle||!by('title').value.trim())by('title').value=def.title;
  by('previewPanel').classList.add('hidden');
- const more=by('a22MoreFields');if(more)more.open=a1;
- for(const spec of def.fields){const field=by('a22_'+spec.key);if(field)field.required=!!spec.required&&a1;}
+ const more=by('a22MoreFields');if(more)more.open=false;
+ for(const spec of def.fields){const field=by('a22_'+spec.key);if(field)field.required=false;}
  a22RefreshPresentation();
  const url=new URL(location.href);url.searchParams.set('code',code);history.replaceState(null,'',url.pathname+url.search+url.hash);
  return true;
@@ -249,13 +263,13 @@ function validate(){
  const more=by('a22MoreFields');
  for(const spec of D[by('code').value].fields){
   const field=by('a22_'+spec.key);
-  if(field)field.required=!!spec.required&&(document.body.classList.contains('hva-a1-mode')||!!more?.open);
+  if(field)field.required=!!spec.required&&!!more?.open;
  }
  if(!a1ValidateDates())return false;
  if(!by('form').reportValidity())return false;
  const {base,extras}=collect();
  if(!validDrive(base.evidence)){notice('Minh chứng chung chỉ nhận liên kết Google Drive/Docs HTTPS.');by('evidence').focus();return false}
- if(!base.evidence&&!document.body.classList.contains('hva-a1-mode')){notice('Vui lòng dán đường liên kết hồ sơ đã hoàn thiện trên Google Drive trước khi gửi.');by('evidence').focus();return false}
+ if(!base.evidence){notice('Vui lòng dán đường liên kết hồ sơ đã hoàn thiện trên Google Drive trước khi gửi.');by('evidence').focus();return false}
  for(const spec of D[base.code].fields){
    const v=extras[spec.key],input=by('a22_'+spec.key);
    if(spec.type==='url'&&v&&!safeUrl(v)){notice('Liên kết '+spec.label+' phải dùng HTTPS và có tên miền hợp lệ.');input.focus();return false}
@@ -391,7 +405,7 @@ async function probeBackend(){
 }
 by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('previewPanel').classList.add('hidden');by('send').disabled=!canSubmit;a22RefreshPresentation();});
 by('a22MoreFields')?.addEventListener('toggle',()=>{
- const more=by('a22MoreFields');for(const spec of D[by('code').value].fields){const el=by('a22_'+spec.key);if(el)el.required=!!spec.required&&(document.body.classList.contains('hva-a1-mode')||more.open);}
+ const more=by('a22MoreFields');for(const spec of D[by('code').value].fields){const el=by('a22_'+spec.key);if(el)el.required=!!spec.required&&more.open;}
 });
 select.addEventListener('change',()=>{clientRequestId=null;submittedId='';by('send').disabled=!canSubmit;a22RefreshPresentation();});
 by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
