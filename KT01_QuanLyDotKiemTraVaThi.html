@@ -476,6 +476,10 @@ el('confirmKT02Handoff').addEventListener('click',()=>{
  if(!allSubjects.includes(subject)||!(d.grades||[]).includes(grade)){kt01HandoffStatus('Môn hoặc khối không thuộc bản nháp KT01.');return}
  const handoff={schema:'KT01_TO_KT02_V1',name:d.name,schoolYear:d.schoolYear,semester:d.semester,type:d.type,grade,subject,examMode:(d.subjectsCentral||[]).includes(subject)?'CENTRAL':'CLASSROOM',source:d.source,planNumber:d.planNumber,planName:d.planName};
  try{
+  // Giữ trọn bản nháp trong danh sách KT01 để quay lại mở, không làm mất các môn/khối còn lại.
+  const drafts=loadDrafts().filter(x=>x.draftId!==d.draftId);
+  drafts.unshift(d);
+  sessionStorage.setItem(draftStorageKey,JSON.stringify(drafts.slice(0,30)));
   sessionStorage.setItem('HVA_KT01_HANDOFF_CONTEXT_V1',JSON.stringify({schema:'HVA_KT01_HANDOFF_CONTEXT_V1',draft:d,selected:{subject,grade},createdAt:new Date().toISOString()}));
   sessionStorage.setItem('HVA_KT01_TO_KT02_V1',JSON.stringify(handoff));
   location.assign('./PhanCong_DeKiemTra.html?from=KT01');
