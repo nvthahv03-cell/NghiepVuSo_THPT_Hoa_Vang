@@ -149,9 +149,9 @@ const rows=[
     ]
   ],
   [
-    "A.2.2",
-    "Nộp ma trận, bản đặc tả và đề kiểm tra",
-    "Chỉ tiếp nhận hồ sơ kiểm tra, đánh giá chính khóa theo kế hoạch giáo dục: ma trận, bản đặc tả, đề, đáp án/hướng dẫn chấm; dùng liên kết phân quyền.",
+    "A.2.1",
+    "Nộp hồ sơ đợt kiểm tra",
+    "Nộp liên kết bộ hồ sơ kiểm tra theo phân công. Phân biệt đề do trường/tổ xây dựng với đề do Sở GD&ĐT cung cấp; không yêu cầu giáo viên nộp lại đề của Sở.",
     [
       [
         "dotKiemTra",
@@ -177,62 +177,54 @@ const rows=[
         ]
       ],
       [
-        "hinhThuc",
-        "Hình thức đề",
+        "nguonDe",
+        "Nguồn đề",
         "select",
         1,
         [
-          "Trắc nghiệm",
-          "Tự luận",
-          "Kết hợp"
+          "Nhà trường",
+          "Tổ/nhóm chuyên môn",
+          "Sở GD&ĐT",
+          "Đơn vị khác theo kế hoạch"
         ]
       ],
       [
-        "maTranUrl",
-        "Liên kết ma trận",
-        "url",
-        1
+        "loaiHoSo",
+        "Thành phần hồ sơ nộp",
+        "select",
+        1,
+        [
+          "Ma trận – đặc tả – đề – đáp án/hướng dẫn chấm",
+          "Hướng dẫn và tiêu chí đánh giá",
+          "Hồ sơ khác theo nhiệm vụ"
+        ]
       ],
       [
-        "dacTaUrl",
-        "Liên kết bản đặc tả",
-        "url",
-        1
-      ],
-      [
-        "deKiemTraUrl",
-        "Liên kết đề kiểm tra",
-        "url",
-        1
-      ],
-      [
-        "dapAnUrl",
-        "Liên kết đáp án / hướng dẫn chấm",
-        "url",
-        1
+        "ghiChuBaoMat",
+        "Ghi chú phân quyền, bàn giao (nếu có)",
+        "textarea",
+        0
       ]
     ]
   ],
   [
-    "A.2.3",
-    "Nộp đề kiểm tra bổ sung, đề kiểm tra lại",
-    "Chỉ tiếp nhận hồ sơ kiểm tra bổ sung, kiểm tra lại thuộc kiểm tra, đánh giá chính khóa; nêu lý do, đối tượng và đủ tài liệu chuyên môn.",
+    "A.2.2",
+    "Nộp hồ sơ kiểm tra bù, kiểm tra lại",
+    "Nộp liên kết đề và tài liệu kèm theo theo phân công; gắn với đợt kiểm tra gốc, phân biệt kiểm tra, đánh giá bù và kiểm tra, đánh giá lại.",
     [
       [
-        "lyDoToChuc",
-        "Lý do kiểm tra",
+        "loaiKiemTra",
+        "Loại kiểm tra",
         "select",
         1,
         [
-          "Kiểm tra bổ sung",
-          "Kiểm tra lại",
-          "Học sinh vắng có lý do",
-          "Khác"
+          "Kiểm tra, đánh giá bù",
+          "Kiểm tra, đánh giá lại"
         ]
       ],
       [
         "dotKiemTra",
-        "Đợt kiểm tra liên quan",
+        "Đợt kiểm tra gốc / kỳ đánh giá liên quan",
         "text",
         1
       ],
@@ -254,66 +246,121 @@ const rows=[
         ]
       ],
       [
-        "deKiemTraUrl",
-        "Liên kết đề",
-        "url",
-        1
-      ],
-      [
-        "dapAnUrl",
-        "Liên kết đáp án / hướng dẫn chấm",
-        "url",
-        1
-      ],
-      [
-        "maTranUrl",
-        "Liên kết ma trận / đặc tả",
-        "url",
+        "ngayDuKien",
+        "Ngày tổ chức dự kiến",
+        "date",
         0
       ],
       [
-        "ngayDeXuat",
-        "Ngày dự kiến",
-        "date",
+        "ghiChu",
+        "Nội dung, đối tượng và tài liệu kèm theo",
+        "textarea",
+        0
+      ]
+    ]
+  ],
+  [
+    "A.2.3",
+    "Báo cáo chung về kiểm tra, đánh giá",
+    "Báo cáo về đánh giá thường xuyên hoặc định kỳ: học sinh vắng, tình huống phát sinh, khó khăn và đề nghị xử lý. Không bắt buộc báo cáo sau mỗi lần đánh giá thường xuyên.",
+    [
+      [
+        "phamVi",
+        "Phạm vi đánh giá",
+        "select",
+        1,
+        [
+          "Đánh giá thường xuyên",
+          "Đánh giá định kỳ",
+          "Cả hai hình thức"
+        ]
+      ],
+      [
+        "dotKiemTra",
+        "Kỳ/đợt kiểm tra hoặc học kỳ",
+        "text",
+        1
+      ],
+      [
+        "monLop",
+        "Môn, lớp hoặc khối liên quan",
+        "text",
+        1
+      ],
+      [
+        "loaiBaoCao",
+        "Nội dung báo cáo",
+        "select",
+        1,
+        [
+          "Tình hình thực hiện đánh giá",
+          "Học sinh vắng/chưa tham gia",
+          "Tình huống bất thường",
+          "Đề nghị kiểm tra, đánh giá bù",
+          "Khó khăn/kiến nghị khác"
+        ]
+      ],
+      [
+        "thongTin",
+        "Nội dung, số liệu liên quan",
+        "textarea",
+        1
+      ],
+      [
+        "kienNghi",
+        "Đề nghị xử lý (nếu có)",
+        "textarea",
         0
       ]
     ]
   ],
   [
     "A.2.4",
-    "Báo cáo, đề nghị về kiểm tra, đánh giá",
-    "Báo cáo vụ việc, kết quả và kiến nghị thuộc kiểm tra, đánh giá chính khóa. Không nhận báo cáo bồi dưỡng, ôn thi, phụ đạo (A.1).",
+    "Báo cáo kết quả và xử lý sau kiểm tra",
+    "Báo cáo hoàn thành chấm, nhập điểm, đối soát, sai sót và xử lý sau kiểm tra khi được phân công; tránh nhập lại dữ liệu đã có trên hệ thống điểm.",
     [
       [
-        "loaiBaoCao",
-        "Loại nội dung",
-        "select",
-        1,
-        [
-          "Báo cáo kết quả",
-          "Đề nghị điều chỉnh",
-          "Báo cáo bất thường",
-          "Kiến nghị",
-          "Khác"
-        ]
-      ],
-      [
         "dotKiemTra",
-        "Đợt kiểm tra / kỳ đánh giá",
+        "Đợt kiểm tra hoặc kỳ đánh giá",
         "text",
         1
       ],
       [
-        "noiDungVuViec",
-        "Nội dung và số liệu liên quan",
+        "monLop",
+        "Môn, lớp hoặc khối liên quan",
+        "text",
+        1
+      ],
+      [
+        "trangThai",
+        "Nội dung báo cáo",
+        "select",
+        1,
+        [
+          "Hoàn thành chấm bài",
+          "Hoàn thành nhập điểm",
+          "Đối soát, điều chỉnh sai sót",
+          "Báo cáo phân tích chất lượng",
+          "Kiến nghị xử lý sau kiểm tra"
+        ]
+      ],
+      [
+        "soBai",
+        "Số bài đã chấm (nếu có)",
+        "number",
+        0
+      ],
+      [
+        "noiDung",
+        "Kết quả, số liệu hoặc sai lệch cần xử lý",
         "textarea",
         1
       ],
       [
-        "phuongAnXuLy",
-        "Đề xuất giải pháp / hướng xử lý",
+        "deXuat",
+        "Giải pháp, kiến nghị",
         "textarea",
-        1
+        0
       ]
     ]
   ],
