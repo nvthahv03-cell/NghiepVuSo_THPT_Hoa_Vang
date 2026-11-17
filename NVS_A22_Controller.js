@@ -4,6 +4,7 @@ const D=window.HVA_A22_DEFS||{};
 const names=Object.keys(D);
 const ids=['code','schoolYear','owner','team','date','subject','title','content','result','evidence'];
 const by=id=>document.getElementById(id);
+let canSubmit=false,clientRequestId=null,submittedId="";
 if(!names.length||!by('form')||!by('specialFields')){console.error('Thiếu cấu hình biểu mẫu A22');return;}
 const storeRead=key=>{for(const kind of ['localStorage','sessionStorage'])try{const v=window[kind].getItem(key);if(v)return v;}catch(_){}return ''};
 const sessionExpiryValid=raw=>{
@@ -377,7 +378,7 @@ select.addEventListener('change',()=>{setCode(select.value);notice('Đã chuyể
 by('send').disabled=true;
 /* Tuyến tiếp nhận dùng chung chỉ mở khi Backend đã triển khai action A22 và trả chứng nhận hỗ trợ. */
 const A22_BACKEND_URL='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
-let canSubmit=false,clientRequestId=null,submittedId="";
+
 const token=()=>{
  for(const kind of ['localStorage','sessionStorage'])try{
   const st=window[kind],t=st.getItem('hvaSessionToken');
