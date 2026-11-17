@@ -35,10 +35,11 @@ function a22SetConnection(status,message){
  box.dataset.status=status;label.textContent=message;
 }
 function a22RefreshPresentation(){
- const code=by('code').value,plan=code==='A.1.3-KH',def=D[code];
+ const code=by('code').value,plan=code==='A.1.3-KH',a1=/^A[.]1[.](?:3|4)(?:-|$)/.test(code),def=D[code];
  const official=a22OfficialTemplateUrl(code),templateButton=by('a22TemplateDownload');
  if(templateButton){
-  templateButton.title=official?'Mở mẫu chính thức trên Google Drive':'Nhà trường chưa cập nhật mẫu chính thức';
+  templateButton.title=official?'Mở mẫu chính thức trên Google Drive':'Chưa có mẫu Drive được phê duyệt';
+  templateButton.disabled=!official;
   templateButton.dataset.templateStatus=official?'ready':'pending';
  }
  const landing=by('a22LandingTitle');
@@ -47,8 +48,17 @@ function a22RefreshPresentation(){
  // Các nút tải và nộp đã nằm ở màn hình chọn. Không lặp lại trong form.
  if(quick)quick.hidden=true;
  const evidence=by('evidence'),evidenceLabel=document.querySelector('label[for="evidence"]');
- if(evidenceLabel)evidenceLabel.textContent=plan?'Liên kết kế hoạch bồi dưỡng HSG trên Google Drive / Docs *':'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *';
- if(evidence){evidence.required=true;evidence.placeholder='https://drive.google.com/...';}
+ if(evidenceLabel)evidenceLabel.textContent=a1?'Tài liệu, minh chứng Google Drive / Docs (nếu có)':plan?'Liên kết kế hoạch bồi dưỡng HSG trên Google Drive / Docs *':'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *';
+ if(evidence){evidence.required=!a1;evidence.placeholder=a1?'Dán liên kết minh chứng nếu có…':'https://drive.google.com/...';}
+ const openLabel=by('a22OpenSubmission');if(openLabel&&a1){
+  const strong=openLabel.querySelector('strong'),small=openLabel.querySelector('small');
+  if(strong)strong.textContent='Kê khai trực tiếp';if(small)small.textContent='Nhập nội dung · Xem trước · Gửi khi kết nối';
+ }
+ if(templateButton&&a1){
+  const strong=templateButton.querySelector('strong'),small=templateButton.querySelector('small');
+  if(strong)strong.textContent=official?'Mở mẫu chính thức':'Chưa có mẫu Drive';
+  if(small)small.textContent=official?'Mở tài liệu do trường cung cấp':'Có thể kê khai trực tiếp tại EDOS';
+ }
  const btn=by('send'),planBtn=by('a22PlanSend');
  if(btn){
   btn.classList.remove('hidden');
@@ -62,9 +72,12 @@ function a22OpenSubmission(){
  const evidence=by('evidence');
  // Đặt ô liên kết lên đầu thông tin chung, không bắt GV tìm trong biểu mẫu dài.
  const grid=evidence?.closest('.cols'),wrap=evidence?.closest('.hva-a-link-field');
- if(grid&&wrap&&grid.firstElementChild!==wrap)grid.prepend(wrap);
+ if(grid&&wrap){
+  if(document.body.classList.contains('hva-a1-mode'))grid.append(wrap);
+  else if(grid.firstElementChild!==wrap)grid.prepend(wrap);
+ }
  editor.scrollIntoView({behavior:'smooth',block:'start'});
- if(evidence)window.setTimeout(()=>evidence.focus({preventScroll:true}),250);
+ if(evidence&&!document.body.classList.contains('hva-a1-mode'))window.setTimeout(()=>evidence.focus({preventScroll:true}),250);
 }
 /* Các liên kết mẫu chính thức do Nhà trường cung cấp và duyệt.
  * Chưa có liên kết thì KHÔNG tạo tệp thay thế. Chỉ cấu hình URL được xác minh.
@@ -127,7 +140,10 @@ function a1CalendarControl(input){
 function a1BaseDate(enabled){
  const field=by('date');if(!field)return;
  const wrapped=field.classList.contains('hva-a-date-display');
- if(enabled&&!wrapped){field.replaceWith(a1CalendarControl(field));}
+ if(enabled&&!wrapped){
+  const parent=field.parentElement,next=field.nextSibling,control=a1CalendarControl(field);
+  parent.insertBefore(control,next);
+ }
  if(!enabled&&wrapped){
   const iso=a1ToISO(field.value),host=field.parentElement;
   field.classList.remove('hva-a-date-display');field.type='date';
@@ -200,8 +216,8 @@ function setCode(code,keepTitle=false){
  const holder=by('specialFields');holder.replaceChildren(...def.fields.map(makeField));
  if(!keepTitle||!by('title').value.trim())by('title').value=def.title;
  by('previewPanel').classList.add('hidden');
- const more=by('a22MoreFields');if(more)more.open=false;
- for(const spec of def.fields){const field=by('a22_'+spec.key);if(field)field.required=false;}
+ const more=by('a22MoreFields');if(more)more.open=a1;
+ for(const spec of def.fields){const field=by('a22_'+spec.key);if(field)field.required=!!spec.required&&a1;}
  a22RefreshPresentation();
  const url=new URL(location.href);url.searchParams.set('code',code);history.replaceState(null,'',url.pathname+url.search+url.hash);
  return true;
@@ -229,7 +245,7 @@ function validate(){
  if(!by('form').reportValidity())return false;
  const {base,extras}=collect();
  if(!validDrive(base.evidence)){notice('Minh chứng chung chỉ nhận liên kết Google Drive/Docs HTTPS.');by('evidence').focus();return false}
- if(!base.evidence){notice('Vui lòng dán đường liên kết hồ sơ đã hoàn thiện trên Google Drive trước khi gửi.');by('evidence').focus();return false}
+ if(!base.evidence&&!document.body.classList.contains('hva-a1-mode')){notice('Vui lòng dán đường liên kết hồ sơ đã hoàn thiện trên Google Drive trước khi gửi.');by('evidence').focus();return false}
  for(const spec of D[base.code].fields){
    const v=extras[spec.key],input=by('a22_'+spec.key);
    if(spec.type==='url'&&v&&!safeUrl(v)){notice('Liên kết '+spec.label+' phải dùng HTTPS và có tên miền hợp lệ.');input.focus();return false}
