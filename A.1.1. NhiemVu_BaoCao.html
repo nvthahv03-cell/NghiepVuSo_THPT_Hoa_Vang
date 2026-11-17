@@ -361,7 +361,13 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 }
 @media print{.hva-pro-header::before,.hva-pro-header::after{display:none!important}}
 </style>
-</head>
+<style id="hva-a11-backend-status-20261117">
+#a11SendHint{flex-basis:100%;display:block!important;padding:11px 14px;border:1px solid #c8dfef;background:#edf8ff;
+ border-radius:10px;color:#23557a!important;font-size:12px!important;text-align:left!important;line-height:1.55!important}
+#a11SendHint[data-error="true"]{background:#fff7ea!important;color:#85500c!important;border-color:#eed6a6!important}
+#a11RetryConnection{min-height:42px}
+@media(max-width:600px){#a11RetryConnection{width:100%}}
+</style></head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
   <a class="hva-pro-back" href="./NghiepVu.html" title="Về Nghiệp vụ số" aria-label="Về danh mục Nghiệp vụ số"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
@@ -451,7 +457,8 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       <button type="button" class="btn secondary" id="editButton"><i class="bi bi-arrow-left"></i> Quay lại chỉnh sửa</button>
       <button type="button" class="btn" id="a11Send" disabled><i class="bi bi-send-check"></i> Xác nhận &amp; gửi</button>
       <button type="button" class="btn secondary" id="printButton"><i class="bi bi-printer"></i> In / Lưu PDF</button>
-      <span class="muted" id="a11SendHint">Chỉ ghi nhận đã nộp khi Backend cấp mã tiếp nhận và xác nhận trạng thái ký.</span>
+      <span class="muted" id="a11SendHint" role="status" aria-live="polite">Đang kiểm tra tuyến nhận báo cáo A1.1…</span>
+      <button type="button" class="btn secondary" id="a11RetryConnection"><i class="bi bi-arrow-clockwise"></i> Kiểm tra lại kết nối</button>
     </div>
     <div id="a11SubmitAck" hidden role="status"><i class="bi bi-check-circle-fill"></i><div><strong id="a11SubmitAckTitle">Báo cáo đã được hệ thống tiếp nhận</strong><div id="a11SubmitAckText"></div><button type="button" id="a11FinishButton" class="btn secondary" style="display:block;margin-top:12px">Hoàn tất – Về danh mục 4 báo cáo</button></div></div>
   </section>
@@ -496,7 +503,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     return '';
   };
   const A11_BACKEND_URL='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
-  let a11Enabled=false,a11RequestId='',a11SubmittedId='';
+  let a11Enabled=false,a11RequestId='',a11SubmittedId='',a11ConnectionError='';
   // A1.1 – dùng chung hai hình thức ký như DTHT/Chủ nhiệm.
   let a11SignMethod='PAPER',a11SignerVerified=false,a11SignatureData='',a11Signed=false,a11VerificationToken='';
   let a11SigningSupported={paper:false,electronic:false};
@@ -560,18 +567,26 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     const data=await r.json();if(data.success!==true)throw Error(data.message||'Máy chủ chưa tiếp nhận yêu cầu.');return data;
   }
   async function a11Check(){
+    const retry=$('a11RetryConnection');if(retry)retry.disabled=true;
+    a11ConnectionError='';
     try{
       account();
       const response=await a11API('nvsA22Capabilities');
-      if(response.supported!==true||response.version!=='A22-1'||!response.bghCount||!response.ccCount)throw Error('Chưa xác định tuyến BGH/TTCM.');
+      if(response.supported!==true||response.version!=='A22-1')throw Error('Backend chưa công khai tuyến tiếp nhận A1.1 phiên bản A22-1.');
+      if(!Number(response.bghCount)||!Number(response.ccCount))
+        throw Error('Backend chưa xác định đủ người nhận BGH và người đồng nhận phù hợp.');
       // Chỉ mở gửi theo từng kiểu ký khi Backend công khai năng lực tương ứng.
       a11SigningSupported={
         paper:response.paperSigning===true || response.signingMethods?.includes?.('PAPER')===true,
         electronic:response.electronicSigning===true || response.signingMethods?.includes?.('ELECTRONIC')===true
       };
       a11Enabled=true;
-      announce('Đã kết nối tuyến Nhóm A. Kiểu ký chỉ được gửi khi Backend xác nhận hỗ trợ.',false);
-    }catch(err){a11Enabled=false;announce('Chưa thể nộp hồ sơ A.1.1: '+err.message+' Có thể in bản nháp.',true);}
+      announce('Đã xác nhận tuyến tiếp nhận A1.1. Có thể gửi hồ sơ theo hình thức ký được Backend hỗ trợ.',false);
+    }catch(err){
+      a11Enabled=false;a11SigningSupported={paper:false,electronic:false};
+      a11ConnectionError=String(err.message||err);
+      announce('Chưa thể nộp hồ sơ A1.1: '+a11ConnectionError+' Có thể in bản nháp.',true);
+    }finally{if(retry)retry.disabled=false;}
     a11UpdateSend();
   }
   function a11UpdateSend(){
@@ -585,7 +600,17 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     const hint=$('a11SignHint');
     if(hint&&a11Enabled&&!a11SigningSupported[a11SignMethod==='PAPER'?'paper':'electronic'])
       hint.textContent='Backend A1.1 chưa xác nhận hỗ trợ hình thức ký này; có thể xem trước và in, chưa thể nộp.';
-
+    const sendHint=$('a11SendHint');
+    if(sendHint){
+      const kind=a11SignMethod==='PAPER'?'ký tay':'ký điện tử';
+      sendHint.textContent=a11ConnectionError
+        ?'Chưa kết nối được A1.1: '+a11ConnectionError+' Bấm “Kiểm tra lại kết nối” sau khi Backend được cập nhật.'
+        :!a11Enabled?'Chưa xác nhận được tuyến tiếp nhận A1.1.'
+        :!a11SigningSupported[a11SignMethod==='PAPER'?'paper':'electronic']?'Máy chủ chưa hỗ trợ '+kind+'.'
+        :a11SignMethod==='ELECTRONIC'&&!ready?'Cần xác thực CCCD và ký xác nhận trước khi gửi.'
+        :'Đã kết nối '+kind+'. Hồ sơ chỉ được coi là gửi thành công khi có mã tiếp nhận từ máy chủ.';
+      sendHint.dataset.error=String(!!a11ConnectionError);
+    }
   }
   async function a11Submit(){
     if(!a11Enabled||a11SubmittedId||$('previewSection').hidden||!current||defs[current].draft)return;
@@ -821,6 +846,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   $('editButton').addEventListener('click',()=>{$('editor').scrollIntoView({block:'start',behavior:'smooth'});});
   $('clearButton').addEventListener('click',()=>{if(dirty&&!confirm('Xóa nội dung chưa lưu của báo cáo này?'))return;const id=current;dirty=false;setChoice(id,false);announce('Đã làm mới biểu mẫu. Không thay đổi dữ liệu thật.');});
   $('a11Send').addEventListener('click',a11Submit);
+  $('a11RetryConnection').addEventListener('click',a11Check);
   $('a11FinishButton').addEventListener('click',()=>a11ReturnToChoices(true));
   $('a11DynamicType').addEventListener('change',()=>$('a11DynamicCustom').hidden=$('a11DynamicType').value!=='Khác');
   $('a11DynamicAdd').addEventListener('click',()=>{
