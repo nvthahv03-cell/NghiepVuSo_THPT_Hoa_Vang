@@ -35,11 +35,12 @@ function a22SetConnection(status,message){
  box.dataset.status=status;label.textContent=message;
 }
 function a22RefreshPresentation(){
- const code=by('code').value,plan=code==='A.1.3-KH',a1=/^A[.]1[.](?:3|4)(?:-|$)/.test(code),def=D[code];
+ const code=by('code').value,plan=code==='A.1.3-KH',a21=code==='A.2.1',a1=/^A[.]1[.](?:3|4)(?:-|$)/.test(code),def=D[code];
  const official=a22OfficialTemplateUrl(code),templateButton=by('a22TemplateDownload');
  if(templateButton){
   const downloadable=plan||!!official;
-  templateButton.disabled=!downloadable;
+  templateButton.disabled=a21||!downloadable;
+  templateButton.hidden=a21;
   templateButton.dataset.templateStatus=downloadable?'ready':'pending';
   templateButton.title=plan?'Tải mẫu kế hoạch Word – dự thảo chờ duyệt':official?'Mở mẫu trên Google Drive':'Chưa có mẫu được xác nhận';
   const strong=templateButton.querySelector('strong'),small=templateButton.querySelector('small');
@@ -49,8 +50,10 @@ function a22RefreshPresentation(){
  const landing=by('a22LandingTitle');if(landing&&def)landing.textContent=code+' · '+def.title;
  const intro=document.querySelector('.hva-a-landing-intro');
  if(intro&&a1)intro.textContent='Tải mẫu, hoàn thiện hồ sơ và lưu trên Google Drive. Sau đó chọn “Nộp hồ sơ”, dán liên kết và gửi đến BGH/TTCM.';
+ if(intro&&a21)intro.textContent='Giáo viên được phân công nộp liên kết bộ hồ sơ đợt kiểm tra gồm ma trận, đặc tả, đề, đáp án/hướng dẫn chấm hoặc tiêu chí đánh giá phù hợp. Không tải đề mật lên liên kết công khai.';
  const note=document.querySelector('.hva-a-landing-note');
  if(note&&a1)note.textContent=plan?'Mẫu Word hiện là bản dự thảo để nhà trường duyệt. Hồ sơ chỉ được ghi nhận khi Backend cấp mã tiếp nhận.':'Nộp liên kết tài liệu đã hoàn thiện và chia sẻ đúng quyền. Hệ thống chỉ xác nhận nộp khi Backend trả mã hồ sơ.';
+ if(note&&a21)note.textContent='Nguồn đề do Sở cung cấp: không yêu cầu giáo viên nộp lại. Việc tiếp nhận đề của Sở thực hiện theo quy trình bảo mật và Điều hành. Với đề của trường/tổ, hồ sơ chỉ được ghi nhận sau khi Backend trả mã tiếp nhận.';
  const quick=by('a22QuickTools');if(quick)quick.hidden=true;
  const evidence=by('evidence'),evidenceLabel=document.querySelector('label[for="evidence"]');
  if(evidenceLabel)evidenceLabel.textContent=a1?'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *':'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *';
@@ -63,6 +66,12 @@ function a22RefreshPresentation(){
  const btn=by('send'),planBtn=by('a22PlanSend');
  if(btn){btn.classList.remove('hidden');if(!btn.disabled)btn.textContent='Xác nhận nộp liên kết hồ sơ';}
  if(planBtn)planBtn.disabled=true;
+ if(a21){
+  const source=by('a22_nguonDe'),state=by('a22A21Policy');
+  const isDepartment=source?.value==='Sở GD&ĐT';
+  if(state){state.hidden=false;state.textContent=isDepartment?'Đề do Sở GD&ĐT cung cấp: giáo viên không nộp lại đề tại A2.1. Nhà trường tổ chức tiếp nhận và bảo quản đề theo chỉ đạo của Sở.':'Chỉ nộp hồ sơ được giao qua liên kết Google Drive/Docs đã giới hạn quyền xem. Không bật chế độ “Bất kỳ ai có liên kết”.';}
+  const btn=by('send');if(btn){btn.disabled=!canSubmit||!!submittedId||isDepartment;btn.title=isDepartment?'Đề của Sở được quản lý tại Điều hành, không nộp tại A2.1':'Chỉ gửi khi Backend A22 xác nhận tuyến tiếp nhận';}
+ }else if(by('a22A21Policy'))by('a22A21Policy').hidden=true;
 }
 function a22OpenSubmission(){
  const editor=by('a22SubmissionEditor');if(!editor)return;
@@ -240,8 +249,9 @@ function setCode(code,keepTitle=false){
  const holder=by('specialFields');holder.replaceChildren(...def.fields.map(makeField));
  if(!keepTitle||!by('title').value.trim())by('title').value=def.title;
  by('previewPanel').classList.add('hidden');
- const more=by('a22MoreFields');if(more)more.open=false;
- for(const spec of def.fields){const field=by('a22_'+spec.key);if(field)field.required=false;}
+ const more=by('a22MoreFields');if(more)more.open=code==='A.2.1';
+ if(more){const label=more.querySelector('summary');if(label)label.firstChild.textContent=code==='A.2.1'?'02 · Thông tin hồ sơ đợt kiểm tra ':'Thông tin nghiệp vụ chi tiết ';}
+ for(const spec of def.fields){const field=by('a22_'+spec.key);if(field)field.required=!!spec.required&&code==='A.2.1';}
  a22RefreshPresentation();
  const url=new URL(location.href);url.searchParams.set('code',code);history.replaceState(null,'',url.pathname+url.search+url.hash);
  return true;
@@ -257,17 +267,19 @@ function collect(){
  const extras=Object.fromEntries(D[base.code].fields.map(spec=>[spec.key,a1Read(by('a22_'+spec.key))]));
  return {base,extras};
 }
+function baseIsA21(){return by('code').value==='A.2.1'}
 function validate(){
  // Khi chỉ nộp liên kết: trường chi tiết trong phần thu gọn là thông tin bổ sung,
  // không ép giáo viên nhập lại toàn bộ nội dung đã có trong tài liệu.
  const more=by('a22MoreFields');
  for(const spec of D[by('code').value].fields){
   const field=by('a22_'+spec.key);
-  if(field)field.required=!!spec.required&&!!more?.open;
+  if(field)field.required=!!spec.required&&(baseIsA21()||!!more?.open);
  }
  if(!a1ValidateDates())return false;
  if(!by('form').reportValidity())return false;
  const {base,extras}=collect();
+ if(base.code==='A.2.1'&&extras.nguonDe==='Sở GD&ĐT'){notice('Đề do Sở cung cấp không nộp lại tại A2.1. Nhà trường tiếp nhận theo quy trình Điều hành.');return false;}
  if(!validDrive(base.evidence)){notice('Minh chứng chung chỉ nhận liên kết Google Drive/Docs HTTPS.');by('evidence').focus();return false}
  if(!base.evidence){notice('Vui lòng dán đường liên kết hồ sơ đã hoàn thiện trên Google Drive trước khi gửi.');by('evidence').focus();return false}
  for(const spec of D[base.code].fields){
@@ -405,7 +417,7 @@ async function probeBackend(){
 }
 by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('previewPanel').classList.add('hidden');by('send').disabled=!canSubmit;a22RefreshPresentation();});
 by('a22MoreFields')?.addEventListener('toggle',()=>{
- const more=by('a22MoreFields');for(const spec of D[by('code').value].fields){const el=by('a22_'+spec.key);if(el)el.required=!!spec.required&&more.open;}
+ const more=by('a22MoreFields');for(const spec of D[by('code').value].fields){const el=by('a22_'+spec.key);if(el)el.required=!!spec.required&&(baseIsA21()||more.open);}
 });
 select.addEventListener('change',()=>{clientRequestId=null;submittedId='';by('send').disabled=!canSubmit;a22RefreshPresentation();});
 by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
