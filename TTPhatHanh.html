@@ -13,7 +13,9 @@
             align-items: center; justify-content: center; background: #f8fafc;
             font-family: Inter, Arial, sans-serif;
         }
-    </style>
+    
+.hva-role-box{border:1px solid #bad9ef;background:#edf7ff;border-radius:14px;padding:15px;margin:0 0 16px;font-size:12px;color:#0c5289}.hva-role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:11px 0}.hva-role-grid label{display:grid;gap:5px;font-weight:750}.hva-role-grid select{width:100%;padding:10px;border:1px solid #b9d8eb;border-radius:9px;background:#fff}.hva-role-grid button{margin-top:15px;background:#086ab2;color:white;border:0;border-radius:9px;padding:10px;font-weight:800}.hva-role-grid button:disabled{opacity:.45}#hvaRolePeople{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0}#hvaRolePeople label{padding:8px;border:1px solid #c3def0;border-radius:12px;background:#fff;color:#16527f}#hvaRoleStatus{color:#557993;line-height:1.5;margin:8px 0}@media(max-width:600px){.hva-role-grid{grid-template-columns:1fr}}
+</style>
     <script>
         (() => {
             const params = new URLSearchParams(window.location.search);
@@ -256,7 +258,7 @@ body.hva-receiver-mode #hva-module-content-viewer {
                         </h3>
                     </div>
 
-                    <div class="space-y-2" id="recipient-selector-container">
+                    <div id="hvaRoleChooser" class="hva-role-box" hidden><b>ĐÍCH NHẬN THEO VAI TRÒ</b><div class="hva-role-grid"><label>Vai trò<select id="hvaRoleType"><option value="">Chọn vai trò</option><option value="BGH">Ban Giám hiệu (BGH)</option><option value="TTCM">Tổ trưởng chuyên môn (TTCM)</option><option value="TPCM">Nhóm trưởng chuyên môn (TPCM)</option></select></label><label>Tổ / nhóm<select id="hvaRoleTeam" disabled><option value="">Chọn tổ / nhóm</option></select></label></div><div id="hvaRolePeople"></div><div class="hva-role-grid"><label>Hình thức nhận<select id="hvaRoleKind"><option value="TO">Người nhận chính</option><option value="CC_INFO">CC – Để biết</option><option value="CC_REPORT">CC – Để báo cáo</option></select></label><button type="button" id="hvaRoleAdd" disabled>Thêm người nhận</button></div><p id="hvaRoleStatus">Nhân sự tham chiếu từ Cuộc họp.</p></div><div class="space-y-2" id="recipient-selector-container">
                         <p class="text-xs text-slate-400 italic">Đang nhận danh sách đối tượng từ module nguồn...</p>
                     </div>
                 </div>
@@ -278,7 +280,8 @@ body.hva-receiver-mode #hva-module-content-viewer {
 
     </main>
 
-    <!-- ARCHITECTURE SCRIPT: TTĐHS_HVA ENTERPRISE ENGINE v2.2 -->
+    <script defer src="./HVA_Personnel.js"></script>
+<!-- ARCHITECTURE SCRIPT: TTĐHS_HVA ENTERPRISE ENGINE v2.2 -->
     <script>
     /**
      * TTĐHS_HVA PUBLISHING ENGINE v2.2 (Enterprise Refactored Architecture)
@@ -1598,6 +1601,22 @@ ContentViewerRouter.register(
         }
     };
 
+
+const HvaRoleDest={
+ groups:[],ready:false,initialized:false,
+ norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim()},
+ user(m){return String(m.username||m.tenDangNhap||'').trim()},
+ label(m){return String(m.hoTen||m.fullName||m.name||'')},
+ role(m){return [m.chucVu,m.viTriViecLam,m.vaiTro,m.raw?.chucVu,m.raw?.viTriViecLam,m.raw?.vaiTro].filter(Boolean).join(' ')},
+ is(m,type){const v=this.norm(this.role(m));return type==='BGH'?/hieu truong|ban giam hieu|bgh/.test(v):type==='TTCM'?/to truong|ttcm/.test(v):/nhom truong|truong nhom|tpcm/.test(v)},
+ people(type,team){const map=new Map();for(const g of this.groups){if(type!=='BGH'&&String(g.kind).toUpperCase()!=='TEAM')continue;if(team&&String(g.groupKey||g.tenTo)!==team)continue;for(const m of g.members||[]){if(this.is(m,type)&&this.user(m))map.set(this.user(m).toLowerCase(),{...m,teamName:g.tenTo})}}return [...map.values()]},
+ async init(){if(this.initialized)return;this.initialized=true;const el=id=>document.getElementById(id);el('hvaRoleChooser').hidden=false;el('hvaRoleType').addEventListener('change',()=>this.setType());el('hvaRoleTeam').addEventListener('change',()=>this.draw());el('hvaRoleAdd').addEventListener('click',()=>this.add());
+ try{if(!window.HVAPersonnel?.buildGroups)throw Error('Chưa có nguồn Nhân sự HVA');this.groups=await window.HVAPersonnel.buildGroups();if(!this.groups.length)throw Error('Chưa có nhóm nhân sự');this.ready=true;el('hvaRoleStatus').textContent='Đã tải nhân sự từ Cuộc họp; chọn đối tượng, tổ/nhóm và người nhận.';this.setType()}catch(e){el('hvaRoleStatus').textContent='Không tải được nhân sự Cuộc họp: '+e.message;el('hvaRolePeople').textContent='Chưa có dữ liệu được xác thực.'}},
+ setType(){const type=document.getElementById('hvaRoleType').value,sel=document.getElementById('hvaRoleTeam');sel.replaceChildren(new Option('Chọn tổ / nhóm',''));if(type!=='BGH'&&type){for(const g of this.groups.filter(g=>String(g.kind).toUpperCase()==='TEAM'&&this.people(type,String(g.groupKey||g.tenTo)).length)){sel.add(new Option(g.tenTo,String(g.groupKey||g.tenTo)))}sel.disabled=sel.options.length<2}else sel.disabled=true;this.draw()},
+ draw(){const type=document.getElementById('hvaRoleType').value,team=document.getElementById('hvaRoleTeam').value,root=document.getElementById('hvaRolePeople');root.replaceChildren();const list=this.ready&&type&&(type==='BGH'||team)?this.people(type,team):[];for(const m of list){const label=document.createElement('label'),inp=document.createElement('input');inp.type='checkbox';inp.value=this.user(m);inp.checked=true;label.append(inp,document.createTextNode(' '+this.label(m)+' · '+m.teamName));root.append(label)}if(!list.length)root.textContent=type==='TPCM'?'Chưa có chức danh Nhóm trưởng CM được nhận diện.':'Chọn tổ/nhóm hoặc chưa có dữ liệu tương ứng.';document.getElementById('hvaRoleAdd').disabled=!list.length},
+ add(){if(!this.ready)return;const type=document.getElementById('hvaRoleType').value,team=document.getElementById('hvaRoleTeam').value,kind=document.getElementById('hvaRoleKind').value,checked=new Set([...document.querySelectorAll('#hvaRolePeople input:checked')].map(x=>x.value)),existing=new Set(TTDHS_State.recipients.map(r=>String(r.username||'').toLowerCase()));let count=0;for(const m of this.people(type,team)){const username=this.user(m);if(!checked.has(username)||existing.has(username.toLowerCase()))continue;TTDHS_State.recipients.push({username,hoTen:this.label(m),chucVu:this.role(m),to:m.teamName,nhom:type,deliveryRole:kind==='TO'?'TO':'CC',ccPurpose:kind==='CC_INFO'?'Để biết':kind==='CC_REPORT'?'Để báo cáo':''});existing.add(username.toLowerCase());count++}Controller.refreshUI();document.getElementById('hvaRoleStatus').textContent='Đã thêm '+count+' người nhận. Cần kiểm thử Backend về phân biệt người nhận chính/CC trước phát hành chính thức.'}
+};
+
     const RecipientEngine = {
         getResolvedRecipients: (recipientList) => Array.isArray(recipientList) ? [...recipientList] : [],
         displayName: (r) => {
@@ -2309,6 +2328,7 @@ return;
                 Controller.applySourceDefaults(TTDHS_State.document.moduleSource);
             }
             Controller.refreshUI();
+            if(String(TTDHS_State.document?.moduleSource||'').toLowerCase()!=='khovanban')HvaRoleDest.init();
         } catch (err) {
             document.documentElement.classList.remove('hva-boot-receiver');
             console.error('KhoVanBan batch handoff error:', err);
