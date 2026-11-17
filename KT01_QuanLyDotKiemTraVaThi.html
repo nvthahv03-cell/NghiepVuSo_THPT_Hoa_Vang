@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
+<title>KT01 · Quản lý đợt kiểm tra và kỳ thi | HVA–EDOS</title>
+<style>
+:root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#153e60;background:#f3f8fd;color-scheme:light}*{box-sizing:border-box}body{margin:0}button,input,textarea,select{font:inherit}a{color:#0967ae}button{cursor:pointer}button:disabled{opacity:.52;cursor:not-allowed}
+header{background:linear-gradient(113deg,#063e82,#0869b9 66%,#06a8c5);color:white;padding:19px max(16px,calc((100vw - 1160px)/2));box-shadow:0 6px 18px #104d7730}
+header .top{display:flex;align-items:center;gap:17px}.back{background:#ffffff1a;color:white;text-decoration:none;border:1px solid #ffffff80;border-radius:11px;padding:10px 13px;font-weight:800}header h1{font-size:clamp(21px,3vw,27px);margin:5px 0}header p{font-size:13px;margin:0;color:#dbf4ff}.mark{margin-left:auto;border:1px solid #9be8f1;background:#ffffff20;border-radius:100px;padding:7px 12px;font-size:11px;font-weight:800}
+main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#fff;border:1px solid #d2e4f2;border-radius:17px;padding:22px;margin:15px 0;box-shadow:0 5px 19px #164f7910}h2{font-size:18px;margin:0 0 12px;color:#075591}h3{font-size:15px;color:#09588b;margin:20px 0 8px}.lead{color:#58758d;font-size:13px;line-height:1.65;margin:5px 0 12px}.notice{background:#eaf5ff;border:1px solid #b9d9ee;border-left:4px solid #0872b7;color:#255477;padding:12px 16px;border-radius:11px;font-size:13px;line-height:1.65}.warning{background:#fff7eb;border-color:#f1d7b3;border-left-color:#bd7c17}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}.span2{grid-column:1/-1}label{font-size:13px;font-weight:750;display:block;color:#24557a}label small{font-size:11px;color:#6b8298;font-weight:500;display:block;margin:5px 0}input,select,textarea{width:100%;margin-top:7px;border:1px solid #bcd7e9;border-radius:10px;min-height:42px;padding:10px 12px;color:#193f63;background:#fff}textarea{min-height:88px;resize:vertical}input:focus,textarea:focus,select:focus{outline:2px solid #41a4e2;outline-offset:1px}.check-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.check{display:flex;align-items:center;gap:8px;border:1px solid #d0e4f3;border-radius:10px;padding:9px 10px;color:#15446b;font-size:13px;font-weight:650;background:#f7fbff}.check input{width:17px;height:17px;margin:0;min-height:unset;accent-color:#0d74bf}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 17px;border-radius:10px;border:1px solid #0a6dae;color:white;background:#086ab5;font-size:13px;font-weight:800;min-height:43px}.btn.light{background:#ecf6ff;border-color:#bcdbed;color:#145381}.btn.danger{background:#fff6f2;border-color:#efc8c0;color:#93463b}.btn:focus-visible,a:focus-visible{outline:3px solid #ffbe4f;outline-offset:3px}.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.chip{font-size:11px;font-weight:800;color:#946b21;background:#fff7e1;border:1px solid #e9d49b;padding:6px 10px;border-radius:999px}.mini{font-size:12px;color:#678099}.group{border:1px solid #d9e8f2;background:#fafcff;padding:14px;border-radius:12px;margin-top:11px}.group strong{color:#0a548e}.source-rule{margin-top:12px;font-size:13px;line-height:1.65}.data-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.data-table th{background:#eaf5ff;color:#0b5185}.data-table td,.data-table th{padding:10px;border-bottom:1px solid #e1edf4;vertical-align:top}.status{font-weight:750;color:#9b6b24}.empty{padding:17px;color:#668098;text-align:center}.footer{font-size:12px;color:#6b8395;text-align:center;margin:28px 0}.hidden,[hidden]{display:none!important}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}.check-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:17px}.data-table{font-size:12px}}
+@media print{header,.actions,.notice,.footer{display:none!important}body{background:#fff}.panel{box-shadow:none;border:0}input,select,textarea{border:0;border-bottom:1px solid #bbb;border-radius:0}}
+</style></head>
+<body><header><div class="top"><a class="back" href="./DieuHanh.html" aria-label="Về Điều hành">← Điều hành</a><div><small style="letter-spacing:.07em;font-weight:850">HVA–EDOS · ĐIỀU HÀNH KIỂM TRA VÀ THI</small><h1>KT01 – Quản lý đợt kiểm tra và kỳ thi</h1><p>Thiết lập dữ liệu tổ chức từ kế hoạch đã ban hành · Không thay thế văn bản kế hoạch</p></div><span class="mark">BẢN THIẾT KẾ</span></div></header>
+<main>
+<div class="notice warning" id="modeNotice">KT01 hiện là bản thiết kế để kiểm thử giao diện và quy trình. Chưa nối Backend V5; không có chức năng ban hành, không ghi lên Sheet hoặc tạo kỳ kiểm tra chính thức.</div>
+<div id="deny" class="panel hidden"><h2>Không có quyền truy cập</h2><p>Hãy đăng nhập phiên EDOS hợp lệ bằng tài khoản BGH hoặc TTCM được phân quyền. Truy cập giao diện không thay thế xác thực tại Backend.</p><a href="./DieuHanh.html">Quay lại Điều hành</a></div>
+<div id="content" class="hidden">
+<section class="panel"><div class="bar"><div><h2>01 · Thông tin kế hoạch làm căn cứ</h2><p class="lead">Liên kết kế hoạch đã được ban hành tại Văn bản số/Điều hành. Không soạn hoặc phê duyệt văn bản tại KT01.</p></div><span class="chip">CHỈ LẬP BẢN NHÁP</span></div>
+<form id="ktForm" novalidate>
+<div class="grid">
+<label>Tên kế hoạch đã ban hành *<input id="planName" required maxlength="240" placeholder="Ví dụ: Kế hoạch tổ chức kiểm tra cuối kỳ I"></label>
+<label>Số, ký hiệu văn bản *<input id="planNumber" required maxlength="85" placeholder="Ví dụ: .../KH-THPTHV"></label>
+<label>Ngày ban hành *<input id="planDate" type="date" required></label>
+<label>Liên kết văn bản chính thức (nếu có)<input id="planUrl" type="url" maxlength="1500" placeholder="https://..."></label>
+</div>
+<h2 style="margin-top:24px">02 · Thông tin đợt kiểm tra / kỳ thi</h2>
+<div class="grid">
+<label>Tên đợt kiểm tra / kỳ thi *<input id="name" required maxlength="230" placeholder="Ví dụ: Kiểm tra cuối kỳ II – Khối 12"></label>
+<label>Loại đợt *<select id="type" required><option value="">— Chọn loại —</option><option>Kiểm tra giữa kỳ</option><option>Kiểm tra cuối kỳ</option><option>Kiểm tra, đánh giá bù</option><option>Kiểm tra, đánh giá lại</option><option>Thi thử tốt nghiệp THPT</option><option>Thi thử HSG cấp thành phố</option><option>Thi chọn HSG cấp trường</option><option>Kỳ thi khác</option></select></label>
+<label>Năm học *<input id="schoolYear" required maxlength="12" value="2026–2027" pattern="^20[0-9]{2}[–-]20[0-9]{2}$" title="Ví dụ: 2026–2027"></label>
+<label>Học kỳ *<select id="semester" required><option value="">— Chọn —</option><option>Học kỳ I</option><option>Học kỳ II</option><option>Hè / Khác</option></select></label>
+<div class="span2"><label>Khối lớp / đối tượng * </label><div class="check-grid" role="group" aria-label="Chọn khối lớp"><label class="check"><input type="checkbox" name="grade" value="10">Khối 10</label><label class="check"><input type="checkbox" name="grade" value="11">Khối 11</label><label class="check"><input type="checkbox" name="grade" value="12">Khối 12</label><label class="check"><input type="checkbox" name="grade" value="other">Đối tượng khác</label></div></div>
+<label>Thời gian bắt đầu *<input id="start" type="date" required></label>
+<label>Thời gian kết thúc *<input id="end" type="date" required></label>
+<label>Đơn vị/bộ phận phụ trách *<input id="unit" required maxlength="150" placeholder="BGH / Hội đồng kiểm tra / Tổ chuyên môn..."></label>
+<label>Tài liệu/lịch kèm theo (nếu có)<input id="scheduleUrl" type="url" maxlength="1500" placeholder="Liên kết lịch kiểm tra đã ban hành"></label>
+<div class="span2"><label>Môn kiểm tra / môn thi (nhập tên từng môn, cách nhau bằng dấu phẩy) *<textarea id="subjects" required maxlength="650" placeholder="Ví dụ: Toán, Ngữ văn, Tiếng Anh..."></textarea></label></div>
+</div>
+<h2 style="margin-top:24px">03 · Nguồn đề và phạm vi tổ chức</h2>
+<div class="grid">
+<label>Nguồn đề *<select id="source" required><option value="">— Chọn nguồn đề —</option><option value="SO">Sở GD&ĐT cung cấp</option><option value="TRUONG">Nhà trường xây dựng</option><option value="TO">Tổ/nhóm chuyên môn xây dựng</option><option value="HONHOP">Nhiều nguồn đề theo môn</option><option value="KHAC">Đơn vị khác theo kế hoạch</option></select></label>
+<label>Trạng thái hồ sơ KT01<select id="status" disabled><option>Bản nháp – chưa ban hành</option></select></label>
+<div id="sourceDetails" class="span2 group"><strong>Quy định xử lý nguồn đề</strong><p class="source-rule" id="sourceRule">Chọn nguồn đề để xem cách phân công và tiếp nhận hồ sơ.</p><div id="subjectSourceWrap" class="hidden"><label>Nguồn đề theo từng môn *<textarea id="subjectSources" maxlength="2000" placeholder="Ví dụ: Toán – Sở GD&ĐT (khối 12); Ngữ văn – Sở GD&ĐT (khối 12); Tiếng Anh – Trường"></textarea><small>Ghi rõ môn, khối và nguồn đề. KT01 không tự suy diễn nguồn đề của các môn.</small></label></div></div>
+<div class="span2"><label>Ghi chú tổ chức / đặc thù kỳ thi<textarea id="notes" maxlength="1800" placeholder="Ghi những nội dung cần lưu ý, không nhập thông tin đề mật hoặc dữ liệu học sinh nhạy cảm..."></textarea></label></div>
+</div>
+<div class="row actions" style="margin-top:23px"><button type="submit" class="btn">Kiểm tra & xem trước bản nháp</button><button id="export" type="button" class="btn light" disabled>Tải bản nháp JSON</button><button id="reset" type="button" class="btn light">Làm mới</button></div>
+<p class="mini" id="feedback" role="status" aria-live="polite">Chưa lưu. Không gửi dữ liệu ra máy chủ.</p>
+</form></section>
+<section class="panel hidden" id="previewPanel"><div class="bar"><h2>04 · Bản xem trước KT01</h2><span class="chip">KHÔNG PHẢI QUYẾT ĐỊNH BAN HÀNH</span></div><div id="preview" style="white-space:pre-wrap;line-height:1.8;font-size:14px"></div><div class="row actions" style="margin-top:18px"><button type="button" id="print" class="btn light">In bản nháp</button><button type="button" id="backEdit" class="btn light">Quay lại chỉnh sửa</button></div></section>
+<section class="panel"><h2>05 · Những đợt đã thiết lập</h2><p class="lead">Khi kết nối Backend, khu vực này sẽ hiển thị các đợt do BGH quản lý, trạng thái và mã đợt để liên thông KT02–KT06, A2.1–A2.4.</p><table class="data-table"><thead><tr><th>Mã đợt</th><th>Tên đợt</th><th>Loại</th><th>Trạng thái</th></tr></thead><tbody><tr><td colspan="4" class="empty">Chưa kết nối cơ sở dữ liệu KT01 – Không có danh sách thực tế</td></tr></tbody></table></section>
+</div><div class="footer">HVA–EDOS · Trường THPT Hòa Vang · KT01 bản thiết kế · Không lưu hồ sơ vào Backend</div>
+</main>
+<script>
+(function(){'use strict';
+const el=id=>document.getElementById(id);
+function store(key){for(const kind of ['sessionStorage','localStorage'])try{const value=window[kind].getItem(key);if(value)return value}catch(_){ }return ''}
+function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim()}
+function allowed(){
+ const raw=store('hvaSessionExpiresAt'),n=Number(raw),exp=Number.isFinite(n)&&n>0?(n<1e12?n*1000:n):Date.parse(raw);
+ if(!store('hvaSessionToken')||!Number.isFinite(exp)||exp<=Date.now())return false;
+ let u={};try{u=JSON.parse(store('user')||'{}')}catch(_){}
+ const role=norm([u.chucVu,u.viTriViecLam,u.vaiTro,u.role,u.chucDanh].filter(Boolean).join(' '));
+ const codes=String(u.vaiTro||u.role||'').toUpperCase().split(/[^A-Z0-9]+/);
+ return role.includes('hieu truong')||role.includes('pho hieu truong')||role.includes('ban giam hieu')||role.includes('to truong')||role.includes('ttcm')||codes.includes('BGH')||codes.includes('TTCM')||codes.includes('ADMIN');
+}
+if(!allowed()){el('deny').classList.remove('hidden');return}
+el('content').classList.remove('hidden');
+const f=el('ktForm'),fields=['planName','planNumber','planDate','planUrl','name','type','schoolYear','semester','start','end','unit','scheduleUrl','subjects','source','subjectSources','notes'];
+let validDraft=null;
+function htmlSafeUrl(value){if(!value)return true;try{let u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!!u.hostname}catch(_){return false}}
+function refreshSource(){
+ const v=el('source').value,detail=el('sourceRule'),wrap=el('subjectSourceWrap');
+ wrap.classList.toggle('hidden',v!=='HONHOP');
+ el('subjectSources').required=v==='HONHOP';
+ detail.textContent=v==='SO'?'Đề do Sở cung cấp: KT01 chỉ quản lý lịch, trạng thái tổ chức và bàn giao theo hướng dẫn; không giao giáo viên ra đề hoặc tải đề mật lên kho công khai.':v==='HONHOP'?'Đề theo nhiều nguồn: ghi rõ nguồn cho từng môn/khối để KT02 không giao nhầm nhiệm vụ ra đề.':v==='TRUONG'||v==='TO'?'Đề do nhà trường/tổ xây dựng: chuyển nhiệm vụ ra đề, phản biện, nộp hồ sơ sang KT02 và A2.1 theo phân quyền.':v==='KHAC'?'Đối chiếu nguồn đề và yêu cầu bảo mật với kế hoạch đã ban hành.':'Chọn nguồn đề để xem cách phân công và tiếp nhận hồ sơ.';
+}
+refreshSource();el('source').addEventListener('change',refreshSource);
+function getData(){
+ const d={};for(const id of fields)d[id]=el(id).value.trim();
+ d.grades=[...document.querySelectorAll('input[name="grade"]:checked')].map(x=>x.value);
+ d.state='DRAFT_LOCAL_ONLY';d.schema='HVA-KT01-DRAFT-1';d.updatedAt=new Date().toISOString();
+ return d;
+}
+function validate(){
+ const required=f.querySelectorAll('[required]');
+ for(const input of required){if(!input.value.trim()){input.reportValidity();input.focus();return false}}
+ if(!el('schoolYear').checkValidity()){el('schoolYear').reportValidity();return false}
+ if(!document.querySelector('input[name="grade"]:checked')){el('feedback').textContent='Cần chọn ít nhất một khối hoặc đối tượng.';return false}
+ if(el('end').value<el('start').value){el('end').setCustomValidity('Ngày kết thúc không được trước ngày bắt đầu.');el('end').reportValidity();return false}
+ el('end').setCustomValidity('');
+ for(const id of ['planUrl','scheduleUrl'])if(!htmlSafeUrl(el(id).value.trim())){el(id).setCustomValidity('Liên kết phải dùng HTTPS hợp lệ.');el(id).reportValidity();return false}else el(id).setCustomValidity('');
+ if(el('source').value==='SO'&&el('type').value==='Kiểm tra cuối kỳ'&&el('semester').value==='Học kỳ II'&&el('schoolYear').value.replace('-','–')==='2026–2027'&&el('subjects').value.toLowerCase().includes('toán')&&el('subjects').value.toLowerCase().includes('ngữ văn')&&!el('subjectSources').value){
+  el('feedback').textContent='Lưu ý: phạm vi Sở ra đề Toán, Ngữ văn khối 12 cần đối chiếu văn bản và các môn/khối thực tế trước khi áp dụng; không tự mở rộng cho toàn bộ đợt.';
+ }
+ return true;
+}
+function preview(d){
+ const gradeLabel=d.grades.map(x=>x==='other'?'Đối tượng khác':'Khối '+x).join(', ');
+ const lines=['KT01 · BẢN NHÁP DỮ LIỆU TỔ CHỨC','TRƯỜNG THPT HÒA VANG','', 'I. VĂN BẢN LÀM CĂN CỨ','Kế hoạch: '+d.planName,'Số, ký hiệu: '+d.planNumber,'Ngày ban hành: '+d.planDate,'Liên kết: '+(d.planUrl||'Chưa có'),'','II. ĐỢT KIỂM TRA / KỲ THI','Tên đợt: '+d.name,'Loại: '+d.type,'Năm học – Học kỳ: '+d.schoolYear+' · '+d.semester,'Đối tượng: '+gradeLabel,'Môn: '+d.subjects,'Thời gian: '+d.start+' đến '+d.end,'Bộ phận phụ trách: '+d.unit,'Lịch kèm theo: '+(d.scheduleUrl||'Chưa có'),'','III. NGUỒN ĐỀ','Loại nguồn: '+el('source').selectedOptions[0].text,'Phân loại theo môn: '+(d.subjectSources||'Không áp dụng'),'Ghi chú: '+(d.notes||'Không có'),'','TRẠNG THÁI: BẢN NHÁP CỤC BỘ – CHƯA LƯU HỆ THỐNG – CHƯA PHÊ DUYỆT'];
+ el('preview').textContent=lines.join('\n');el('previewPanel').classList.remove('hidden');el('previewPanel').scrollIntoView({block:'start',behavior:'smooth'});
+}
+f.addEventListener('input',()=>{validDraft=null;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Có thay đổi chưa xem trước. Chưa lưu dữ liệu.'});
+f.addEventListener('change',()=>{validDraft=null;el('export').disabled=true;el('previewPanel').classList.add('hidden')});
+f.addEventListener('submit',e=>{e.preventDefault();if(!validate())return;validDraft=getData();preview(validDraft);el('export').disabled=false;el('feedback').textContent='Đã kiểm tra bản nháp. Chưa gửi hoặc lưu lên EDOS.'});
+el('export').addEventListener('click',()=>{
+ if(!validDraft)return;const blob=new Blob([JSON.stringify(validDraft,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='HVA_KT01_BAN_NHAP_'+validDraft.start.replaceAll('-','')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+});
+el('reset').addEventListener('click',()=>{f.reset();validDraft=null;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Đã xóa dữ liệu đang soạn trên trang; không ảnh hưởng dữ liệu hệ thống.';refreshSource()});
+el('print').addEventListener('click',()=>window.print());
+el('backEdit').addEventListener('click',()=>f.scrollIntoView({block:'start',behavior:'smooth'}));
+})();
+</script></body></html>
