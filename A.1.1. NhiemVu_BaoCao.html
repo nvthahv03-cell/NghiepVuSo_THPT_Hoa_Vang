@@ -367,6 +367,20 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 #a11SendHint[data-error="true"]{background:#fff7ea!important;color:#85500c!important;border-color:#eed6a6!important}
 #a11RetryConnection{min-height:42px}
 @media(max-width:600px){#a11RetryConnection{width:100%}}
+</style><style id="hva-a11-date-vn-input-20261117">
+/* Hiển thị ngày không phụ thuộc locale máy: luôn dd/mm/yyyy, kể cả iOS en-US. */
+#editor .hva-a11-date-control{position:relative;min-width:0;width:100%}
+#editor .hva-a11-date-control>input[id^="field-"]{display:block;width:100%!important;min-width:0!important;
+ height:45px!important;padding:10px 44px 10px 12px!important;font-size:14px!important;color:#173f5c!important}
+#editor .hva-a11-date-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#176ca5;pointer-events:none;font-size:17px}
+#editor .hva-a11-date-control .hva-a11-native-date{position:absolute!important;right:0!important;top:0!important;
+ width:42px!important;min-width:42px!important;max-width:42px!important;height:100%!important;
+ opacity:0!important;cursor:pointer!important;padding:0!important;margin:0!important;z-index:3;border:0!important}
+#editor .hva-a11-date-control:focus-within>input[id^="field-"]{border-color:#067aca!important;
+ box-shadow:0 0 0 3px rgba(6,129,209,.15)!important}
+@media(max-width:600px){#editor .hva-a11-date-control>input[id^="field-"]{font-size:12px!important;padding:9px 35px 9px 7px!important}
+#editor .hva-a11-date-icon{right:10px!important;font-size:15px!important}
+#editor .hva-a11-date-control .hva-a11-native-date{width:36px!important;min-width:36px!important;max-width:36px!important}}
 </style></head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
@@ -572,6 +586,30 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     return m?m[3]+'/'+m[2]+'/'+m[1]:String(v||'');
   };
   const a11ReportValue=(key,value)=>['from','to','dueDate'].includes(key)?a11DisplayDate(value):value;
+  // Giao diện date VN: nhập/chọn dd/mm/yyyy, lưu ISO yyyy-mm-dd cho Backend.
+  function a11DateISO(display){
+    const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(display||'').trim());
+    if(!m)return '';
+    const d=+m[1],month=+m[2],y=+m[3];
+    if(y<1900||y>2100)return '';
+    const obj=new Date(Date.UTC(y,month-1,d));
+    if(obj.getUTCFullYear()!==y||obj.getUTCMonth()!==month-1||obj.getUTCDate()!==d)return '';
+    return m[3]+'-'+m[2]+'-'+m[1];
+  }
+  function a11ReadField(id){
+    const input=$('field-'+id);
+    return ['from','to','dueDate'].includes(id)?a11DateISO(input.value):input.value.trim();
+  }
+  function a11ValidateDates(){
+    let valid=true;
+    for(const id of ['from','to','dueDate']){
+      const input=$('field-'+id);if(!input)continue;
+      const raw=input.value.trim(),iso=a11DateISO(raw);
+      input.setCustomValidity(raw&&!iso?'Ngày không hợp lệ. Vui lòng nhập theo dạng dd/mm/yyyy.':'');
+      if(!input.checkValidity()){if(valid){input.reportValidity();input.focus()}valid=false;}
+    }
+    return valid;
+  }
   async function a11Check(){
     const retry=$('a11RetryConnection');if(retry)retry.disabled=true;
     a11ConnectionError='';
@@ -628,7 +666,8 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     if(!a11SigningSupported[a11SignMethod==='PAPER'?'paper':'electronic']){announce('Backend chưa kích hoạt hình thức ký đã chọn.',true);return;}
     if(a11SignMethod==='ELECTRONIC'&&!(a11SignerVerified&&a11Signed&&a11SignatureData)){announce('Chưa hoàn thành xác thực và ký điện tử.',true);return;}
     const actor=verifySession();if(!actor||!$('reportForm').reportValidity())return;
-    const def=defs[current],data=Object.fromEntries(def.fields.map(([key])=>[key,$('field-'+key).value.trim()]));
+    if(!a11ValidateDates())return;
+    const def=defs[current],data=Object.fromEntries(def.fields.map(([key])=>[key,a11ReadField(key)]));
     if(!validDrive($('driveLink').value.trim())){announce('Liên kết Drive không hợp lệ.',true);return;}
     const dynamic=current==='other'?a11DynamicSections():[];
     if(current==='other'&&!dynamic.some(x=>x.value)){announce('Cần nhập ít nhất một mục nội dung báo cáo.',true);return;}
@@ -731,10 +770,36 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     const wrap=el('div',undefined,'field'+(type==='textarea'?' full':''));
     const text=el('label',label);text.htmlFor='field-'+id;if(required)text.append(el('em',' *'));
     const input=el(type==='textarea'?'textarea':'input');input.id='field-'+id;input.name=id;input.required=required;
-    if(type!=='textarea')input.type=type;input.maxLength=type==='textarea'?10000:1000;
+    if(type!=='textarea')input.type=type==='date'?'text':type;
+    input.maxLength=type==='date'?10:(type==='textarea'?10000:1000);
     if(id==='year')input.value='2026–2027';
-    if(type!=='date')input.placeholder=a11Hints[id]||'Nhập nội dung phù hợp…';
-    if(type==='date')input.setAttribute('aria-label',label);
+    input.placeholder=type==='date'?'dd/mm/yyyy':a11Hints[id]||'Nhập nội dung phù hợp…';
+    if(type==='date'){
+      input.inputMode='numeric';
+      input.setAttribute('autocomplete','off');
+      input.setAttribute('aria-label',label+' (ngày/tháng/năm)');
+      const picker=el('div',undefined,'hva-a11-date-control');
+      const icon=el('i',undefined,'bi bi-calendar3 hva-a11-date-icon');icon.setAttribute('aria-hidden','true');
+      const native=el('input');native.type='date';native.className='hva-a11-native-date';
+      native.tabIndex=-1;native.setAttribute('aria-label','Chọn '+label.toLowerCase()+' từ lịch');
+      native.addEventListener('change',()=>{
+        input.value=a11DisplayDate(native.value);
+        input.setCustomValidity('');
+        input.dispatchEvent(new Event('input',{bubbles:true}));
+      });
+      input.addEventListener('input',()=>{
+        input.setCustomValidity('');
+        const iso=a11DateISO(input.value);native.value=iso;
+      });
+      input.addEventListener('blur',()=>{
+        const iso=a11DateISO(input.value);
+        if(iso)input.value=a11DisplayDate(iso);
+      });
+      picker.append(input,icon,native);
+      input.addEventListener('focus',()=>wrap.classList.add('hva-a11-field-focused'));
+      input.addEventListener('blur',()=>wrap.classList.remove('hva-a11-field-focused'));
+      wrap.append(text,picker);return wrap;
+    }
     if(type==='textarea')input.rows=3;
     input.addEventListener('focus',()=>wrap.classList.add('hva-a11-field-focused'));
     input.addEventListener('blur',()=>wrap.classList.remove('hva-a11-field-focused'));
@@ -814,7 +879,8 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   function renderPreview(event){
     event?.preventDefault();const a=verifySession();if(!a)return;
     if(!$('reportForm').reportValidity())return;
-    const def=defs[current],data=Object.fromEntries(def.fields.map(([id])=>[id,$('field-'+id).value.trim()]));
+    if(!a11ValidateDates())return;
+    const def=defs[current],data=Object.fromEntries(def.fields.map(([id])=>[id,a11ReadField(id)]));
     const drive=$('driveLink').value.trim();
     if(data.year&&!/^\d{4}\s*(?:-|–|\/)\s*\d{4}$/.test(data.year)){announce('Năm học cần theo dạng 2026–2027.',true);return;}
     if(data.from&&data.to&&data.to<data.from){announce('Ngày kết thúc không được trước ngày bắt đầu.',true);return;}
