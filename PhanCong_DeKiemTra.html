@@ -624,18 +624,28 @@ const KT02_LOGIN_API='https://script.google.com/macros/s/AKfycbz3RGGmU_75a_lbRn7
 const $=id=>document.getElementById(id);let members=[],team='',actor='',actorName='',actorIsTTCM=false,actorIsBGH=false,personnelGroups=[],personnelTrusted=false,proposal=null,numberOfExams=2,signMethod='ELECTRONIC';
 const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().trim();
 function session(){
-  for(const storage of [localStorage,sessionStorage]){
-    let u={};try{u=JSON.parse(storage.getItem('user')||'{}')||{}}catch(_){}
-    const token=String(storage.getItem('hvaSessionToken')||'').trim();
-    const raw=storage.getItem('hvaSessionExpiresAt')||'';
-    const num=Number(raw),expiration=Number.isFinite(num)&&num>0?(num<1e12?num*1000:num):Date.parse(raw);
-    if(token&&Number.isFinite(expiration)&&expiration>Date.now()){
-      return {username:String(u.username||u.tenDangNhap||'').trim(),hoTen:String(u.hoTen||u.fullName||u.name||'').trim(),
-      to:String(u.toBoPhan||u.tenTo||u.to||'').trim(),chucVu:String(u.chucVu||u.viTriViecLam||u.vaiTro||u.role||'').trim(),
-      token,valid:true};
-    }
-  }
-  return {username:'',hoTen:'',to:'',chucVu:'',token:'',valid:false};
+ // Ke thua CuocHop/GVCN/DTHT: user co the nam trong sessionStorage,
+ // token o localStorage hoac sessionStorage. Chuc vu tren giao dien khong cap quyen.
+ let u={};
+ for(const storage of [sessionStorage,localStorage]){
+  try{const raw=JSON.parse(storage.getItem('user')||'null');if(raw&&typeof raw==='object'&&(raw.tenDangNhap||raw.username||raw.userName||raw.maGV)){u=raw;break}}catch(_){}
+ }
+ const username=String(u.username||u.tenDangNhap||u.userName||u.maGV||'').trim();
+ const candidates=[sessionStorage,localStorage].map(storage=>{
+  const token=String(storage.getItem('hvaSessionToken')||'').trim();
+  const raw=String(storage.getItem('hvaSessionExpiresAt')||'').trim();
+  const numeric=Number(raw),expiry=raw?(Number.isFinite(numeric)&&numeric>0?(numeric<1e12?numeric*1000:numeric):Date.parse(raw)):0;
+  return {token,expiry,hasExpiry:!!raw,expired:!!raw&&Number.isFinite(expiry)&&expiry<=Date.now()};
+ });
+ const choice=candidates.find(x=>x.token&&x.hasExpiry&&Number.isFinite(x.expiry)&&x.expiry>Date.now())||
+               candidates.find(x=>x.token&&!x.hasExpiry)||
+               candidates.find(x=>x.token);
+ const token=choice?.token||'';
+ // Khong coi token local la quyen: Backend phai xac thuc truoc khi doc nhan su.
+ return {username,hoTen:String(u.hoTen||u.hoten||u.fullName||u.name||u.displayName||'').trim(),
+  to:String(u.toBoPhan||u.tenTo||u.to||'').trim(),
+  chucVu:String(u.chucVu||u.chucvu||u.position||u.roleName||u.viTriViecLam||u.vaiTro||u.role||'').trim(),
+  token,valid:!!username&&!!token&&!choice?.expired,needsServerCheck:true};
 }
 
 function kt02ShowLogin(message){
@@ -776,9 +786,19 @@ async function load(){
  $('msg').textContent='Đang tải nhân sự tổ từ Cuộc họp (Nhân sự HVA)...';
  personnelTrusted=false;
  try{
-  if(!window.HVAPersonnel?.buildGroups)throw Error('Thiếu thư viện nhân sự chung HVA_Personnel.js.');
-  // Nhân sự tham chiếu đúng tuyến đang dùng ở Cuộc họp: getNVSMeetingPersonnel.
-  const groups=await window.HVAPersonnel.buildGroups();
+  // Ke thua tuyên du lieu CuocHop. Backend bat buoc xac thuc token.
+  // Thu vien HVA_Personnel co the bao het phien neu thieu metadata expiry;
+  // trong truong hop do dung JSONP chinh cung action, khong tu cap quyen.
+  let groups;
+  try{
+   if(!window.HVAPersonnel?.buildGroups)throw Error('Chưa tải thư viện nhân sự chung.');
+   groups=await window.HVAPersonnel.buildGroups();
+  }catch(helperError){
+   const response=await personnelJSONP(me.token,'getNVSMeetingPersonnel');
+   if(!Array.isArray(response.groups))throw Error('Backend nhân sự không trả danh sách nhóm tổ chuyên môn.');
+   groups=response.groups.filter(g=>!/^cccd$/i.test(String(g.tenTo||'').trim())&&!/^workgroup:cccd$/i.test(String(g.groupKey||'').trim()));
+   $('msg').textContent='Đã xác thực phiên trên Backend Cuộc họp; đang tải tổ chuyên môn...';
+  }
   if(!Array.isArray(groups)||!groups.some(g=>String(g.kind||'').toUpperCase()==='TEAM'))
    throw Error('Dịch vụ Cuộc họp chưa trả nhóm tổ chuyên môn.');
   pcdkLoadTeamSelect(groups,me.to);
@@ -804,7 +824,7 @@ async function load(){
   $('pcdkTeamSelect').replaceChildren(new Option('Không có tổ chuyên môn',''));
   $('pcdkTeamSelect').disabled=true;$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Chưa tải được danh sách giáo viên từ Cuộc họp.';
   $('pcdkRelogin').hidden=false;
-  $('msg').textContent='Không tải được nhân sự từ Cuộc họp: '+error.message+'. Đăng nhập lại rồi thử Tải lại nhân sự tổ.';
+  $('msg').textContent='KT02 không xác thực hoặc tải được nhân sự từ tuyến Cuộc họp: '+error.message+'. Kiểm tra phiên đăng nhập HVA–EDOS rồi thử Tải lại nhân sự tổ; không dùng dữ liệu cũ để phát hành.';
   refreshSubjects();render();
  }
 }
