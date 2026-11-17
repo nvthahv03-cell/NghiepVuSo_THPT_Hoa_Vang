@@ -627,7 +627,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       // DTHT có Sheet riêng. A1.1 chỉ gửi khi Web App xác nhận tuyến ký A1.1
       // và có nvsA11Submit_, tránh ghi nhầm vào bảng hồ sơ chung.
       if(!a11SigningSupported.paper&&!a11SigningSupported.electronic){
-        throw Error('Web App đang chạy chưa công bố hỗ trợ ký A1.1. Cần triển khai phiên bản V5 có nvsA11Submit_ và paperSigning/electronicSigning.');
+        throw Error('Web App trả tuyến A22-1 nhưng THIẾU thông tin ký A1.1 (paperSigning/electronicSigning). Cần triển khai phiên bản Backend V5 mới trên đúng Web App đang kết nối; không thay link sang DTHT.');
       }
       a11Enabled=true;
       announce('Đã xác nhận tuyến tiếp nhận A1.1. Có thể gửi hồ sơ theo hình thức ký được Backend hỗ trợ.',false);
