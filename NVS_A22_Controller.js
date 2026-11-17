@@ -44,6 +44,11 @@ function a22RefreshPresentation(){
  }
  const landing=by('a22LandingTitle');
  if(landing&&def)landing.textContent=code+' · '+def.title;
+ const intro=document.querySelector('.hva-a-landing-intro');
+ if(intro&&a1)intro.textContent='Chọn “Kê khai trực tiếp” để lập hồ sơ, điền các trường bắt buộc, xem trước và gửi khi hệ thống xác nhận tuyến nhận. Liên kết minh chứng Drive là tùy chọn.';
+ const note=document.querySelector('.hva-a-landing-note');
+ if(note&&a1)note.textContent='Các nghiệp vụ này đang hoàn thiện kết nối. Mẫu Drive chỉ mở khi trường cung cấp liên kết chính thức; chức năng gửi chỉ kích hoạt sau khi Backend xác nhận.';
+
  const quick=by('a22QuickTools');
  // Các nút tải và nộp đã nằm ở màn hình chọn. Không lặp lại trong form.
  if(quick)quick.hidden=true;
@@ -239,7 +244,7 @@ function validate(){
  const more=by('a22MoreFields');
  for(const spec of D[by('code').value].fields){
   const field=by('a22_'+spec.key);
-  if(field)field.required=!!spec.required&&!!more?.open;
+  if(field)field.required=!!spec.required&&(document.body.classList.contains('hva-a1-mode')||!!more?.open);
  }
  if(!a1ValidateDates())return false;
  if(!by('form').reportValidity())return false;
@@ -381,7 +386,7 @@ async function probeBackend(){
 }
 by('form').addEventListener('input',()=>{clientRequestId=null;submittedId='';by('previewPanel').classList.add('hidden');by('send').disabled=!canSubmit;a22RefreshPresentation();});
 by('a22MoreFields')?.addEventListener('toggle',()=>{
- const more=by('a22MoreFields');for(const spec of D[by('code').value].fields){const el=by('a22_'+spec.key);if(el)el.required=!!spec.required&&more.open;}
+ const more=by('a22MoreFields');for(const spec of D[by('code').value].fields){const el=by('a22_'+spec.key);if(el)el.required=!!spec.required&&(document.body.classList.contains('hva-a1-mode')||more.open);}
 });
 select.addEventListener('change',()=>{clientRequestId=null;submittedId='';by('send').disabled=!canSubmit;a22RefreshPresentation();});
 by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
