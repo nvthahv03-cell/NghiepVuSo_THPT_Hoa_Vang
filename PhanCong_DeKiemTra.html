@@ -467,7 +467,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 @media(max-width:650px){.pcdk-sign-cards{grid-template-columns:1fr}.pcdk-sign-card{padding:12px}}
 
 .pcdk-member-head{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:12px 0 7px;color:#134e7a;font-size:12px}.pcdk-member-head span{color:#5e8099;font-weight:700}.pcdk-members{border:1px solid #c4dfef;border-radius:12px;background:#f7fbff;padding:12px;display:flex;flex-wrap:wrap;gap:7px;min-height:50px;font-size:12px;color:#647d93}.pcdk-person{display:inline-flex;align-items:center;padding:7px 10px;background:white;border:1px solid #d4e6f2;border-radius:999px;color:#1c5075;font-size:12px;font-weight:700}
-</style><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="./HVA_Personnel.js"></script></head><body><header class="hva-pro-header">
+.pcdk-page-title{margin:0 0 14px;padding:13px 18px;background:#edf7ff;border:1px solid #badbf0;border-radius:13px;color:#0b5087;display:flex;flex-direction:column;gap:4px}.pcdk-page-title strong{font-size:15px;letter-spacing:.015em}.pcdk-page-title small{font-size:12px;color:#567a97;line-height:1.5}</style><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="./HVA_Personnel.js"></script></head><body><header class="hva-pro-header">
   <div class="hva-pro-header-inner">
 
     <button type="button"
@@ -482,9 +482,9 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 <span class="hva-pro-divider" aria-hidden="true"></span>
 
       <div class="hva-pro-brandtext">
-        <div class="hva-pro-kicker">HVA–EDOS · ĐIỀU HÀNH KIỂM TRA VÀ THI</div>
+        <div class="hva-pro-kicker">TRUNG TÂM QUẢN TRỊ SỐ HVA</div>
         <div class="hva-pro-school">Trường THPT Hòa Vang</div>
-        <div class="hva-pro-slogan">KT02 – Phân công nhiệm vụ ra đề và phản biện</div>
+        <div class="hva-pro-slogan">Quản trị thông minh <b>•</b> Giáo dục sáng tạo</div>
       </div>
     </div>
 
@@ -496,7 +496,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
     </div>
 
   </div>
-</header><div class="shell">
+</header><div class="shell"><div class="pcdk-page-title"><strong>KT02 – PHÂN CÔNG NHIỆM VỤ KIỂM TRA, ĐÁNH GIÁ</strong><small>Điều hành kiểm tra và thi · Phân công biên soạn, phản biện, xác nhận hồ sơ đề</small></div>
 <section class="panel"><h2>1. Người phân công, nhân sự tổ và hình thức ký</h2><div class="pcdk-sign-cards" role="radiogroup" aria-label="Hình thức ký phân công"><label class="pcdk-sign-card"><input name="pcdkSignMethod" type="radio" value="ELECTRONIC" checked><span><b>✍ Ký điện tử</b><small>Xác thực CCCD và ký xác nhận trước khi chuyển Trung tâm Phát hành</small></span></label><label class="pcdk-sign-card"><input name="pcdkSignMethod" type="radio" value="PAPER"><span><b>▤ Ký tay</b><small>In bản phân công, ký trực tiếp và trình phê duyệt theo quy trình giấy</small></span></label></div><p class="pcdk-sign-help" id="pcdkSignHelp">Đã chọn ký điện tử. Cần xác thực và ký xác nhận trước khi chuyển Trung tâm Phát hành.</p>
 <div class="identity-card">
  <div class="identity-col">
@@ -589,9 +589,9 @@ function pcdkSetTeam(key){
  const roster=$('pcdkTeamMembers');roster.replaceChildren();
  if(!members.length){roster.textContent='Chưa có danh sách nhân sự tổ được xác thực.';}else members.forEach(m=>{const chip=document.createElement('span');chip.className='pcdk-person';chip.textContent=m.hoTen+(m.chucVu?' · '+m.chucVu:'');roster.append(chip);});
  const myself=members.find(m=>norm(m.username)===norm(actor));
- actorIsTTCM=!!myself&&/to truong|ttcm/.test(norm(myself.chucVu||session().chucVu));
+ actorIsTTCM=!!myself&&/to truong|ttcm/.test(norm([myself.chucVu,session().chucVu].join(' ')));
  if(actorIsBGH&&!myself)actorIsTTCM=false;
- $('identityRole').textContent=actorIsBGH?'Ban Giám hiệu':actorIsTTCM?'Tổ trưởng chuyên môn':(session().chucVu||'Chưa xác định chức danh');
+ $('identityRole').textContent=actorIsBGH?'Ban Giám hiệu':actorIsTTCM?'Tổ trưởng chuyên môn':(myself?.chucVu||'Chức danh chưa được xác thực');
  $('team').value=team;$('count').value=members.length+' người';
  $('identityTeam').textContent=team;$('identityCount').textContent=members.length+' người';
  refreshSubjects();render();renderReview();
@@ -605,7 +605,7 @@ function pcdkLoadTeamSelect(groups,preferred){
  const visible=actorIsBGH?personnelGroups:(own?[own]:[]);
  for(const g of visible){const op=document.createElement('option');op.value=String(g.groupKey||g.tenTo);op.textContent=String(g.tenTo||g.name||g.groupKey);select.append(op);}
  select.disabled=!actorIsBGH||visible.length<2;
- const target=visible.find(g=>norm(g.tenTo)===norm(preferred))||own||visible[0];
+ const target=actorIsBGH?(visible.find(g=>norm(g.tenTo)===norm(preferred))||visible[0]):own;
  if(target){select.value=String(target.groupKey||target.tenTo);pcdkSetTeam(select.value);}
  else{members=[];team='';$('identityCount').textContent='—';$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Chưa xác định tổ chuyên môn thuộc tài khoản đăng nhập.';$('msg').textContent='Chưa xác định tổ chuyên môn theo quyền được cấp.';refreshSubjects();render();}
 }
@@ -618,12 +618,12 @@ async function load(){
   members=[];team='';personnelTrusted=false;
   $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';
   $('pcdkRelogin').hidden=false;
-  $('msg').textContent='Phiên NVS đã hết hạn hoặc thiếu thông tin tài khoản. Vui lòng đăng nhập lại từ Nghiệp vụ số.';
+  $('msg').textContent='Phiên EDOS đã hết hạn hoặc thiếu xác thực. Tên người dùng lưu trên máy không xác nhận quyền truy cập. Vui lòng đăng nhập lại NVS, sau đó mở KT02 để tải nhân sự tổ.';
   $('pcdkTeamSelect').disabled=true;$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Cần đăng nhập lại để tải danh sách tổ.';refreshSubjects();render();return;
  }
  actor=username;actorName=me.hoTen||username;
  actorIsBGH=/hieu truong|ban giam hieu|pht|bgh|quan tri/.test(norm(me.chucVu));
- $('identityRole').textContent=me.chucVu||'Đang đối chiếu chức danh';
+ $('identityRole').textContent='Đang đối chiếu chức danh từ nhân sự...';
  $('msg').textContent='Đang xác thực danh sách nhân sự theo tổ...';
  try{
   const payload=await personnelJSONP(me.token,'getPhanCongDePersonnel');
@@ -640,7 +640,7 @@ async function load(){
    const groups=await window.HVAPersonnel.buildGroups();
    if(!Array.isArray(groups)||!groups.length)throw Error('Không trả danh sách tổ chuyên môn.');
    pcdkLoadTeamSelect(groups,me.to);
-   $('msg').textContent='Đã nạp danh sách tổ để soạn nháp từ Nhân sự HVA. Tuyến phân công chưa xác thực ('+e.message+'); không được phát hành.';
+   $('msg').textContent='Đã tải danh sách tổ qua dịch vụ Nhân sự HVA. Tuyến phân công chưa xác thực ('+e.message+'); chỉ soạn nháp, không được phát hành.';
   }catch(error){
    members=[];team='';personnelGroups=[];
    $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';
