@@ -753,6 +753,7 @@ function pcdkSetTeam(key){
  $('team').value=team;$('count').value=members.length+' người';
  $('identityTeam').textContent=team;$('identityCount').textContent=members.length+' người';
  refreshSubjects();render();renderReview();pcdkApplyHandoffSubject();
+ window.dispatchEvent(new Event('hva:kt02-personnel-ready'));
  $('msg').textContent='Đã tải '+members.length+' nhân sự thuộc '+team+'. '+(personnelTrusted?'Đã xác thực danh sách từ tuyến phân công.':'Danh sách tham khảo; tuyến phân công chưa xác thực, không thể phát hành.');
 }
 function pcdkLoadTeamSelect(groups,preferred){
@@ -1162,6 +1163,7 @@ function exportCSV(){
 $('uAddRestriction').addEventListener('click',()=>{restrictions.push({person:'',grades:[],reason:'',type:'CONFLICT'});restrictionRows();markDirty()});
 $('uGradeFilter').addEventListener('change',taskRows);
 $('uRefreshPersonnel').addEventListener('click',()=>{restrictionRows();taskRows();$('uMessage').textContent='Đã nạp lại lựa chọn giáo viên từ nhân sự KT02 hiện có; chưa ghi Backend.'});
+window.addEventListener('hva:kt02-personnel-ready',()=>{restrictionRows();taskRows();$('uMessage').textContent='Đã đồng bộ danh sách giáo viên từ tổ chuyên môn đang được xác thực. Chưa ghi Backend V2.'});
 $('uValidate').addEventListener('click',valid);
 $('uSave').addEventListener('click',()=>{try{sessionStorage.setItem(K,JSON.stringify(serialize()));$('uMessage').textContent='Đã lưu bản nháp trong phiên trình duyệt, chưa ghi Google Sheets hay Backend.'}catch(e){showErrors(['Không lưu được bản nháp: '+e.message])}});
 $('uExport').addEventListener('click',exportCSV);
