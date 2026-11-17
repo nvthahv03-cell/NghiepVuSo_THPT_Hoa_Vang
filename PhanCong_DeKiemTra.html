@@ -519,7 +519,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 .kt02u-table input[type=checkbox]{width:17px;height:17px;accent-color:#086faf}
 .kt02u-table input[type=datetime-local]{min-width:163px}
 .kt02u-table .kt02u-person{min-width:155px}.kt02u-table .kt02u-deadline{display:block;margin-top:7px}
-.kt02u-table .kt02u-dlabel{display:block;font-size:10px;color:#687c8b;padding-top:3px}
+.kt02u-table .kt02u-dlabel{display:block;font-size:10px;color:#687c8b;padding-top:3px}.kt02u-time-preview{color:#075d96!important;font-weight:700;font-size:11px!important}
 .kt02u-table .kt02u-recipient{font-weight:700;min-width:130px}
 .kt02u-table .kt02u-small-btn{padding:7px;font-size:11px}
 .kt02u-table .kt02u-name{font-weight:700;white-space:normal;min-width:144px}
@@ -528,7 +528,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 .kt02u-message.kt02u-error{color:#9b3119;background:#fff2ec}
 .kt02u-error-input{outline:2px solid #d95232!important}
 @media(max-width:750px){.kt02u-fields{grid-template-columns:1fr}}
-@media print{body.kt02u-print header,body.kt02u-print .shell>section:not(#kt02Unified),body.kt02u-print #kt02Unified .kt02u-toolbar,body.kt02u-print #kt02Unified .kt02u-fields,body.kt02u-print #kt02Unified #uRestrictions,body.kt02u-print #kt02Unified #uRestrictionInfo,body.kt02u-print #kt02Unified #uMessage{display:none!important}body.kt02u-print .shell{max-width:none;padding:0;margin:0}body.kt02u-print #kt02Unified{border:none;background:white;box-shadow:none}body.kt02u-print .kt02u-scroll{overflow:visible;border:0}body.kt02u-print .kt02u-table{min-width:0;font-size:9pt}body.kt02u-print .kt02u-table input,body.kt02u-print .kt02u-table select{border:0;background:transparent;appearance:none} @page{size:A3 landscape;margin:12mm}}
+@media print{body.kt02u-print header,body.kt02u-print .shell>section:not(#kt02Unified),body.kt02u-print #kt02Unified .kt02u-toolbar,body.kt02u-print #kt02Unified .kt02u-fields,body.kt02u-print #kt02Unified #uRestrictions,body.kt02u-print #kt02Unified #uRestrictionInfo,body.kt02u-print #kt02Unified #uMessage{display:none!important}body.kt02u-print .shell{max-width:none;padding:0;margin:0}body.kt02u-print #kt02Unified{border:none;background:white;box-shadow:none}body.kt02u-print .kt02u-scroll{overflow:visible;border:0}body.kt02u-print .kt02u-table{min-width:0;font-size:9pt}body.kt02u-print .kt02u-table input[type=datetime-local]{display:none!important}body.kt02u-print .kt02u-table input,body.kt02u-print .kt02u-table select{border:0;background:transparent;appearance:none} @page{size:A3 landscape;margin:12mm}}
 </style><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="./HVA_Personnel.js"></script><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"></head><body><header class="hva-edos-standard-head" aria-label="HVA–EDOS">
   <div class="hva-edos-standard-inner">
     <a class="hva-edos-standard-back" href="./DieuHanh.html" aria-label="Quay lại Điều hành" title="Quay lại"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
@@ -582,6 +582,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
  <div class="kt02u-line"><strong>BẢNG PHÂN CÔNG TỔNG HỢP THEO TIẾN TRÌNH</strong><span>Chọn GV và nhập hạn riêng dưới từng người · trước HHhMM ngày DD/MM/YYYY</span></div>
  <div class="kt02u-toolbar">
   <label class="kt02u-grade">Khối hiển thị <select id="uGradeFilter"><option value="all">Cả 3 khối</option><option value="10">Khối 10</option><option value="11">Khối 11</option><option value="12">Khối 12</option></select></label>
+  <button id="uRefreshPersonnel" type="button" class="outline">Cập nhật danh sách GV</button>
   <button id="uValidate" type="button" class="outline">Kiểm tra phân công</button>
   <button id="uSave" type="button" class="outline">Lưu nháp trong phiên</button>
   <button id="uExport" type="button" class="outline">Xuất CSV (mở bằng Excel)</button>
@@ -1071,17 +1072,18 @@ function personnelSelect(value,grade,restricted){
  s.value=value||'';return s;
 }
 function dateInput(value){return field('input',{type:'datetime-local',value:value||'',className:'kt02u-deadline','aria-label':'Ngày giờ hạn hoàn thành'})}
+function dateCell(container,value,callback,caption){const inp=dateInput(value);const summary=field('small',{className:'kt02u-dlabel kt02u-time-preview',text:value?humanDate(value):'Chưa chọn thời hạn'});inp.addEventListener('change',()=>{callback(inp.value);summary.textContent=inp.value?humanDate(inp.value):'Chưa chọn thời hạn';markDirty()});container.append(inp,summary,field('small',{className:'kt02u-dlabel',text:caption}))}
 function taskRows(){
  const tbody=$('uTasks').querySelector('tbody');tbody.replaceChildren();
  const show=$('uGradeFilter').value;
  assignments.filter(a=>show==='all'||a.grade===show).forEach((a,i)=>{
   const tr=field('tr');const col=(txt,cl)=>{const td=field('td',{className:cl||''});if(txt!==undefined)td.textContent=txt;tr.append(td);return td};
   col(String(i+1));col(a.grade);col(a.name,'kt02u-name');
-  const worker=col(undefined);const ws=personnelSelect(a.worker,a.grade,a.kind==='exam');ws.addEventListener('change',()=>{a.worker=ws.value;markDirty()});worker.append(ws);const wd=dateInput(a.workerDue);wd.addEventListener('change',()=>{a.workerDue=wd.value;markDirty()});worker.append(wd,field('small',{className:'kt02u-dlabel',text:'Hạn GV thực hiện'}));
+  const worker=col(undefined);const ws=personnelSelect(a.worker,a.grade,a.kind==='exam');ws.addEventListener('change',()=>{a.worker=ws.value;markDirty()});worker.append(ws);dateCell(worker,a.workerDue,v=>a.workerDue=v,'Hạn GV thực hiện');
   const review=col(undefined);if(a.kind==='public'){review.textContent='Không bắt buộc phản biện theo mẫu';}else{
-   const rs=personnelSelect(a.reviewer,a.grade,a.kind==='exam');rs.addEventListener('change',()=>{a.reviewer=rs.value;markDirty()});review.append(rs);const rd=dateInput(a.reviewDue);rd.addEventListener('change',()=>{a.reviewDue=rd.value;markDirty()});review.append(rd,field('small',{className:'kt02u-dlabel',text:'Hạn GV phản biện'}));
+   const rs=personnelSelect(a.reviewer,a.grade,a.kind==='exam');rs.addEventListener('change',()=>{a.reviewer=rs.value;markDirty()});review.append(rs);dateCell(review,a.reviewDue,v=>a.reviewDue=v,'Hạn GV phản biện');
   }
-  const receive=col(undefined);receive.append(field('div',{className:'kt02u-recipient',text:a.recipient}));const dt=dateInput(a.receiveDue);dt.addEventListener('change',()=>{a.receiveDue=dt.value;markDirty()});receive.append(dt,field('small',{className:'kt02u-dlabel',text:'Hạn bàn giao'}));
+  const receive=col(undefined);receive.append(field('div',{className:'kt02u-recipient',text:a.recipient}));dateCell(receive,a.receiveDue,v=>a.receiveDue=v,'Hạn bàn giao');
   const state=col(undefined);const sel=field('select');['Chưa giao','Đã giao','Đang thực hiện','Chờ phản biện','Chờ tiếp nhận','Hoàn thành'].forEach(x=>mkOpt(sel,x,x));sel.value=a.status;sel.addEventListener('change',()=>{a.status=sel.value;markDirty()});state.append(sel);
   tbody.append(tr);
  });
@@ -1139,6 +1141,7 @@ function exportCSV(){
 }
 $('uAddRestriction').addEventListener('click',()=>{restrictions.push({person:'',grades:[],reason:'',type:'CONFLICT'});restrictionRows();markDirty()});
 $('uGradeFilter').addEventListener('change',taskRows);
+$('uRefreshPersonnel').addEventListener('click',()=>{restrictionRows();taskRows();$('uMessage').textContent='Đã nạp lại lựa chọn giáo viên từ nhân sự KT02 hiện có; chưa ghi Backend.'});
 $('uValidate').addEventListener('click',valid);
 $('uSave').addEventListener('click',()=>{try{sessionStorage.setItem(K,JSON.stringify(serialize()));$('uMessage').textContent='Đã lưu bản nháp trong phiên trình duyệt, chưa ghi Google Sheets hay Backend.'}catch(e){showErrors(['Không lưu được bản nháp: '+e.message])}});
 $('uExport').addEventListener('click',exportCSV);
