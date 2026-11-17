@@ -620,7 +620,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 <script>
 'use strict';
 const API='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
-const KT02_LOGIN_API='https://script.google.com/macros/s/AKfycbz3RGGmU_75a_lbRn7vnyX4prrWiWZT9WO3SHI19GOwKpLkt6mJ0eJqsBjmcAl2z8wEUg/exec';
+const KT02_LOGIN_API='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec'; // Cùng endpoint đăng nhập index.html (DTHT_STANDALONE_BACKEND)
 const $=id=>document.getElementById(id);let members=[],team='',actor='',actorName='',actorIsTTCM=false,actorIsBGH=false,personnelGroups=[],personnelTrusted=false,proposal=null,numberOfExams=2,signMethod='ELECTRONIC';
 const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().trim();
 function session(){
@@ -660,13 +660,13 @@ $('pcdkRelogin').addEventListener('click',()=>kt02ShowLogin('Đăng nhập lại
 $('pcdkAuthForm').addEventListener('submit',async e=>{
  e.preventDefault();const username=$('pcdkAuthUser').value.trim(),password=$('pcdkAuthPassword').value;
  if(!username||!password)return;
- const btn=$('pcdkAuthSubmit');btn.disabled=true;$('pcdkAuthError').textContent='Đang xác thực tài khoản...';
+ const btn=$('pcdkAuthSubmit');btn.disabled=true;$('pcdkAuthError').textContent='Đang xác thực với Backend đăng nhập HVA–EDOS...';
  try{
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);
-  let response;try{response=await fetch(KT02_LOGIN_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'login',tenDangNhap:username,matKhau:password}),cache:'no-store',signal:controller.signal})}finally{clearTimeout(timer)}
+  let response;try{response=await fetch(KT02_LOGIN_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'login',tenDangNhap:username,matKhau:/^\d{4}$/.test(password.trim())?'HVA@'+password.trim():password}),cache:'no-store',signal:controller.signal})}finally{clearTimeout(timer)}
   if(!response.ok)throw Error('Máy chủ phản hồi HTTP '+response.status);
   const data=await response.json();
-  if(data?.ok!==true||!data.nguoiDung||!data.sessionToken||!data.hetHanLuc)throw Error(data?.thongBao||data?.message||'Không thể xác thực tài khoản NVS.');
+  if(data?.ok!==true||!data.nguoiDung||!data.sessionToken||!data.hetHanLuc)throw Error(data?.thongBao||data?.message||'Backend đăng nhập không trả đầy đủ người dùng, phiên và hạn phiên.');
   const user=data.nguoiDung,expiry=String(data.hetHanLuc);
   const n=Number(expiry),ts=Number.isFinite(n)&&n>0?(n<1e12?n*1000:n):Date.parse(expiry);
   if(!Number.isFinite(ts)||ts<=Date.now())throw Error('Backend trả thời hạn phiên không hợp lệ.');
@@ -794,12 +794,15 @@ async function load(){
   try{
    if(!window.HVAPersonnel?.buildGroups)throw Error('Chưa tải thư viện nhân sự chung.');
    groups=await window.HVAPersonnel.buildGroups();
+   $('msg').textContent='Bước 1/3: Phiên được tuyến nhân sự Cuộc họp chấp nhận. Đang xác định tổ...';
   }catch(helperError){
+   $('msg').textContent='Bước 1/3: Kiểm tra phiên trực tiếp tại Backend nhân sự Cuộc họp...';
    const response=await personnelJSONP(me.token,'getNVSMeetingPersonnel');
    if(!Array.isArray(response.groups))throw Error('Backend nhân sự không trả danh sách nhóm tổ chuyên môn.');
    groups=response.groups.filter(g=>!/^cccd$/i.test(String(g.tenTo||'').trim())&&!/^workgroup:cccd$/i.test(String(g.groupKey||'').trim()));
    $('msg').textContent='Đã xác thực phiên trên Backend Cuộc họp; đang tải tổ chuyên môn...';
   }
+  $('msg').textContent='Bước 2/3: Đã nhận '+(Array.isArray(groups)?groups.length:0)+' nhóm nhân sự. Đang đối chiếu tổ với tài khoản...';
   if(!Array.isArray(groups)||!groups.some(g=>String(g.kind||'').toUpperCase()==='TEAM'))
    throw Error('Dịch vụ Cuộc họp chưa trả nhóm tổ chuyên môn.');
   pcdkLoadTeamSelect(groups,me.to);
@@ -807,6 +810,7 @@ async function load(){
   $('msg').textContent='Đã tải '+members.length+' nhân sự tổ '+team+' từ dữ liệu Cuộc họp. Đang kiểm tra quyền chuyển phát hành...';
   // Tuyến phân công chỉ dùng để đối chiếu quyền; không yêu cầu nó trả cấu trúc groups.
   try{
+   $('msg').textContent='Bước 3/3: Đã xác định tổ '+team+'. Đang xác thực quyền KT02...';
    const authorized=await personnelJSONP(me.token,'getPhanCongDePersonnel');
    if(!Array.isArray(authorized.danhSach))throw Error('Không có danh sách được cấp quyền.');
    const entitled=actorIsBGH||authorized.danhSach.some(m=>norm(m.username||m.tenDangNhap)===norm(actor));
