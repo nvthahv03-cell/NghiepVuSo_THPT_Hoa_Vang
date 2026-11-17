@@ -1625,7 +1625,7 @@ const HvaRoleDest={
         },
         displayMeta: (r) => {
             if (typeof r === 'string') return '';
-            return [r.chucVu || r.vaiTro || '', r.toBoPhan || r.to || ''].filter(Boolean).join(' · ');
+            return [r.chucVu || r.vaiTro || '', r.toBoPhan || r.to || '',r.deliveryRole==='CC'?'CC – '+(r.ccPurpose||'Để biết'):''].filter(Boolean).join(' · ');
         }
     };
 
@@ -2577,6 +2577,14 @@ return;
     },
     executePublishing: async () => {
         if (TTDHS_State.isPublishing) return;
+        // Không gửi CC như người thực hiện khi Backend chưa có hợp đồng phân biệt TO/CC.
+        if((TTDHS_State.recipients||[]).some(r=>r.deliveryRole==='CC')){
+            Controller.showPublishResult(false,'Đã chọn người nhận CC. Backend phát hành hiện chưa được kiểm chứng lưu và phân phối riêng CC – Để biết/Để báo cáo. Tạm dừng phát hành để tránh giao nhầm nhiệm vụ.','Cần kết nối CC ở Backend');return;
+        }
+        // KT02 có tuyến publishPhanCongDe với người nhận khóa từ module nguồn.
+        if(String(TTDHS_State.document?.moduleSource||'')==='PhanCongDeKiemTra' && (TTDHS_State.recipients||[]).some(r=>r.nhom==='TTCM'||r.nhom==='TPCM'||r.deliveryRole==='TO')){
+            Controller.showPublishResult(false,'KT02 đang dùng tuyến phát hành chuyên biệt; cần kiểm thử và cấp quyền Backend trước khi bổ sung người nhận từ bộ chọn vai trò.','Chưa hỗ trợ người nhận mở rộng cho KT02');return;
+        }
         const check = PreCheckEngine.runChecks(TTDHS_State);
         if (!check.allPassed) {
             Controller.showPublishResult(false,'Vui lòng kiểm tra và bổ sung các thông tin còn thiếu trước khi phát hành.','Chưa đủ điều kiện phát hành');
