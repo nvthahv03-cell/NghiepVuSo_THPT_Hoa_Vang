@@ -419,19 +419,19 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
  <div class="a11-sign-eyebrow"><i class="bi bi-pen"></i> PHƯƠNG THỨC XÁC NHẬN</div>
  <h3 id="a11SignTitle">Chọn hình thức ký báo cáo</h3>
  <div class="a11-sign-options" role="radiogroup" aria-label="Hình thức ký báo cáo">
-   <label class="a11-sign-choice"><input type="radio" name="a11SigningMethod" value="ELECTRONIC">
+   <label class="a11-sign-choice"><input type="radio" name="a11SigningMethod" value="ELECTRONIC" checked>
      <span class="a11-sign-icon"><i class="bi bi-shield-check"></i></span>
      <span class="a11-sign-copy"><strong>Ký điện tử</strong><small>Xác thực CCCD, tải chữ ký và ký xác nhận</small></span>
      <i class="bi bi-check-circle-fill a11-sign-check" aria-hidden="true"></i>
    </label>
-   <label class="a11-sign-choice"><input type="radio" name="a11SigningMethod" value="PAPER" checked>
+   <label class="a11-sign-choice"><input type="radio" name="a11SigningMethod" value="PAPER">
      <span class="a11-sign-icon"><i class="bi bi-printer"></i></span>
      <span class="a11-sign-copy"><strong>Ký tay</strong><small>Gửi hồ sơ, in báo cáo và nộp bản giấy đã ký</small></span>
      <i class="bi bi-check-circle-fill a11-sign-check" aria-hidden="true"></i>
    </label>
  </div>
- <p id="a11SignHint" class="muted">Ký tay: không cần xác thực CCCD hoặc tải chữ ký.</p>
- <div class="a11-electronic-fields" id="a11ElectronicFields" hidden>
+ <p id="a11SignHint" class="muted">Ký điện tử: xác thực CCCD và ký xác nhận trước khi gửi. Có thể chủ động chuyển sang ký tay nếu cần.</p>
+ <div class="a11-electronic-fields" id="a11ElectronicFields">
   <div class="a11-electronic-grid">
    <div><label for="a11Cccd">CCCD của người báo cáo</label><input id="a11Cccd" type="password" maxlength="12" inputmode="numeric" autocomplete="off" placeholder="12 chữ số CCCD"><button type="button" class="btn secondary" id="a11VerifyCccd"><i class="bi bi-shield-lock"></i> Xác thực CCCD</button></div>
    <div><label for="a11SignatureFile">Hình ảnh chữ ký của người báo cáo</label><input id="a11SignatureFile" type="file" accept="image/png,image/jpeg,image/webp"><div id="a11SignaturePreview" class="a11-signature-preview">Chưa chọn ảnh chữ ký</div></div>
@@ -519,7 +519,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   const A11_BACKEND_URL='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
   let a11Enabled=false,a11RequestId='',a11SubmittedId='',a11ConnectionError='';
   // A1.1 – dùng chung hai hình thức ký như DTHT/Chủ nhiệm.
-  let a11SignMethod='PAPER',a11SignerVerified=false,a11SignatureData='',a11Signed=false,a11VerificationToken='';
+  let a11SignMethod='ELECTRONIC',a11SignerVerified=false,a11SignatureData='',a11Signed=false,a11VerificationToken='';
   let a11SigningSupported={paper:false,electronic:false};
   const a11SignFingerprint=()=>[a11SignMethod,a11SignerVerified,a11Signed,!!a11SignatureData].join('|');
   function a11SelectSign(mode){
