@@ -542,23 +542,21 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 <script>
 'use strict';
 const API='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
-const $=id=>document.getElementById(id);let members=[],team='',actor='',actorName='',actorIsTTCM=false,proposal=null,numberOfExams=2;
+const $=id=>document.getElementById(id);let members=[],team='',actor='',actorName='',actorIsTTCM=false,actorIsBGH=false,personnelGroups=[],personnelTrusted=false,proposal=null,numberOfExams=2,signMethod='ELECTRONIC';
 const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().trim();
 function session(){
-  let u={};
   for(const storage of [localStorage,sessionStorage]){
-    for(const k of ['user','hvaCurrentUser','hvaUser','nvsUser']){
-      try{const v=JSON.parse(storage.getItem(k)||'null');if(v&&(v.username||v.tenDangNhap)){u=v;break}}catch(_){}
+    let u={};try{u=JSON.parse(storage.getItem('user')||'{}')||{}}catch(_){}
+    const token=String(storage.getItem('hvaSessionToken')||'').trim();
+    const raw=storage.getItem('hvaSessionExpiresAt')||'';
+    const num=Number(raw),expiration=Number.isFinite(num)&&num>0?(num<1e12?num*1000:num):Date.parse(raw);
+    if(token&&Number.isFinite(expiration)&&expiration>Date.now()){
+      return {username:String(u.username||u.tenDangNhap||'').trim(),hoTen:String(u.hoTen||u.fullName||u.name||'').trim(),
+      to:String(u.toBoPhan||u.tenTo||u.to||'').trim(),chucVu:String(u.chucVu||u.viTriViecLam||u.vaiTro||u.role||'').trim(),
+      token,valid:true};
     }
-    if(u.username||u.tenDangNhap)break;
   }
-  return {
-    username:String(u.username||u.tenDangNhap||'').trim(),
-    hoTen:String(u.hoTen||u.fullName||'').trim(),
-    to:String(u.toBoPhan||u.tenTo||u.to||'').trim(),
-    chucVu:String(u.chucVu||u.vaiTro||'').trim(),
-    token:String(localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||u.sessionToken||'').trim()
-  };
+  return {username:'',hoTen:'',to:'',chucVu:'',token:'',valid:false};
 }
 function personnelJSONP(token,action='getNVSMeetingPersonnel'){
   return new Promise((resolve,reject)=>{
@@ -576,53 +574,77 @@ function personnelJSONP(token,action='getNVSMeetingPersonnel'){
     script.src=url.toString();document.head.appendChild(script);
   });
 }
-async function load(){
-  const me=session();
-  const username=me.username;
-  $('user').value=me.hoTen||username;
-  $('identityName').textContent=me.hoTen||username||'Chưa đăng nhập';
-  if(!username){$('msg').textContent='Không nhận diện được tài khoản. Vui lòng mở từ NVS sau khi đăng nhập.';return}
-  if(!me.token){$('msg').textContent='Chưa có mã phiên NVS. Vui lòng đăng nhập lại từ trang chính.';return}
-  $('msg').textContent='Đang tải danh sách giáo viên thuộc tổ chuyên môn...';
-  try{
-
-    const payload=await personnelJSONP(me.token,'getPhanCongDePersonnel');
-    if(!Array.isArray(payload.danhSach))throw Error('API Phân công chưa trả về danh sách nhân sự.');
-    const groups=payload.groups||[];
-    const teams=groups.filter(g=>g&&String(g.kind||'').toUpperCase()==='TEAM');
-    const own=teams.find(g=>Array.isArray(g.members)&&g.members.some(m=>norm(m.username||m.tenDangNhap)===norm(username)))
-       ||teams.find(g=>me.to&&norm(g.tenTo)===norm(me.to)&&g.members?.some(m=>norm(m.username)===norm(username)));
-    if(!payload.danhSach.some(m=>norm(m.username||m.tenDangNhap)===norm(username)))throw Error('Tài khoản không thuộc tổ được Backend cấp quyền.');
-    members=(Array.isArray(payload.danhSach)?payload.danhSach:(own.members||[])).map(m=>({
-      username:String(m.username||m.tenDangNhap||'').trim(),
-      hoTen:String(m.hoTen||m.fullName||m.name||'').trim(),
-      monDay:String(m.monDay||m.mon||m.raw?.monDay||'').trim(),
-      chucVu:String(m.viTriViecLam||m.chucVu||m.vaiTro||'').trim()
-    })).filter(m=>m.username&&m.hoTen).sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
-    const myself=members.find(m=>norm(m.username)===norm(username));
-    actorName=myself?.hoTen||me.hoTen;
-    actorIsTTCM=/to truong|ttcm/.test(norm(myself?.chucVu||me.chucVu));
-    $('identityRole').textContent=actorIsTTCM?'TTCM':(myself?.chucVu||me.chucVu||'Chưa xác định chức danh');
-    team=String(payload.to||own?.tenTo||own?.name||own?.label||'').trim();
-    if(actor!==username){signatureState.verified=false;signatureState.signed=false;}
-    actor=username;
-    $('user').value=actorName||username;
-    $('team').value=team;
-    $('count').value=members.length+' người';
-    $('identityName').textContent=actorName||username;
-    $('identityTeam').textContent=team;
-    $('identityCount').textContent=members.length+' người';
-    refreshSubjects();
-    const hasSubjects=members.length>0&&members.every(m=>m.monDay);
-    $('msg').textContent=hasSubjects?'Đã tải '+members.length+' nhân sự tổ '+team+'.':'Đã tải '+members.length+' nhân sự tổ '+team+'. Chưa có đầy đủ môn dạy từ Backend.';
-    render();
-  }catch(e){
-    members=[];team='';$('team').value='';$('count').value='Chưa tải';
-    $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';$('identityRole').textContent='Chưa xác định chức danh';
-    refreshSubjects();render();
-    $('msg').textContent='Không tải được nhân sự: '+e.message;
-  }
+function pcdkMember(m){return {username:String(m.username||m.tenDangNhap||'').trim(),
+ hoTen:String(m.hoTen||m.fullName||m.name||'').trim(),
+ monDay:String(m.monDay||m.mon||m.raw?.monDay||'').trim(),
+ chucVu:String(m.viTriViecLam||m.chucVu||m.vaiTro||'').trim()};}
+function pcdkSetTeam(key){
+ const group=personnelGroups.find(g=>String(g.groupKey||g.tenTo)===String(key));
+ if(!group)return;
+ team=String(group.tenTo||group.name||'').trim();
+ members=(group.members||[]).map(pcdkMember).filter(m=>m.username&&m.hoTen).sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
+ const myself=members.find(m=>norm(m.username)===norm(actor));
+ actorIsTTCM=!!myself&&/to truong|ttcm/.test(norm(myself.chucVu||session().chucVu));
+ if(actorIsBGH&&!myself)actorIsTTCM=false;
+ $('identityRole').textContent=actorIsBGH?'Ban Giám hiệu':actorIsTTCM?'Tổ trưởng chuyên môn':(session().chucVu||'Chưa xác định chức danh');
+ $('team').value=team;$('count').value=members.length+' người';
+ $('identityTeam').textContent=team;$('identityCount').textContent=members.length+' người';
+ refreshSubjects();render();renderReview();
+ $('msg').textContent='Đã tải '+members.length+' nhân sự thuộc '+team+'. '+(personnelTrusted?'Đã xác thực danh sách từ tuyến phân công.':'Danh sách tham khảo; tuyến phân công chưa xác thực, không thể phát hành.');
 }
+function pcdkLoadTeamSelect(groups,preferred){
+ personnelGroups=groups.filter(g=>String(g.kind||'').toUpperCase()==='TEAM'&&Array.isArray(g.members)&&g.members.length);
+ const select=$('pcdkTeamSelect');select.textContent='';
+ const own=personnelGroups.find(g=>(g.members||[]).some(m=>norm(m.username||m.tenDangNhap)===norm(actor)));
+ const visible=actorIsBGH?personnelGroups:(own?[own]:[]);
+ for(const g of visible){const op=document.createElement('option');op.value=String(g.groupKey||g.tenTo);op.textContent=String(g.tenTo||g.name||g.groupKey);select.append(op);}
+ select.disabled=visible.length<2;
+ const target=visible.find(g=>norm(g.tenTo)===norm(preferred))||own||visible[0];
+ if(target){select.value=String(target.groupKey||target.tenTo);pcdkSetTeam(select.value);}
+ else{members=[];team='';$('identityCount').textContent='—';$('msg').textContent='Chưa xác định tổ chuyên môn theo quyền được cấp.';refreshSubjects();render();}
+}
+async function load(){
+ const me=session(),username=me.username;
+ $('identityName').textContent=me.hoTen||username||'Chưa đăng nhập';
+ $('user').value=me.hoTen||username;
+ $('pcdkRelogin').hidden=true;
+ if(!me.valid||!username){
+  members=[];team='';personnelTrusted=false;
+  $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';
+  $('pcdkRelogin').hidden=false;
+  $('msg').textContent='Phiên NVS đã hết hạn hoặc thiếu thông tin tài khoản. Vui lòng đăng nhập lại từ Nghiệp vụ số.';
+  $('pcdkTeamSelect').disabled=true;refreshSubjects();render();return;
+ }
+ actor=username;actorName=me.hoTen||username;
+ actorIsBGH=/hieu truong|ban giam hieu|pht|bgh|quan tri/.test(norm(me.chucVu));
+ $('identityRole').textContent=me.chucVu||'Đang đối chiếu chức danh';
+ $('msg').textContent='Đang xác thực danh sách nhân sự theo tổ...';
+ try{
+  const payload=await personnelJSONP(me.token,'getPhanCongDePersonnel');
+  if(!Array.isArray(payload.danhSach))throw Error('Tuyến phân công chưa trả danh sách nhân sự hợp lệ.');
+  const groups=(payload.groups||[]).filter(g=>String(g.kind||'').toUpperCase()==='TEAM');
+  if(!groups.length)throw Error('Tuyến phân công chưa trả các tổ chuyên môn.');
+  if(!actorIsBGH&&!payload.danhSach.some(m=>norm(m.username||m.tenDangNhap)===norm(username)))throw Error('Tài khoản không thuộc danh sách được Backend cấp quyền.');
+  personnelTrusted=true;pcdkLoadTeamSelect(groups,me.to);
+ }catch(e){
+  personnelTrusted=false;
+  // HVA_Personnel.js dùng tuyến getNVSMeetingPersonnel đã có, chỉ để chọn nhân sự/soạn nháp.
+  try{
+   if(!window.HVAPersonnel?.buildGroups)throw Error('Không có dịch vụ nhân sự chung.');
+   const groups=await window.HVAPersonnel.buildGroups();
+   if(!Array.isArray(groups)||!groups.length)throw Error('Không trả danh sách tổ chuyên môn.');
+   pcdkLoadTeamSelect(groups,me.to);
+   $('msg').textContent='Đã nạp danh sách tổ để soạn nháp từ Nhân sự HVA. Tuyến phân công chưa xác thực ('+e.message+'); không được phát hành.';
+  }catch(error){
+   members=[];team='';personnelGroups=[];
+   $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';
+   $('pcdkTeamSelect').disabled=true;$('pcdkRelogin').hidden=true;
+   $('msg').textContent='Không tải được nhân sự: '+e.message+'. Dịch vụ nhân sự chung: '+error.message+'. Kiểm tra lại phiên đăng nhập hoặc kết nối Backend.';
+   refreshSubjects();render();
+  }
+ }
+}
+$('pcdkTeamSelect').addEventListener('change',e=>{resetSignedDocument();pcdkSetTeam(e.target.value)});
 const SUBJECT_BY_UNIT={
 'MATH_IT':['Toán','Tin học'],'LITERATURE':['Ngữ văn'],'ENGLISH':['Tiếng Anh'],
 'HISTORY_GEO':['Lịch sử','Địa lí','GDKT&PL'],
