@@ -459,7 +459,7 @@ el('toKT02').addEventListener('click',()=>{
  const subj=el('kt02SubjectChoice'),grade=el('kt02GradeChoice');subj.replaceChildren();grade.replaceChildren();
  const selectOption=(box,label,value)=>{const op=document.createElement('option');op.value=value;op.textContent=label;box.append(op)};
  selectOption(subj,'— Chọn môn —','');
- subjects.forEach(s=>selectOption(subj,s+(d.subjectsCentral||[]).includes(s)?'':'',s));
+ subjects.forEach(s=>selectOption(subj,s+' — '+((d.subjectsCentral||[]).includes(s)?'Kiểm tra tập trung':'Kiểm tra tại lớp'),s));
  selectOption(grade,'— Chọn khối —','');
  grades.forEach(g=>selectOption(grade,'Khối '+g,g));
  // Không tự xác định môn học nào của từng khối; người sử dụng lựa chọn dựa trên kế hoạch.
