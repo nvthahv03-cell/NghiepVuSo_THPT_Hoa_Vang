@@ -566,6 +566,12 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     if(!r.ok)throw Error('Backend không phản hồi hợp lệ: HTTP '+r.status);
     const data=await r.json();if(data.success!==true)throw Error(data.message||'Máy chủ chưa tiếp nhận yêu cầu.');return data;
   }
+  // Ngày input được giữ ISO cho API, nhưng biểu mẫu và PDF hiển thị dd/mm/yyyy.
+  const a11DisplayDate=v=>{
+    const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v||'').trim());
+    return m?m[3]+'/'+m[2]+'/'+m[1]:String(v||'');
+  };
+  const a11ReportValue=(key,value)=>['from','to','dueDate'].includes(key)?a11DisplayDate(value):value;
   async function a11Check(){
     const retry=$('a11RetryConnection');if(retry)retry.disabled=true;
     a11ConnectionError='';
@@ -580,6 +586,11 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
         paper:response.paperSigning===true || response.signingMethods?.includes?.('PAPER')===true,
         electronic:response.electronicSigning===true || response.signingMethods?.includes?.('ELECTRONIC')===true
       };
+      // DTHT có Sheet riêng. A1.1 chỉ gửi khi Web App xác nhận tuyến ký A1.1
+      // và có nvsA11Submit_, tránh ghi nhầm vào bảng hồ sơ chung.
+      if(!a11SigningSupported.paper&&!a11SigningSupported.electronic){
+        throw Error('Web App đang chạy chưa công bố hỗ trợ ký A1.1. Cần triển khai phiên bản V5 có nvsA11Submit_ và paperSigning/electronicSigning.');
+      }
       a11Enabled=true;
       announce('Đã xác nhận tuyến tiếp nhận A1.1. Có thể gửi hồ sơ theo hình thức ký được Backend hỗ trợ.',false);
     }catch(err){
@@ -606,7 +617,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       sendHint.textContent=a11ConnectionError
         ?'Chưa kết nối được A1.1: '+a11ConnectionError+' Bấm “Kiểm tra lại kết nối” sau khi Backend được cập nhật.'
         :!a11Enabled?'Chưa xác nhận được tuyến tiếp nhận A1.1.'
-        :!a11SigningSupported[a11SignMethod==='PAPER'?'paper':'electronic']?'Máy chủ chưa hỗ trợ '+kind+'.'
+        :!a11SigningSupported[a11SignMethod==='PAPER'?'paper':'electronic']?'Backend chưa công bố hỗ trợ '+kind+' cho A1.1. Cần kiểm tra phiên bản Web App đang triển khai.'
         :a11SignMethod==='ELECTRONIC'&&!ready?'Cần xác thực CCCD và ký xác nhận trước khi gửi.'
         :'Đã kết nối '+kind+'. Hồ sơ chỉ được coi là gửi thành công khi có mã tiếp nhận từ máy chủ.';
       sendHint.dataset.error=String(!!a11ConnectionError);
@@ -621,7 +632,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     if(!validDrive($('driveLink').value.trim())){announce('Liên kết Drive không hợp lệ.',true);return;}
     const dynamic=current==='other'?a11DynamicSections():[];
     if(current==='other'&&!dynamic.some(x=>x.value)){announce('Cần nhập ít nhất một mục nội dung báo cáo.',true);return;}
-    const text=def.fields.map(([key,label])=>label+': '+data[key]).concat(dynamic.filter(x=>x.value).map(x=>x.title+': '+x.value)).join('\n');
+    const text=def.fields.map(([key,label])=>label+': '+a11ReportValue(key,data[key])).concat(dynamic.filter(x=>x.value).map(x=>x.title+': '+x.value)).join('\n');
     if(text.length>7000){announce('Nội dung vượt giới hạn 7.000 ký tự. Hãy dùng liên kết Drive cho phụ lục.',true);return;}
     if(!a11RequestId)a11RequestId=a11NewRequestId();
     if(!window.confirm('Xác nhận gửi '+def.name+' đến BGH/TTCM theo hình thức '+(a11SignMethod==='PAPER'?'ký tay, chờ nộp bản giấy':'ký điện tử')+'?'))return;
@@ -805,7 +816,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     paper.append(el('div','BÁO CÁO','report-title'),el('div',def.name,'report-subtitle'));
     paper.append(el('p','Kính gửi: Ban Giám hiệu Trường THPT Hòa Vang'));
     appendLine(paper,'Người báo cáo',a.name);appendLine(paper,'Tổ / bộ phận',a.team);appendLine(paper,'Chức vụ',a.role);
-    def.fields.forEach(([id,label])=>appendLine(paper,label,data[id]));
+    def.fields.forEach(([id,label])=>appendLine(paper,label,a11ReportValue(id,data[id])));
     if(current==='other'){
       const sections=a11DynamicSections().filter(x=>x.value);
       if(!sections.length){announce('Cần nhập ít nhất một mục nội dung báo cáo.',true);return;}
