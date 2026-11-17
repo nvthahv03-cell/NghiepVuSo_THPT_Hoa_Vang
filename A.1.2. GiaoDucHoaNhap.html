@@ -18,7 +18,7 @@ h1{font-size:clamp(21px,3.5vw,27px);margin:0 0 9px;color:#0d477a}h2{font-size:cl
 .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}.field{min-width:0}.field.wide{grid-column:1/-1}
 label{display:block;margin:9px 0 7px;font-weight:850;color:#184f76;font-size:12px}
 input,select,textarea{border:1.5px solid #aecce2;border-radius:10px;min-height:44px;background:#fff;color:#183e5b;padding:11px 12px;width:100%;min-width:0}
-textarea{resize:vertical;min-height:104px;line-height:1.5}textarea::placeholder,input::placeholder{color:#7d96aa;font-size:12px}
+textarea{resize:vertical;min-height:104px;line-height:1.5}.date-wrap{position:relative}.date-wrap .date-display{padding-right:44px!important}.date-wrap .date-native{position:absolute;right:0;top:0;width:41px;min-width:41px;height:100%;opacity:0;cursor:pointer;z-index:2}.date-wrap:after{content:'📅';position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none}textarea::placeholder,input::placeholder{color:#7d96aa;font-size:12px}
 input:focus,textarea:focus,select:focus{outline:2px solid #087ec5;outline-offset:1px}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:19px}button.btn{border:1px solid #0676ba;background:#086fb3;color:#fff;padding:11px 17px;min-height:45px;border-radius:10px;font-weight:850;font-size:13px}
 button.btn.alt{background:#eef7ff;border-color:#b5d9ef;color:#145785}
@@ -37,7 +37,10 @@ button.btn.alt{background:#eef7ff;border-color:#b5d9ef;color:#145785}
 <button type="button" class="tile" data-form="plan"><span class="number">02</span><span><b>Kế hoạch giáo dục cá nhân</b><small>Mục tiêu, biện pháp, phối hợp và thời hạn</small></span></button>
 <button type="button" class="tile" data-form="monitor"><span class="number">03</span><span><b>Theo dõi và đánh giá</b><small>Ghi nhận tiến bộ, minh chứng, điều chỉnh hỗ trợ</small></span></button>
 <button type="button" class="tile" data-form="report"><span class="number">04</span><span><b>Báo cáo giáo dục hòa nhập</b><small>Tổng hợp kết quả, khó khăn, đề xuất</small></span></button>
-</div></section>
+</div>
+<div class="actions"><button type="button" class="btn alt" id="loadHistory">Tra cứu hồ sơ đã gửi</button></div>
+<div id="history" hidden></div>
+</section>
 <section class="panel" id="formScreen" hidden>
 <div class="eyebrow">ĐANG KÊ KHAI · A1.2</div><h2 id="formTitle"></h2><p class="muted" id="formIntro"></p>
 <div class="ident"><div class="ident-head">THÔNG TIN NGƯỜI LẬP HỒ SƠ · ĐÃ ĐĂNG NHẬP EDOS</div><div class="ident-body"><div><small>Họ và tên</small><strong id="personName">—</strong></div><div><small>Tổ / bộ phận</small><strong id="personTeam">—</strong></div><div><small>Chức vụ</small><strong id="personRole">—</strong></div></div></div>
@@ -73,17 +76,48 @@ const say=(msg,isError=false)=>{$('feedback').textContent=msg;$('feedback').styl
 async function check(){try{const r=await api('nvsA12Health');ready=r.supported===true&&r.version==='A12-1'&&r.permission==='WRITE';if(!ready)throw Error(r.message||'Tài khoản chưa được cấp quyền lập hồ sơ.');$('connection').textContent='Đã xác thực tuyến hồ sơ A1.2; có thể gửi khi biểu mẫu hợp lệ.';say('Đã xác thực quyền tiếp nhận hồ sơ.')}catch(e){ready=false;$('connection').textContent='Chưa kết nối hồ sơ A1.2: '+e.message;say(e.message,true)}updateSend()}
 function updateSend(){$('send').disabled=!ready||!kind||$('previewScreen').hidden||busy||!!receipt;}
 function open(kindNew){kind=kindNew;requestId='';receipt='';const d=defs[kind];$('formTitle').textContent=d.name;$('formIntro').textContent=d.intro;$('fields').replaceChildren();const u=user();$('personName').textContent=u.hoTen||u.fullName||u.name||'Chưa xác định';$('personTeam').textContent=u.toBoPhan||u.tenTo||u.to||'—';$('personRole').textContent=u.chucVu||u.viTriViecLam||'—';
-for(const [key,label,type,required,hint] of d.fields){const box=document.createElement('div');box.className='field'+(type==='textarea'?' wide':'');const lab=txt('label',label+(required?' *':''));lab.htmlFor='f_'+key;let inp;if(type==='textarea'){inp=document.createElement('textarea');inp.rows=3;inp.maxLength=5500;inp.placeholder=hint}else if(type==='select'){inp=document.createElement('select');inp.append(new Option('— Chọn mức độ —',''));for(const v of hint)inp.append(new Option(v,v))}else{inp=document.createElement('input');inp.type=type==='date'?'text':type;inp.placeholder=hint||'';inp.maxLength=type==='date'?10:220;if(type==='date')inp.inputMode='numeric';if(key==='namHoc')inp.value='2026–2027'}inp.id='f_'+key;inp.required=required;box.append(lab,inp);$('fields').append(box)}
+for(const [key,label,type,required,hint] of d.fields){const box=document.createElement('div');box.className='field'+(type==='textarea'?' wide':'');const lab=txt('label',label+(required?' *':''));lab.htmlFor='f_'+key;let inp;if(type==='textarea'){inp=document.createElement('textarea');inp.rows=3;inp.maxLength=5500;inp.placeholder=hint}else if(type==='select'){inp=document.createElement('select');inp.append(new Option('— Chọn mức độ —',''));for(const v of hint)inp.append(new Option(v,v))}else{inp=document.createElement('input');inp.type=type==='date'?'text':type;inp.placeholder=hint||'';inp.maxLength=type==='date'?10:220;if(type==='date')inp.inputMode='numeric';if(key==='namHoc')inp.value='2026–2027'}inp.id='f_'+key;inp.required=required;
+if(type==='date'){
+ const wrap=document.createElement('div');wrap.className='date-wrap';inp.classList.add('date-display');const native=document.createElement('input');native.type='date';native.className='date-native';native.tabIndex=-1;native.setAttribute('aria-label','Mở lịch chọn ngày');
+ native.addEventListener('change',()=>{inp.value=fmtDate(native.value);inp.setCustomValidity('');inp.dispatchEvent(new Event('input',{bubbles:true}));});
+ inp.addEventListener('input',()=>{inp.setCustomValidity('');native.value=parseDate(inp.value);});wrap.append(inp,native);box.append(lab,wrap)
+}else box.append(lab,inp);
+$('fields').append(box)}
 $('choices').hidden=true;$('formScreen').hidden=false;$('previewScreen').hidden=true;$('receipt').hidden=true;$('finish').hidden=true;$('formScreen').scrollIntoView({block:'start'});updateSend();}
 function values(){const data={};for(const [k,,type] of defs[kind].fields){const i=$('f_'+k);const v=i.value.trim();if(type==='date'&&v&&!parseDate(v)){i.setCustomValidity('Nhập ngày theo dd/mm/yyyy.');i.reportValidity();i.focus();return null}i.setCustomValidity('');data[k]=type==='date'&&v?parseDate(v):v}return data}
 function preview(ev){ev.preventDefault();if(!$('entryForm').reportValidity())return;const d=values();if(!d)return;const u=user();const lines=['SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG','TRƯỜNG THPT HÒA VANG','','BẢN XEM TRƯỚC – CHƯA GỬI','','BÁO CÁO / HỒ SƠ',defs[kind].name,'','Người lập: '+(u.hoTen||u.fullName||u.name||''),'Tổ / bộ phận: '+(u.toBoPhan||u.tenTo||u.to||''),''];for(const [k,label,type] of defs[kind].fields)lines.push(label+': '+(type==='date'?fmtDate(d[k]):d[k]||'—'));lines.push('','NGƯỜI LẬP HỒ SƠ','(Ký, ghi rõ họ tên sau khi in)');$('preview').textContent=lines.join('\n');$('previewTitle').textContent=defs[kind].name;$('previewScreen').hidden=false;$('previewScreen').scrollIntoView({block:'start'});updateSend()}
 async function send(){if(!ready||busy||receipt)return;if(!$('entryForm').reportValidity())return;const d=values();if(!d)return;const u=user();if(!confirm('Xác nhận gửi '+defs[kind].name+' vào hệ thống HVA–EDOS?'))return;busy=true;updateSend();try{if(!requestId)requestId='A12-'+(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));const r=await api('nvsA12Submit',{document:{clientRequestId:requestId,kind,fields:d}});if(!r.recordId||r.stored!==true||r.sheetName!=='NVS_A12_HOA_NHAP')throw Error('Máy chủ chưa xác nhận mã và nơi lưu; cần đối chiếu trước khi gửi lại.');receipt=r.recordId;$('receipt').hidden=false;$('receipt').textContent='ĐÃ TIẾP NHẬN · Mã hồ sơ: '+receipt+' · Đã lưu trong hệ thống. Chờ xử lý theo phân quyền.';$('finish').hidden=false;say('Đã xác nhận tiếp nhận hồ sơ '+receipt);$('preview').textContent=$('preview').textContent.replace('BẢN XEM TRƯỚC – CHƯA GỬI','ĐÃ TIẾP NHẬN · '+receipt)}catch(e){say('Chưa xác nhận gửi: '+e.message+' Nếu máy chủ đã cấp mã, không gửi lại khi chưa đối chiếu.',true)}finally{busy=false;updateSend()}}
+async function history(){
+ if(!ready){say('Chưa xác thực quyền truy cập. Bấm kiểm tra kết nối trước.',true);return}
+ $('history').hidden=false;$('history').textContent='Đang tra cứu hồ sơ…';
+ try{
+  const r=await api('nvsA12ListMine');const rows=Array.isArray(r.records)?r.records:[];
+  const wrap=document.createElement('div');wrap.className='history-items';
+  if(!rows.length)wrap.append(txt('p','Chưa có hồ sơ đã gửi.'));
+  for(const item of rows){
+   const bar=document.createElement('div');bar.style.cssText='display:flex;align-items:center;gap:12px;justify-content:space-between;padding:12px;border-bottom:1px solid #dceaf5;flex-wrap:wrap';
+   bar.append(txt('span',(defs[item.kind]?.name||item.kind)+' · '+item.className+' · '+item.createdAt));
+   const btn=document.createElement('button');btn.type='button';btn.className='btn alt';btn.textContent='Xem hồ sơ';btn.addEventListener('click',()=>getRecord(item.recordId));bar.append(btn);wrap.append(bar)
+  }
+  $('history').replaceChildren(wrap);
+ }catch(e){$('history').textContent='Không tra cứu được hồ sơ: '+e.message}
+}
+async function getRecord(recordId){
+ try{
+  const r=await api('nvsA12Get',{recordId});const doc=r.document||{},d=defs[doc.kind];if(!d)throw Error('Không nhận diện được loại hồ sơ.');
+  const u=user();const lines=['SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG','TRƯỜNG THPT HÒA VANG','','HỒ SƠ ĐÃ TIẾP NHẬN · '+r.recordId,'',d.name,'','Người lập: '+(u.hoTen||u.fullName||u.name||'')];
+  for(const [k,label,type] of d.fields)lines.push(label+': '+(type==='date'?fmtDate(doc.fields?.[k]):doc.fields?.[k]||'—'));
+  $('previewTitle').textContent='Hồ sơ đã tiếp nhận · '+d.name;$('preview').textContent=lines.join('\n');
+  receipt=recordId;$('receipt').hidden=false;$('receipt').textContent='Mã hồ sơ: '+recordId+' · '+r.status;
+  $('previewScreen').hidden=false;$('previewScreen').scrollIntoView({block:'start'});$('finish').hidden=false;updateSend();
+ }catch(e){say('Không mở được hồ sơ: '+e.message,true)}
+}
 function back(){if(!receipt&&kind){const nonempty=defs[kind].fields.some(([k])=>{const v=$('f_'+k)?.value.trim();return v&&v!=='2026–2027'});if(nonempty&&!confirm('Về danh mục? Nội dung chưa gửi sẽ bị bỏ.'))return}kind='';$('choices').hidden=false;$('formScreen').hidden=true;$('previewScreen').hidden=true;$('choices').scrollIntoView({block:'start'})}
 $('menuGrid').addEventListener('click',ev=>{const btn=ev.target.closest('button[data-form]');if(btn)open(btn.dataset.form)});
 $('entryForm').addEventListener('submit',preview);
 $('entryForm').addEventListener('input',()=>{if(receipt)return;requestId='';$('previewScreen').hidden=true;updateSend()});
 $('goMenu').addEventListener('click',back);$('backEdit').addEventListener('click',()=>{$('previewScreen').hidden=true;$('formScreen').scrollIntoView({block:'start'})});
-$('finish').addEventListener('click',back);$('retry').addEventListener('click',check);$('send').addEventListener('click',send);$('print').addEventListener('click',()=>window.print());
+$('finish').addEventListener('click',back);$('loadHistory').addEventListener('click',history);$('retry').addEventListener('click',check);$('send').addEventListener('click',send);$('print').addEventListener('click',()=>window.print());
 const initial=new URL(location.href).searchParams.get('form');
 if(initial&&Object.prototype.hasOwnProperty.call(defs,initial))open(initial);
 check();
