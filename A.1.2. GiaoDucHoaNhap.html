@@ -38,8 +38,6 @@ button.btn.alt{background:#eef7ff;border-color:#b5d9ef;color:#145785}
 <button type="button" class="tile" data-form="monitor"><span class="number">03</span><span><b>Đánh giá và điều chỉnh kế hoạch</b><small>Thành phần hồ sơ: kết quả đánh giá, minh chứng, điều chỉnh sau đánh giá</small></span></button>
 <button type="button" class="tile" data-form="report"><span class="number">04</span><span><b>Báo cáo tổng hợp giáo dục hòa nhập</b><small>Phục vụ quản lý, không thay thế hồ sơ cá nhân của học sinh</small></span></button>
 </div>
-<div class="actions"><button type="button" class="btn alt" id="loadHistory">Tra cứu hồ sơ đã gửi</button></div>
-<div id="history" hidden></div>
 </section>
 <section class="panel" id="formScreen" hidden>
 <div class="eyebrow">ĐANG KÊ KHAI · A1.2</div><h2 id="formTitle"></h2><p class="muted" id="formIntro"></p>
@@ -87,37 +85,12 @@ $('choices').hidden=true;$('formScreen').hidden=false;$('previewScreen').hidden=
 function values(){const data={};for(const [k,,type] of defs[kind].fields){const i=$('f_'+k);const v=i.value.trim();if(type==='date'&&v&&!parseDate(v)){i.setCustomValidity('Nhập ngày theo dd/mm/yyyy.');i.reportValidity();i.focus();return null}i.setCustomValidity('');data[k]=type==='date'&&v?parseDate(v):v}return data}
 function preview(ev){ev.preventDefault();if(!$('entryForm').reportValidity())return;const d=values();if(!d)return;const u=user();const lines=['SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG','TRƯỜNG THPT HÒA VANG','','BẢN XEM TRƯỚC – CHƯA GỬI','','BÁO CÁO / HỒ SƠ',defs[kind].name,'','Người lập: '+(u.hoTen||u.fullName||u.name||''),'Tổ / bộ phận: '+(u.toBoPhan||u.tenTo||u.to||''),''];for(const [k,label,type] of defs[kind].fields)lines.push(label+': '+(type==='date'?fmtDate(d[k]):d[k]||'—'));lines.push('','NGƯỜI LẬP HỒ SƠ','(Ký, ghi rõ họ tên sau khi in)');$('preview').textContent=lines.join('\n');$('previewTitle').textContent=defs[kind].name;$('previewScreen').hidden=false;$('previewScreen').scrollIntoView({block:'start'});updateSend()}
 async function send(){if(!ready||busy||receipt)return;if(!$('entryForm').reportValidity())return;const d=values();if(!d)return;const u=user();if(!confirm('Xác nhận gửi '+defs[kind].name+' vào hệ thống HVA–EDOS?'))return;busy=true;updateSend();try{if(!requestId)requestId='A12-'+(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));const r=await api('nvsA12Submit',{document:{clientRequestId:requestId,kind,fields:d}});if(!r.recordId||r.stored!==true||r.sheetName!=='NVS_A12_HOA_NHAP')throw Error('Máy chủ chưa xác nhận mã và nơi lưu; cần đối chiếu trước khi gửi lại.');receipt=r.recordId;$('receipt').hidden=false;$('receipt').textContent='ĐÃ TIẾP NHẬN · Mã hồ sơ: '+receipt+' · Đã lưu trong hệ thống. Chờ xử lý theo phân quyền.';$('finish').hidden=false;say('Đã xác nhận tiếp nhận hồ sơ '+receipt);$('preview').textContent=$('preview').textContent.replace('BẢN XEM TRƯỚC – CHƯA GỬI','ĐÃ TIẾP NHẬN · '+receipt)}catch(e){say('Chưa xác nhận gửi: '+e.message+' Nếu máy chủ đã cấp mã, không gửi lại khi chưa đối chiếu.',true)}finally{busy=false;updateSend()}}
-async function history(){
- if(!ready){say('Chưa xác thực quyền truy cập. Bấm kiểm tra kết nối trước.',true);return}
- $('history').hidden=false;$('history').textContent='Đang tra cứu hồ sơ…';
- try{
-  const r=await api('nvsA12ListMine');const rows=Array.isArray(r.records)?r.records:[];
-  const wrap=document.createElement('div');wrap.className='history-items';
-  if(!rows.length)wrap.append(txt('p','Chưa có hồ sơ đã gửi.'));
-  for(const item of rows){
-   const bar=document.createElement('div');bar.style.cssText='display:flex;align-items:center;gap:12px;justify-content:space-between;padding:12px;border-bottom:1px solid #dceaf5;flex-wrap:wrap';
-   bar.append(txt('span',(defs[item.kind]?.name||item.kind)+' · '+item.className+' · '+item.createdAt));
-   const btn=document.createElement('button');btn.type='button';btn.className='btn alt';btn.textContent='Xem hồ sơ';btn.addEventListener('click',()=>getRecord(item.recordId));bar.append(btn);wrap.append(bar)
-  }
-  $('history').replaceChildren(wrap);
- }catch(e){$('history').textContent='Không tra cứu được hồ sơ: '+e.message}
-}
-async function getRecord(recordId){
- try{
-  const r=await api('nvsA12Get',{recordId});const doc=r.document||{},d=defs[doc.kind];if(!d)throw Error('Không nhận diện được loại hồ sơ.');
-  const u=user();const lines=['SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG','TRƯỜNG THPT HÒA VANG','','HỒ SƠ ĐÃ TIẾP NHẬN · '+r.recordId,'',d.name,'','Người lập: '+(u.hoTen||u.fullName||u.name||'')];
-  for(const [k,label,type] of d.fields)lines.push(label+': '+(type==='date'?fmtDate(doc.fields?.[k]):doc.fields?.[k]||'—'));
-  $('previewTitle').textContent='Hồ sơ đã tiếp nhận · '+d.name;$('preview').textContent=lines.join('\n');
-  receipt=recordId;$('receipt').hidden=false;$('receipt').textContent='Mã hồ sơ: '+recordId+' · '+r.status;
-  $('previewScreen').hidden=false;$('previewScreen').scrollIntoView({block:'start'});$('finish').hidden=false;updateSend();
- }catch(e){say('Không mở được hồ sơ: '+e.message,true)}
-}
 function back(){if(!receipt&&kind){const nonempty=defs[kind].fields.some(([k])=>{const v=$('f_'+k)?.value.trim();return v&&v!=='2026–2027'});if(nonempty&&!confirm('Về danh mục? Nội dung chưa gửi sẽ bị bỏ.'))return}kind='';$('choices').hidden=false;$('formScreen').hidden=true;$('previewScreen').hidden=true;$('choices').scrollIntoView({block:'start'})}
 $('menuGrid').addEventListener('click',ev=>{const btn=ev.target.closest('button[data-form]');if(btn)open(btn.dataset.form)});
 $('entryForm').addEventListener('submit',preview);
 $('entryForm').addEventListener('input',()=>{if(receipt)return;requestId='';$('previewScreen').hidden=true;updateSend()});
 $('goMenu').addEventListener('click',back);$('backEdit').addEventListener('click',()=>{$('previewScreen').hidden=true;$('formScreen').scrollIntoView({block:'start'})});
-$('finish').addEventListener('click',back);$('loadHistory').addEventListener('click',history);$('retry').addEventListener('click',check);$('send').addEventListener('click',send);$('print').addEventListener('click',()=>window.print());
+$('finish').addEventListener('click',back);$('retry').addEventListener('click',check);$('send').addEventListener('click',send);$('print').addEventListener('click',()=>window.print());
 const initial=new URL(location.href).searchParams.get('form');
 if(initial&&Object.prototype.hasOwnProperty.call(defs,initial))open(initial);
 check();
