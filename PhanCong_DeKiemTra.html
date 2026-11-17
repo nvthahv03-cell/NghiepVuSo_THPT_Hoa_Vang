@@ -965,5 +965,5 @@ $('add').addEventListener('click',()=>{resetSignedDocument();if(numberOfExams>=8
   $('result').textContent='Đã chuẩn bị '+recipients.length+' người nhận ('+recipients.filter(x=>x.nhom==='BGH').length+' BGH). Đang mở TT Phát hành; CHƯA PHÁT HÀNH.';
   location.href=new URL('TTPhatHanh.html',location.href).href;
  }catch(e){$('result').textContent='CHƯA CHUYỂN PHÁT HÀNH: '+e.message;}finally{btn.disabled=false;}
-});$('backEdit').addEventListener('click',()=>{$('previewPanel').hidden=true;document.querySelector('#assignments').scrollIntoView({behavior:'smooth'})});$('printPreview').addEventListener('click',()=>{if($('previewPanel').hidden)return;document.body.classList.add('print-assignment');window.print()});window.addEventListener('afterprint',()=>document.body.classList.remove('print-assignment'));render();renderReview();load();
+});$('backEdit').addEventListener('click',()=>{$('previewPanel').hidden=true;document.querySelector('#assignments').scrollIntoView({behavior:'smooth'})});$('printPreview').addEventListener('click',()=>{if($('previewPanel').hidden)return;document.body.classList.add('print-assignment');window.print()});window.addEventListener('afterprint',()=>document.body.classList.remove('print-assignment'));render();renderReview();pcdkConsumeHandoff();load();
 </script></body></html>
