@@ -668,30 +668,39 @@ async function load(){
  actor=username;actorName=me.hoTen||username;
  actorIsBGH=/hieu truong|ban giam hieu|pht|bgh|quan tri/.test(norm(me.chucVu));
  $('identityRole').textContent='Đang đối chiếu chức danh từ nhân sự...';
- $('msg').textContent='Đang xác thực danh sách nhân sự theo tổ...';
+ $('msg').textContent='Đang tải nhân sự tổ từ Cuộc họp (Nhân sự HVA)...';
+ personnelTrusted=false;
  try{
-  const payload=await personnelJSONP(me.token,'getPhanCongDePersonnel');
-  if(!Array.isArray(payload.danhSach))throw Error('Tuyến phân công chưa trả danh sách nhân sự hợp lệ.');
-  const groups=(payload.groups||[]).filter(g=>String(g.kind||'').toUpperCase()==='TEAM');
-  if(!groups.length)throw Error('Tuyến phân công chưa trả các tổ chuyên môn.');
-  if(!actorIsBGH&&!payload.danhSach.some(m=>norm(m.username||m.tenDangNhap)===norm(username)))throw Error('Tài khoản không thuộc danh sách được Backend cấp quyền.');
-  personnelTrusted=true;pcdkLoadTeamSelect(groups,me.to);
- }catch(e){
-  personnelTrusted=false;
-  // HVA_Personnel.js dùng tuyến getNVSMeetingPersonnel đã có, chỉ để chọn nhân sự/soạn nháp.
+  if(!window.HVAPersonnel?.buildGroups)throw Error('Thiếu thư viện nhân sự chung HVA_Personnel.js.');
+  // Nhân sự tham chiếu đúng tuyến đang dùng ở Cuộc họp: getNVSMeetingPersonnel.
+  const groups=await window.HVAPersonnel.buildGroups();
+  if(!Array.isArray(groups)||!groups.some(g=>String(g.kind||'').toUpperCase()==='TEAM'))
+   throw Error('Dịch vụ Cuộc họp chưa trả nhóm tổ chuyên môn.');
+  pcdkLoadTeamSelect(groups,me.to);
+  if(!team)throw Error('Không tìm thấy tổ chuyên môn của tài khoản đăng nhập trong danh sách Cuộc họp.');
+  $('msg').textContent='Đã tải '+members.length+' nhân sự tổ '+team+' từ dữ liệu Cuộc họp. Đang kiểm tra quyền chuyển phát hành...';
+  // Tuyến phân công chỉ dùng để đối chiếu quyền; không yêu cầu nó trả cấu trúc groups.
   try{
-   if(!window.HVAPersonnel?.buildGroups)throw Error('Không có dịch vụ nhân sự chung.');
-   const groups=await window.HVAPersonnel.buildGroups();
-   if(!Array.isArray(groups)||!groups.length)throw Error('Không trả danh sách tổ chuyên môn.');
-   pcdkLoadTeamSelect(groups,me.to);
-   $('msg').textContent='Đã tải danh sách tổ qua dịch vụ Nhân sự HVA. Tuyến phân công chưa xác thực ('+e.message+'); chỉ soạn nháp, không được phát hành.';
-  }catch(error){
-   members=[];team='';personnelGroups=[];
-   $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';
-   $('pcdkTeamSelect').disabled=true;$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Không tải được danh sách nhân sự tổ.';$('pcdkRelogin').hidden=true;
-   $('msg').textContent='Không tải được nhân sự: '+e.message+'. Dịch vụ nhân sự chung: '+error.message+'. Kiểm tra lại phiên đăng nhập hoặc kết nối Backend.';
-   refreshSubjects();render();
+   const authorized=await personnelJSONP(me.token,'getPhanCongDePersonnel');
+   if(!Array.isArray(authorized.danhSach))throw Error('Không có danh sách được cấp quyền.');
+   const entitled=actorIsBGH||authorized.danhSach.some(m=>norm(m.username||m.tenDangNhap)===norm(actor));
+   if(!entitled)throw Error('Tài khoản chưa được cấp quyền phân công.');
+   if(!actorIsBGH&&authorized.to&&norm(authorized.to)!==norm(team))throw Error('Tổ được cấp quyền khác tổ đang hiển thị.');
+   personnelTrusted=true;
+   $('msg').textContent='Đã tải '+members.length+' giáo viên của '+team+' từ Cuộc họp; tuyến phân công đã xác nhận quyền.';
+  }catch(permissionError){
+   personnelTrusted=false;
+   $('msg').textContent='Đã tải '+members.length+' giáo viên tổ '+team+' từ Cuộc họp để soạn nháp. Chưa thể phát hành: '+permissionError.message;
   }
+ }catch(error){
+  personnelTrusted=false;members=[];team='';personnelGroups=[];
+  $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';
+  $('identityRole').textContent=me.chucVu||'Chưa xác minh';
+  $('pcdkTeamSelect').replaceChildren(new Option('Không có tổ chuyên môn',''));
+  $('pcdkTeamSelect').disabled=true;$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Chưa tải được danh sách giáo viên từ Cuộc họp.';
+  $('pcdkRelogin').hidden=false;
+  $('msg').textContent='Không tải được nhân sự từ Cuộc họp: '+error.message+'. Đăng nhập lại rồi thử Tải lại nhân sự tổ.';
+  refreshSubjects();render();
  }
 }
 $('pcdkTeamSelect').addEventListener('change',e=>{resetSignedDocument();pcdkSetTeam(e.target.value)});
