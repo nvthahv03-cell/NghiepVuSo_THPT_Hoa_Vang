@@ -359,7 +359,7 @@
 @media(max-width:550px){#hvaMeetingDialog{padding:12px}.hva-meeting-dialog-card{border-radius:17px}.hva-meeting-dialog-top{padding:17px}.hva-meeting-dialog-body{padding:18px}.hva-meeting-dialog-note{margin:0 18px 16px}.hva-meeting-dialog-actions{padding:0 18px 18px}.hva-meeting-dialog-btn{flex:1}}
 @media(prefers-reduced-motion:reduce){.hva-meeting-dialog-card{animation:none}.hva-meeting-dialog-btn{transition:none}}
 </style>
-</head>
+<link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"></head>
 <body class="min-h-screen bg-slate-50 text-slate-800">
 <!-- HVA-EDOS: accessible meeting dialogs, replacing browser-native confirm/alert -->
 <div id="hvaMeetingDialog" role="presentation" hidden data-kind="notice">
@@ -432,35 +432,22 @@ window.hvaNotice=function(message){
 };
 })();
 </script>
-<header class="hva-pro-header">
-  <div class="hva-pro-header-inner">
-
-    <button type="button"
-            class="hva-pro-back"
-            onclick="location.href='./DieuHanh.html'"
-            aria-label="Quay lại Điều hành HVA-EDOS"
-            title="Quay lại">
-      <i class="bi bi-arrow-left"></i>
-    </button>
-
-    <div class="hva-pro-brand">
-<span class="hva-pro-divider" aria-hidden="true"></span>
-
-      <div class="hva-pro-brandtext hva-edos-identity" aria-label="HVA-EDOS – Trường THPT Hòa Vang">
+<header class="hva-edos-standard-head" aria-label="HVA–EDOS">
+  <div class="hva-edos-standard-inner">
+    <a class="hva-edos-standard-back" href="./DieuHanh.html" aria-label="Quay lại Điều hành" title="Quay lại"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
+    <div class="hva-edos-standard-brand">
+      <div class="hva-edos-standard-brandtext hva-edos-identity" aria-label="HVA-EDOS – Trường THPT Hòa Vang">
         <div class="hva-edos-logo">HVA-<span>EDOS</span></div>
         <div class="hva-edos-en">Hoa Vang Education Data &amp; Operations System</div>
         <div class="hva-edos-school">HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</div>
         <div class="hva-edos-motto">Dữ liệu tập trung – Quản trị thông minh – Giáo dục sáng tạo</div>
+        <div class="hva-edos-head-menu">CUỘC HỌP</div>
       </div>
     </div>
-
-    <div class="hva-pro-tools">
-      <div class="hva-pro-online-wrap"><div class="hva-pro-online" title="Trạng thái kết nối giao diện; không thay thế xác minh máy chủ">
-        <span class="hva-pro-online-dot"></span>
-        <span>TRỰC TUYẾN</span><span class="hva-pro-version" id="hvaVersionLabel">HVA</span>
-      </div></div>
-    </div>
-
+    <nav class="hva-edos-standard-tools" aria-label="Điều hướng">
+      <a class="hva-edos-head-home" href="./index.html" aria-label="Về trang chủ HVA–EDOS" title="Trang chủ"><i class="bi bi-house-door-fill" aria-hidden="true"></i><span>TRANG CHỦ</span></a>
+      <span class="hva-edos-standard-online" title="Trạng thái hiển thị giao diện; không xác nhận kết nối máy chủ"><span class="hva-edos-standard-online-dot" aria-hidden="true"></span><span>TRỰC TUYẾN</span><span class="hva-edos-standard-version">HVA</span></span>
+    </nav>
   </div>
 </header>
 
