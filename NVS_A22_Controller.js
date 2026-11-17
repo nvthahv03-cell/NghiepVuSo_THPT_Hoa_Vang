@@ -98,6 +98,56 @@ function a22OpenOfficialTemplate(){
 }
 function safeUrl(value){if(!value)return true;try{const u=new URL(value);return u.protocol==='https:'&&!!u.hostname&&!u.username&&!u.password}catch(_){return false}}
 function validDrive(value){if(!value)return true;try{const u=new URL(value);return safeUrl(value)&&['drive.google.com','docs.google.com'].includes(u.hostname)}catch(_){return false}}
+function a1ToVN(value){
+ const s=String(value||''),p=s.split('-');
+ return p.length===3&&p[0].length===4?p[2]+'/'+p[1]+'/'+p[0]:s;
+}
+function a1ToISO(value){
+ const s=String(value||'').trim(),p=s.split('/');
+ if(p.length!==3)return '';
+ const d=Number(p[0]),m=Number(p[1]),y=Number(p[2]);
+ if(p[0].length!==2||p[1].length!==2||p[2].length!==4||y<1900||y>2100)return '';
+ const v=new Date(Date.UTC(y,m-1,d));
+ if(v.getUTCFullYear()!==y||v.getUTCMonth()!==m-1||v.getUTCDate()!==d)return '';
+ return p[2]+'-'+p[1]+'-'+p[0];
+}
+function a1CalendarControl(input){
+ const original=input.value;
+ const host=document.createElement('div');host.className='hva-a-date-control';
+ const picker=document.createElement('input');picker.type='date';picker.className='hva-a-native-date';
+ picker.tabIndex=-1;picker.setAttribute('aria-label','Mở lịch chọn ngày');
+ input.type='text';input.classList.add('hva-a-date-display');input.placeholder='dd/mm/yyyy';
+ input.inputMode='numeric';input.maxLength=10;input.value=a1ToVN(original);
+ picker.value=original;
+ picker.addEventListener('change',()=>{input.value=a1ToVN(picker.value);
+  input.setCustomValidity('');input.dispatchEvent(new Event('input',{bubbles:true}));});
+ input.addEventListener('input',()=>{input.setCustomValidity('');picker.value=a1ToISO(input.value);});
+ host.append(input,picker);return host;
+}
+function a1BaseDate(enabled){
+ const field=by('date');if(!field)return;
+ const wrapped=field.classList.contains('hva-a-date-display');
+ if(enabled&&!wrapped){field.replaceWith(a1CalendarControl(field));}
+ if(!enabled&&wrapped){
+  const iso=a1ToISO(field.value),host=field.parentElement;
+  field.classList.remove('hva-a-date-display');field.type='date';
+  field.removeAttribute('maxlength');field.removeAttribute('inputmode');field.removeAttribute('placeholder');
+  host.replaceWith(field);field.value=iso;
+ }
+}
+function a1Read(el){
+ const raw=clean(el?.value);
+ return el?.classList.contains('hva-a-date-display')?a1ToISO(raw):raw;
+}
+function a1ValidateDates(){
+ if(!document.body.classList.contains('hva-a1-mode'))return true;
+ let good=true;
+ for(const input of document.querySelectorAll('#form .hva-a-date-display')){
+  const raw=input.value.trim();input.setCustomValidity(raw&&!a1ToISO(raw)?'Ngày không hợp lệ. Nhập theo dạng dd/mm/yyyy.':'');
+  if(!input.checkValidity()){if(good){input.reportValidity();input.focus()}good=false;}
+ }
+ return good;
+}
 function setDate(){const d=new Date();const pad=v=>String(v).padStart(2,'0');by('date').value=[d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())].join('-')}
 function makeField(spec){
  const wrap=document.createElement('div');wrap.className=spec.type==='textarea'?'wide':'';
