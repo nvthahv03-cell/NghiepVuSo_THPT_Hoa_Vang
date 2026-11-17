@@ -167,6 +167,11 @@ function makeField(spec){
  }
  input.id=elId;input.name='a22_'+spec.key;input.required=!!spec.required;
  if(spec.required)input.setAttribute('aria-required','true');
+ if(document.body.classList.contains('hva-a1-mode')){
+  const hints={monBD:'Ví dụ: Toán, Ngữ văn, Tiếng Anh…',thoiGianBD:'Ví dụ: từ tháng 9/2026 đến tháng 3/2027…',mucTieuBD:'Nêu mục tiêu và yêu cầu cần đạt của đội tuyển…',noiDungBD:'Liệt kê chuyên đề, số buổi và tiến độ thực hiện…',phanCongBD:'Nêu giáo viên phụ trách và cách phối hợp…',tenDoiTuyen:'Ví dụ: Đội tuyển HSG Toán 12 cấp thành phố…',monThi:'Ghi môn thi và cấp thi…',ketQuaBD:'Nêu kết quả thực hiện, sản phẩm và số liệu minh chứng…',khoKhanBD:'Ghi khó khăn, kiến nghị hoặc hỗ trợ cần thiết…'};
+  if(spec.type==='textarea'||spec.type==='text')input.placeholder=hints[spec.key]||('Nhập '+spec.label.toLowerCase()+'…');
+  if(spec.type==='date'){wrap.append(label,a1CalendarControl(input));return wrap;}
+ }
  wrap.append(label,input);return wrap;
 }
 function setCode(code,keepTitle=false){
@@ -175,6 +180,7 @@ function setCode(code,keepTitle=false){
  const a1=/^A[.]1[.](?:3|4)(?:-|$)/.test(code);
  document.body.classList.toggle('hva-a1-mode',a1);
  for(const id of ['a22A1Top','a22UserBar'])if(by(id))by(id).hidden=!a1;
+ a1BaseDate(a1);
  if(by('a22OwnerCell'))by('a22OwnerCell').hidden=a1;
  if(by('a22TeamCell'))by('a22TeamCell').hidden=a1;
  if(by('a22HeaderTitle'))by('a22HeaderTitle').textContent=a1?def.title:'Biểu mẫu nghiệp vụ số';
@@ -207,8 +213,8 @@ by('owner').value=clean(u.hoTen||u.fullName||u.name||'');
 by('team').value=clean(u.toBoPhan||u.tenTo||u.to||'');
 setCode(defaultCode);
 function collect(){
- const base=Object.fromEntries(ids.map(id=>[id,clean(by(id).value)]));
- const extras=Object.fromEntries(D[base.code].fields.map(spec=>[spec.key,clean(by('a22_'+spec.key).value)]));
+ const base=Object.fromEntries(ids.map(id=>[id,a1Read(by(id))]));
+ const extras=Object.fromEntries(D[base.code].fields.map(spec=>[spec.key,a1Read(by('a22_'+spec.key))]));
  return {base,extras};
 }
 function validate(){
@@ -219,6 +225,7 @@ function validate(){
   const field=by('a22_'+spec.key);
   if(field)field.required=!!spec.required&&!!more?.open;
  }
+ if(!a1ValidateDates())return false;
  if(!by('form').reportValidity())return false;
  const {base,extras}=collect();
  if(!validDrive(base.evidence)){notice('Minh chứng chung chỉ nhận liên kết Google Drive/Docs HTTPS.');by('evidence').focus();return false}
@@ -234,9 +241,9 @@ function validate(){
 }
 function linesFor(data){
  const {base,extras}=data,def=D[base.code];
- const lines=['SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG','TRƯỜNG THPT HÒA VANG','','BẢN DỰ THẢO — CHƯA KÝ — CHƯA GỬI','',base.code+' – '+def.title,'','Người lập: '+base.owner,'Tổ / bộ phận: '+base.team,'Năm học: '+base.schoolYear,'Ngày lập: '+base.date,'Môn / lớp / đối tượng / địa điểm: '+(base.subject||'—'),'',
+ const lines=['SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG','TRƯỜNG THPT HÒA VANG','','BẢN DỰ THẢO — CHƯA KÝ — CHƯA GỬI','',base.code+' – '+def.title,'','Người lập: '+base.owner,'Tổ / bộ phận: '+base.team,'Năm học: '+base.schoolYear,'Ngày lập: '+(document.body.classList.contains('hva-a1-mode')?a1ToVN(base.date):base.date),'Môn / lớp / đối tượng / địa điểm: '+(base.subject||'—'),'',
  'I. THÔNG TIN NGHIỆP VỤ'];
- for(const spec of def.fields)lines.push(spec.label+': '+(extras[spec.key]||'—'));
+ for(const spec of def.fields)lines.push(spec.label+': '+(spec.type==='date'&&document.body.classList.contains('hva-a1-mode')?a1ToVN(extras[spec.key]):extras[spec.key]||'—'));
  lines.push('','II. NỘI DUNG / CĂN CỨ','Tiêu đề: '+base.title,base.content||'—',
  '','III. KẾT QUẢ / KIẾN NGHỊ',base.result||'—',
  '','IV. MINH CHỨNG BỔ SUNG',base.evidence||'—',
@@ -264,10 +271,14 @@ function applyDraft(raw){
  if(!raw||!['HVA-A22-DRAFT-2','HVA-DRAFT-1'].includes(raw.schema)||!raw.form||!Object.prototype.hasOwnProperty.call(D,raw.form.code))throw Error('Tệp không đúng phiên bản hoặc mã nghiệp vụ');
  const base=raw.form;
  setCode(base.code);
- for(const id of ids)if(id!=='code')by(id).value=String(base[id]??'').slice(0,by(id).maxLength>0?by(id).maxLength:12000);
+ for(const id of ids)if(id!=='code'){
+  const el=by(id),raw=String(base[id]??'');
+  el.value=(el.classList.contains('hva-a-date-display')?a1ToVN(raw):raw).slice(0,el.maxLength>0?el.maxLength:12000);
+ }
  for(const spec of D[base.code].fields){
    const el=by('a22_'+spec.key);const value=String(raw.schema==='HVA-A22-DRAFT-2'?(raw.extras?.[spec.key]??''):'');
-   if(spec.type==='select'&&!spec.options.includes(value))el.value='';else el.value=value.slice(0,8000);
+   if(spec.type==='select'&&!spec.options.includes(value))el.value='';
+   else el.value=(el.classList.contains('hva-a-date-display')?a1ToVN(value):value).slice(0,8000);
  }
  by('previewPanel').classList.add('hidden');
  return raw.schema==='HVA-DRAFT-1';
