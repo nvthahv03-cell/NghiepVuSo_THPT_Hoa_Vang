@@ -1,0 +1,244 @@
+:root{
+  --hva-h-navy:#073b78;
+  --hva-h-blue:#075cad;
+  --hva-h-cyan:#08abc5;
+  --hva-h-white:#f8fdff;
+  --hva-h-line:rgba(190,238,255,.58);
+}
+
+.hva-edos-standard-head{
+  position:sticky;top:0;z-index:40;
+  margin:12px 14px 0;
+  min-height:126px;
+  border-radius:16px;
+  overflow:hidden;isolation:isolate;
+  color:var(--hva-h-white);
+  background:
+    radial-gradient(circle at 82% 34%,rgba(24,225,255,.26),transparent 22%),
+    radial-gradient(circle at 55% 110%,rgba(0,200,255,.36),transparent 31%),
+    linear-gradient(108deg,var(--hva-h-navy) 0%,#064b96 29%,var(--hva-h-blue) 53%,#078fc0 77%,var(--hva-h-cyan) 100%);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 10px 28px rgba(3,43,84,.18),inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+/* Lớp hiệu ứng công nghệ */
+.hva-edos-standard-head::before{
+  content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;opacity:.55;
+  background:
+    radial-gradient(circle at 48% 25%,#67f4ff 0 1px,transparent 2px),
+    radial-gradient(circle at 56% 70%,#3fe2ff 0 1.2px,transparent 2.2px),
+    radial-gradient(circle at 64% 22%,#72f5ff 0 1.1px,transparent 2px),
+    radial-gradient(circle at 72% 68%,#45e6ff 0 1.2px,transparent 2.2px),
+    linear-gradient(60deg,transparent 49.5%,rgba(91,228,255,.30) 50%,transparent 50.5%) 44% 0/118px 82px,
+    linear-gradient(120deg,transparent 49.5%,rgba(91,228,255,.24) 50%,transparent 50.5%) 48% 0/150px 96px;
+}
+.hva-edos-standard-head::after{
+  content:"";position:absolute;z-index:-1;
+  width:245px;height:245px;right:-22px;top:-58px;
+  border-radius:50%;pointer-events:none;opacity:.20;
+  border:1px solid rgba(129,239,255,.72);
+  background:
+    repeating-radial-gradient(circle,transparent 0 21px,rgba(128,238,255,.28) 22px 23px),
+    repeating-linear-gradient(90deg,transparent 0 27px,rgba(128,238,255,.20) 28px 29px),
+    repeating-linear-gradient(0deg,transparent 0 27px,rgba(128,238,255,.18) 28px 29px);
+  box-shadow:0 0 48px rgba(48,221,255,.28),inset 0 0 35px rgba(53,224,255,.22);
+}
+
+.hva-edos-standard-head-inner{
+  min-height:124px;max-width:1460px;margin:0 auto;padding:13px 24px;
+  display:grid;
+  grid-template-columns:58px minmax(570px,1fr) auto;
+  align-items:center;gap:20px;
+}
+
+/* Nút quay lại */
+.hva-edos-standard-back{
+  width:54px;height:54px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  color:#eaf8ff;
+  background:linear-gradient(145deg,rgba(16,112,187,.95),rgba(7,73,141,.95));
+  border:1.5px solid rgba(79,192,255,.50);
+  box-shadow:0 6px 16px rgba(0,36,78,.20),inset 0 1px 0 rgba(255,255,255,.11);
+  transition:transform .14s ease,filter .14s ease,box-shadow .14s ease;
+}
+.hva-edos-standard-back i{font-size:27px;line-height:1;-webkit-text-stroke:.28px currentColor}
+.hva-edos-standard-back:hover{filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 9px 20px rgba(0,35,77,.24)}
+.hva-edos-standard-back:active{transform:translateY(2px) scale(.98)}
+
+/* Logo + thương hiệu */
+.hva-edos-standard-brand{min-width:0;display:flex;align-items:center}
+.hva-edos-standard-logo{
+  width:88px;height:88px;flex:0 0 88px;object-fit:contain;
+  filter:drop-shadow(0 5px 10px rgba(0,31,76,.28));
+}
+.hva-edos-standard-divider{
+  width:1px;height:70px;flex:0 0 1px;
+  background:linear-gradient(transparent,var(--hva-h-line) 16%,var(--hva-h-line) 84%,transparent);
+}
+.hva-edos-standard-brandtext{
+  min-width:0;width:min(620px,100%);
+  text-align:center;line-height:1.06;
+}
+.hva-edos-standard-kicker{
+  font-size:14px;font-weight:800;letter-spacing:.17em;
+  color:rgba(226,244,255,.90);white-space:nowrap;
+}
+.hva-edos-standard-school{
+  margin-top:7px;font-size:30px;font-weight:800;letter-spacing:-.025em;
+  color:#fff;white-space:nowrap;text-shadow:0 2px 10px rgba(0,31,72,.28);
+}
+.hva-edos-standard-slogan{
+  margin-top:8px;font-size:15px;font-weight:600;
+  color:rgba(235,248,255,.90);white-space:nowrap;
+}
+.hva-edos-standard-slogan b{font-weight:800;padding:0 5px;color:#d9f7ff}
+
+/* Cụm bên phải */
+.hva-edos-standard-tools{display:flex;align-items:center;justify-content:flex-end;gap:9px;white-space:nowrap}
+.hva-edos-standard-online{
+  height:42px;padding:0 17px;display:flex;align-items:center;gap:10px;
+  border-radius:22px;border:1.5px solid rgba(83,246,237,.88);
+  background:rgba(2,77,119,.40);
+  box-shadow:inset 0 0 20px rgba(22,230,225,.08),0 5px 15px rgba(0,40,84,.14);
+  font-size:12px;font-weight:800;
+}
+.hva-edos-standard-online-dot{
+  width:11px;height:11px;border-radius:50%;background:#19e98a;
+  box-shadow:0 0 0 5px rgba(25,233,138,.12),0 0 13px rgba(25,233,138,.82);
+}
+.hva-meeting-history{position:relative;margin-top:10px;background:transparent}
+.hva-meeting-history-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
+.hva-meeting-history-btn,.hva-meeting-count-btn{
+  min-height:46px;padding:10px 14px;display:flex;align-items:center;gap:9px;
+  color:#0F4C81;background:#eaf6ff;border:1.5px solid #b9d9ee;border-radius:14px;
+  box-shadow:0 5px 15px rgba(15,76,129,.06);
+  font-size:12px;font-weight:900;letter-spacing:.01em;
+  transition:background .14s ease,transform .14s ease,box-shadow .14s ease
+}
+.hva-meeting-history-btn{justify-content:flex-start;text-align:left}
+.hva-meeting-count-btn{justify-content:center;text-align:center;white-space:nowrap}
+.hva-meeting-count-number{color:#ea580c;font-size:13px;font-weight:950}
+.hva-meeting-history-btn:hover,.hva-meeting-count-btn:hover{background:#dff1fd;box-shadow:0 7px 18px rgba(15,76,129,.10)}
+.hva-meeting-history-btn:active,.hva-meeting-count-btn:active{transform:translateY(1px)}
+.hva-meeting-history-btn i,.hva-meeting-count-btn i{font-size:14px;-webkit-text-stroke:.3px currentColor;transition:transform .16s ease}
+.hva-meeting-history.is-open .hva-meeting-count-btn i{transform:rotate(180deg)}
+.hva-meeting-history-menu{
+  display:none;position:static;width:100%;overflow:hidden;margin-top:8px;
+  background:#fff;color:#16324a;border:1.5px solid #d9e7f2;border-radius:14px;
+  box-shadow:0 8px 22px rgba(15,76,129,.08)
+}
+.hva-meeting-history.is-open .hva-meeting-history-menu{display:block}
+.hva-meeting-history-head{padding:12px 15px;border-bottom:1px solid #e6eef5;background:#f6fbff;color:#075cad;font-size:12px;font-weight:800}
+.hva-meeting-history-list{max-height:330px;overflow:auto}
+.hva-meeting-history-empty{padding:20px 16px;text-align:center;color:#64748b;font-size:12px;font-weight:600}
+.hva-meeting-history-item{width:100%;display:grid;grid-template-columns:26px minmax(0,1fr);gap:9px;padding:11px 14px;text-align:left;background:#fff;border:0;border-bottom:1px solid #edf2f7;color:#16324a}
+.hva-meeting-history-item:last-child{border-bottom:0}
+.hva-meeting-history-item:hover{background:#f4faff}
+.hva-meeting-history-no{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:#e8f4ff;color:#075cad;font-size:11px;font-weight:900}
+.hva-meeting-history-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:800;color:#123b60}
+.hva-meeting-history-meta{margin-top:4px;display:flex;flex-wrap:wrap;gap:4px 12px;color:#64748b;font-size:10.5px;font-weight:600}
+@media(max-width:470px){
+  .hva-meeting-history-actions{grid-template-columns:1fr 1fr;gap:8px}
+  .hva-meeting-history-btn,.hva-meeting-count-btn{min-height:44px;padding:8px 9px;font-size:10px}
+  .hva-meeting-count-btn{white-space:normal}
+  .hva-meeting-count-number{font-size:11px}
+}
+
+.hva-edos-standard-divider-right{height:52px;margin:0 3px}
+
+.hva-edos-standard-user{
+  min-width:205px;display:flex;align-items:center;gap:10px;padding:5px 6px;
+  border-radius:14px;color:#fff;background:transparent;border:1px solid transparent;text-align:left;
+}
+.hva-edos-standard-user:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.10)}
+.hva-edos-standard-avatar{
+  width:52px;height:52px;flex:0 0 52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:#0c73bd;background:#f4fbff;
+  box-shadow:0 3px 12px rgba(0,31,76,.17);
+}
+.hva-edos-standard-avatar i{font-size:31px}
+.hva-edos-standard-usertext{min-width:0;display:flex;flex-direction:column;gap:3px}
+.hva-edos-standard-usertext strong,.hva-edos-standard-usertext small{
+  max-width:155px;overflow:hidden;text-overflow:ellipsis;
+}
+.hva-edos-standard-usertext strong{font-size:13px;font-weight:800;line-height:1.15}
+.hva-edos-standard-usertext small{font-size:11px;font-weight:500;color:rgba(236,248,255,.88)}
+.hva-edos-standard-userchev{margin-left:auto;font-size:14px;-webkit-text-stroke:.25px currentColor}
+
+/* Tablet */
+@media(max-width:1080px){
+  .hva-edos-standard-head-inner{grid-template-columns:50px minmax(430px,1fr) auto;padding:11px 16px;gap:13px}
+  .hva-edos-standard-logo{width:75px;height:75px;flex-basis:75px}
+  .hva-edos-standard-divider{height:60px}
+  .hva-edos-standard-kicker{font-size:11px}
+  .hva-edos-standard-school{font-size:24px}
+  .hva-edos-standard-slogan{font-size:12px}
+  .hva-edos-standard-user{min-width:auto}
+  .hva-edos-standard-usertext,.hva-edos-standard-userchev{display:none}
+  .hva-edos-standard-avatar{width:44px;height:44px;flex-basis:44px}
+}
+
+/* Mobile */
+@media(max-width:720px){
+  .hva-edos-standard-head{margin:6px 6px 0;border-radius:13px;min-height:78px}
+  .hva-edos-standard-head-inner{min-height:76px;padding:7px 9px;grid-template-columns:37px minmax(0,1fr) auto;gap:7px}
+  .hva-edos-standard-back{width:36px;height:36px;border-radius:10px}
+  .hva-edos-standard-back i{font-size:18px}
+  .hva-edos-standard-brand{gap:7px}
+  .hva-edos-standard-logo{width:49px;height:49px;flex-basis:49px}
+  .hva-edos-standard-divider{height:42px}
+  .hva-edos-standard-brandtext{width:auto}
+  .hva-edos-standard-kicker{font-size:7px;letter-spacing:.08em;white-space:normal}
+  .hva-edos-standard-school{font-size:14px;margin-top:3px;white-space:normal}
+  .hva-edos-standard-slogan{font-size:8px;margin-top:4px;white-space:normal}
+  .hva-edos-standard-tools{gap:3px}
+  .hva-edos-standard-online{height:31px;padding:0 9px;font-size:9px}
+  .hva-edos-standard-online-dot{width:8px;height:8px}
+  .hva-edos-standard-head::after{right:-105px;opacity:.12}
+}
+@media(max-width:470px){
+  .hva-edos-standard-online{
+    width:auto;
+    min-width:92px;
+    padding:0 10px;
+    justify-content:center;
+    gap:7px;
+  }
+  .hva-edos-standard-online span:last-child{display:inline}
+}
+
+
+/* EDOS-CH-HEAD: thừa kế mẫu EDOS đã PASS, chỉ thay trình bày */
+.hva-edos-standard-header{margin:5px 6px 0;min-height:94px;border-radius:10px;background:radial-gradient(circle at 86% 22%,rgba(8,221,228,.34),transparent 26%),linear-gradient(105deg,#064482 0%,#0757a8 45%,#058bbd 75%,#06bccc 100%)}
+.hva-edos-standard-header-inner{min-height:92px;max-width:1460px;grid-template-columns:54px minmax(0,1fr) minmax(110px,auto);gap:12px;padding:10px 18px}
+.hva-edos-standard-brand{justify-content:center;min-width:0}
+.hva-edos-standard-brand .hva-edos-standard-divider{display:none}
+.hva-edos-identity{width:auto;max-width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.08}
+.hva-edos-logo{color:#fff;font-weight:900;font-size:clamp(22px,2.65vw,34px);letter-spacing:-.035em;text-shadow:0 2px 9px rgba(0,30,82,.30)}
+.hva-edos-logo span{color:#ffa129}
+.hva-edos-en{color:#f5fbff;font-weight:750;font-size:clamp(9px,.88vw,12px)}
+.hva-edos-school{color:#fff;font-weight:850;font-size:clamp(9px,.9vw,12px)}
+.hva-edos-motto{color:#e3f4ff;font-size:clamp(9px,.82vw,11px);font-style:italic;font-weight:650}
+.hva-edos-standard-tools{justify-content:flex-end}
+.hva-edos-standard-online{height:36px;padding:0 11px;font-size:10px}
+.hva-qr-hide{border:1px solid #d4d7e6;border-radius:8px;width:29px;height:29px;flex:0 0 29px;background:#fff;color:#64748b;display:grid;place-items:center;font-size:16px;cursor:pointer}
+.hva-qr-hide:hover{background:#fee2e2;color:#b91c1c;border-color:#fecaca}
+.hva-restore-meetings{display:inline-flex;align-items:center;gap:5px;margin-top:10px;border:1px solid #c4b5fd;border-radius:9px;background:#faf5ff;color:#6d28d9;padding:7px 10px;font-size:10px;font-weight:800;cursor:pointer}
+.hva-restore-meetings[hidden]{display:none!important}
+@media(max-width:720px){.hva-edos-standard-header-inner{grid-template-columns:37px minmax(0,1fr) 95px;min-height:83px;padding:8px 8px;gap:5px}.hva-edos-standard-back{width:35px;height:35px}.hva-edos-logo{font-size:20px}.hva-edos-en{font-size:7px}.hva-edos-school{font-size:7px;line-height:1.15}.hva-edos-motto{font-size:6.5px;line-height:1.15}.hva-edos-standard-online{font-size:8px;padding:0 7px;height:29px}.hva-edos-standard-online-dot{width:7px;height:7px}.hva-edos-standard-version{font-size:7px}}
+@media(max-width:390px){.hva-edos-standard-header-inner{grid-template-columns:33px minmax(0,1fr) 77px;gap:3px}.hva-edos-logo{font-size:18px}.hva-edos-school{font-size:6.4px}.hva-edos-en{font-size:6.5px}.hva-edos-motto{font-size:6px}.hva-edos-standard-online{min-width:0;padding:0 4px;font-size:7px}}
+
+/* HVA-EDOS HEAD: inherited from CuocHop.html, common menu extension */
+.hva-edos-standard-head{margin:5px 6px 0!important;min-height:94px!important;position:relative;z-index:40;padding:0!important}
+.hva-edos-standard-head .hva-edos-standard-inner{min-height:92px;display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 18px}
+.hva-edos-standard-head .hva-edos-standard-brand{justify-content:center;min-width:0}
+.hva-edos-standard-head .hva-edos-standard-tools{display:flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap}
+.hva-edos-standard-head .hva-edos-head-home{height:36px;padding:0 12px;border:1.5px solid rgba(83,246,237,.88);border-radius:20px;background:rgba(2,77,119,.40);color:white;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:10px;font-weight:800;white-space:nowrap}
+.hva-edos-standard-head .hva-edos-head-home:hover{filter:brightness(1.16)}
+.hva-edos-standard-head .hva-edos-head-home .bi{font-size:17px}
+.hva-edos-standard-head .hva-edos-standard-online-dot{animation:hvaEdosHeaderPulse 1.5s ease-in-out infinite}
+@keyframes hvaEdosHeaderPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.73)}}
+@media(prefers-reduced-motion:reduce){.hva-edos-standard-head .hva-edos-standard-online-dot{animation:none}}
+.hva-edos-head-menu{margin-top:5px;font-size:11px;font-weight:800;line-height:1.2;color:#fff;text-shadow:0 1px 5px rgba(0,25,66,.3);letter-spacing:.02em}
+@media(max-width:900px){.hva-edos-standard-head .hva-edos-standard-inner{grid-template-columns:43px minmax(0,1fr) auto;padding:8px 10px;gap:7px}.hva-edos-standard-head .hva-edos-standard-tools{gap:4px}.hva-edos-standard-head .hva-edos-head-home{padding:0 8px}.hva-edos-standard-head .hva-edos-standard-online{padding:0 7px}}
+@media(max-width:720px){.hva-edos-standard-head .hva-edos-standard-inner{grid-template-columns:36px minmax(0,1fr);min-height:85px}.hva-edos-standard-head .hva-edos-standard-back{width:35px;height:35px}.hva-edos-standard-head .hva-edos-standard-tools{grid-column:1/-1;justify-content:flex-end}.hva-edos-head-menu{font-size:9px}.hva-edos-standard-head .hva-edos-head-home{height:29px}.hva-edos-standard-head .hva-edos-standard-online{height:29px}}
