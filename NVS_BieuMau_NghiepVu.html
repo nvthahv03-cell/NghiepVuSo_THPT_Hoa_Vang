@@ -136,8 +136,62 @@ input::placeholder,textarea::placeholder{color:#637d95!important;opacity:1!impor
  .hva-a-landing-actions button strong{font-size:16px!important}
  .hva-a-landing-actions button small{font-size:12px!important}
 }
+</style><style id="hva-a1-frontend-release-20261117">
+/* Chỉ áp dụng nghiệp vụ A1, không thay đổi giao diện A2–A6. */
+.hva-a-header{position:relative!important;isolation:isolate;overflow:hidden!important;
+ background:linear-gradient(112deg,#07549a 0%,#087cbe 57%,#0db7da 100%)!important}
+.hva-a-header::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.34;z-index:0;
+ background-image:radial-gradient(circle,#fff 1.5px,transparent 2.5px),
+ repeating-linear-gradient(28deg,transparent 0 63px,rgba(255,255,255,.16) 64px,transparent 65px 130px),
+ repeating-linear-gradient(151deg,transparent 0 81px,rgba(255,255,255,.13) 82px,transparent 83px 161px);
+ background-size:92px 79px,100% 100%,100% 100%;background-position:16px 16px,0 0,0 0}
+.hva-a-header>.hva-a-header-top,.hva-a-header>.hva-a-header-bottom{position:relative;z-index:1}
+.hva-a-header .hva-a-section-code{color:#e4f6ff;font-size:11px;font-weight:850;letter-spacing:.09em;margin-bottom:5px}
+#form .hva-a-date-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+ gap:10px;grid-column:1/-1;min-width:0}
+#form .hva-a-date-pair>div{min-width:0}
+#form .hva-a-date-control{position:relative;width:100%;min-width:0}
+#form .hva-a-date-control .hva-a-date-display{width:100%;min-width:0;padding-right:42px!important}
+#form .hva-a-date-control .hva-a-native-date{position:absolute!important;right:0;top:0;opacity:0!important;
+ width:39px!important;min-width:39px!important;height:100%!important;z-index:2;cursor:pointer;padding:0!important;border:0!important}
+#form .hva-a-date-control::after{content:"📅";position:absolute;right:11px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:16px}
+#form .hva-a-date-pair label{white-space:nowrap;font-size:12px}
+.hva-a-a1-top[hidden],.hva-a-user-bar[hidden]{display:none!important}
+.hva-a-a1-top{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eef8ff;
+ border:1.5px solid #b4d8ed;padding:15px 16px;border-radius:13px;margin-bottom:16px}
+.hva-a-a1-selected{min-width:0}.hva-a-a1-selected strong{display:block;color:#075084;font-size:clamp(16px,2.2vw,21px);font-weight:900;margin:4px 0}
+.hva-a-a1-selected p{font-size:12px;color:#416d89;margin:4px 0 0;line-height:1.5}
+.hva-a-back-to-forms{flex:0 0 auto;min-height:45px;background:#086aae!important;color:white!important;
+ border:1px solid #0665a5!important;font-weight:850!important}
+.hva-a-user-bar{border-radius:13px;background:linear-gradient(108deg,#07559e,#087abc 70%,#0b96bf);
+ color:#fff;border-left:5px solid #54dcfa;margin:0 0 18px;overflow:hidden}
+.hva-a-user-bar-heading{display:flex;justify-content:space-between;gap:8px;align-items:center;
+ border-bottom:1px solid rgba(255,255,255,.27);padding:10px 14px;font-size:11px}
+.hva-a-user-bar-heading span{font-size:10px;color:#e0f5ff}
+.hva-a-user-bar-row{display:grid;grid-template-columns:1.2fr 1fr .9fr;min-width:0}
+.hva-a-user-bar-row>div{padding:11px 12px;min-width:0}
+.hva-a-user-bar-row>div+div{border-left:1px solid rgba(255,255,255,.23)}
+.hva-a-user-bar-row small{display:block;color:#e3f3ff;font-size:10px;margin-bottom:5px}
+.hva-a-user-bar-row strong{display:block;font-size:clamp(11px,1.6vw,14px);font-weight:850;
+ color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#form .hva-a1-input-hint::placeholder{color:#748fa3!important;opacity:1}
+#form .hva-a-a1-selected label:focus-within,#form label:focus-within{color:#066ca8!important}
+@media(max-width:650px){
+ .hva-a-a1-top{flex-direction:column;align-items:stretch;padding:13px}
+ .hva-a-back-to-forms{width:100%}
+ .hva-a-user-bar-heading{padding:9px 8px;font-size:9px}
+ .hva-a-user-bar-heading span{font-size:9px}
+ .hva-a-user-bar-row{grid-template-columns:1.2fr 1fr .85fr}
+ .hva-a-user-bar-row>div{padding:9px 5px}
+ .hva-a-user-bar-row small{font-size:8px}
+ .hva-a-user-bar-row strong{font-size:10px}
+ #form .hva-a-date-pair{gap:7px}
+ #form .hva-a-date-pair label{font-size:11px}
+ #form .hva-a-date-control .hva-a-date-display{font-size:12px!important;padding:9px 34px 9px 7px!important}
+}
+@media print{.hva-a-user-bar,.hva-a-a1-top{display:none!important}}
 </style></head><body>
-<header class="hva-a-header"><div class="hva-a-header-top"><a class="hva-a-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ số" title="Quay lại Nghiệp vụ số">←</a><div class="hva-a-identity"><div class="hva-a-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a-brand">HVA–EDOS</div></div></div><div class="hva-a-header-bottom"><h1>Biểu mẫu nghiệp vụ số</h1><p>Soạn hồ sơ · Kiểm tra nội dung · Nộp theo quyền được cấp</p></div></header>
+<header class="hva-a-header"><div class="hva-a-header-top"><a class="hva-a-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ số" title="Quay lại Nghiệp vụ số">←</a><div class="hva-a-identity"><div class="hva-a-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a-brand">HVA–EDOS</div></div></div><div class="hva-a-header-bottom"><div class="hva-a-section-code" id="a22HeaderCode">HỒ SƠ CHUYÊN MÔN</div><h1 id="a22HeaderTitle">Biểu mẫu nghiệp vụ số</h1><p>Soạn hồ sơ · Kiểm tra nội dung · Nộp theo quyền được cấp</p></div></header>
 <main><div class="hva-a-flow" aria-label="Quy trình hồ sơ"><span><b>1</b> Mở mẫu Drive</span><span><b>2</b> Nộp liên kết Drive</span><span><b>3</b> Nhận mã tiếp nhận</span></div><div class="hva-a-status" id="a22Connection" role="status" aria-live="polite"><span class="hva-a-status-dot" aria-hidden="true"></span><span id="a22ConnectionText">Đang kiểm tra quyền nộp hồ sơ…</span></div><div class="note hva-a-brief" role="note"><i class="hva-brief-icon" aria-hidden="true">i</i><span>Hồ sơ chỉ được coi là <b>đã nộp</b> khi máy chủ trả <b>mã tiếp nhận</b>. Nếu chưa kết nối, thầy/cô vẫn có thể soạn và lưu bản nháp. Không đưa thông tin cá nhân nhạy cảm của học sinh vào biểu mẫu.</span></div>
 <section class="panel hva-a-template-landing" id="a22TemplateLanding" aria-label="Quy trình tải mẫu và nộp liên kết">
  <div class="hva-a-kicker">BIỂU MẪU NGHIỆP VỤ</div>
@@ -149,13 +203,26 @@ input::placeholder,textarea::placeholder{color:#637d95!important;opacity:1!impor
  </div>
  <p class="hva-a-landing-note">Nếu nhà trường chưa cập nhật link mẫu, hệ thống sẽ thông báo rõ, không tự tạo mẫu thay thế. Hồ sơ chỉ được ghi nhận khi có mã tiếp nhận.</p>
 </section>
-<section class="panel edit hidden" id="a22SubmissionEditor"><div class="hva-a-form-title"><div><span class="hva-a-kicker">MẪU NGHIỆP VỤ ĐƯỢC CHỌN</span><h2 id="heading">Chuẩn bị biểu mẫu</h2></div><span class="hva-a-draft-chip">ĐANG SOẠN</span></div><form id="form"><div class="hva-a-section-name">01 · Thông tin chung</div>
+<section class="panel edit hidden" id="a22SubmissionEditor">
+<div class="hva-a-a1-top" id="a22A1Top" hidden>
+ <div class="hva-a-a1-selected"><div class="hva-a-kicker">ĐANG KÊ KHAI BIỂU MẪU</div><strong id="a22A1SelectedTitle">Nghiệp vụ A1</strong><p id="a22A1SelectedPurpose"></p></div>
+ <button type="button" id="a22BackToLanding" class="secondary hva-a-back-to-forms">← Quay lại lựa chọn biểu mẫu</button>
+</div>
+<section class="hva-a-user-bar" id="a22UserBar" hidden aria-label="Thông tin tài khoản HVA–EDOS">
+ <div class="hva-a-user-bar-heading"><strong>THÔNG TIN NGƯỜI LẬP HỒ SƠ</strong><span>Đồng bộ từ tài khoản EDOS</span></div>
+ <div class="hva-a-user-bar-row">
+ <div><small>Họ và tên</small><strong id="a22UserName">—</strong></div>
+ <div><small>Tổ / Bộ phận</small><strong id="a22UserTeam">—</strong></div>
+ <div><small>Chức vụ</small><strong id="a22UserRole">—</strong></div>
+ </div>
+</section>
+<div class="hva-a-form-title"><div><span class="hva-a-kicker">MẪU NGHIỆP VỤ ĐƯỢC CHỌN</span><h2 id="heading">Chuẩn bị biểu mẫu</h2></div><span class="hva-a-draft-chip">ĐANG SOẠN</span></div><form id="form"><div class="hva-a-section-name">01 · Thông tin chung</div>
 <div class="cols"><div><label for="code">Nghiệp vụ</label><select id="code" required></select></div><div><label for="schoolYear">Năm học</label><input id="schoolYear" value="2026–2027" required maxlength="20"></div>
-<div><label for="owner">Người lập hồ sơ</label><input id="owner" required maxlength="150" autocomplete="name"></div><div><label for="team">Tổ / bộ phận</label><input id="team" required maxlength="150"></div>
-<div><label for="date">Ngày lập</label><input id="date" type="date" required></div><div><label for="subject">Môn / lớp / đối tượng / địa điểm (nếu có)</label><input id="subject" maxlength="250"></div>
-<div class="wide"><label for="title">Tiêu đề / nội dung công việc</label><input id="title" required maxlength="300"></div>
-<div class="wide"><label for="content">Thông tin bổ sung / căn cứ (nếu có)</label><textarea id="content" maxlength="12000"></textarea></div>
-<div class="wide"><label for="result">Kết quả, kế hoạch thực hiện hoặc kiến nghị</label><textarea id="result" maxlength="8000"></textarea></div>
+<div id="a22OwnerCell"><label for="owner">Người lập hồ sơ</label><input id="owner" required maxlength="150" autocomplete="name"></div><div id="a22TeamCell"><label for="team">Tổ / bộ phận</label><input id="team" required maxlength="150"></div>
+<div id="a22DateCell"><label for="date">Ngày lập</label><input id="date" type="date" required></div><div><label for="subject">Môn / lớp / đối tượng / địa điểm (nếu có)</label><input id="subject" maxlength="250"></div>
+<div class="wide"><label for="title">Tiêu đề / nội dung công việc</label><input id="title" required maxlength="300" placeholder="Ghi rõ tên nhiệm vụ, kế hoạch hoặc báo cáo…"></div>
+<div class="wide"><label for="content">Thông tin bổ sung / căn cứ (nếu có)</label><textarea id="content" maxlength="12000" placeholder="Nêu căn cứ phân công, yêu cầu thực hiện hoặc những thông tin liên quan…"></textarea></div>
+<div class="wide"><label for="result">Kết quả, kế hoạch thực hiện hoặc kiến nghị</label><textarea id="result" maxlength="8000" placeholder="Nêu kết quả cụ thể, tiến độ, sản phẩm đầu ra hoặc kiến nghị (nếu có)…"></textarea></div>
 <div class="wide hva-a-link-field"><label for="evidence">Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *</label><input id="evidence" type="url" required placeholder="https://drive.google.com/..." maxlength="1500" autocomplete="url"><small>Dán liên kết tài liệu đã hoàn thiện; kiểm tra quyền chia sẻ cho người tiếp nhận.</small></div></div>
 <details class="hva-a-more-fields" id="a22MoreFields"><summary>Thông tin nghiệp vụ chi tiết <span>(mở khi cần bổ sung)</span></summary>
 <section id="specialPanel" class="a22-special" aria-labelledby="specialTitle"><div class="hva-a-section-name">02 · Nội dung nghiệp vụ</div>
@@ -170,7 +237,7 @@ input::placeholder,textarea::placeholder{color:#637d95!important;opacity:1!impor
 <details class="hva-a-draft-tools"><summary>Tiện ích bản nháp <span>▾</span></summary><div class="actions"><button type="button" class="secondary" id="export">Tải bản nháp JSON</button><button type="button" class="secondary" id="import">Nạp bản nháp JSON</button><button type="button" class="secondary" id="saveSession">Lưu nháp trong phiên</button><button type="button" class="secondary" id="restoreSession">Khôi phục bản nháp</button></div></details>
 <input class="hidden" id="file" type="file" accept="application/json,.json">
 <div id="feedback" aria-live="polite"></div></form></section>
-<section class="panel hidden" id="previewPanel"><div class="hva-a-kicker">KIỂM TRA NỘI DUNG TRƯỚC KHI GỬI</div><h2>Bản xem trước hồ sơ</h2><div class="report" id="preview"></div><div class="actions"><button type="button" id="print">In / lưu PDF bản nháp</button><button type="button" class="secondary" id="edit">Quay lại chỉnh sửa</button></div></section>
+<section class="panel hidden" id="previewPanel"><div class="hva-a-kicker">KIỂM TRA NỘI DUNG TRƯỚC KHI GỬI</div><h2 id="a22PreviewTitle">Bản xem trước hồ sơ</h2><div class="report" id="preview"></div><div class="actions"><button type="button" id="print">In / lưu PDF bản nháp</button><button type="button" class="secondary" id="edit">← Quay lại chỉnh sửa</button><button type="button" class="secondary" id="a22PreviewBackToLanding">← Về lựa chọn biểu mẫu</button></div></section>
 <footer>HVA–EDOS · Trường THPT Hòa Vang · Hồ sơ được ghi nhận theo phản hồi của hệ thống, không tự động được coi là đã phê duyệt.</footer></main>
 <script defer src="./NVS_A22_Definitions.js?v=20261116_A14_A2scope"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261116-drive-only3"></script>
