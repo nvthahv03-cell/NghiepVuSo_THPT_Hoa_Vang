@@ -77,6 +77,8 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 .kt01-confirmed-subjects li::before{content:counter(kt01mon);display:grid;place-items:center;flex:0 0 23px;width:23px;height:23px;border-radius:7px;background:#0b76bb;color:#fff;font-size:11px}
 .kt01-list-empty{padding:10px 12px;color:#697f91;font-size:12px}
 @media(max-width:480px){.kt01-confirmed-subjects{grid-template-columns:1fr}}
+
+#feedback.kt01-validation-error{color:#a33d1d!important;background:#fff4ed;border:1px solid #e7b69e;border-radius:9px;padding:11px 13px;font-weight:750;line-height:1.5}.kt01-invalid{border:2px solid #d45531!important;box-shadow:0 0 0 3px rgba(212,85,49,.12)!important}
 </style><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><style>
 /* KT01: header exact CuocHop appearance, self-contained, independent of external CSS */
 .hva-edos-standard-head{position:relative!important;z-index:40!important;display:block!important;margin:5px 6px 0!important;padding:0!important;min-height:94px!important;overflow:hidden!important;border-radius:10px!important;isolation:isolate!important;color:#f8fdff!important;background:radial-gradient(circle at 86% 22%,rgba(8,221,228,.34),transparent 26%),linear-gradient(105deg,#064482 0%,#0757a8 45%,#058bbd 75%,#06bccc 100%)!important;box-shadow:0 10px 28px rgba(3,43,84,.18)!important}
@@ -274,19 +276,50 @@ function getData(){
  d.state='DRAFT_LOCAL_ONLY';d.schema='HVA-KT01-DRAFT-1';d.updatedAt=new Date().toISOString();d.draftId=activeDraftId||'KTDRAFT-'+Date.now().toString(36).toUpperCase();
  return d;
 }
-function validate(){
- const required=f.querySelectorAll('[required]');
- for(const input of required){if(!input.value.trim()){input.reportValidity();input.focus();return false}}
- if(!el('schoolYear').checkValidity()){el('schoolYear').reportValidity();return false}
- if(!document.querySelector('input[name="grade"]:checked')){el('feedback').textContent='Cần chọn ít nhất một khối hoặc đối tượng.';return false}
- if(!subjectConfirmed){el('feedback').textContent='Cần xác nhận phân loại môn trước khi xem trước.';el('confirmSubjects').focus();return false}
- if(!selectedSubjects('subjectsCentral').length&&!selectedSubjects('subjectsClass').length){el('feedback').textContent='Chọn ít nhất một môn kiểm tra tập trung hoặc tại lớp.';document.querySelector('.kt01-subject-layout').scrollIntoView({block:'center'});return false}
- if(el('end').value<el('start').value){el('end').setCustomValidity('Ngày kết thúc không được trước ngày bắt đầu.');el('end').reportValidity();return false}
- el('end').setCustomValidity('');
- for(const id of ['planUrl','scheduleUrl'])if(!htmlSafeUrl(el(id).value.trim())){el(id).setCustomValidity('Liên kết phải dùng HTTPS hợp lệ.');el(id).reportValidity();return false}else el(id).setCustomValidity('');
- if(el('source').value==='SO'&&el('type').value==='Kiểm tra cuối kỳ'&&el('semester').value==='Học kỳ II'&&el('schoolYear').value.replace('-','–')==='2026–2027'&&[...selectedSubjects('subjectsCentral'),...selectedSubjects('subjectsClass')].includes('Toán')&&[...selectedSubjects('subjectsCentral'),...selectedSubjects('subjectsClass')].includes('Ngữ văn')&&!el('subjectSources').value){
-  el('feedback').textContent='Lưu ý: phạm vi Sở ra đề Toán, Ngữ văn khối 12 cần đối chiếu văn bản và các môn/khối thực tế trước khi áp dụng; không tự mở rộng cho toàn bộ đợt.';
+function kt01ValidationMessage(message,control){
+ const feedback=el('feedback');
+ feedback.textContent='Chưa thể xem trước: '+message;
+ feedback.setAttribute('role','alert');
+ feedback.classList.add('kt01-validation-error');
+ if(control){
+  control.classList.add('kt01-invalid');
+  control.scrollIntoView({block:'center',behavior:'smooth'});
+  setTimeout(()=>control.focus({preventScroll:true}),120);
+ }else{
+  feedback.scrollIntoView({block:'center',behavior:'smooth'});
  }
+ return false;
+}
+function validate(){
+ document.querySelectorAll('.kt01-invalid').forEach(x=>x.classList.remove('kt01-invalid'));
+ el('feedback').classList.remove('kt01-validation-error');
+ const labels={
+  planName:'Tên kế hoạch đã ban hành',
+  planNumber:'Số, ký hiệu văn bản',
+  planDate:'Ngày ban hành',
+  name:'Tên đợt kiểm tra / kỳ thi',
+  type:'Loại đợt kiểm tra',
+  schoolYear:'Năm học',
+  semester:'Học kỳ',
+  start:'Thời gian bắt đầu',
+  end:'Thời gian kết thúc',
+  unit:'Đơn vị/bộ phận phụ trách',
+  source:'Nguồn đề'
+ };
+ for(const [id,title] of Object.entries(labels)){
+  const input=el(id);
+  if(!input || !String(input.value||'').trim())return kt01ValidationMessage('Cần nhập hoặc chọn: '+title+'.',input);
+  if(!input.checkValidity())return kt01ValidationMessage('Dữ liệu chưa đúng định dạng: '+title+'.',input);
+ }
+ if(!document.querySelector('input[name="grade"]:checked'))return kt01ValidationMessage('Cần chọn ít nhất một khối lớp hoặc đối tượng.',document.querySelector('input[name="grade"]'));
+ if(!subjectConfirmed)return kt01ValidationMessage('Cần bấm Xác nhận phân loại môn trước khi xem trước.',el('confirmSubjects'));
+ if(!selectedSubjects('subjectsCentral').length&&!selectedSubjects('subjectsClass').length)return kt01ValidationMessage('Cần có ít nhất một môn kiểm tra.',el('confirmSubjects'));
+ if(el('end').value<el('start').value)return kt01ValidationMessage('Ngày kết thúc không được trước ngày bắt đầu.',el('end'));
+ for(const id of ['planUrl','scheduleUrl']){
+  const val=el(id).value.trim();
+  if(val&&!htmlSafeUrl(val))return kt01ValidationMessage('Đường dẫn phải là liên kết HTTPS hợp lệ.',el(id));
+ }
+ if(el('source').value==='HONHOP'&&!el('subjectSources').value.trim())return kt01ValidationMessage('Cần ghi rõ nguồn đề theo từng môn, khối.',el('subjectSources'));
  return true;
 }
 function preview(d){
