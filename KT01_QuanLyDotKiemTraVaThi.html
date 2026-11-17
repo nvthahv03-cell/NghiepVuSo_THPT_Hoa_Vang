@@ -9,7 +9,7 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}.span2{grid-column:1/-1}label{font-size:13px;font-weight:750;display:block;color:#24557a}label small{font-size:11px;color:#6b8298;font-weight:500;display:block;margin:5px 0}input,select,textarea{width:100%;margin-top:7px;border:1px solid #bcd7e9;border-radius:10px;min-height:42px;padding:10px 12px;color:#193f63;background:#fff}textarea{min-height:88px;resize:vertical}input:focus,textarea:focus,select:focus{outline:2px solid #41a4e2;outline-offset:1px}.check-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.check{display:flex;align-items:center;gap:8px;border:1px solid #d0e4f3;border-radius:10px;padding:9px 10px;color:#15446b;font-size:13px;font-weight:650;background:#f7fbff}.check input{width:17px;height:17px;margin:0;min-height:unset;accent-color:#0d74bf}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 17px;border-radius:10px;border:1px solid #0a6dae;color:white;background:#086ab5;font-size:13px;font-weight:800;min-height:43px}.btn.light{background:#ecf6ff;border-color:#bcdbed;color:#145381}.btn.danger{background:#fff6f2;border-color:#efc8c0;color:#93463b}.btn:focus-visible,a:focus-visible{outline:3px solid #ffbe4f;outline-offset:3px}.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.chip{font-size:11px;font-weight:800;color:#946b21;background:#fff7e1;border:1px solid #e9d49b;padding:6px 10px;border-radius:999px}.mini{font-size:12px;color:#678099}.group{border:1px solid #d9e8f2;background:#fafcff;padding:14px;border-radius:12px;margin-top:11px}.group strong{color:#0a548e}.source-rule{margin-top:12px;font-size:13px;line-height:1.65}.data-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.data-table th{background:#eaf5ff;color:#0b5185}.data-table td,.data-table th{padding:10px;border-bottom:1px solid #e1edf4;vertical-align:top}.status{font-weight:750;color:#9b6b24}.empty{padding:17px;color:#668098;text-align:center}.footer{font-size:12px;color:#6b8395;text-align:center;margin:28px 0}.hidden,[hidden]{display:none!important}
 @media(max-width:700px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}.check-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:17px}.data-table{font-size:12px}}
 @media print{header,.actions,.notice,.footer{display:none!important}body{background:#fff}.panel{box-shadow:none;border:0}input,select,textarea{border:0;border-bottom:1px solid #bbb;border-radius:0}}
-</style></head>
+.draft-list{display:grid;gap:10px}.draft-entry{border:1px solid #d1e5f4;background:#fafcff;border-radius:12px;padding:13px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.draft-entry strong{display:block;color:#0a5387;font-size:13px}.draft-entry small{display:block;font-size:11px;color:#617d92;margin-top:5px}.draft-entry button{padding:8px 10px;background:#ebf6ff;border:1px solid #bad8ed;border-radius:8px;color:#125581;font-size:12px;font-weight:700}.draft-entry button.danger{background:#fff5f1;border-color:#edd1c7;color:#9b4a3b}</style></head>
 <body><header><div class="top"><a class="back" href="./DieuHanh.html" aria-label="Về Điều hành">← Điều hành</a><div><small style="letter-spacing:.07em;font-weight:850">HVA–EDOS · ĐIỀU HÀNH KIỂM TRA VÀ THI</small><h1>KT01 – Quản lý đợt kiểm tra và kỳ thi</h1><p>Thiết lập dữ liệu tổ chức từ kế hoạch đã ban hành · Không thay thế văn bản kế hoạch</p></div><span class="mark">BẢN THIẾT KẾ</span></div></header>
 <main>
 <div class="notice warning" id="modeNotice">KT01 hiện là bản thiết kế để kiểm thử giao diện và quy trình. Chưa nối Backend V5; không có chức năng ban hành, không ghi lên Sheet hoặc tạo kỳ kiểm tra chính thức.</div>
@@ -43,12 +43,12 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 <div id="sourceDetails" class="span2 group"><strong>Quy định xử lý nguồn đề</strong><p class="source-rule" id="sourceRule">Chọn nguồn đề để xem cách phân công và tiếp nhận hồ sơ.</p><div id="subjectSourceWrap" class="hidden"><label>Nguồn đề theo từng môn *<textarea id="subjectSources" maxlength="2000" placeholder="Ví dụ: Toán – Sở GD&ĐT (khối 12); Ngữ văn – Sở GD&ĐT (khối 12); Tiếng Anh – Trường"></textarea><small>Ghi rõ môn, khối và nguồn đề. KT01 không tự suy diễn nguồn đề của các môn.</small></label></div></div>
 <div class="span2"><label>Ghi chú tổ chức / đặc thù kỳ thi<textarea id="notes" maxlength="1800" placeholder="Ghi những nội dung cần lưu ý, không nhập thông tin đề mật hoặc dữ liệu học sinh nhạy cảm..."></textarea></label></div>
 </div>
-<div class="row actions" style="margin-top:23px"><button type="submit" class="btn">Kiểm tra & xem trước bản nháp</button><button id="export" type="button" class="btn light" disabled>Tải bản nháp JSON</button><button id="reset" type="button" class="btn light">Làm mới</button></div>
+<div class="row actions" style="margin-top:23px"><button type="submit" class="btn">Kiểm tra & xem trước bản nháp</button><button id="saveDraft" type="button" class="btn light" disabled>Lưu bản nháp trên trình duyệt</button><button id="export" type="button" class="btn light" disabled>Tải bản nháp JSON</button><button id="reset" type="button" class="btn light">Làm mới</button></div>
 <p class="mini" id="feedback" role="status" aria-live="polite">Chưa lưu. Không gửi dữ liệu ra máy chủ.</p>
 </form></section>
-<section class="panel hidden" id="previewPanel"><div class="bar"><h2>04 · Bản xem trước KT01</h2><span class="chip">KHÔNG PHẢI QUYẾT ĐỊNH BAN HÀNH</span></div><div id="preview" style="white-space:pre-wrap;line-height:1.8;font-size:14px"></div><div class="row actions" style="margin-top:18px"><button type="button" id="print" class="btn light">In bản nháp</button><button type="button" id="backEdit" class="btn light">Quay lại chỉnh sửa</button></div></section>
-<section class="panel"><h2>05 · Những đợt đã thiết lập</h2><p class="lead">Khi kết nối Backend, khu vực này sẽ hiển thị các đợt do BGH quản lý, trạng thái và mã đợt để liên thông KT02–KT06, A2.1–A2.4.</p><table class="data-table"><thead><tr><th>Mã đợt</th><th>Tên đợt</th><th>Loại</th><th>Trạng thái</th></tr></thead><tbody><tr><td colspan="4" class="empty">Chưa kết nối cơ sở dữ liệu KT01 – Không có danh sách thực tế</td></tr></tbody></table></section>
-</div><div class="footer">HVA–EDOS · Trường THPT Hòa Vang · KT01 bản thiết kế · Không lưu hồ sơ vào Backend</div>
+<section class="panel hidden" id="previewPanel"><div class="bar"><h2>04 · Bản xem trước KT01</h2><span class="chip">KHÔNG PHẢI QUYẾT ĐỊNH BAN HÀNH</span></div><div id="preview" style="white-space:pre-wrap;line-height:1.8;font-size:14px"></div><div class="row actions" style="margin-top:18px"><button type="button" id="print" class="btn light">In bản nháp</button><button type="button" id="toKT02" class="btn" disabled>Chuyển thông tin sang KT02</button><button type="button" id="backEdit" class="btn light">Quay lại chỉnh sửa</button></div></section>
+<section class="panel"><h2>05 · Các bản nháp KT01 trên trình duyệt</h2><p class="lead">Bản nháp chỉ lưu trong phiên tab trình duyệt, không phải hồ sơ đã tạo trên EDOS. Có thể mở để chỉnh sửa hoặc xuất JSON. Không lưu thông tin mật của đề thi vào đây.</p><div id="kt01DraftList" class="draft-list" aria-live="polite">Chưa có bản nháp trong phiên này.</div></section>
+</div><div class="footer">HVA–EDOS · Trường THPT Hòa Vang · KT01 · Lưu bản nháp trong phiên trình duyệt, chưa kết nối Backend</div>
 </main>
 <script>
 (function(){'use strict';
@@ -66,7 +66,7 @@ function allowed(){
 if(!allowed()){el('deny').classList.remove('hidden');return}
 el('content').classList.remove('hidden');
 const f=el('ktForm'),fields=['planName','planNumber','planDate','planUrl','name','type','schoolYear','semester','start','end','unit','scheduleUrl','subjects','source','subjectSources','notes'];
-let validDraft=null;
+let validDraft=null;const draftStorageKey='HVA_KT01_LOCAL_DRAFTS_V1';let activeDraftId=null;
 function htmlSafeUrl(value){if(!value)return true;try{let u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!!u.hostname}catch(_){return false}}
 function refreshSource(){
  const v=el('source').value,detail=el('sourceRule'),wrap=el('subjectSourceWrap');
@@ -78,7 +78,7 @@ refreshSource();el('source').addEventListener('change',refreshSource);
 function getData(){
  const d={};for(const id of fields)d[id]=el(id).value.trim();
  d.grades=[...document.querySelectorAll('input[name="grade"]:checked')].map(x=>x.value);
- d.state='DRAFT_LOCAL_ONLY';d.schema='HVA-KT01-DRAFT-1';d.updatedAt=new Date().toISOString();
+ d.state='DRAFT_LOCAL_ONLY';d.schema='HVA-KT01-DRAFT-1';d.updatedAt=new Date().toISOString();d.draftId=activeDraftId||'KTDRAFT-'+Date.now().toString(36).toUpperCase();
  return d;
 }
 function validate(){
@@ -99,13 +99,55 @@ function preview(d){
  const lines=['KT01 · BẢN NHÁP DỮ LIỆU TỔ CHỨC','TRƯỜNG THPT HÒA VANG','', 'I. VĂN BẢN LÀM CĂN CỨ','Kế hoạch: '+d.planName,'Số, ký hiệu: '+d.planNumber,'Ngày ban hành: '+d.planDate,'Liên kết: '+(d.planUrl||'Chưa có'),'','II. ĐỢT KIỂM TRA / KỲ THI','Tên đợt: '+d.name,'Loại: '+d.type,'Năm học – Học kỳ: '+d.schoolYear+' · '+d.semester,'Đối tượng: '+gradeLabel,'Môn: '+d.subjects,'Thời gian: '+d.start+' đến '+d.end,'Bộ phận phụ trách: '+d.unit,'Lịch kèm theo: '+(d.scheduleUrl||'Chưa có'),'','III. NGUỒN ĐỀ','Loại nguồn: '+el('source').selectedOptions[0].text,'Phân loại theo môn: '+(d.subjectSources||'Không áp dụng'),'Ghi chú: '+(d.notes||'Không có'),'','TRẠNG THÁI: BẢN NHÁP CỤC BỘ – CHƯA LƯU HỆ THỐNG – CHƯA PHÊ DUYỆT'];
  el('preview').textContent=lines.join('\n');el('previewPanel').classList.remove('hidden');el('previewPanel').scrollIntoView({block:'start',behavior:'smooth'});
 }
-f.addEventListener('input',()=>{validDraft=null;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Có thay đổi chưa xem trước. Chưa lưu dữ liệu.'});
-f.addEventListener('change',()=>{validDraft=null;el('export').disabled=true;el('previewPanel').classList.add('hidden')});
-f.addEventListener('submit',e=>{e.preventDefault();if(!validate())return;validDraft=getData();preview(validDraft);el('export').disabled=false;el('feedback').textContent='Đã kiểm tra bản nháp. Chưa gửi hoặc lưu lên EDOS.'});
+f.addEventListener('input',()=>{validDraft=null;el('saveDraft').disabled=true;el('toKT02').disabled=true;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Có thay đổi chưa xem trước. Chưa lưu dữ liệu.'});
+f.addEventListener('change',()=>{validDraft=null;el('saveDraft').disabled=true;el('toKT02').disabled=true;el('export').disabled=true;el('previewPanel').classList.add('hidden')});
+f.addEventListener('submit',e=>{e.preventDefault();if(!validate())return;validDraft=getData();preview(validDraft);el('saveDraft').disabled=false;el('toKT02').disabled=false;el('export').disabled=false;el('feedback').textContent='Đã kiểm tra bản nháp. Chưa gửi hoặc lưu lên EDOS.'});
 el('export').addEventListener('click',()=>{
  if(!validDraft)return;const blob=new Blob([JSON.stringify(validDraft,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='HVA_KT01_BAN_NHAP_'+validDraft.start.replaceAll('-','')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
 });
-el('reset').addEventListener('click',()=>{f.reset();validDraft=null;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Đã xóa dữ liệu đang soạn trên trang; không ảnh hưởng dữ liệu hệ thống.';refreshSource()});
+el('reset').addEventListener('click',()=>{f.reset();activeDraftId=null;validDraft=null;el('saveDraft').disabled=true;el('toKT02').disabled=true;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Đã xóa dữ liệu đang soạn trên trang; không ảnh hưởng dữ liệu hệ thống.';refreshSource()});
+
+function loadDrafts(){
+ try{const a=JSON.parse(sessionStorage.getItem(draftStorageKey)||'[]');return Array.isArray(a)?a.filter(d=>d&&d.schema==='HVA-KT01-DRAFT-1'):[]}catch(_){return []}
+}
+function renderDrafts(){
+ const box=el('kt01DraftList');box.replaceChildren();const all=loadDrafts();
+ if(!all.length){box.textContent='Chưa có bản nháp trong phiên này.';return}
+ for(const d of all){
+  const entry=document.createElement('div');entry.className='draft-entry';
+  const info=document.createElement('div'),strong=document.createElement('strong'),small=document.createElement('small');
+  strong.textContent=d.name||'(Chưa đặt tên)';small.textContent=[d.draftId,d.type,d.schoolYear,d.updatedAt?new Date(d.updatedAt).toLocaleString('vi-VN'):''].filter(Boolean).join(' · ');
+  info.append(strong,small);const actions=document.createElement('div');actions.className='row';
+  for(const [name,action,kind] of [['Mở sửa','open',''],['Xóa nháp','remove','danger']]){
+   const button=document.createElement('button');button.type='button';button.textContent=name;button.className=kind;
+   button.addEventListener('click',()=>{
+    if(action==='open'){activeDraftId=d.draftId;for(const id of fields)el(id).value=String(d[id]||'');document.querySelectorAll('input[name="grade"]').forEach(c=>c.checked=(d.grades||[]).includes(c.value));refreshSource();validDraft=null;el('previewPanel').classList.add('hidden');el('saveDraft').disabled=true;el('export').disabled=true;el('toKT02').disabled=true;el('feedback').textContent='Đã mở bản nháp '+d.draftId+'. Cần kiểm tra và xem trước lại trước khi sử dụng.';f.scrollIntoView({behavior:'smooth',block:'start'});}
+    else{const kept=loadDrafts().filter(x=>x.draftId!==d.draftId);sessionStorage.setItem(draftStorageKey,JSON.stringify(kept));if(activeDraftId===d.draftId)activeDraftId=null;renderDrafts()}
+   });actions.append(button);
+  }entry.append(info,actions);box.append(entry);
+ }
+}
+el('saveDraft').addEventListener('click',()=>{
+ if(!validDraft)return;try{
+  const saved=loadDrafts().filter(d=>d.draftId!==validDraft.draftId);saved.unshift(validDraft);
+  sessionStorage.setItem(draftStorageKey,JSON.stringify(saved.slice(0,30)));activeDraftId=validDraft.draftId;
+  renderDrafts();el('feedback').textContent='Đã lưu bản nháp trên tab này, mã '+activeDraftId+'. Chưa gửi Backend.';
+ }catch(e){el('feedback').textContent='Không lưu được bản nháp trong trình duyệt: '+e.message}
+});
+el('toKT02').addEventListener('click',()=>{
+ if(!validDraft)return;
+ if(validDraft.source==='SO'){el('feedback').textContent='Đề do Sở cung cấp: KT02 không giao nhiệm vụ ra đề. Chỉ quản lý tổ chức tại KT01.';return}
+ if(validDraft.source==='HONHOP'){el('feedback').textContent='Đợt có nhiều nguồn đề: cần phân tách đúng môn, khối và nguồn đề trước khi tạo phân công KT02.';return}
+ if((validDraft.grades||[]).length!==1||['10','11','12'].indexOf(validDraft.grades[0])<0){el('feedback').textContent='Để chuyển KT02, cần chọn đúng một khối 10/11/12.';return}
+ const subjects=validDraft.subjects.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
+ if(subjects.length!==1){el('feedback').textContent='KT02 phân công theo từng môn. Hãy chọn đúng một môn, một khối trước khi chuyển.';return}
+ if(!['Kiểm tra giữa kỳ','Kiểm tra cuối kỳ'].includes(validDraft.type)){el('feedback').textContent='Hiện chỉ tự điền KT02 với kiểm tra giữa kỳ/cuối kỳ. Các loại thi khác cần cấu hình nhiệm vụ riêng.';return}
+ const handoff={schema:'KT01_TO_KT02_V1',name:validDraft.name,schoolYear:validDraft.schoolYear,semester:validDraft.semester,type:validDraft.type,grade:validDraft.grades[0],subject:subjects[0],source:validDraft.source,planNumber:validDraft.planNumber,planName:validDraft.planName};
+ try{sessionStorage.setItem('HVA_KT01_TO_KT02_V1',JSON.stringify(handoff));window.location.assign('./PhanCong_DeKiemTra.html?from=KT01')}
+ catch(e){el('feedback').textContent='Không chuyển được thông tin sang KT02: '+e.message}
+});
+renderDrafts();
+
 el('print').addEventListener('click',()=>window.print());
 el('backEdit').addEventListener('click',()=>f.scrollIntoView({block:'start',behavior:'smooth'}));
 })();
