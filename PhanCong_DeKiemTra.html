@@ -497,6 +497,38 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 @media(max-width:900px){.hva-kt-header .hva-kt-head-inner{gap:12px;padding:12px 15px}.hva-kt-header .hva-kt-kicker{font-size:11px}.hva-kt-header .hva-kt-school{font-size:23px}.hva-kt-header .hva-kt-slogan{font-size:12px}.hva-kt-header .hva-kt-tools{gap:5px}.hva-kt-header .hva-kt-home,.hva-kt-header .hva-kt-online{padding:0 10px;font-size:10px}}
 @media(max-width:680px){.hva-kt-header{margin:6px 6px 0;border-radius:13px}.hva-kt-header .hva-kt-head-inner{min-height:84px;grid-template-columns:36px minmax(0,1fr);gap:7px;padding:9px}.hva-kt-header .hva-kt-back{width:36px;height:36px;font-size:20px;border-radius:10px}.hva-kt-header .hva-kt-kicker{font-size:9px;letter-spacing:.07em}.hva-kt-header .hva-kt-school{font-size:17px;margin-top:4px}.hva-kt-header .hva-kt-slogan{font-size:9px;margin-top:4px}.hva-kt-header .hva-kt-tools{grid-column:1/-1;justify-content:flex-end;gap:7px}.hva-kt-header .hva-kt-home,.hva-kt-header .hva-kt-online{height:32px;font-size:10px}.hva-kt-header .hva-kt-online-dot{width:8px;height:8px;flex-basis:8px}}
 
+
+/* KT02 V2: unified workflow prototype; isolated from established legacy form */
+#kt02Unified{border:2px solid #8bbfdf;background:linear-gradient(180deg,#f6fbff,#fff 170px)}
+.kt02u-title{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.kt02u-title h2{color:#07548b;font-size:18px}.kt02u-title p{font-size:12px;color:#527087;line-height:1.6;margin:7px 0}
+.kt02u-chip{font-size:10px;font-weight:800;color:#94571c;border:1px solid #e7cc99;background:#fff9eb;padding:8px;border-radius:8px}
+.kt02u-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}
+.kt02u-fields label{font-size:12px;font-weight:700;color:#225371;display:grid;gap:5px}
+.kt02u-fields textarea{width:100%;min-height:68px;border:1px solid #b6cfe4;border-radius:9px;padding:9px;font:13px Arial,sans-serif;resize:vertical}
+.kt02u-line{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 10px;background:#e7f4ff;border-radius:9px;margin:17px 0 9px;font-size:12px}
+.kt02u-line strong{color:#064d83}.kt02u-line span{color:#486b85}
+.kt02u-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:11px 0}
+.kt02u-toolbar button{font-size:12px;padding:9px 12px}
+.kt02u-grade{font-size:12px;font-weight:bold;display:flex;align-items:center;gap:8px}
+.kt02u-grade select{width:140px}.kt02u-scroll{width:100%;overflow-x:auto;border:1px solid #c4d9e8;border-radius:10px}
+.kt02u-table{border-collapse:collapse;min-width:980px;width:100%;font-size:12px;background:#fff;color:#234765}
+.kt02u-table th{background:#e6f3ff;border-bottom:1px solid #bad4e7;text-align:left;font-weight:800;padding:11px 9px;white-space:nowrap}
+.kt02u-table td{border-bottom:1px solid #e1eaf2;padding:9px 7px;vertical-align:top}
+.kt02u-table tr:last-child td{border-bottom:0}.kt02u-table select,.kt02u-table input{width:100%;height:34px;font-size:12px;padding:5px}
+.kt02u-table input[type=checkbox]{width:17px;height:17px;accent-color:#086faf}
+.kt02u-table input[type=datetime-local]{min-width:163px}
+.kt02u-table .kt02u-person{min-width:155px}.kt02u-table .kt02u-deadline{display:block;margin-top:7px}
+.kt02u-table .kt02u-dlabel{display:block;font-size:10px;color:#687c8b;padding-top:3px}
+.kt02u-table .kt02u-recipient{font-weight:700;min-width:130px}
+.kt02u-table .kt02u-small-btn{padding:7px;font-size:11px}
+.kt02u-table .kt02u-name{font-weight:700;white-space:normal;min-width:144px}
+.kt02u-thsub{font-size:10px;color:#57758a;font-weight:400}
+.kt02u-message{font-size:12px;color:#1d537a;background:#f1f8ff;border-radius:9px;padding:12px;line-height:1.7;white-space:pre-wrap}
+.kt02u-message.kt02u-error{color:#9b3119;background:#fff2ec}
+.kt02u-error-input{outline:2px solid #d95232!important}
+@media(max-width:750px){.kt02u-fields{grid-template-columns:1fr}}
+@media print{body.kt02u-print header,body.kt02u-print .shell>section:not(#kt02Unified),body.kt02u-print #kt02Unified .kt02u-toolbar,body.kt02u-print #kt02Unified .kt02u-fields,body.kt02u-print #kt02Unified #uRestrictions,body.kt02u-print #kt02Unified #uRestrictionInfo,body.kt02u-print #kt02Unified #uMessage{display:none!important}body.kt02u-print .shell{max-width:none;padding:0;margin:0}body.kt02u-print #kt02Unified{border:none;background:white;box-shadow:none}body.kt02u-print .kt02u-scroll{overflow:visible;border:0}body.kt02u-print .kt02u-table{min-width:0;font-size:9pt}body.kt02u-print .kt02u-table input,body.kt02u-print .kt02u-table select{border:0;background:transparent;appearance:none} @page{size:A3 landscape;margin:12mm}}
 </style><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="./HVA_Personnel.js"></script><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"></head><body><header class="hva-edos-standard-head" aria-label="HVA–EDOS">
   <div class="hva-edos-standard-inner">
     <a class="hva-edos-standard-back" href="./DieuHanh.html" aria-label="Quay lại Điều hành" title="Quay lại"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
@@ -536,6 +568,30 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 <div class="grid" style="display:none"><label>Giáo viên đăng nhập<input id="user" readonly></label><label>Tổ chuyên môn<input id="team" readonly></label><label>Số nhân sự tổ<input id="count" readonly></label></div>
 
 <div class="pcdk-team-picker"><label for="pcdkTeamSelect">Tổ chuyên môn phụ trách (TTCM chỉ xem tổ của mình)</label><select id="pcdkTeamSelect" disabled><option value="">Đang tải tổ chuyên môn...</option></select><div class="pcdk-member-head"><b>Danh sách nhân sự tổ</b><span id="pcdkRosterCount">Chưa tải</span></div><div id="pcdkTeamMembers" class="pcdk-members" aria-live="polite">Đang xác thực dữ liệu nhân sự tổ...</div></div><div class="actions"><button id="reload" class="outline">Tải lại nhân sự tổ</button><button class="pcdk-login" id="pcdkRelogin" type="button" hidden>Đăng nhập lại NVS</button></div></section>
+<section class="panel" id="kt02Unified" aria-label="Bảng phân công tổng hợp KT02">
+ <div class="kt02u-title"><div><h2>KT02 · QUY TRÌNH VÀ BẢNG PHÂN CÔNG TỔNG HỢP</h2><p>Thiết kế giao diện V2 · TTCM lập hồ sơ theo kế hoạch; lưu bản nháp tại trình duyệt, <b>chưa ghi Google Sheets và chưa gửi BGH</b>.</p></div><span class="kt02u-chip">CHƯA KẾT NỐI BACKEND V2</span></div>
+ <div class="kt02u-fields">
+  <label>Mã/số kế hoạch kiểm tra<input id="uPlan" placeholder="Số, ký hiệu văn bản đã ban hành"></label>
+  <label>Kế hoạch dạy học môn học<input id="uTeachingPlan" placeholder="Tên/số văn bản, phiên bản, ngày phê duyệt"></label>
+  <label>Nội dung, phạm vi kiểm tra<textarea id="uScope" rows="2" placeholder="Nội dung và yêu cầu cần đạt theo từng khối; căn cứ kế hoạch dạy học môn học"></textarea></label>
+  <label>Trạng thái phê duyệt phạm vi<select id="uScopeStatus"><option value="DRAFT">Đang soạn – Chưa gửi BGH</option><option value="PENDING" disabled>Chờ BGH duyệt – cần Backend</option><option value="APPROVED" disabled>Đã duyệt – chỉ từ Backend</option></select></label>
+ </div>
+ <div class="kt02u-line"><strong>KT02.00 · Rà soát điều kiện giáo viên ra đề, phản biện</strong><span>Tích các khối bị hạn chế và nhập lý do, không công khai lý do cá nhân trong bản phân công</span></div>
+ <div class="kt02u-toolbar"><button id="uAddRestriction" type="button" class="outline">＋ Thêm giáo viên cần hạn chế</button><span id="uRestrictionInfo"></span></div>
+ <div class="kt02u-scroll"><table class="kt02u-table" id="uRestrictions"><thead><tr><th>Giáo viên trong tổ</th><th>Khối 10</th><th>Khối 11</th><th>Khối 12</th><th>Lý do</th><th>Loại hạn chế</th><th>Thao tác</th></tr></thead><tbody></tbody></table></div>
+ <div class="kt02u-line"><strong>BẢNG PHÂN CÔNG TỔNG HỢP THEO TIẾN TRÌNH</strong><span>Chọn GV và nhập hạn riêng dưới từng người · trước HHhMM ngày DD/MM/YYYY</span></div>
+ <div class="kt02u-toolbar">
+  <label class="kt02u-grade">Khối hiển thị <select id="uGradeFilter"><option value="all">Cả 3 khối</option><option value="10">Khối 10</option><option value="11">Khối 11</option><option value="12">Khối 12</option></select></label>
+  <button id="uValidate" type="button" class="outline">Kiểm tra phân công</button>
+  <button id="uSave" type="button" class="outline">Lưu nháp trong phiên</button>
+  <button id="uExport" type="button" class="outline">Xuất CSV (mở bằng Excel)</button>
+  <button id="uPrint" type="button" class="outline">In bảng</button>
+ </div>
+ <div class="kt02u-scroll"><table class="kt02u-table kt02u-assign" id="uTasks"><thead><tr><th>STT</th><th>Khối</th><th>Công việc / Sản phẩm</th><th>GV thực hiện<div class="kt02u-thsub">Hạn hoàn thành bên dưới</div></th><th>GV phản biện<div class="kt02u-thsub">Hạn phản biện bên dưới</div></th><th>Tiếp nhận / Bàn giao<div class="kt02u-thsub">Hạn tiếp nhận bên dưới</div></th><th>Trạng thái</th></tr></thead><tbody></tbody></table></div>
+ <p id="uMessage" class="kt02u-message" role="status" aria-live="polite">Chưa kiểm tra. Mọi thông tin trong bảng mới chỉ là dữ liệu giao diện, không tự động gửi, ký hoặc duyệt.</p>
+ <div class="kt02u-line"><strong>HƯỚNG XỬ LÝ HỒ SƠ</strong><span>01. TTCM lập phạm vi → BGH duyệt → 02. Ma trận, đặc tả → 03. Đề cương/đề tham khảo và ra đề → 04. Phản biện đề → 05. Nộp trực tiếp Hội đồng KT</span></div>
+ <p class="note">Chỉ phân công đề chính thức khi phạm vi kiểm tra và ma trận, bản đặc tả đã được phê duyệt/xác nhận theo quy trình. Không tải nội dung đề mật lên KT02 hoặc CSV. Bản mới chưa thay thế luồng ký, phát hành đang có bên dưới.</p>
+</section>
 <section class="panel"><h2>2. Thông tin đợt kiểm tra</h2><div class="grid"><label class="field">Môn kiểm tra <span style="color:#c22">*</span><select id="subject"><option value="">Chọn môn theo tổ chuyên môn</option></select></label><label class="field">Khối<select id="grade"><option value="">Chọn khối</option><option>10</option><option>11</option><option>12</option></select></label><label class="field">Kỳ kiểm tra<select id="exam"><option>Cuối kỳ I</option><option>Giữa kỳ I</option><option>Giữa kỳ II</option><option>Cuối kỳ II</option></select></label><label class="field">Năm học<input value="2026–2027" readonly></label></div><div class="pcdk-kt01-source" id="pcdkKT01Source" hidden role="status"></div><div class="plan-ref" id="planRef">Căn cứ dự thảo Kế hoạch tổ chức kiểm tra cuối kì I năm học 2026–2027 (dự kiến ban hành 18/11/2026). Chưa đồng bộ dữ liệu KT01; đây là dự thảo phân công để TTCM tham mưu.</div><div class="pcdk-exam-policy" role="note">Cuối kì I: bốn môn Ngữ văn, Tiếng Anh, Toán, Lịch sử kiểm tra tập trung; các môn còn lại kiểm tra tại lớp hoặc đánh giá phù hợp. Đối chiếu lịch theo từng khối.</div><label class="field" style="margin-top:12px;max-width:600px">Hình thức đánh giá<select id="pcdkAssessmentType"><option value="WRITTEN">Đề kiểm tra viết</option><option value="OTHER">Thực hành / dự án / sản phẩm học tập</option></select></label></section>
 <section class="panel" id="reviewSection" hidden><h2>3. Phân công bộ tài liệu hướng dẫn ôn tập</h2><label class="review-choice"><input type="checkbox" id="reviewEnabled" checked> Áp dụng bộ tài liệu hướng dẫn ôn tập (04 loại) cho môn kiểm tra này</label><div id="reviewRows"></div><p class="note">Bộ tài liệu gồm ma trận, bản đặc tả, đề tham khảo và đề cương ôn tập. Bốn môn kiểm tra tập trung phải hoàn thành trước 16h00 ngày 27/11/2026; TTCM kiểm tra, xác nhận trước khi trình PHT chuyên môn.</p></section>
 <section class="panel"><h2>4. Phân công và thời hạn từng công đoạn</h2><p class="note">Theo kế hoạch cuối kì I, mỗi môn/khối dùng đề viết cần ít nhất 02 bộ đề tương đương: chính thức và dự phòng, có đáp án/hướng dẫn chấm. Đánh giá bằng sản phẩm/thực hành cần nhiệm vụ và tiêu chí tương đương. Ngày tháng hiển thị dd/MM/yyyy.</p><div class="pcdk-exam-policy" role="note">Ra đề, phản biện, nghiệm thu: <b>trước 16h00 ngày 09/12/2026</b>. Bàn giao đề tập trung bằng <b>hồ sơ giấy niêm phong trước 11h00 ngày 11/12/2026</b>. Đề chính thức, dự phòng và đáp án được đóng gói riêng. <b>Không nộp, chuyển đề mật qua Drive/EDOS trước khi hết yêu cầu bảo mật.</b></div><label class="pcdk-conflict"><input type="checkbox" id="pcdkConflictReview"> Đã rà soát nguy cơ xung đột lợi ích (có con, em ruột dự kiểm tra ở khối được phân công hoặc tình huống ảnh hưởng tính khách quan); báo cáo người có thẩm quyền khi có phát sinh.</label><div id="assignments"></div><div class="actions" style="margin-top:10px"><button id="add" class="outline">＋ Thêm đề</button><button id="remove" class="outline" hidden>− Bỏ đề cuối</button><button id="check" class="outline">Kiểm tra</button><button id="preview" class="outline">Xem trước</button><button id="assign">Ký xác nhận → TT Phát hành</button></div><div id="result" class="banner" aria-live="polite">Kiểm tra dữ liệu trước khi xem trước. Xác thực chữ ký và chuyển phát hành chỉ hoạt động khi Backend hỗ trợ đúng nghiệp vụ.</div></section>
@@ -977,4 +1033,125 @@ $('add').addEventListener('click',()=>{resetSignedDocument();if(numberOfExams>=8
   location.href=new URL('TTPhatHanh.html',location.href).href;
  }catch(e){$('result').textContent='CHƯA CHUYỂN PHÁT HÀNH: '+e.message;}finally{btn.disabled=false;}
 });$('backEdit').addEventListener('click',()=>{$('previewPanel').hidden=true;document.querySelector('#assignments').scrollIntoView({behavior:'smooth'})});$('printPreview').addEventListener('click',()=>{if($('previewPanel').hidden)return;document.body.classList.add('print-assignment');window.print()});window.addEventListener('afterprint',()=>document.body.classList.remove('print-assignment'));render();renderReview();pcdkConsumeHandoff();load();
+</script>
+<script>
+/* KT02 V2 draft-only interface. No server writes and no official approval implied. */
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const root=$('kt02Unified');if(!root)return;
+const K='HVA_KT02_UNIFIED_DRAFT_V1';
+const phases=[
+ ['Ma trận – Bản đặc tả','TTCM','matrix'],
+ ['Đề cương ôn tập + 01 đề tham khảo','TTCM → Phụ trách trang TTĐT','public'],
+ ['Đề kiểm tra 01','Hội đồng kiểm tra','exam'],
+ ['Đề kiểm tra 02','Hội đồng kiểm tra','exam']
+];
+let restrictions=[],assignments=[];
+for(const grade of ['10','11','12'])for(const [name,recipient,kind] of phases){
+ assignments.push({id:'KT02-'+grade+'-'+(kind==='exam'?(name.endsWith('01')?'EX1':'EX2'):kind.toUpperCase()),grade,name,recipient,kind,worker:'',workerDue:'',reviewer:'',reviewDue:'',receiveDue:'',status:'Chưa giao'});
+}
+function field(tag,props={}){const e=document.createElement(tag);for(const [key,value] of Object.entries(props)){if(key==='text')e.textContent=value;else if(key==='className')e.className=value;else e.setAttribute(key,String(value))}return e}
+function mkOpt(select,value,label){const o=field('option',{value,text:label});select.append(o)}
+function membersList(){
+ const s=$('subject')?.value||'',norm=v=>String(v||'').toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+ const all=Array.isArray(window.HVA_PERSONNEL)?window.HVA_PERSONNEL:[];
+ // Personnel is loaded by the legacy module. Do not assume a public object shape.
+ const legacy=[...document.querySelectorAll('#assignments select[id^="person-"] option')].filter(x=>x.value);
+ const arr=new Map();legacy.forEach(o=>arr.set(o.value,o.textContent));
+ const local=[...document.querySelectorAll('#pcdkTeamMembers .pcdk-person')].map(x=>x.textContent.trim()).filter(Boolean);
+ if(!arr.size)local.forEach(name=>arr.set(name,name));
+ return [...arr].map(([value,name])=>({value,name})).sort((a,b)=>a.name.localeCompare(b.name,'vi'));
+}
+function blockedPerson(value,grade){return restrictions.some(r=>r.person===value&&r.grades.includes(grade))}
+function personnelSelect(value,grade,restricted){
+ const s=field('select',{className:'kt02u-person'});mkOpt(s,'','Chọn giáo viên');
+ membersList().forEach(m=>{if(!restricted||!blockedPerson(m.value,grade)||m.value===value)mkOpt(s,m.value,m.name)});
+ if(value&&!([...s.options].some(o=>o.value===value)))mkOpt(s,value,value+' (cần rà soát)');
+ s.value=value||'';return s;
+}
+function dateInput(value){return field('input',{type:'datetime-local',value:value||'',className:'kt02u-deadline','aria-label':'Ngày giờ hạn hoàn thành'})}
+function taskRows(){
+ const tbody=$('uTasks').querySelector('tbody');tbody.replaceChildren();
+ const show=$('uGradeFilter').value;
+ assignments.filter(a=>show==='all'||a.grade===show).forEach((a,i)=>{
+  const tr=field('tr');const col=(txt,cl)=>{const td=field('td',{className:cl||''});if(txt!==undefined)td.textContent=txt;tr.append(td);return td};
+  col(String(i+1));col(a.grade);col(a.name,'kt02u-name');
+  const worker=col(undefined);const ws=personnelSelect(a.worker,a.grade,a.kind==='exam');ws.addEventListener('change',()=>{a.worker=ws.value;markDirty()});worker.append(ws);const wd=dateInput(a.workerDue);wd.addEventListener('change',()=>{a.workerDue=wd.value;markDirty()});worker.append(wd,field('small',{className:'kt02u-dlabel',text:'Hạn GV thực hiện'}));
+  const review=col(undefined);if(a.kind==='public'){review.textContent='Không bắt buộc phản biện theo mẫu';}else{
+   const rs=personnelSelect(a.reviewer,a.grade,a.kind==='exam');rs.addEventListener('change',()=>{a.reviewer=rs.value;markDirty()});review.append(rs);const rd=dateInput(a.reviewDue);rd.addEventListener('change',()=>{a.reviewDue=rd.value;markDirty()});review.append(rd,field('small',{className:'kt02u-dlabel',text:'Hạn GV phản biện'}));
+  }
+  const receive=col(undefined);receive.append(field('div',{className:'kt02u-recipient',text:a.recipient}));const dt=dateInput(a.receiveDue);dt.addEventListener('change',()=>{a.receiveDue=dt.value;markDirty()});receive.append(dt,field('small',{className:'kt02u-dlabel',text:'Hạn bàn giao'}));
+  const state=col(undefined);const sel=field('select');['Chưa giao','Đã giao','Đang thực hiện','Chờ phản biện','Chờ tiếp nhận','Hoàn thành'].forEach(x=>mkOpt(sel,x,x));sel.value=a.status;sel.addEventListener('change',()=>{a.status=sel.value;markDirty()});state.append(sel);
+  tbody.append(tr);
+ });
+}
+function restrictionRows(){
+ const tbody=$('uRestrictions').querySelector('tbody');tbody.replaceChildren();
+ restrictions.forEach((r,i)=>{
+  const tr=field('tr'),td=()=>{const t=field('td');tr.append(t);return t};
+  const t=td();const person=personnelSelect(r.person,'',false);person.addEventListener('change',()=>{r.person=person.value;markDirty();taskRows()});t.append(person);
+  for(const grade of ['10','11','12']){const t=td(),cb=field('input',{type:'checkbox','aria-label':'Hạn chế khối '+grade});cb.checked=r.grades.includes(grade);cb.addEventListener('change',()=>{r.grades=cb.checked?[...new Set([...r.grades,grade])]:r.grades.filter(x=>x!==grade);markDirty();taskRows()});t.append(cb)}
+  const reason=td(),inp=field('input',{placeholder:'Có con học khối..., chưa có kinh nghiệm, lý do khác'});inp.value=r.reason;inp.addEventListener('input',()=>{r.reason=inp.value;markDirty()});reason.append(inp);
+  const type=td(),s=field('select');mkOpt(s,'CONFLICT','Xung đột lợi ích');mkOpt(s,'TEMPORARY','Tạm thời không phân công');s.value=r.type;s.addEventListener('change',()=>{r.type=s.value;markDirty();taskRows()});type.append(s);
+  const del=td(),b=field('button',{type:'button',className:'outline kt02u-small-btn',text:'Xóa'});b.addEventListener('click',()=>{restrictions.splice(i,1);restrictionRows();taskRows();markDirty()});del.append(b);tbody.append(tr);
+ });
+ $('uRestrictionInfo').textContent=restrictions.length+' giáo viên có ghi nhận hạn chế';
+}
+function markDirty(){$('uMessage').classList.remove('kt02u-error');$('uMessage').textContent='Đã thay đổi dữ liệu nháp. Chưa gửi phê duyệt, chưa ghi Google Sheets.'}
+function showErrors(arr){
+ $('uMessage').textContent=arr.length?'Cần rà soát:\n'+arr.slice(0,30).map((x,i)=>(i+1)+'. '+x).join('\n')+(arr.length>30?'\n... và '+(arr.length-30)+' nội dung khác.':''):'Đã kiểm tra cấu trúc phân công. Dữ liệu mới chỉ là bản nháp, chưa phê duyệt hoặc gửi cho giáo viên.';
+ $('uMessage').classList.toggle('kt02u-error',!!arr.length);
+ $('uMessage').scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function valid(){
+ const errors=[];
+ if(!$('uPlan').value.trim())errors.push('Chưa nhập số/ký hiệu kế hoạch làm căn cứ.');
+ if(!$('uTeachingPlan').value.trim())errors.push('Chưa nhập căn cứ Kế hoạch dạy học môn học.');
+ if(!$('uScope').value.trim())errors.push('Chưa xác định nội dung, phạm vi kiểm tra.');
+ for(const r of restrictions){if(!r.person)errors.push('Có dòng hạn chế chưa chọn giáo viên.');if(!r.grades.length)errors.push('Có hạn chế chưa chọn khối lớp.');if(!r.reason.trim())errors.push('Cần ghi lý do hạn chế của giáo viên '+(r.person||'chưa chọn')+'.')}
+ for(const a of assignments){
+  const row='Khối '+a.grade+' – '+a.name+': ';
+  if(!a.worker)errors.push(row+'chưa chọn GV thực hiện.');
+  if(!a.workerDue)errors.push(row+'chưa có hạn GV thực hiện.');
+  if(a.kind!=='public'&&!a.reviewer)errors.push(row+'chưa chọn GV phản biện.');
+  if(a.kind!=='public'&&!a.reviewDue)errors.push(row+'chưa có hạn phản biện.');
+  if(!a.receiveDue)errors.push(row+'chưa có hạn bàn giao.');
+  if(a.kind!=='public'&&a.worker&&a.worker===a.reviewer)errors.push(row+'không được tự phản biện.');
+  if(a.kind==='exam'&&((a.worker&&blockedPerson(a.worker,a.grade))||(a.reviewer&&blockedPerson(a.reviewer,a.grade))))errors.push(row+'có GV bị đánh dấu hạn chế tiếp cận đề khối này.');
+  if(a.workerDue&&a.reviewDue&&a.reviewDue<a.workerDue)errors.push(row+'hạn phản biện sớm hơn hạn xây dựng.');
+  const last=a.reviewDue||a.workerDue;
+  if(last&&a.receiveDue&&a.receiveDue<last)errors.push(row+'hạn bàn giao sớm hơn công đoạn trước.');
+ }
+ showErrors(errors);return !errors.length;
+}
+function serialize(){return {schema:'HVA_KT02_UNIFIED_UI_V1',plan:$('uPlan').value,teachingPlan:$('uTeachingPlan').value,scope:$('uScope').value,source:'KT02_FRONTEND_DRAFT_ONLY',assignments,restrictions,updatedAt:new Date().toISOString()}}
+function cleanExcel(v){const s=String(v??'');return /^[=+\-@\t\r]/.test(s)?'\''+s:s}
+function csvField(value){return '"'+cleanExcel(value).replace(/"/g,'""')+'"'}
+function humanDate(v){if(!v)return '';const m=String(v).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);return m?'Trước '+m[4]+'h'+m[5]+' ngày '+m[3]+'/'+m[2]+'/'+m[1]:v}
+function exportCSV(){
+ const headers=['STT','Khối','Công việc / Sản phẩm','GV thực hiện','Hạn GV thực hiện','GV phản biện','Hạn GV phản biện','Tiếp nhận / Bàn giao','Hạn bàn giao','Trạng thái'];
+ const lines=[headers.map(csvField).join(',')];
+ assignments.forEach((a,i)=>lines.push([i+1,a.grade,a.name,a.worker,humanDate(a.workerDue),a.reviewer,humanDate(a.reviewDue),a.recipient,humanDate(a.receiveDue),a.status].map(csvField).join(',')));
+ const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+ const link=document.createElement('a'),url=URL.createObjectURL(blob);link.href=url;link.download='HVA_KT02_BANG_PHAN_CONG_BAN_NHAP.csv';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+ $('uMessage').textContent='Đã xuất CSV bản nháp, mở được bằng Excel. Không bao gồm lý do hạn chế cá nhân; chưa phải bảng phân công được duyệt.';
+}
+$('uAddRestriction').addEventListener('click',()=>{restrictions.push({person:'',grades:[],reason:'',type:'CONFLICT'});restrictionRows();markDirty()});
+$('uGradeFilter').addEventListener('change',taskRows);
+$('uValidate').addEventListener('click',valid);
+$('uSave').addEventListener('click',()=>{try{sessionStorage.setItem(K,JSON.stringify(serialize()));$('uMessage').textContent='Đã lưu bản nháp trong phiên trình duyệt, chưa ghi Google Sheets hay Backend.'}catch(e){showErrors(['Không lưu được bản nháp: '+e.message])}});
+$('uExport').addEventListener('click',exportCSV);
+$('uPrint').addEventListener('click',()=>{document.body.classList.add('kt02u-print');window.print()});
+window.addEventListener('afterprint',()=>document.body.classList.remove('kt02u-print'));
+try{
+ const data=JSON.parse(sessionStorage.getItem(K)||'null');
+ if(data?.schema==='HVA_KT02_UNIFIED_UI_V1'){
+  $('uPlan').value=data.plan||'';$('uTeachingPlan').value=data.teachingPlan||'';$('uScope').value=data.scope||'';
+  if(Array.isArray(data.assignments)&&data.assignments.length===assignments.length&&data.assignments.every((x,i)=>x.id===assignments[i].id))assignments=data.assignments;
+  if(Array.isArray(data.restrictions))restrictions=data.restrictions;
+ }
+}catch(_){}
+restrictionRows();taskRows();
+})();
 </script></body></html>
