@@ -62,6 +62,13 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 .kt01-subject-count{margin-top:11px;font-size:12px;font-weight:800;color:#0869ae}
 .kt01-subject-help{grid-column:1/-1;color:#6c8296;font-size:12px;margin:0;line-height:1.5}
 @media(max-width:820px){.kt01-subject-layout{grid-template-columns:1fr}}@media(max-width:480px){.kt01-subject-options{grid-template-columns:1fr}}
+
+.kt01-subject-choice[hidden]{display:none!important}
+.kt01-subject-choice input:disabled{opacity:1;cursor:default}
+.kt01-subject-choice:has(input:checked){background:#e4f4ff}
+.kt01-subject-confirm{grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px solid #bfdcf1;border-radius:12px;padding:12px;background:#f4faff}
+.kt01-confirm-note{font-size:12px;font-weight:700;color:#35688d}
+.kt01-subject-confirm button[hidden]{display:none!important}
 </style><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><style>
 /* KT01: header exact CuocHop appearance, self-contained, independent of external CSS */
 .hva-edos-standard-head{position:relative!important;z-index:40!important;display:block!important;margin:5px 6px 0!important;padding:0!important;min-height:94px!important;overflow:hidden!important;border-radius:10px!important;isolation:isolate!important;color:#f8fdff!important;background:radial-gradient(circle at 86% 22%,rgba(8,221,228,.34),transparent 26%),linear-gradient(105deg,#064482 0%,#0757a8 45%,#058bbd 75%,#06bccc 100%)!important;box-shadow:0 10px 28px rgba(3,43,84,.18)!important}
@@ -138,8 +145,13 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 <label>Tài liệu/lịch kèm theo (nếu có)<input id="scheduleUrl" type="url" maxlength="1500" placeholder="Liên kết lịch kiểm tra đã ban hành"></label>
 <div class="span2 kt01-subject-layout">
 <div class="kt01-subject-panel"><div class="kt01-subject-head"><strong>1. Môn kiểm tra tập trung</strong><small>Được chọn nhiều môn</small></div><div class="kt01-subject-options" role="group" aria-label="Môn kiểm tra tập trung"><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Toán"><span>Toán</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Ngữ văn"><span>Ngữ văn</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Tiếng Anh"><span>Tiếng Anh</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Vật lí"><span>Vật lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Hóa học"><span>Hóa học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Sinh học"><span>Sinh học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Lịch sử"><span>Lịch sử</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Địa lí"><span>Địa lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục kinh tế và pháp luật"><span>Giáo dục kinh tế và pháp luật</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Tin học"><span>Tin học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Công nghệ"><span>Công nghệ</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục thể chất"><span>Giáo dục thể chất</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục quốc phòng và an ninh"><span>Giáo dục quốc phòng và an ninh</span></label></div><div class="kt01-subject-count" id="centralCount">Chưa chọn môn</div></div>
-<div class="kt01-subject-panel"><div class="kt01-subject-head"><strong>2. Môn kiểm tra tại lớp</strong><small>Được chọn nhiều môn</small></div><div class="kt01-subject-options" role="group" aria-label="Môn kiểm tra tại lớp"><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Toán"><span>Toán</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Ngữ văn"><span>Ngữ văn</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tiếng Anh"><span>Tiếng Anh</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Vật lí"><span>Vật lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Hóa học"><span>Hóa học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Sinh học"><span>Sinh học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Lịch sử"><span>Lịch sử</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Địa lí"><span>Địa lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục kinh tế và pháp luật"><span>Giáo dục kinh tế và pháp luật</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tin học"><span>Tin học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Công nghệ"><span>Công nghệ</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục thể chất"><span>Giáo dục thể chất</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục quốc phòng và an ninh"><span>Giáo dục quốc phòng và an ninh</span></label></div><div class="kt01-subject-count" id="classCount">Chưa chọn môn</div></div>
-<p class="kt01-subject-help">Mỗi môn chỉ được chọn ở một hình thức trong cùng đợt; đối chiếu kế hoạch khi phân theo khối.</p>
+<div class="kt01-subject-panel"><div class="kt01-subject-head"><strong>2. Môn kiểm tra tại lớp</strong><small>Tự động chọn các môn còn lại; môn tập trung sẽ ẩn khỏi danh sách</small></div><div class="kt01-subject-options" role="group" aria-label="Môn kiểm tra tại lớp"><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Toán"><span>Toán</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Ngữ văn"><span>Ngữ văn</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tiếng Anh"><span>Tiếng Anh</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Vật lí"><span>Vật lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Hóa học"><span>Hóa học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Sinh học"><span>Sinh học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Lịch sử"><span>Lịch sử</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Địa lí"><span>Địa lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục kinh tế và pháp luật"><span>Giáo dục kinh tế và pháp luật</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tin học"><span>Tin học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Công nghệ"><span>Công nghệ</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục thể chất"><span>Giáo dục thể chất</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục quốc phòng và an ninh"><span>Giáo dục quốc phòng và an ninh</span></label></div><div class="kt01-subject-count" id="classCount">Chưa chọn môn</div></div>
+<div class="kt01-subject-confirm">
+<button type="button" id="confirmSubjects" class="btn">✓ Xác nhận phân loại môn</button>
+<button type="button" id="editSubjects" class="btn light" hidden>Chỉnh sửa phân loại</button>
+<span id="subjectConfirmation" class="kt01-confirm-note" role="status" aria-live="polite">Chưa xác nhận phân loại môn.</span>
+</div>
+<p class="kt01-subject-help">Chọn các môn kiểm tra tập trung ở bên trái. Các môn còn lại sẽ tự động chuyển sang kiểm tra tại lớp, mỗi môn chỉ thuộc một hình thức. Bấm Xác nhận sau khi rà soát.</p>
 </div>
 </div>
 <h2 style="margin-top:24px">03 · Nguồn đề và phạm vi tổ chức</h2>
@@ -181,24 +193,59 @@ if(!kt01Authorized){
 }
 const f=el('ktForm'),fields=['planName','planNumber','planDate','planUrl','name','type','schoolYear','semester','start','end','unit','scheduleUrl','source','subjectSources','notes'];
 let validDraft=null;const draftStorageKey='HVA_KT01_LOCAL_DRAFTS_V1';let activeDraftId=null;
+let subjectConfirmed=false;
+const centralBoxes=[...document.querySelectorAll('input[name="subjectsCentral"]')];
+const classBoxes=[...document.querySelectorAll('input[name="subjectsClass"]')];
 function selectedSubjects(group){return [...document.querySelectorAll('input[name="'+group+'"]:checked')].map(x=>x.value)}
 function refreshSubjectCount(){
- const central=selectedSubjects('subjectsCentral').length,classroom=selectedSubjects('subjectsClass').length;
- el('centralCount').textContent=central?central+' môn đã chọn':'Chưa chọn môn';
- el('classCount').textContent=classroom?classroom+' môn đã chọn':'Chưa chọn môn';
+ const n1=selectedSubjects('subjectsCentral').length,n2=selectedSubjects('subjectsClass').length;
+ el('centralCount').textContent=n1?n1+' môn đã chọn':'Chưa chọn môn';
+ el('classCount').textContent=n2?n2+' môn đã chọn':'Chưa chọn môn';
 }
-document.querySelectorAll('input[name="subjectsCentral"],input[name="subjectsClass"]').forEach(box=>box.addEventListener('change',()=>{
- if(box.checked){const other=box.name==='subjectsCentral'?'subjectsClass':'subjectsCentral';const duplicate=[...document.querySelectorAll('input[name="'+other+'"]')].find(x=>x.value===box.value);if(duplicate)duplicate.checked=false}
+function renderSubjectClassification(autofill){
+ const central=new Set(selectedSubjects('subjectsCentral'));
+ for(const box of classBoxes){
+  const isCentral=central.has(box.value);
+  box.closest('.kt01-subject-choice').hidden=isCentral;
+  if(autofill)box.checked=!isCentral;
+  else if(isCentral)box.checked=false;
+  // Kiểm tra tại lớp là phần bù của môn tập trung, không chỉnh riêng từng ô.
+  box.disabled=true;
+ }
+ for(const box of centralBoxes)box.disabled=subjectConfirmed;
+ el('confirmSubjects').hidden=subjectConfirmed;
+ el('editSubjects').hidden=!subjectConfirmed;
+ el('subjectConfirmation').textContent=subjectConfirmed
+  ?'Đã xác nhận: '+central.size+' môn tập trung, '+selectedSubjects('subjectsClass').length+' môn tại lớp.'
+  :'Chưa xác nhận phân loại môn.';
  refreshSubjectCount();
+}
+centralBoxes.forEach(box=>box.addEventListener('change',()=>{
+ subjectConfirmed=false;
+ renderSubjectClassification(true);
 }));
+el('confirmSubjects').addEventListener('click',()=>{
+ // Nếu không chọn môn tập trung, toàn bộ môn còn lại được xem là kiểm tra tại lớp.
+ renderSubjectClassification(true);
+ if(!subjectConfirmed){el('feedback').textContent='Cần bấm Xác nhận phân loại môn trước khi xem trước bản nháp.';el('confirmSubjects').focus();return false}
+ if(!selectedSubjects('subjectsCentral').length&&!selectedSubjects('subjectsClass').length){
+  el('subjectConfirmation').textContent='Không có môn nào để xác nhận.';return;
+ }
+ subjectConfirmed=true;
+ renderSubjectClassification(false);
+});
+el('editSubjects').addEventListener('click',()=>{
+ subjectConfirmed=false;
+ renderSubjectClassification(true);
+});
 function setSubjectSelections(d){
  const central=Array.isArray(d.subjectsCentral)?d.subjectsCentral:[];
- const classroom=Array.isArray(d.subjectsClass)?d.subjectsClass:[];
- document.querySelectorAll('input[name="subjectsCentral"]').forEach(x=>x.checked=central.includes(x.value));
- document.querySelectorAll('input[name="subjectsClass"]').forEach(x=>x.checked=classroom.includes(x.value)&&!central.includes(x.value));
- refreshSubjectCount();
+ centralBoxes.forEach(x=>x.checked=central.includes(x.value));
+ subjectConfirmed=false;
+ renderSubjectClassification(true);
+ // Bản nháp cũ được mở để chỉnh sửa, cần xác nhận lại trước khi xem trước.
 }
-refreshSubjectCount();
+renderSubjectClassification(false);
 
 function htmlSafeUrl(value){if(!value)return true;try{let u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!!u.hostname}catch(_){return false}}
 function refreshSource(){
@@ -211,7 +258,7 @@ refreshSource();el('source').addEventListener('change',refreshSource);
 function getData(){
  const d={};for(const id of fields)d[id]=el(id).value.trim();
  d.grades=[...document.querySelectorAll('input[name="grade"]:checked')].map(x=>x.value);
- d.subjectsCentral=selectedSubjects('subjectsCentral');d.subjectsClass=selectedSubjects('subjectsClass');d.subjects=[...d.subjectsCentral,...d.subjectsClass].join(', ');
+ d.subjectsCentral=selectedSubjects('subjectsCentral');d.subjectsClass=selectedSubjects('subjectsClass');d.subjectClassificationConfirmed=subjectConfirmed;d.subjects=[...d.subjectsCentral,...d.subjectsClass].join(', ');
  d.state='DRAFT_LOCAL_ONLY';d.schema='HVA-KT01-DRAFT-1';d.updatedAt=new Date().toISOString();d.draftId=activeDraftId||'KTDRAFT-'+Date.now().toString(36).toUpperCase();
  return d;
 }
@@ -240,7 +287,7 @@ f.addEventListener('submit',e=>{e.preventDefault();if(!validate())return;validDr
 el('export').addEventListener('click',()=>{
  if(!validDraft)return;const blob=new Blob([JSON.stringify(validDraft,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='HVA_KT01_BAN_NHAP_'+validDraft.start.replaceAll('-','')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
 });
-el('reset').addEventListener('click',()=>{f.reset();refreshSubjectCount();activeDraftId=null;validDraft=null;el('saveDraft').disabled=true;el('toKT02').disabled=true;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Đã xóa dữ liệu đang soạn trên trang; không ảnh hưởng dữ liệu hệ thống.';refreshSource()});
+el('reset').addEventListener('click',()=>{f.reset();subjectConfirmed=false;renderSubjectClassification(false);activeDraftId=null;validDraft=null;el('saveDraft').disabled=true;el('toKT02').disabled=true;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Đã xóa dữ liệu đang soạn trên trang; không ảnh hưởng dữ liệu hệ thống.';refreshSource()});
 
 function loadDrafts(){
  try{const a=JSON.parse(sessionStorage.getItem(draftStorageKey)||'[]');return Array.isArray(a)?a.filter(d=>d&&d.schema==='HVA-KT01-DRAFT-1'):[]}catch(_){return []}
