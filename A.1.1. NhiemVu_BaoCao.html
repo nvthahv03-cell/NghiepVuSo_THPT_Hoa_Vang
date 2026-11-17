@@ -651,6 +651,16 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       const expected=a11SignMethod==='PAPER'?'CHO_KY_TAY':'DA_KY_DIEN_TU';
       const got=String(res.signatureStatus||res.data?.signatureStatus||'');
       if(got!==expected)throw Error('Backend chưa xác nhận trạng thái ký '+expected+'. Mã tiếp nhận nếu có: '+res.recordId+'. KHÔNG gửi lại trước khi đối chiếu.');
+      if(res.stored!==true || res.sheetName!=='NVS_A11_BAO_CAO'){
+        throw Error('Backend chưa xác nhận lưu vào Sheet NVS_A11_BAO_CAO. Mã nếu có: '+res.recordId+'. KHÔNG gửi lại trước khi đối chiếu.');
+      }
+      // Kế thừa nguyên tắc DTHT: đọc lại hồ sơ trên Backend trước khi ghi nhận thành công.
+      // Giữ nguyên requestId để không tạo bản ghi trùng nếu mạng gián đoạn.
+      const history=await a11API('nvsA22ListMine');
+      const records=history.records||history.data?.records;
+      if(!Array.isArray(records) || !records.some(row=>String(row.recordId||'')===String(res.recordId))){
+        throw Error('Đã có mã hồ sơ '+res.recordId+' nhưng chưa đọc lại được hồ sơ đã lưu. KHÔNG gửi lại trước khi đối chiếu Sheet.');
+      }
       a11SubmittedId=res.recordId;
       $('a11SubmitAck').hidden=false;
       $('a11SubmitAckTitle').textContent='Báo cáo đã được hệ thống tiếp nhận';
@@ -659,7 +669,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       announce('ĐÃ TIẾP NHẬN hồ sơ '+res.recordId+' · '+(a11SignMethod==='PAPER'?'Chờ bản ký tay':'Đã ký điện tử')+' · Chờ BGH/TTCM xử lý.',false);
       const stamp=$('previewPaper').querySelector('.preview-stamp');
       if(stamp)stamp.textContent='ĐÃ TIẾP NHẬN · '+res.recordId+' · '+(a11SignMethod==='PAPER'?'CHỜ BẢN KÝ TAY':'ĐÃ KÝ ĐIỆN TỬ')+' · CHỜ XỬ LÝ';
-    }catch(e){announce('CHƯA XÁC NHẬN NỘP: '+e.message+'. Nếu gián đoạn mạng, thử lại mà không sửa nội dung.',true);}
+    }catch(e){announce('CHƯA XÁC NHẬN NỘP: '+e.message+'. Nếu có mã tiếp nhận, KHÔNG gửi lại khi chưa đối chiếu.',true);}
     finally{a11UpdateSend();}
   }
   function account(){
