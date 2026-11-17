@@ -50,6 +50,18 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 #modeNotice{margin-bottom:15px}
 @media(max-width:820px){.kt01-flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.kt01-overview{padding:15px}.kt01-overview-heading h2{font-size:18px}.kt01-flow{gap:7px}.kt01-flow>div{padding:10px}.kt01-flow strong{font-size:11px}}
+
+.kt01-subject-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.kt01-subject-panel{padding:15px;border:1.5px solid #c8dff2;border-radius:14px;background:linear-gradient(180deg,#f1f8ff,#fff);min-width:0}
+.kt01-subject-head{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;color:#075591}
+.kt01-subject-head strong{font-size:15px}.kt01-subject-head small{font-size:12px;color:#668098}
+.kt01-subject-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.kt01-subject-choice{display:flex;align-items:center;gap:8px;padding:9px 10px;background:#fff;border:1px solid #d7e7f5;border-radius:10px;color:#254e70;font-size:12px;font-weight:700;cursor:pointer;min-width:0}
+.kt01-subject-choice:has(input:checked){border-color:#2690d1;background:#e4f4ff;color:#06548e}
+.kt01-subject-choice input{width:17px;height:17px;min-height:0;margin:0;flex:none;accent-color:#0876c1}
+.kt01-subject-count{margin-top:11px;font-size:12px;font-weight:800;color:#0869ae}
+.kt01-subject-help{grid-column:1/-1;color:#6c8296;font-size:12px;margin:0;line-height:1.5}
+@media(max-width:820px){.kt01-subject-layout{grid-template-columns:1fr}}@media(max-width:480px){.kt01-subject-options{grid-template-columns:1fr}}
 </style><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><style>
 /* KT01: header exact CuocHop appearance, self-contained, independent of external CSS */
 .hva-edos-standard-head{position:relative!important;z-index:40!important;display:block!important;margin:5px 6px 0!important;padding:0!important;min-height:94px!important;overflow:hidden!important;border-radius:10px!important;isolation:isolate!important;color:#f8fdff!important;background:radial-gradient(circle at 86% 22%,rgba(8,221,228,.34),transparent 26%),linear-gradient(105deg,#064482 0%,#0757a8 45%,#058bbd 75%,#06bccc 100%)!important;box-shadow:0 10px 28px rgba(3,43,84,.18)!important}
@@ -124,7 +136,11 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 <label>Thời gian kết thúc *<input id="end" type="date" required></label>
 <label>Đơn vị/bộ phận phụ trách *<input id="unit" required maxlength="150" placeholder="BGH / Hội đồng kiểm tra / Tổ chuyên môn..."></label>
 <label>Tài liệu/lịch kèm theo (nếu có)<input id="scheduleUrl" type="url" maxlength="1500" placeholder="Liên kết lịch kiểm tra đã ban hành"></label>
-<div class="span2"><label>Môn kiểm tra / môn thi (nhập tên từng môn, cách nhau bằng dấu phẩy) *<textarea id="subjects" required maxlength="650" placeholder="Ví dụ: Toán, Ngữ văn, Tiếng Anh..."></textarea></label></div>
+<div class="span2 kt01-subject-layout">
+<div class="kt01-subject-panel"><div class="kt01-subject-head"><strong>1. Môn kiểm tra tập trung</strong><small>Được chọn nhiều môn</small></div><div class="kt01-subject-options" role="group" aria-label="Môn kiểm tra tập trung"><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Toán"><span>Toán</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Ngữ văn"><span>Ngữ văn</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Tiếng Anh"><span>Tiếng Anh</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Vật lí"><span>Vật lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Hóa học"><span>Hóa học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Sinh học"><span>Sinh học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Lịch sử"><span>Lịch sử</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Địa lí"><span>Địa lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục kinh tế và pháp luật"><span>Giáo dục kinh tế và pháp luật</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Tin học"><span>Tin học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Công nghệ"><span>Công nghệ</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục thể chất"><span>Giáo dục thể chất</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsCentral" value="Giáo dục quốc phòng và an ninh"><span>Giáo dục quốc phòng và an ninh</span></label></div><div class="kt01-subject-count" id="centralCount">Chưa chọn môn</div></div>
+<div class="kt01-subject-panel"><div class="kt01-subject-head"><strong>2. Môn kiểm tra tại lớp</strong><small>Được chọn nhiều môn</small></div><div class="kt01-subject-options" role="group" aria-label="Môn kiểm tra tại lớp"><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Toán"><span>Toán</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Ngữ văn"><span>Ngữ văn</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tiếng Anh"><span>Tiếng Anh</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Vật lí"><span>Vật lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Hóa học"><span>Hóa học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Sinh học"><span>Sinh học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Lịch sử"><span>Lịch sử</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Địa lí"><span>Địa lí</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục kinh tế và pháp luật"><span>Giáo dục kinh tế và pháp luật</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Tin học"><span>Tin học</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Công nghệ"><span>Công nghệ</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục thể chất"><span>Giáo dục thể chất</span></label><label class="kt01-subject-choice"><input type="checkbox" name="subjectsClass" value="Giáo dục quốc phòng và an ninh"><span>Giáo dục quốc phòng và an ninh</span></label></div><div class="kt01-subject-count" id="classCount">Chưa chọn môn</div></div>
+<p class="kt01-subject-help">Mỗi môn chỉ được chọn ở một hình thức trong cùng đợt; đối chiếu kế hoạch khi phân theo khối.</p>
+</div>
 </div>
 <h2 style="margin-top:24px">03 · Nguồn đề và phạm vi tổ chức</h2>
 <div class="grid">
@@ -163,8 +179,27 @@ if(!kt01Authorized){
 }else{
   el('modeNotice').textContent='KT01 đang ở chế độ bản nháp để hoàn thiện và kiểm thử. Chưa kết nối Backend KT01; dữ liệu chỉ lưu trong phiên trình duyệt, chưa phát hành hồ sơ.';
 }
-const f=el('ktForm'),fields=['planName','planNumber','planDate','planUrl','name','type','schoolYear','semester','start','end','unit','scheduleUrl','subjects','source','subjectSources','notes'];
+const f=el('ktForm'),fields=['planName','planNumber','planDate','planUrl','name','type','schoolYear','semester','start','end','unit','scheduleUrl','source','subjectSources','notes'];
 let validDraft=null;const draftStorageKey='HVA_KT01_LOCAL_DRAFTS_V1';let activeDraftId=null;
+function selectedSubjects(group){return [...document.querySelectorAll('input[name="'+group+'"]:checked')].map(x=>x.value)}
+function refreshSubjectCount(){
+ const central=selectedSubjects('subjectsCentral').length,classroom=selectedSubjects('subjectsClass').length;
+ el('centralCount').textContent=central?central+' môn đã chọn':'Chưa chọn môn';
+ el('classCount').textContent=classroom?classroom+' môn đã chọn':'Chưa chọn môn';
+}
+document.querySelectorAll('input[name="subjectsCentral"],input[name="subjectsClass"]').forEach(box=>box.addEventListener('change',()=>{
+ if(box.checked){const other=box.name==='subjectsCentral'?'subjectsClass':'subjectsCentral';const duplicate=[...document.querySelectorAll('input[name="'+other+'"]')].find(x=>x.value===box.value);if(duplicate)duplicate.checked=false}
+ refreshSubjectCount();
+}));
+function setSubjectSelections(d){
+ const central=Array.isArray(d.subjectsCentral)?d.subjectsCentral:[];
+ const classroom=Array.isArray(d.subjectsClass)?d.subjectsClass:[];
+ document.querySelectorAll('input[name="subjectsCentral"]').forEach(x=>x.checked=central.includes(x.value));
+ document.querySelectorAll('input[name="subjectsClass"]').forEach(x=>x.checked=classroom.includes(x.value)&&!central.includes(x.value));
+ refreshSubjectCount();
+}
+refreshSubjectCount();
+
 function htmlSafeUrl(value){if(!value)return true;try{let u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!!u.hostname}catch(_){return false}}
 function refreshSource(){
  const v=el('source').value,detail=el('sourceRule'),wrap=el('subjectSourceWrap');
@@ -176,6 +211,7 @@ refreshSource();el('source').addEventListener('change',refreshSource);
 function getData(){
  const d={};for(const id of fields)d[id]=el(id).value.trim();
  d.grades=[...document.querySelectorAll('input[name="grade"]:checked')].map(x=>x.value);
+ d.subjectsCentral=selectedSubjects('subjectsCentral');d.subjectsClass=selectedSubjects('subjectsClass');d.subjects=[...d.subjectsCentral,...d.subjectsClass].join(', ');
  d.state='DRAFT_LOCAL_ONLY';d.schema='HVA-KT01-DRAFT-1';d.updatedAt=new Date().toISOString();d.draftId=activeDraftId||'KTDRAFT-'+Date.now().toString(36).toUpperCase();
  return d;
 }
@@ -184,17 +220,18 @@ function validate(){
  for(const input of required){if(!input.value.trim()){input.reportValidity();input.focus();return false}}
  if(!el('schoolYear').checkValidity()){el('schoolYear').reportValidity();return false}
  if(!document.querySelector('input[name="grade"]:checked')){el('feedback').textContent='Cần chọn ít nhất một khối hoặc đối tượng.';return false}
+ if(!selectedSubjects('subjectsCentral').length&&!selectedSubjects('subjectsClass').length){el('feedback').textContent='Chọn ít nhất một môn kiểm tra tập trung hoặc tại lớp.';document.querySelector('.kt01-subject-layout').scrollIntoView({block:'center'});return false}
  if(el('end').value<el('start').value){el('end').setCustomValidity('Ngày kết thúc không được trước ngày bắt đầu.');el('end').reportValidity();return false}
  el('end').setCustomValidity('');
  for(const id of ['planUrl','scheduleUrl'])if(!htmlSafeUrl(el(id).value.trim())){el(id).setCustomValidity('Liên kết phải dùng HTTPS hợp lệ.');el(id).reportValidity();return false}else el(id).setCustomValidity('');
- if(el('source').value==='SO'&&el('type').value==='Kiểm tra cuối kỳ'&&el('semester').value==='Học kỳ II'&&el('schoolYear').value.replace('-','–')==='2026–2027'&&el('subjects').value.toLowerCase().includes('toán')&&el('subjects').value.toLowerCase().includes('ngữ văn')&&!el('subjectSources').value){
+ if(el('source').value==='SO'&&el('type').value==='Kiểm tra cuối kỳ'&&el('semester').value==='Học kỳ II'&&el('schoolYear').value.replace('-','–')==='2026–2027'&&[...selectedSubjects('subjectsCentral'),...selectedSubjects('subjectsClass')].includes('Toán')&&[...selectedSubjects('subjectsCentral'),...selectedSubjects('subjectsClass')].includes('Ngữ văn')&&!el('subjectSources').value){
   el('feedback').textContent='Lưu ý: phạm vi Sở ra đề Toán, Ngữ văn khối 12 cần đối chiếu văn bản và các môn/khối thực tế trước khi áp dụng; không tự mở rộng cho toàn bộ đợt.';
  }
  return true;
 }
 function preview(d){
  const gradeLabel=d.grades.map(x=>x==='other'?'Đối tượng khác':'Khối '+x).join(', ');
- const lines=['KT01 · BẢN NHÁP DỮ LIỆU TỔ CHỨC','TRƯỜNG THPT HÒA VANG','', 'I. VĂN BẢN LÀM CĂN CỨ','Kế hoạch: '+d.planName,'Số, ký hiệu: '+d.planNumber,'Ngày ban hành: '+d.planDate,'Liên kết: '+(d.planUrl||'Chưa có'),'','II. ĐỢT KIỂM TRA / KỲ THI','Tên đợt: '+d.name,'Loại: '+d.type,'Năm học – Học kỳ: '+d.schoolYear+' · '+d.semester,'Đối tượng: '+gradeLabel,'Môn: '+d.subjects,'Thời gian: '+d.start+' đến '+d.end,'Bộ phận phụ trách: '+d.unit,'Lịch kèm theo: '+(d.scheduleUrl||'Chưa có'),'','III. NGUỒN ĐỀ','Loại nguồn: '+el('source').selectedOptions[0].text,'Phân loại theo môn: '+(d.subjectSources||'Không áp dụng'),'Ghi chú: '+(d.notes||'Không có'),'','TRẠNG THÁI: BẢN NHÁP CỤC BỘ – CHƯA LƯU HỆ THỐNG – CHƯA PHÊ DUYỆT'];
+ const lines=['KT01 · BẢN NHÁP DỮ LIỆU TỔ CHỨC','TRƯỜNG THPT HÒA VANG','', 'I. VĂN BẢN LÀM CĂN CỨ','Kế hoạch: '+d.planName,'Số, ký hiệu: '+d.planNumber,'Ngày ban hành: '+d.planDate,'Liên kết: '+(d.planUrl||'Chưa có'),'','II. ĐỢT KIỂM TRA / KỲ THI','Tên đợt: '+d.name,'Loại: '+d.type,'Năm học – Học kỳ: '+d.schoolYear+' · '+d.semester,'Đối tượng: '+gradeLabel,'Môn kiểm tra tập trung: '+((d.subjectsCentral||[]).join(', ')||'Không có'),'Môn kiểm tra tại lớp: '+((d.subjectsClass||[]).join(', ')||'Không có'),'Thời gian: '+d.start+' đến '+d.end,'Bộ phận phụ trách: '+d.unit,'Lịch kèm theo: '+(d.scheduleUrl||'Chưa có'),'','III. NGUỒN ĐỀ','Loại nguồn: '+el('source').selectedOptions[0].text,'Phân loại theo môn: '+(d.subjectSources||'Không áp dụng'),'Ghi chú: '+(d.notes||'Không có'),'','TRẠNG THÁI: BẢN NHÁP CỤC BỘ – CHƯA LƯU HỆ THỐNG – CHƯA PHÊ DUYỆT'];
  el('preview').textContent=lines.join('\n');el('previewPanel').classList.remove('hidden');el('previewPanel').scrollIntoView({block:'start',behavior:'smooth'});
 }
 f.addEventListener('input',()=>{validDraft=null;el('saveDraft').disabled=true;el('toKT02').disabled=true;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Có thay đổi chưa xem trước. Chưa lưu dữ liệu.'});
@@ -203,7 +240,7 @@ f.addEventListener('submit',e=>{e.preventDefault();if(!validate())return;validDr
 el('export').addEventListener('click',()=>{
  if(!validDraft)return;const blob=new Blob([JSON.stringify(validDraft,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='HVA_KT01_BAN_NHAP_'+validDraft.start.replaceAll('-','')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
 });
-el('reset').addEventListener('click',()=>{f.reset();activeDraftId=null;validDraft=null;el('saveDraft').disabled=true;el('toKT02').disabled=true;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Đã xóa dữ liệu đang soạn trên trang; không ảnh hưởng dữ liệu hệ thống.';refreshSource()});
+el('reset').addEventListener('click',()=>{f.reset();refreshSubjectCount();activeDraftId=null;validDraft=null;el('saveDraft').disabled=true;el('toKT02').disabled=true;el('export').disabled=true;el('previewPanel').classList.add('hidden');el('feedback').textContent='Đã xóa dữ liệu đang soạn trên trang; không ảnh hưởng dữ liệu hệ thống.';refreshSource()});
 
 function loadDrafts(){
  try{const a=JSON.parse(sessionStorage.getItem(draftStorageKey)||'[]');return Array.isArray(a)?a.filter(d=>d&&d.schema==='HVA-KT01-DRAFT-1'):[]}catch(_){return []}
@@ -219,7 +256,7 @@ function renderDrafts(){
   for(const [name,action,kind] of [['Mở sửa','open',''],['Xóa nháp','remove','danger']]){
    const button=document.createElement('button');button.type='button';button.textContent=name;button.className=kind;
    button.addEventListener('click',()=>{
-    if(action==='open'){activeDraftId=d.draftId;for(const id of fields)el(id).value=String(d[id]||'');document.querySelectorAll('input[name="grade"]').forEach(c=>c.checked=(d.grades||[]).includes(c.value));refreshSource();validDraft=null;el('previewPanel').classList.add('hidden');el('saveDraft').disabled=true;el('export').disabled=true;el('toKT02').disabled=true;el('feedback').textContent='Đã mở bản nháp '+d.draftId+'. Cần kiểm tra và xem trước lại trước khi sử dụng.';f.scrollIntoView({behavior:'smooth',block:'start'});}
+    if(action==='open'){activeDraftId=d.draftId;for(const id of fields)el(id).value=String(d[id]||'');setSubjectSelections(d);document.querySelectorAll('input[name="grade"]').forEach(c=>c.checked=(d.grades||[]).includes(c.value));refreshSource();validDraft=null;el('previewPanel').classList.add('hidden');el('saveDraft').disabled=true;el('export').disabled=true;el('toKT02').disabled=true;el('feedback').textContent='Đã mở bản nháp '+d.draftId+'. Cần kiểm tra và xem trước lại trước khi sử dụng.';f.scrollIntoView({behavior:'smooth',block:'start'});}
     else{const kept=loadDrafts().filter(x=>x.draftId!==d.draftId);sessionStorage.setItem(draftStorageKey,JSON.stringify(kept));if(activeDraftId===d.draftId)activeDraftId=null;renderDrafts()}
    });actions.append(button);
   }entry.append(info,actions);box.append(entry);
@@ -237,10 +274,10 @@ el('toKT02').addEventListener('click',()=>{
  if(validDraft.source==='SO'){el('feedback').textContent='Đề do Sở cung cấp: KT02 không giao nhiệm vụ ra đề. Chỉ quản lý tổ chức tại KT01.';return}
  if(validDraft.source==='HONHOP'){el('feedback').textContent='Đợt có nhiều nguồn đề: cần phân tách đúng môn, khối và nguồn đề trước khi tạo phân công KT02.';return}
  if((validDraft.grades||[]).length!==1||['10','11','12'].indexOf(validDraft.grades[0])<0){el('feedback').textContent='Để chuyển KT02, cần chọn đúng một khối 10/11/12.';return}
- const subjects=validDraft.subjects.split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
- if(subjects.length!==1){el('feedback').textContent='KT02 phân công theo từng môn. Hãy chọn đúng một môn, một khối trước khi chuyển.';return}
+ const subjects=[...(validDraft.subjectsCentral||[]),...(validDraft.subjectsClass||[])];
+ if(subjects.length!==1){el('feedback').textContent='KT02 phân công theo từng môn. Hãy chọn một môn, một khối để chuyển tự động. Các môn khác cần lập phân công riêng.';return}
  if(!['Kiểm tra giữa kỳ','Kiểm tra cuối kỳ'].includes(validDraft.type)){el('feedback').textContent='Hiện chỉ tự điền KT02 với kiểm tra giữa kỳ/cuối kỳ. Các loại thi khác cần cấu hình nhiệm vụ riêng.';return}
- const handoff={schema:'KT01_TO_KT02_V1',name:validDraft.name,schoolYear:validDraft.schoolYear,semester:validDraft.semester,type:validDraft.type,grade:validDraft.grades[0],subject:subjects[0],source:validDraft.source,planNumber:validDraft.planNumber,planName:validDraft.planName};
+ const handoff={schema:'KT01_TO_KT02_V1',name:validDraft.name,schoolYear:validDraft.schoolYear,semester:validDraft.semester,type:validDraft.type,grade:validDraft.grades[0],subject:subjects[0],examMode:(validDraft.subjectsCentral||[]).includes(subjects[0])?'CENTRAL':'CLASSROOM',source:validDraft.source,planNumber:validDraft.planNumber,planName:validDraft.planName};
  try{sessionStorage.setItem('HVA_KT01_TO_KT02_V1',JSON.stringify(handoff));window.location.assign('./PhanCong_DeKiemTra.html?from=KT01')}
  catch(e){el('feedback').textContent='Không chuyển được thông tin sang KT02: '+e.message}
 });
