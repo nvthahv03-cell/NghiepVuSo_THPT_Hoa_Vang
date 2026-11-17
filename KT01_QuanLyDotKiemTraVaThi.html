@@ -195,14 +195,11 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 </form></section>
 <section class="panel hidden" id="previewPanel"><div class="bar"><h2>04 · Bản xem trước KT01</h2><span class="chip">KHÔNG PHẢI QUYẾT ĐỊNH BAN HÀNH</span></div><div class="kt01-paper-frame"><article class="kt01-paper" id="preview" aria-label="Hồ sơ bản nháp KT01"></article></div><div class="row actions" style="margin-top:18px"><button type="button" id="print" class="btn light">In bản nháp</button><button type="button" id="toKT02" class="btn" disabled>Chuyển thông tin sang KT02</button><button type="button" id="backEdit" class="btn light">Quay lại chỉnh sửa</button></div>
 <div id="kt02HandoffPanel" class="kt01-handoff-panel hidden" aria-live="polite">
- <h3>Chuẩn bị chuyển thông tin sang KT02</h3>
- <p class="lead">KT02 phân công theo từng môn và khối. Chọn đúng một cặp môn – khối để chuyển; toàn bộ dữ liệu KT01 vẫn được giữ trong bản nháp, không tự tạo phân công hàng loạt.</p>
- <div class="grid">
- <label>Môn kiểm tra cần phân công<select id="kt02SubjectChoice"><option value="">— Chọn môn —</option></select></label>
- <label>Khối cần phân công<select id="kt02GradeChoice"><option value="">— Chọn khối —</option></select></label>
- </div>
- <p id="kt02HandoffStatus" class="mini" role="status">Chưa chọn môn và khối.</p>
- <div class="row actions"><button type="button" class="btn" id="confirmKT02Handoff">Tiếp tục sang KT02</button><button type="button" class="btn light" id="cancelKT02Handoff">Hủy</button></div>
+ <h3>Triển khai phân công nhiệm vụ theo kế hoạch</h3>
+ <p class="lead">Đề nghị các Tổ trưởng chuyên môn căn cứ kế hoạch tổ chức kiểm tra, đánh giá đã ban hành để thực hiện phân công nhiệm vụ thuộc phạm vi tổ chuyên môn; bảo đảm đúng môn, khối lớp, thời hạn và yêu cầu chuyên môn.</p>
+ <p class="lead">Hồ sơ phân công được thực hiện tại KT02 và trình phê duyệt theo quy trình. KT01 không tự tạo phân công hoặc phê duyệt hồ sơ.</p>
+ <div class="row actions"><button type="button" class="btn" id="confirmKT02Handoff">Chuyển đến KT02 – Phân công nhiệm vụ</button><button type="button" class="btn light" id="cancelKT02Handoff">Hủy</button></div>
+ <p id="kt02HandoffStatus" class="mini" role="status"></p>
 </div></section>
 <section class="panel"><h2>05 · Các bản nháp KT01 trên trình duyệt</h2><p class="lead">Bản nháp chỉ lưu trong phiên tab trình duyệt, không phải hồ sơ đã tạo trên EDOS. Có thể mở để chỉnh sửa hoặc xuất JSON. Không lưu thông tin mật của đề thi vào đây.</p><div id="kt01DraftList" class="draft-list" aria-live="polite">Chưa có bản nháp trong phiên này.</div></section>
 </div><div class="footer">HVA–EDOS · Trường THPT Hòa Vang · KT01 · Lưu bản nháp trong phiên trình duyệt, chưa kết nối Backend</div>
@@ -450,40 +447,23 @@ el('saveDraft').addEventListener('click',()=>{
 function kt01HandoffStatus(message){el('kt02HandoffStatus').textContent=message}
 el('toKT02').addEventListener('click',()=>{
  if(!validDraft)return;
- const d=validDraft;
- if(!['TRUONG','TO'].includes(d.source)){el('feedback').textContent='KT02 hiện chỉ nhận bản chuyển tiếp nguồn đề do nhà trường hoặc tổ/nhóm chuyên môn xây dựng. Các nguồn khác cần rà soát phân quyền và nguồn theo từng môn.';el('feedback').scrollIntoView({block:'center'});return}
- if(!['Kiểm tra giữa kỳ','Kiểm tra cuối kỳ'].includes(d.type)){el('feedback').textContent='KT02 hiện chỉ nhận bản chuyển tiếp kiểm tra giữa kỳ hoặc cuối kỳ.';return}
- const subjects=[...new Set([...(d.subjectsCentral||[]),...(d.subjectsClass||[])])];
- const grades=(d.grades||[]).filter(x=>['10','11','12'].includes(x));
- if(!subjects.length||!grades.length){kt01HandoffStatus('Không có môn hoặc khối 10–12 đủ điều kiện.');return}
- const subj=el('kt02SubjectChoice'),grade=el('kt02GradeChoice');subj.replaceChildren();grade.replaceChildren();
- const selectOption=(box,label,value)=>{const op=document.createElement('option');op.value=value;op.textContent=label;box.append(op)};
- selectOption(subj,'— Chọn môn —','');
- subjects.forEach(s=>selectOption(subj,s+' — '+((d.subjectsCentral||[]).includes(s)?'Kiểm tra tập trung':'Kiểm tra tại lớp'),s));
- selectOption(grade,'— Chọn khối —','');
- grades.forEach(g=>selectOption(grade,'Khối '+g,g));
- // Không tự xác định môn học nào của từng khối; người sử dụng lựa chọn dựa trên kế hoạch.
  el('kt02HandoffPanel').classList.remove('hidden');
- kt01HandoffStatus('Chọn 01 môn và 01 khối. Danh sách đầy đủ vẫn giữ trong bản nháp KT01.');
+ kt01HandoffStatus('KT02 sẽ thực hiện phân công theo kế hoạch và phân quyền của từng tổ. Không chuyển tự động môn, khối hoặc giao nhiệm vụ.');
  el('kt02HandoffPanel').scrollIntoView({block:'center',behavior:'smooth'});
 });
 el('cancelKT02Handoff').addEventListener('click',()=>el('kt02HandoffPanel').classList.add('hidden'));
 el('confirmKT02Handoff').addEventListener('click',()=>{
  if(!validDraft)return;
- const d=validDraft,subject=el('kt02SubjectChoice').value,grade=el('kt02GradeChoice').value;
- if(!subject||!grade){kt01HandoffStatus('Cần chọn đầy đủ môn và khối trước khi chuyển.');return}
- const allSubjects=[...new Set([...(d.subjectsCentral||[]),...(d.subjectsClass||[])])];
- if(!allSubjects.includes(subject)||!(d.grades||[]).includes(grade)){kt01HandoffStatus('Môn hoặc khối không thuộc bản nháp KT01.');return}
- const handoff={schema:'KT01_TO_KT02_V1',name:d.name,schoolYear:d.schoolYear,semester:d.semester,type:d.type,grade,subject,examMode:(d.subjectsCentral||[]).includes(subject)?'CENTRAL':'CLASSROOM',source:d.source,planNumber:d.planNumber,planName:d.planName};
  try{
-  // Giữ trọn bản nháp trong danh sách KT01 để quay lại mở, không làm mất các môn/khối còn lại.
+  const d=validDraft;
   const drafts=loadDrafts().filter(x=>x.draftId!==d.draftId);
   drafts.unshift(d);
   sessionStorage.setItem(draftStorageKey,JSON.stringify(drafts.slice(0,30)));
-  sessionStorage.setItem('HVA_KT01_HANDOFF_CONTEXT_V1',JSON.stringify({schema:'HVA_KT01_HANDOFF_CONTEXT_V1',draft:d,selected:{subject,grade},createdAt:new Date().toISOString()}));
-  sessionStorage.setItem('HVA_KT01_TO_KT02_V1',JSON.stringify(handoff));
-  location.assign('./PhanCong_DeKiemTra.html?from=KT01');
- }catch(e){kt01HandoffStatus('Không chuyển được thông tin: '+e.message)}
+  activeDraftId=d.draftId;
+  renderDrafts();
+  // Không truyền action KT01_TO_KT02_V1: mỗi TTCM phải phân công theo KH.
+  location.assign('./PhanCong_DeKiemTra.html');
+ }catch(e){kt01HandoffStatus('Không mở được KT02: '+e.message)}
 });
 renderDrafts();
 
