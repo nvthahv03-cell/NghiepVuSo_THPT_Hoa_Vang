@@ -33,6 +33,23 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 
 
 .hva-kt-page-title{max-width:1160px;margin:17px auto 0;padding:0 16px;display:flex;flex-direction:column;gap:5px;color:#075591}.hva-kt-page-title strong{font-size:20px;line-height:1.3}.hva-kt-page-title small{font-size:13px;color:#58758d}@media(max-width:680px){.hva-kt-page-title strong{font-size:17px}}
+
+/* KT01 | Màn hình nghiệp vụ hoàn chỉnh - chỉ trình bày/bản nháp */
+.kt01-overview{padding:22px 24px 20px;background:linear-gradient(120deg,#fff,#edf7ff);border:1px solid #cde3f5;border-radius:18px;box-shadow:0 6px 22px rgba(15,76,129,.07);margin:0 0 16px}
+.kt01-overview-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.kt01-overview-heading h2{font-size:22px;margin:7px 0 5px;color:#064d87}
+.kt01-overview-heading p{font-size:13px;line-height:1.6;color:#57758f;margin:0}
+.kt01-eyebrow{color:#098ac5;font-size:11px;font-weight:900;letter-spacing:.09em}
+.kt01-stage{background:#fff5df;border:1px solid #ead49b;color:#8b631c;padding:9px 12px;border-radius:999px;font-size:11px;font-weight:850;white-space:nowrap}
+.kt01-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:20px}
+.kt01-flow>div{display:flex;flex-direction:column;gap:5px;min-width:0;padding:13px 12px;background:#fff;border:1px solid #d4e9f7;border-radius:13px}
+.kt01-flow>div span{display:grid;place-items:center;background:#e6f4ff;color:#075c9c;border-radius:9px;width:32px;height:32px;font-weight:900;font-size:12px}
+.kt01-flow strong{font-size:12px;color:#164d7d}.kt01-flow small{font-size:11px;color:#6d8395}
+#ktForm h2{padding-bottom:9px;border-bottom:1px solid #e5eef7}
+#content>.panel{padding:23px}
+#modeNotice{margin-bottom:15px}
+@media(max-width:820px){.kt01-flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.kt01-overview{padding:15px}.kt01-overview-heading h2{font-size:18px}.kt01-flow{gap:7px}.kt01-flow>div{padding:10px}.kt01-flow strong{font-size:11px}}
 </style><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><style>
 /* KT01: header exact CuocHop appearance, self-contained, independent of external CSS */
 .hva-edos-standard-head{position:relative!important;z-index:40!important;display:block!important;margin:5px 6px 0!important;padding:0!important;min-height:94px!important;overflow:hidden!important;border-radius:10px!important;isolation:isolate!important;color:#f8fdff!important;background:radial-gradient(circle at 86% 22%,rgba(8,221,228,.34),transparent 26%),linear-gradient(105deg,#064482 0%,#0757a8 45%,#058bbd 75%,#06bccc 100%)!important;box-shadow:0 10px 28px rgba(3,43,84,.18)!important}
@@ -76,6 +93,15 @@ main{max-width:1160px;margin:20px auto 60px;padding:0 16px}.panel{background:#ff
 </header>
 <div class="hva-kt-page-title"><strong>KT01 – QUẢN LÝ ĐỢT KIỂM TRA VÀ KỲ THI</strong><small>Điều hành kiểm tra và thi · Thiết lập dữ liệu theo kế hoạch đã ban hành</small></div>
 <main>
+<section class="kt01-overview" aria-label="Tổng quan nghiệp vụ KT01">
+ <div class="kt01-overview-heading"><div><span class="kt01-eyebrow">ĐIỀU HÀNH KIỂM TRA VÀ THI</span><h2>Thiết lập đợt kiểm tra, đánh giá</h2><p>Khởi tạo thông tin từ kế hoạch đã ban hành, kiểm tra dữ liệu và chuyển công đoạn phân công khi đủ điều kiện.</p></div><span class="kt01-stage">BẢN NHÁP · CHƯA PHÁT HÀNH</span></div>
+ <div class="kt01-flow" aria-label="Quy trình xử lý">
+  <div><span>01</span><strong>Kế hoạch làm căn cứ</strong><small>Văn bản đã ban hành</small></div>
+  <div><span>02</span><strong>Thông tin đợt kiểm tra</strong><small>Thời gian, khối, môn</small></div>
+  <div><span>03</span><strong>Nguồn đề kiểm tra</strong><small>Phân định trách nhiệm</small></div>
+  <div><span>04</span><strong>Kiểm tra và xem trước</strong><small>Bản nháp, chưa ban hành</small></div>
+ </div>
+</section>
 <div class="notice warning" id="modeNotice">KT01 hiện là bản thiết kế để kiểm thử giao diện và quy trình. Chưa nối Backend V5; không có chức năng ban hành, không ghi lên Sheet hoặc tạo kỳ kiểm tra chính thức.</div>
 <div id="deny" class="panel hidden"><h2>Không có quyền truy cập</h2><p>Hãy đăng nhập phiên EDOS hợp lệ bằng tài khoản BGH hoặc TTCM được phân quyền. Truy cập giao diện không thay thế xác thực tại Backend.</p><a href="./DieuHanh.html">Quay lại Điều hành</a></div>
 <div id="content" class="hidden">
@@ -127,8 +153,16 @@ function allowed(){
  const codes=String(u.vaiTro||u.role||'').toUpperCase().split(/[^A-Z0-9]+/);
  return role.includes('hieu truong')||role.includes('pho hieu truong')||role.includes('ban giam hieu')||role.includes('to truong')||role.includes('ttcm')||codes.includes('BGH')||codes.includes('TTCM')||codes.includes('ADMIN');
 }
-if(!allowed()){el('deny').classList.remove('hidden');return}
+// Giao diện KT01 luôn hiển thị để rà soát và lập bản nháp cục bộ.
+// Không có phiên hợp lệ: tuyệt đối không gọi Backend, không xác nhận phân quyền.
+const kt01Authorized=allowed();
 el('content').classList.remove('hidden');
+if(!kt01Authorized){
+  el('deny').classList.add('hidden');
+  el('modeNotice').textContent='CHẾ ĐỘ THIẾT KẾ – Thầy có thể xem và thử lập bản nháp tại trình duyệt. Chưa nhận diện phiên BGH/TTCM; không tạo hồ sơ chính thức, không ghi CSDL và không chuyển giao nghiệp vụ.';
+}else{
+  el('modeNotice').textContent='KT01 đang ở chế độ bản nháp để hoàn thiện và kiểm thử. Chưa kết nối Backend KT01; dữ liệu chỉ lưu trong phiên trình duyệt, chưa phát hành hồ sơ.';
+}
 const f=el('ktForm'),fields=['planName','planNumber','planDate','planUrl','name','type','schoolYear','semester','start','end','unit','scheduleUrl','subjects','source','subjectSources','notes'];
 let validDraft=null;const draftStorageKey='HVA_KT01_LOCAL_DRAFTS_V1';let activeDraftId=null;
 function htmlSafeUrl(value){if(!value)return true;try{let u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!!u.hostname}catch(_){return false}}
