@@ -122,6 +122,22 @@ function makeField(spec){
 function setCode(code,keepTitle=false){
  if(!Object.prototype.hasOwnProperty.call(D,code))return false;
  by('code').value=code;const def=D[code];
+ const a1=/^A[.]1[.](?:3|4)(?:-|$)/.test(code);
+ document.body.classList.toggle('hva-a1-mode',a1);
+ for(const id of ['a22A1Top','a22UserBar'])if(by(id))by(id).hidden=!a1;
+ if(by('a22OwnerCell'))by('a22OwnerCell').hidden=a1;
+ if(by('a22TeamCell'))by('a22TeamCell').hidden=a1;
+ if(by('a22HeaderTitle'))by('a22HeaderTitle').textContent=a1?def.title:'Biểu mẫu nghiệp vụ số';
+ if(by('a22HeaderCode'))by('a22HeaderCode').textContent=a1?code+' · BÁO CÁO CHUYÊN MÔN':'HỒ SƠ CHUYÊN MÔN';
+ if(by('a22A1SelectedTitle'))by('a22A1SelectedTitle').textContent=def.title;
+ if(by('a22A1SelectedPurpose'))by('a22A1SelectedPurpose').textContent=def.purpose;
+ if(by('a22PreviewTitle'))by('a22PreviewTitle').textContent=a1?'Bản xem trước – '+def.title:'Bản xem trước hồ sơ';
+ if(a1){
+  const user=currentUser();
+  if(by('a22UserName'))by('a22UserName').textContent=clean(user.hoTen||user.fullName||user.name)||'Chưa xác định';
+  if(by('a22UserTeam'))by('a22UserTeam').textContent=clean(user.toBoPhan||user.tenTo||user.to)||'Chưa xác định';
+  if(by('a22UserRole'))by('a22UserRole').textContent=clean(user.chucVu||user.viTriViecLam||user.role)||'Chưa xác định';
+ }
  by('heading').textContent=code+' – '+def.title;
  by('specialTitle').textContent='Thông tin nghiệp vụ '+code;
  by('specialHint').textContent=def.purpose;
@@ -237,6 +253,13 @@ by('restoreSession').addEventListener('click',()=>{
 });
 by('print').addEventListener('click',()=>{if(submittedId){window.print();return}if(preview())window.print()});
 by('edit').addEventListener('click',()=>by('form').scrollIntoView({behavior:'smooth'}));
+function returnA1Menu(){
+ by('a22SubmissionEditor')?.classList.add('hidden');
+ by('previewPanel')?.classList.add('hidden');
+ by('a22TemplateLanding')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+by('a22BackToLanding')?.addEventListener('click',returnA1Menu);
+by('a22PreviewBackToLanding')?.addEventListener('click',returnA1Menu);
 select.addEventListener('change',()=>{setCode(select.value);notice('Đã chuyển mẫu. Hãy kiểm tra lại thông tin trước khi xuất.')});
 by('send').disabled=true;
 /* Tuyến tiếp nhận dùng chung chỉ mở khi Backend đã triển khai action A22 và trả chứng nhận hỗ trợ. */
