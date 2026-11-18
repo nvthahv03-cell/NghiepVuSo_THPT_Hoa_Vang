@@ -881,7 +881,9 @@ async function load(){
   $('pcdkTeamSelect').replaceChildren(new Option('Không có tổ chuyên môn',''));
   $('pcdkTeamSelect').disabled=true;$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Chưa tải được danh sách giáo viên từ Cuộc họp.';
   $('pcdkRelogin').hidden=false;
-  $('msg').textContent='KT02 không xác thực hoặc tải được nhân sự từ tuyến Cuộc họp: '+error.message+'. Kiểm tra phiên đăng nhập HVA–EDOS rồi thử Tải lại nhân sự tổ; không dùng dữ liệu cũ để phát hành.';
+  const authRejected=/phiên NVS không hợp lệ|phiên.*hết hạn|AUTH_REQUIRED|SESSION_INVALID|từ chối phiên/i.test(String(error.message||''));
+  if(authRejected)kt02ShowLogin('Backend nhân sự không chấp nhận phiên hiện tại. Đăng nhập trực tiếp KT02 để tạo và kiểm tra phiên với chính tuyến nhân sự; nếu không được, cần sửa Backend.');
+  $('msg').textContent='KT02 không xác thực hoặc tải được nhân sự từ tuyến Cuộc họp: '+error.message+'. '+(authRejected?'Đã mở biểu mẫu xác thực riêng KT02.':'Kiểm tra lại nguồn nhân sự và tài khoản.')+' Không dùng dữ liệu cũ để phát hành.';
   refreshSubjects();render();
  }
 }
