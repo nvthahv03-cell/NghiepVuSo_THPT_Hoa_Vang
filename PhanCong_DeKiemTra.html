@@ -793,8 +793,8 @@ async function load(){
   $('pcdkTeamSelect').disabled=true;$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Cần đăng nhập lại để tải danh sách tổ.';refreshSubjects();render();return;
  }
  actor=username;actorName=me.hoTen||username;
- actorIsBGH=/hieu truong|ban giam hieu|pht|bgh|quan tri/.test(norm(me.chucVu));
- $('identityRole').textContent='Đang đối chiếu chức danh từ nhân sự...';
+ actorIsBGH=/pho hieu truong|hieu truong|ban giam hieu|pht|bgh|quan tri/.test(norm([me.chucVu,me.to].join(' ')));
+ $('identityRole').textContent=actorIsBGH?'Ban Giám hiệu (chờ Backend xác minh quyền)':'Đang đối chiếu chức danh từ nhân sự...';
  $('msg').textContent='Đang tải nhân sự tổ từ Cuộc họp (Nhân sự HVA)...';
  personnelTrusted=false;
  try{
@@ -819,7 +819,7 @@ async function load(){
   if(!groups.some(g=>g.kind==='TEAM'))
    throw Error('Dịch vụ Cuộc họp chưa trả nhóm tổ chuyên môn.');
   pcdkLoadTeamSelect(groups,me.to);
-  if(!team)throw Error('Backend đã trả nhân sự nhưng không tìm thấy tài khoản '+username+' trong tổ chuyên môn. Kiểm tra cột O (Tên đăng nhập), M (Tổ/Bộ phận) ở Sheet chuẩn và tuyến Backend.');
+  if(!team)throw Error(actorIsBGH?'Backend đã trả nhóm nhưng chưa xác định được tổ chuyên môn để BGH xem.':'Backend đã trả nhân sự nhưng không tìm thấy tài khoản '+username+' trong tổ chuyên môn. Kiểm tra cột O (Tên đăng nhập), M (Tổ/Bộ phận) ở Sheet chuẩn và tuyến Backend.');
   $('msg').textContent='Đã tải '+members.length+' nhân sự tổ '+team+' từ dữ liệu Cuộc họp. Đang kiểm tra quyền chuyển phát hành...';
   // Tuyến phân công chỉ dùng để đối chiếu quyền; không yêu cầu nó trả cấu trúc groups.
   try{
