@@ -620,32 +620,44 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 <script>
 'use strict';
 const API='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
-const KT02_LOGIN_API='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec'; // Cùng endpoint đăng nhập index.html (DTHT_STANDALONE_BACKEND)
+const KT02_LOGIN_API=API; // KT02 xac thuc voi cung Backend cung cap getNVSMeetingPersonnel; khong dung token cua mot dich vu khac.
 const $=id=>document.getElementById(id);let members=[],team='',actor='',actorName='',actorIsTTCM=false,actorIsBGH=false,personnelGroups=[],personnelTrusted=false,proposal=null,numberOfExams=2,signMethod='ELECTRONIC';
 const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().trim();
+const KT02_PERSONNEL_SESSION_KEY='HVA_KT02_PERSONNEL_AUTH_V1';
+function kt02SavedPersonnelSession(){
+ try{
+  const obj=JSON.parse(sessionStorage.getItem(KT02_PERSONNEL_SESSION_KEY)||'null');
+  if(!obj||typeof obj!=='object'||!obj.token||!obj.username)return null;
+  const expiry=Number(obj.expiry);
+  if(!Number.isFinite(expiry)||expiry<=Date.now()){sessionStorage.removeItem(KT02_PERSONNEL_SESSION_KEY);return null;}
+  return obj;
+ }catch(_){return null}
+}
 function session(){
- // Ke thua CuocHop/GVCN/DTHT: user co the nam trong sessionStorage,
- // token o localStorage hoac sessionStorage. Chuc vu tren giao dien khong cap quyen.
+ // Thong tin dang nhap giong CuocHop: uu tien thong tin trong phien tab.
  let u={};
  for(const storage of [sessionStorage,localStorage]){
-  try{const raw=JSON.parse(storage.getItem('user')||'null');if(raw&&typeof raw==='object'&&(raw.tenDangNhap||raw.username||raw.userName||raw.maGV)){u=raw;break}}catch(_){}
+  try{const raw=JSON.parse(storage.getItem('user')||'null');if(raw&&typeof raw==='object'&&(raw.tenDangNhap||raw.username||raw.userName||raw.maGV)){u=raw;break;}}catch(_){}
  }
- const username=String(u.username||u.tenDangNhap||u.userName||u.maGV||'').trim();
+ const username=String(u.tenDangNhap||u.username||u.userName||u.maGV||'').trim();
+ // Token chuyen dung chi duoc tao sau khi chinh Backend nhan su xac nhan.
+ const dedicated=kt02SavedPersonnelSession();
+ if(dedicated&&(!username||norm(dedicated.username)===norm(username))){
+  return {username:dedicated.username,hoTen:dedicated.hoTen||u.hoTen||'',to:String(u.toBoPhan||u.tenTo||'').trim(),
+   chucVu:String(u.chucVu||u.viTriViecLam||u.vaiTro||'').trim(),token:dedicated.token,valid:true,personnelVerified:true};
+ }
  const candidates=[sessionStorage,localStorage].map(storage=>{
   const token=String(storage.getItem('hvaSessionToken')||'').trim();
   const raw=String(storage.getItem('hvaSessionExpiresAt')||'').trim();
   const numeric=Number(raw),expiry=raw?(Number.isFinite(numeric)&&numeric>0?(numeric<1e12?numeric*1000:numeric):Date.parse(raw)):0;
-  return {token,expiry,hasExpiry:!!raw,expired:!!raw&&Number.isFinite(expiry)&&expiry<=Date.now()};
+  return {token,expiry};
  });
- const choice=candidates.find(x=>x.token&&x.hasExpiry&&Number.isFinite(x.expiry)&&x.expiry>Date.now())||
-               candidates.find(x=>x.token&&!x.hasExpiry)||
-               candidates.find(x=>x.token);
- const token=choice?.token||'';
- // Khong coi token local la quyen: Backend phai xac thuc truoc khi doc nhan su.
+ // Khong chon token da het han hoac khong co expiry.
+ const choice=candidates.find(x=>x.token&&Number.isFinite(x.expiry)&&x.expiry>Date.now());
  return {username,hoTen:String(u.hoTen||u.hoten||u.fullName||u.name||u.displayName||'').trim(),
   to:String(u.toBoPhan||u.tenTo||u.to||'').trim(),
   chucVu:String(u.chucVu||u.chucvu||u.position||u.roleName||u.viTriViecLam||u.vaiTro||u.role||'').trim(),
-  token,valid:!!username&&!!token&&!choice?.expired,needsServerCheck:true};
+  token:choice?.token||'',valid:!!username&&!!choice?.token,personnelVerified:false};
 }
 
 function kt02ShowLogin(message){
@@ -658,26 +670,39 @@ function kt02ShowLogin(message){
 }
 $('pcdkRelogin').addEventListener('click',()=>kt02ShowLogin('Đăng nhập lại để làm mới phiên và tải nhân sự của tổ chuyên môn.'));
 $('pcdkAuthForm').addEventListener('submit',async e=>{
- e.preventDefault();const username=$('pcdkAuthUser').value.trim(),password=$('pcdkAuthPassword').value;
+ e.preventDefault();
+ const username=$('pcdkAuthUser').value.trim(),password=$('pcdkAuthPassword').value;
  if(!username||!password)return;
- const btn=$('pcdkAuthSubmit');btn.disabled=true;$('pcdkAuthError').textContent='Đang xác thực với Backend đăng nhập HVA–EDOS...';
+ const btn=$('pcdkAuthSubmit');btn.disabled=true;
+ $('pcdkAuthError').textContent='Đang đăng nhập tại Backend nhân sự Cuộc họp...';
  try{
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);
-  let response;try{response=await fetch(KT02_LOGIN_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'login',tenDangNhap:username,matKhau:/^\d{4}$/.test(password.trim())?'HVA@'+password.trim():password}),cache:'no-store',signal:controller.signal})}finally{clearTimeout(timer)}
-  if(!response.ok)throw Error('Máy chủ phản hồi HTTP '+response.status);
-  const data=await response.json();
-  if(data?.ok!==true||!data.nguoiDung||!data.sessionToken||!data.hetHanLuc)throw Error(data?.thongBao||data?.message||'Backend đăng nhập không trả đầy đủ người dùng, phiên và hạn phiên.');
-  const user=data.nguoiDung,expiry=String(data.hetHanLuc);
-  const n=Number(expiry),ts=Number.isFinite(n)&&n>0?(n<1e12?n*1000:n):Date.parse(expiry);
-  if(!Number.isFinite(ts)||ts<=Date.now())throw Error('Backend trả thời hạn phiên không hợp lệ.');
-  localStorage.setItem('user',JSON.stringify(user));
-  localStorage.setItem('hvaSessionToken',String(data.sessionToken));
-  localStorage.setItem('hvaSessionExpiresAt',expiry);
-  localStorage.setItem('hvaLastUsername',String(user.tenDangNhap||username));
-  $('pcdkAuthPassword').value='';$('pcdkAuth').hidden=true;
-  await load();
- }catch(e){$('pcdkAuthError').textContent='Không đăng nhập được: '+(e.name==='AbortError'?'Quá thời gian chờ máy chủ.':e.message);$('pcdkAuthPassword').value='';}
- finally{btn.disabled=false;}
+  let response;
+  try{response=await fetch(KT02_LOGIN_API,{
+   method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},
+   body:JSON.stringify({action:'login',tenDangNhap:username,matKhau:/^\\d{4}$/.test(password.trim())?'HVA@'+password.trim():password}),
+   cache:'no-store',signal:controller.signal
+  });}finally{clearTimeout(timer)}
+  if(!response.ok)throw Error('Backend nhân sự phản hồi HTTP '+response.status);
+  let data;try{data=await response.json()}catch(_){throw Error('Backend nhân sự không hỗ trợ phản hồi đăng nhập JSON. Cần kết nối Apps Script nhân sự.')}
+  if(data?.ok!==true||!data.nguoiDung||!data.sessionToken||!data.hetHanLuc)
+   throw Error(data?.thongBao||data?.message||'Backend nhân sự chưa hỗ trợ tạo phiên đăng nhập KT02. Cần bổ sung tại Apps Script; không sử dụng phiên từ Backend khác.');
+  const num=Number(data.hetHanLuc),expiry=Number.isFinite(num)&&num>0?(num<1e12?num*1000:num):Date.parse(String(data.hetHanLuc));
+  if(!Number.isFinite(expiry)||expiry<=Date.now())throw Error('Backend nhân sự trả thời hạn phiên không hợp lệ.');
+  const account=String(data.nguoiDung.tenDangNhap||data.nguoiDung.username||username).trim();
+  if(norm(account)!==norm(username))throw Error('Backend trả tài khoản khác tài khoản vừa đăng nhập.');
+  // Chi chap nhan token khi Backend nhan su thuc su tra ve danh sach.
+  $('pcdkAuthError').textContent='Đang xác minh phiên mới bằng tuyến getNVSMeetingPersonnel...';
+  const result=await personnelJSONP(String(data.sessionToken),'getNVSMeetingPersonnel');
+  if(!Array.isArray(result.groups))throw Error('Phiên được cấp nhưng Backend nhân sự không trả danh sách tổ.');
+  sessionStorage.setItem(KT02_PERSONNEL_SESSION_KEY,JSON.stringify({
+   username:account,hoTen:String(data.nguoiDung.hoTen||''),token:String(data.sessionToken),expiry
+  }));
+  // KHONG ghi de hvaSessionToken cua EDOS, tranh anh huong CuocHop/GVCN/DTHT.
+  $('pcdkAuth').hidden=true;await load();
+ }catch(err){
+  $('pcdkAuthError').textContent='KT02 chưa xác thực được với Backend nhân sự: '+(err.name==='AbortError'?'Quá thời gian chờ máy chủ.':err.message);
+ }finally{$('pcdkAuthPassword').value='';btn.disabled=false;}
 });
 
 function personnelJSONP(token,action='getNVSMeetingPersonnel'){
