@@ -680,7 +680,7 @@ $('pcdkAuthForm').addEventListener('submit',async e=>{
   let response;
   try{response=await fetch(KT02_LOGIN_API,{
    method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},
-   body:JSON.stringify({action:'login',tenDangNhap:username,matKhau:/^\\d{4}$/.test(password.trim())?'HVA@'+password.trim():password}),
+   body:JSON.stringify({action:'login',tenDangNhap:username,matKhau:/^\d{4}$/.test(password.trim())?'HVA@'+password.trim():password}),
    cache:'no-store',signal:controller.signal
   });}finally{clearTimeout(timer)}
   if(!response.ok)throw Error('Backend nhân sự phản hồi HTTP '+response.status);
