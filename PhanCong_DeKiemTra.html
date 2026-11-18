@@ -700,8 +700,8 @@ function personnelJSONP(token,action='getNVSMeetingPersonnel'){
 function pcdkMember(m){
  const source=m||{},raw=source.raw||{};
  return {
-  username:String(source.username||source.tenDangNhap||source.userName||raw.tenDangNhap||raw.username||'').trim(),
-  hoTen:String(source.hoTen||source.fullName||source.name||raw.hoTen||'').trim(),
+  username:String(source.username||source.tenDangNhap||source.userName||source.maGV||source.maNhanSu||raw.tenDangNhap||raw.username||raw.userName||raw.maGV||'').trim(),
+  hoTen:String(source.hoTen||source.fullName||source.name||raw.hoTen||raw.fullName||'').trim(),
   monDay:String(source.monDay||source.mon||source.monGiangDay||raw.monDay||raw.mon||'').trim(),
   chucVu:String(source.chucVu||source.viTriViecLam||source.vaiTro||raw.chucVu||raw.viTriViecLam||'').trim()
  };
@@ -744,6 +744,25 @@ function pcdkApplyHandoffSubject(){
  }
 }
 
+// KT02: chi giu ten, tai khoan, mon va chuc vu tu phan hoi da xac thuc.
+function pcdkNormalizePersonnelGroups(groups){
+ if(!Array.isArray(groups))return [];
+ return groups.filter(g=>!/^cccd$/i.test(String(g.tenTo||g.name||'').trim())
+  &&!/^workgroup:cccd$/i.test(String(g.groupKey||''))).map(g=>{
+  const seen=new Set(),safe=[];
+  (Array.isArray(g.members)?g.members:[]).forEach(raw=>{
+   const m=pcdkMember(raw),id=norm(m.username);
+   if(!id||!m.hoTen||seen.has(id))return;
+   seen.add(id);safe.push(m);
+  });
+  return {groupKey:String(g.groupKey||g.tenTo||g.name||'').trim(),
+   tenTo:String(g.tenTo||g.name||'').trim(),
+   kind:String(g.kind||'').trim().toUpperCase(),members:safe};
+ });
+}
+function pcdkHasMyTeam(groups,username){
+ return groups.some(g=>g.kind==='TEAM'&&g.members.some(m=>norm(m.username)===norm(username)));
+}
 function pcdkSetTeam(key){
  const group=personnelGroups.find(g=>String(g.groupKey||g.tenTo)===String(key));
  if(!group)return;
@@ -796,23 +815,25 @@ async function load(){
   // Ke thua tuyên du lieu CuocHop. Backend bat buoc xac thuc token.
   // Thu vien HVA_Personnel co the bao het phien neu thieu metadata expiry;
   // trong truong hop do dung JSONP chinh cung action, khong tu cap quyen.
-  let groups;
+  let groups=[],helperProblem='';
   try{
    if(!window.HVAPersonnel?.buildGroups)throw Error('Chưa tải thư viện nhân sự chung.');
-   groups=await window.HVAPersonnel.buildGroups();
-   $('msg').textContent='Bước 1/3: Phiên được tuyến nhân sự Cuộc họp chấp nhận. Đang xác định tổ...';
-  }catch(helperError){
-   $('msg').textContent='Bước 1/3: Kiểm tra phiên trực tiếp tại Backend nhân sự Cuộc họp...';
-   const response=await personnelJSONP(me.token,'getNVSMeetingPersonnel');
-   if(!Array.isArray(response.groups))throw Error('Backend nhân sự không trả danh sách nhóm tổ chuyên môn.');
-   groups=response.groups.filter(g=>!/^cccd$/i.test(String(g.tenTo||'').trim())&&!/^workgroup:cccd$/i.test(String(g.groupKey||'').trim()));
-   $('msg').textContent='Đã xác thực phiên trên Backend Cuộc họp; đang tải tổ chuyên môn...';
+   groups=pcdkNormalizePersonnelGroups(await window.HVAPersonnel.buildGroups());
+  }catch(e){helperProblem=String(e.message||e)}
+  // Nếu helper loại bản ghi thiếu username, đối chiếu cùng Backend Cuộc họp bằng tên khóa gốc.
+  if(!groups.some(g=>g.kind==='TEAM')||(!actorIsBGH&&!pcdkHasMyTeam(groups,username))){
+   $('msg').textContent='Bước 1/3: Đối chiếu danh sách tài khoản trên Backend nhân sự Cuộc họp...';
+   let response;
+   try{response=await personnelJSONP(me.token,'getNVSMeetingPersonnel')}
+   catch(e){throw Error('Tuyến nhân sự Cuộc họp từ chối phiên hoặc không kết nối: '+e.message+(helperProblem?' (Thư viện: '+helperProblem+')':''))}
+   if(!Array.isArray(response.groups))throw Error('Backend nhân sự không trả nhóm tổ chuyên môn hợp lệ.');
+   groups=pcdkNormalizePersonnelGroups(response.groups);
   }
-  $('msg').textContent='Bước 2/3: Đã nhận '+(Array.isArray(groups)?groups.length:0)+' nhóm nhân sự. Đang đối chiếu tổ với tài khoản...';
-  if(!Array.isArray(groups)||!groups.some(g=>String(g.kind||'').toUpperCase()==='TEAM'))
+  $('msg').textContent='Bước 2/3: Đã nhận '+groups.length+' nhóm nhân sự; đang đối chiếu tên đăng nhập với tổ chuyên môn...';
+  if(!groups.some(g=>g.kind==='TEAM'))
    throw Error('Dịch vụ Cuộc họp chưa trả nhóm tổ chuyên môn.');
   pcdkLoadTeamSelect(groups,me.to);
-  if(!team)throw Error('Không tìm thấy tổ chuyên môn của tài khoản đăng nhập trong danh sách Cuộc họp.');
+  if(!team)throw Error('Backend đã trả nhân sự nhưng không tìm thấy tài khoản '+username+' trong tổ chuyên môn. Kiểm tra cột O (Tên đăng nhập), M (Tổ/Bộ phận) ở Sheet chuẩn và tuyến Backend.');
   $('msg').textContent='Đã tải '+members.length+' nhân sự tổ '+team+' từ dữ liệu Cuộc họp. Đang kiểm tra quyền chuyển phát hành...';
   // Tuyến phân công chỉ dùng để đối chiếu quyền; không yêu cầu nó trả cấu trúc groups.
   try{
