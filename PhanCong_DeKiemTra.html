@@ -529,6 +529,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 .kt02u-error-input{outline:2px solid #d95232!important}
 @media(max-width:750px){.kt02u-fields{grid-template-columns:1fr}}
 @media print{body.kt02u-print header,body.kt02u-print .shell>section:not(#kt02Unified),body.kt02u-print #kt02Unified .kt02u-toolbar,body.kt02u-print #kt02Unified .kt02u-fields,body.kt02u-print #kt02Unified #uRestrictions,body.kt02u-print #kt02Unified #uRestrictionInfo,body.kt02u-print #kt02Unified #uMessage{display:none!important}body.kt02u-print .shell{max-width:none;padding:0;margin:0}body.kt02u-print #kt02Unified{border:none;background:white;box-shadow:none}body.kt02u-print .kt02u-scroll{overflow:visible;border:0}body.kt02u-print .kt02u-table{min-width:0;font-size:9pt}body.kt02u-print .kt02u-table input[type=datetime-local]{display:none!important}body.kt02u-print .kt02u-table input,body.kt02u-print .kt02u-table select{border:0;background:transparent;appearance:none} @page{size:A3 landscape;margin:12mm}}
+[id="pcdkAuth"]{display:none!important}
 </style><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="./HVA_Personnel.js"></script><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"></head><body><header class="hva-edos-standard-head" aria-label="HVA–EDOS">
   <div class="hva-edos-standard-inner">
     <a class="hva-edos-standard-back" href="./DieuHanh.html" aria-label="Quay lại Điều hành" title="Quay lại"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
@@ -649,18 +650,13 @@ function session(){
 }
 
 function kt02ShowLogin(message){
- const form=$('pcdkAuth'),err=$('pcdkAuthError');
- $('pcdkAuthGuide').textContent=(message||'Phiên đăng nhập HVA–EDOS không hợp lệ.')+' Vui lòng đăng nhập lại tại Trang chủ HVA–EDOS.';
- err.textContent='';form.hidden=false;
- $('pcdkAuthUser').disabled=true;$('pcdkAuthPassword').disabled=true;
- $('pcdkAuthSubmit').textContent='Đến Trang chủ đăng nhập';
- $('pcdkAuthSubmit').type='button';
- $('pcdkAuthSubmit').onclick=()=>{location.href=new URL('./index.html',location.href).href;};
- let old='';try{old=localStorage.getItem('hvaLastUsername')||JSON.parse(localStorage.getItem('user')||'{}').tenDangNhap||''}catch(_){}
- if(!$('pcdkAuthUser').value)$('pcdkAuthUser').value=old;
- ($('pcdkAuthUser').value?$('pcdkAuthPassword'):$('pcdkAuthUser')).focus();
+ // KT02 KHONG yeu cau dang nhap lai trong trang. Phien dung chung index.html.
+ const modal=$('pcdkAuth');if(modal)modal.hidden=true;
+ const msg=$('msg');if(msg)msg.textContent=message||'Chưa xác thực được nhân sự. KT02 vẫn giữ phiên EDOS; không tự mở đăng nhập.';
+ const retry=$('pcdkRelogin');if(retry){retry.hidden=false;retry.textContent='Thử tải lại nhân sự';}
 }
-$('pcdkRelogin').addEventListener('click',()=>kt02ShowLogin('Cần làm mới phiên EDOS tại Trang chủ.'));
+
+$('pcdkRelogin').addEventListener('click',()=>load());
 $('pcdkAuthForm').addEventListener('submit',e=>{
  e.preventDefault();
  // Dang nhap tai index.html de su dung dung phien chung; khong luu mat khau KT02.
@@ -782,6 +778,8 @@ function pcdkLoadTeamSelect(groups,preferred){
  else{members=[];team='';$('identityCount').textContent='—';$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Chưa xác định tổ chuyên môn thuộc tài khoản đăng nhập.';$('msg').textContent='Chưa xác định tổ chuyên môn theo quyền được cấp.';refreshSubjects();render();}
 }
 async function load(){
+ // Khong mo hop thoai dang nhap o KT02 trong bat ky truong hop loi nhan su nao.
+ if($('pcdkAuth'))$('pcdkAuth').hidden=true;
  const me=session(),username=me.username;
  $('identityName').textContent=me.hoTen||username||'Chưa đăng nhập';
  $('user').value=me.hoTen||username;
@@ -790,7 +788,7 @@ async function load(){
   members=[];team='';personnelTrusted=false;
   $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';
   $('pcdkRelogin').hidden=false;
-  kt02ShowLogin('Phiên đã hết hạn hoặc thiếu thông tin xác thực. Đăng nhập lại NVS để tải nhân sự tổ.');
+  kt02ShowLogin('Phiên HVA–EDOS không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại tại Trang chủ nếu cần; KT02 không yêu cầu nhập tài khoản và mật khẩu lần hai.');
   $('msg').textContent='Phiên EDOS đã hết hạn hoặc thiếu xác thực. Tên người dùng lưu trên máy không xác nhận quyền truy cập. Vui lòng đăng nhập lại NVS, sau đó mở KT02 để tải nhân sự tổ.';
   $('pcdkTeamSelect').disabled=true;$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Cần đăng nhập lại để tải danh sách tổ.';refreshSubjects();render();return;
  }
@@ -845,8 +843,8 @@ async function load(){
   $('pcdkTeamSelect').disabled=true;$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Chưa tải được danh sách giáo viên từ Cuộc họp.';
   $('pcdkRelogin').hidden=false;
   const authRejected=/phiên NVS không hợp lệ|phiên.*hết hạn|AUTH_REQUIRED|SESSION_INVALID|từ chối phiên/i.test(String(error.message||''));
-  if(authRejected)kt02ShowLogin('Backend nhân sự từ chối phiên do EDOS cấp; cần đối chiếu cơ chế xác thực trên Apps Script nhân sự, không tạo tài khoản đăng nhập KT02 riêng.');
-  $('msg').textContent='KT02 không xác thực hoặc tải được nhân sự từ tuyến Cuộc họp: '+error.message+'. '+(authRejected?'Đã mở biểu mẫu xác thực riêng KT02.':'Kiểm tra lại nguồn nhân sự và tài khoản.')+' Không dùng dữ liệu cũ để phát hành.';
+  if(authRejected)kt02ShowLogin('Backend nhân sự chưa chấp nhận phiên từ Trang chủ EDOS. Đây là lỗi liên thông Backend, không phải yêu cầu đăng nhập lại.');
+  $('msg').textContent='KT02 không xác thực hoặc tải được nhân sự từ tuyến Cuộc họp: '+error.message+'. '+(authRejected?'Phiên EDOS không bị thay đổi; không yêu cầu đăng nhập lại.':'Kiểm tra lại nguồn nhân sự và tài khoản.')+' Không dùng dữ liệu cũ để phát hành.';
   refreshSubjects();render();
  }
 }
