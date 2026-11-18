@@ -696,10 +696,16 @@ function personnelJSONP(token,action='getNVSMeetingPersonnel'){
     script.src=url.toString();document.head.appendChild(script);
   });
 }
-function pcdkMember(m){return {username:String(m.username||m.tenDangNhap||'').trim(),
- hoTen:String(m.hoTen||m.fullName||m.name||'').trim(),
- monDay:String(m.monDay||m.mon||m.raw?.monDay||'').trim(),
- chucVu:String(m.viTriViecLam||m.chucVu||m.vaiTro||'').trim()};}
+// Chi chuyen cac truong can thiet cho phan cong: khong dua CCCD, dien thoai, mat khau vao KT02.
+function pcdkMember(m){
+ const source=m||{},raw=source.raw||{};
+ return {
+  username:String(source.username||source.tenDangNhap||source.userName||raw.tenDangNhap||raw.username||'').trim(),
+  hoTen:String(source.hoTen||source.fullName||source.name||raw.hoTen||'').trim(),
+  monDay:String(source.monDay||source.mon||source.monGiangDay||raw.monDay||raw.mon||'').trim(),
+  chucVu:String(source.chucVu||source.viTriViecLam||source.vaiTro||raw.chucVu||raw.viTriViecLam||'').trim()
+ };
+}
 
 const pcdkHandoffKey='HVA_KT01_TO_KT02_V1';
 let pcdkPendingHandoff=null;
@@ -759,7 +765,7 @@ function pcdkSetTeam(key){
 function pcdkLoadTeamSelect(groups,preferred){
  personnelGroups=groups.filter(g=>String(g.kind||'').toUpperCase()==='TEAM'&&Array.isArray(g.members)&&g.members.length);
  const select=$('pcdkTeamSelect');select.textContent='';
- const own=personnelGroups.find(g=>(g.members||[]).some(m=>norm(m.username||m.tenDangNhap)===norm(actor)));
+ const own=personnelGroups.find(g=>(g.members||[]).some(m=>norm(pcdkMember(m).username)===norm(actor)));
  // TTCM chỉ được thấy tổ mà tài khoản thực sự thuộc về; BGH có danh sách các tổ.
  const visible=actorIsBGH?personnelGroups:(own?[own]:[]);
  for(const g of visible){const op=document.createElement('option');op.value=String(g.groupKey||g.tenTo);op.textContent=String(g.tenTo||g.name||g.groupKey);select.append(op);}
@@ -893,7 +899,7 @@ function renderReview(){
   members.filter(m=>m.monDay&&$('subject').value&&subjectMatches(m.monDay,$('subject').value)).forEach(m=>{const o=document.createElement('option');o.value=m.username;o.textContent=m.hoTen+' ('+m.monDay+')';select.appendChild(o)});
   const deadline=document.createElement('div');deadline.className='deadline-group';
   const date=document.createElement('input');date.type='text';date.id='reviewDate'+j;date.placeholder='dd/MM/yyyy';date.maxLength=10;date.inputMode='numeric';date.setAttribute('aria-label','Hạn '+label);
-  const time=document.createElement('input');time.type='time';time.id='reviewTime'+j;time.value='17:00';time.setAttribute('aria-label','Giờ '+label);
+  const time=document.createElement('input');time.type='time';time.id='reviewTime'+j;time.value='';time.setAttribute('aria-label','Giờ '+label);
   deadline.append(date,time);row.append(strong,select,deadline);rows.appendChild(row);
   [select,date,time].forEach(el=>{if(old[el.id]!==undefined&&(el.tagName!=='SELECT'||[...el.options].some(o=>o.value===old[el.id])))el.value=old[el.id]});
  });root.appendChild(rows);
@@ -1012,7 +1018,7 @@ $('previewSign').addEventListener('click',()=>{
 });
 function render(){const saved={};document.querySelectorAll('#assignments select,#assignments input').forEach(el=>saved[el.id]=el.value);const n=numberOfExams;const container=$('assignments');container.textContent='';for(let i=1;i<=n;i++){const title=document.createElement('h3');title.className='exam-heading';title.textContent=(i===1?'BỘ 1 – CHÍNH THỨC':i===2?'BỘ 2 – DỰ PHÒNG':'BỘ TƯƠNG ĐƯƠNG '+i)+($('pcdkAssessmentType').value==='OTHER'?' · NHIỆM VỤ ĐÁNH GIÁ':' · ĐỀ KIỂM TRA');container.appendChild(title);stages.forEach((stage,j)=>{const box=document.createElement('div');box.className='step';const text=document.createElement('div');const strong=document.createElement('strong');strong.textContent=(j+1)+'. '+stage;const small=document.createElement('small');small.textContent=j===4?'TTCM kiểm tra, xác nhận':'Không chuyển đề mật qua Drive/EDOS khi còn yêu cầu bảo mật';text.append(strong,small);const sel=document.createElement('select');sel.id='person-'+i+'-'+j;sel.setAttribute('aria-label','Giáo viên đề '+i+', công đoạn '+stage);const empty=document.createElement('option');empty.value='';empty.textContent='Chọn giáo viên trong tổ';sel.appendChild(empty);const candidates=j===4?members.filter(m=>/to truong|ttcm/.test(norm(m.chucVu))&&(actorIsBGH||(actorIsTTCM&&norm(m.username)===norm(actor)))):
  members.filter(m=>!m.monDay||!$('subject').value||subjectMatches(m.monDay,$('subject').value));
- candidates.forEach(m=>{const opt=document.createElement('option');opt.value=m.username;opt.textContent=m.hoTen+(m.monDay?' ('+m.monDay+')':'');sel.appendChild(opt)});if(j===4){const chief=candidates.find(m=>norm(m.username)===norm(actor))||candidates[0];if(chief)sel.value=chief.username;}const dateWrap=document.createElement('div');dateWrap.className='deadline-group';const date=document.createElement('input');date.type='text';date.inputMode='numeric';date.placeholder='dd/MM/yyyy';date.maxLength=10;date.id='deadline-'+i+'-'+j;date.setAttribute('aria-label','Hạn hoàn thành đề '+i+', công đoạn '+stage);const time=document.createElement('input');time.type='time';time.id='time-'+i+'-'+j;time.value='17:00';time.setAttribute('aria-label','Giờ hoàn thành đề '+i+', công đoạn '+stage);const dateEntry=document.createElement('div');dateEntry.className='date-entry';date.classList.add('date-text');const calendar=document.createElement('button');calendar.type='button';calendar.className='date-calendar';calendar.innerHTML='<i class="bi bi-calendar3" aria-hidden="true"></i>';calendar.setAttribute('aria-label','Mở lịch chọn ngày cho đề '+i+', công đoạn '+stage);const native=document.createElement('input');native.type='date';native.className='date-native';native.tabIndex=-1;native.setAttribute('aria-hidden','true');native.addEventListener('change',()=>{if(native.value){const [y,m,d]=native.value.split('-');date.value=d+'/'+m+'/'+y;date.dispatchEvent(new Event('input',{bubbles:true}));}});calendar.addEventListener('click',()=>{const match=date.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(match)native.value=match[3]+'-'+match[2]+'-'+match[1];try{if(typeof native.showPicker==='function'){native.showPicker()}else{native.focus();native.click()}}catch(_){native.style.opacity='1';native.style.pointerEvents='auto';native.style.width='100%';native.style.height='44px';native.focus();native.click();native.addEventListener('blur',()=>{native.style.opacity='0';native.style.pointerEvents='none';native.style.width='1px';native.style.height='1px'},{once:true})}});dateEntry.append(date,calendar,native);dateWrap.append(dateEntry,time);box.append(text,sel,dateWrap);container.appendChild(box);[sel,date,time].forEach(el=>{if(Object.prototype.hasOwnProperty.call(saved,el.id)&&(el.tagName!=='SELECT'||Array.from(el.options).some(o=>o.value===saved[el.id])))el.value=saved[el.id]})})}}
+ candidates.forEach(m=>{const opt=document.createElement('option');opt.value=m.username;opt.textContent=m.hoTen+(m.monDay?' ('+m.monDay+')':'');sel.appendChild(opt)});if(j===4){const chief=candidates.find(m=>norm(m.username)===norm(actor))||candidates[0];if(chief)sel.value=chief.username;}const dateWrap=document.createElement('div');dateWrap.className='deadline-group';const date=document.createElement('input');date.type='text';date.inputMode='numeric';date.placeholder='dd/MM/yyyy';date.maxLength=10;date.id='deadline-'+i+'-'+j;date.setAttribute('aria-label','Hạn hoàn thành đề '+i+', công đoạn '+stage);const time=document.createElement('input');time.type='time';time.id='time-'+i+'-'+j;time.value='';time.setAttribute('aria-label','Giờ hoàn thành đề '+i+', công đoạn '+stage);const dateEntry=document.createElement('div');dateEntry.className='date-entry';date.classList.add('date-text');const calendar=document.createElement('button');calendar.type='button';calendar.className='date-calendar';calendar.innerHTML='<i class="bi bi-calendar3" aria-hidden="true"></i>';calendar.setAttribute('aria-label','Mở lịch chọn ngày cho đề '+i+', công đoạn '+stage);const native=document.createElement('input');native.type='date';native.className='date-native';native.tabIndex=-1;native.setAttribute('aria-hidden','true');native.addEventListener('change',()=>{if(native.value){const [y,m,d]=native.value.split('-');date.value=d+'/'+m+'/'+y;date.dispatchEvent(new Event('input',{bubbles:true}));}});calendar.addEventListener('click',()=>{const match=date.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(match)native.value=match[3]+'-'+match[2]+'-'+match[1];try{if(typeof native.showPicker==='function'){native.showPicker()}else{native.focus();native.click()}}catch(_){native.style.opacity='1';native.style.pointerEvents='auto';native.style.width='100%';native.style.height='44px';native.focus();native.click();native.addEventListener('blur',()=>{native.style.opacity='0';native.style.pointerEvents='none';native.style.width='1px';native.style.height='1px'},{once:true})}});dateEntry.append(date,calendar,native);dateWrap.append(dateEntry,time);box.append(text,sel,dateWrap);container.appendChild(box);[sel,date,time].forEach(el=>{if(Object.prototype.hasOwnProperty.call(saved,el.id)&&(el.tagName!=='SELECT'||Array.from(el.options).some(o=>o.value===saved[el.id])))el.value=saved[el.id]})})}}
 function validate(){const problems=reviewIssues();const n=numberOfExams;
  if(n<pcdkMinimumSets())problems.push('Số bộ đề/nhiệm vụ chưa đạt mức tối thiểu theo kỳ kiểm tra đang chọn.');
  if(!$('pcdkConflictReview').checked)problems.push('Cần xác nhận đã rà soát xung đột lợi ích trước khi phân công.');for(let i=1;i<=n;i++){let previous='';for(let j=0;j<5;j++){const p=$('person-'+i+'-'+j).value;const d=$('deadline-'+i+'-'+j).value;if(!p)problems.push('Đề '+i+', bước '+(j+1)+': chưa chọn người phụ trách.');
@@ -1080,20 +1086,20 @@ for(const grade of ['10','11','12'])for(const [name,recipient,kind] of phases){
 function field(tag,props={}){const e=document.createElement(tag);for(const [key,value] of Object.entries(props)){if(key==='text')e.textContent=value;else if(key==='className')e.className=value;else e.setAttribute(key,String(value))}return e}
 function mkOpt(select,value,label){const o=field('option',{value,text:label});select.append(o)}
 function membersList(){
- const s=$('subject')?.value||'',norm=v=>String(v||'').toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
- const all=Array.isArray(window.HVA_PERSONNEL)?window.HVA_PERSONNEL:[];
- // Personnel is loaded by the legacy module. Do not assume a public object shape.
- const legacy=[...document.querySelectorAll('#assignments select[id^="person-"] option')].filter(x=>x.value);
- const arr=new Map();legacy.forEach(o=>arr.set(o.value,o.textContent));
- const local=[...document.querySelectorAll('#pcdkTeamMembers .pcdk-person')].map(x=>x.textContent.trim()).filter(Boolean);
- if(!arr.size)local.forEach(name=>arr.set(name,name));
- return [...arr].map(([value,name])=>({value,name})).sort((a,b)=>a.name.localeCompare(b.name,'vi'));
+ // Danh sach duy nhat tu nhom duoc Backend tra ve, khong lay text DOM/nguon Sheet cong khai.
+ // Danh sach nay chi dung khi da tai duoc nhom nhan su tu Cuoc hop.
+ if(!team||!Array.isArray(members)||!members.length)return [];
+ return members.filter(m=>m.username&&m.hoTen).map(m=>({value:m.username,name:m.hoTen}))
+  .sort((a,b)=>a.name.localeCompare(b.name,'vi'));
 }
 function blockedPerson(value,grade){return restrictions.some(r=>r.person===value&&r.grades.includes(grade))}
 function personnelSelect(value,grade,restricted){
  const s=field('select',{className:'kt02u-person'});mkOpt(s,'','Chọn giáo viên');
  membersList().forEach(m=>{if(!restricted||!blockedPerson(m.value,grade)||m.value===value)mkOpt(s,m.value,m.name)});
- if(value&&!([...s.options].some(o=>o.value===value)))mkOpt(s,value,value+' (cần rà soát)');
+ if(value&&!([...s.options].some(o=>o.value===value))){
+  // Giu lai gia tri nhap nhap truoc day de TTCM biet can chinh sua, khong chon duoc de giao moi.
+  mkOpt(s,value,value+' (không thuộc danh sách hợp lệ)');
+ }
  s.value=value||'';return s;
 }
 function dateInput(value){return field('input',{type:'datetime-local',value:value||'',className:'kt02u-deadline','aria-label':'Ngày giờ hạn hoàn thành'})}
@@ -1140,8 +1146,10 @@ function valid(){
  for(const a of assignments){
   const row='Khối '+a.grade+' – '+a.name+': ';
   if(!a.worker)errors.push(row+'chưa chọn GV thực hiện.');
+  if(a.worker&&!membersList().some(m=>m.value===a.worker))errors.push(row+'GV thực hiện không thuộc danh sách nhân sự tổ được tải từ Backend.');
   if(!a.workerDue)errors.push(row+'chưa có hạn GV thực hiện.');
   if(a.kind!=='public'&&!a.reviewer)errors.push(row+'chưa chọn GV phản biện.');
+  if(a.kind!=='public'&&a.reviewer&&!membersList().some(m=>m.value===a.reviewer))errors.push(row+'GV phản biện không thuộc danh sách nhân sự tổ được tải từ Backend.');
   if(a.kind!=='public'&&!a.reviewDue)errors.push(row+'chưa có hạn phản biện.');
   if(!a.receiveDue)errors.push(row+'chưa có hạn bàn giao.');
   if(a.kind!=='public'&&a.worker&&a.worker===a.reviewer)errors.push(row+'không được tự phản biện.');
