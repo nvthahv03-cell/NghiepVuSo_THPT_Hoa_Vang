@@ -133,6 +133,7 @@ async function post(action,payload){
 function render(){
  const status=chosen?.status||'';
  $('ktsStatus').textContent=stateLabel[status]||'Chưa có hồ sơ được duyệt';
+ if($('uScopeStatus'))$('uScopeStatus').value=status==='APPROVED'?'APPROVED':status==='PENDING'?'PENDING':'DRAFT';
  const bgh=!!actorIsBGH,ttcm=!!actorIsTTCM;
  const edit=ttcm&&(!chosen||['DRAFT','RETURNED'].includes(status));
  for(const id of Object.values(values))$(id).disabled=!edit;
