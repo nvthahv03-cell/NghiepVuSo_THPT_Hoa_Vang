@@ -52,6 +52,18 @@
 #a21SchedulePanel .a21-calendar-mark{position:absolute;right:14px;color:#096eac;font-size:21px;pointer-events:none;z-index:2}
 #a21SchedulePanel .a21-field-help{font-size:11px;color:#668299;display:block;margin-top:5px}
 @media(max-width:650px){#a21SchedulePanel .a21-user-strip{flex-wrap:wrap}#a21SchedulePanel .a21-actor-flag{margin-left:57px}}
+
+/* A.2.1 – balanced responsive schedule layout and optional specialist rooms */
+#a21SchedulePanel .a21-schedule-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:15px;row-gap:8px;align-items:start}
+#a21SchedulePanel .a21-schedule-grid>div{min-width:0}
+#a21SchedulePanel .a21-schedule-grid label{display:block;font-size:12px;font-weight:850;color:#154c77;margin:9px 0 6px}
+#a21SchedulePanel .a21-schedule-grid input,#a21SchedulePanel .a21-schedule-grid select{width:100%;min-height:44px;border:1px solid #adcfe7;border-radius:10px;font-size:13px;padding:9px 11px;box-sizing:border-box}
+#a21SchedulePanel .a21-schedule-grid input:focus,#a21SchedulePanel .a21-schedule-grid select:focus{outline:2px solid #4ea5d8;outline-offset:1px}
+#a21SchedulePanel #a21RoomWrap[hidden]{display:none!important}
+#a21SchedulePanel .a21-schedule-grid .a21-field-help{font-size:10px;color:#66869e}
+#a21SchedulePanel .a21-preview-table{min-width:830px}
+@media(max-width:800px){#a21SchedulePanel .a21-schedule-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){#a21SchedulePanel .a21-schedule-grid{grid-template-columns:minmax(0,1fr)}}
 </style><style id="hva-a1-a6-design-v1">
 :root{font-family:Inter,"Segoe UI",Arial,sans-serif}
 body{background:radial-gradient(circle at 88% 0,#d9efff,transparent 33%),#f5f8fc;color:#193951}
@@ -263,24 +275,26 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
   <span id="a21ActorFlag" class="a21-actor-flag">Chưa xác minh</span>
  </div>
  <div class="a21-form-title">01 · THÔNG TIN LỊCH KIỂM TRA</div>
- <div class="cols">
-  <div><label for="a21Grade">Khối *</label><select id="a21Grade" required><option value="">Chọn khối</option><option value="10">Khối 10</option><option value="11">Khối 11</option><option value="12">Khối 12</option></select></div>
-  <div><label for="a21Class">Lớp *</label><select id="a21Class" required disabled><option value="">Chọn khối trước</option></select></div>
-  <div><label for="a21Subject">Môn kiểm tra *</label><select id="a21Subject" required><option value="">Chọn môn kiểm tra</option><option>Ngữ văn</option><option>Toán</option><option>Tiếng Anh</option><option>Lịch sử</option><option>Địa lí</option><option>Giáo dục kinh tế và pháp luật</option><option>Vật lí</option><option>Hóa học</option><option>Sinh học</option><option>Tin học</option><option>Công nghệ</option><option>Giáo dục thể chất</option><option>Giáo dục quốc phòng và an ninh</option><option>Hoạt động trải nghiệm, hướng nghiệp</option><option>Nội dung giáo dục của địa phương</option></select></div>
-  <div><label for="a21Date">Ngày kiểm tra *</label><div class="a21-date-wrap">
+ <div class="a21-schedule-grid">
+ <div><label for="a21Grade">Khối *</label><select id="a21Grade" required><option value="">Chọn khối</option><option value="10">Khối 10</option><option value="11">Khối 11</option><option value="12">Khối 12</option></select></div>
+ <div><label for="a21Class">Lớp *</label><select id="a21Class" required disabled><option value="">Chọn khối trước</option></select></div>
+ <div><label for="a21Subject">Môn kiểm tra *</label><select id="a21Subject" required><option value="">Chọn môn kiểm tra</option><option>Ngữ văn</option><option>Toán</option><option>Tiếng Anh</option><option>Lịch sử</option><option>Địa lí</option><option>Giáo dục kinh tế và pháp luật</option><option>Vật lí</option><option>Hóa học</option><option>Sinh học</option><option>Tin học</option><option>Công nghệ</option><option>Giáo dục thể chất</option><option>Giáo dục quốc phòng và an ninh</option><option>Hoạt động trải nghiệm, hướng nghiệp</option><option>Nội dung giáo dục của địa phương</option></select></div>
+ <div><label for="a21Date">Ngày kiểm tra *</label><div class="a21-date-wrap">
   <input id="a21Date" required type="text" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off" aria-describedby="a21DateHelp">
   <input id="a21NativeDate" type="date" min="2026-12-14" max="2027-01-05" lang="vi-VN" aria-label="Chọn ngày từ lịch">
   <span class="a21-calendar-mark" aria-hidden="true">▦</span>
  </div><small id="a21DateHelp" class="a21-field-help">Định dạng Việt Nam: ngày/tháng/năm</small></div>
-  <div><label for="a21Session">Buổi *</label><select id="a21Session" required><option value="">Chọn buổi</option><option>Sáng</option><option>Chiều</option></select></div>
-  <div><label for="a21Start">Tiết bắt đầu *</label><select id="a21Start" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-  <div><label for="a21End">Tiết kết thúc *</label><select id="a21End" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-  <div class="wide"><label for="a21Assessment">Hình thức kiểm tra *</label><select id="a21Assessment" required><option value="">Chọn hình thức</option><option>Kiểm tra viết</option><option>Thực hành</option><option>Dự án / sản phẩm học tập</option><option>Hình thức khác</option></select></div>
+ <div><label for="a21Session">Buổi *</label><select id="a21Session" required><option value="">Chọn buổi</option><option>Sáng</option><option>Chiều</option></select></div>
+ <div><label for="a21Assessment">Hình thức kiểm tra *</label><select id="a21Assessment" required><option value="">Chọn hình thức</option><option>Kiểm tra viết</option><option>Thực hành</option><option>Dự án / sản phẩm học tập</option><option>Hình thức khác</option></select></div>
+ <div><label for="a21Start">Tiết bắt đầu *</label><select id="a21Start" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+ <div><label for="a21End">Tiết kết thúc *</label><select id="a21End" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+ <div><label for="a21RoomType">Địa điểm kiểm tra *</label><select id="a21RoomType" required><option value="CLASSROOM">Phòng học của lớp</option><option value="COMPUTER">Phòng máy (Tin học)</option><option value="LAB">Phòng thí nghiệm / thực hành</option><option value="FUNCTION">Phòng chức năng khác</option><option value="OUTDOOR">Sân tập / khu vực ngoài trời</option></select></div>
+ <div class="a21-room-detail" id="a21RoomWrap" hidden><label for="a21Room">Số hoặc tên phòng/khu vực *</label><input id="a21Room" maxlength="90" placeholder="Ví dụ: Phòng máy 1" autocomplete="off"><small class="a21-field-help">Ghi đúng tên phòng để tránh trùng lịch sử dụng</small></div>
  </div>
  <div class="a21-form-title">02 · KIỂM TRA VÀ XEM TRƯỚC</div>
  <section class="a21-preview-block" aria-labelledby="a21PreviewTitle">
   <div class="a21-preview-heading"><strong id="a21PreviewTitle">BẢNG XEM TRƯỚC LỊCH ĐĂNG KÝ</strong><span id="a21PreviewState">Chưa đủ thông tin</span></div>
-  <div class="a21-preview-scroll"><table class="a21-preview-table"><thead><tr><th>Lớp</th><th>Môn kiểm tra</th><th>Ngày</th><th>Buổi</th><th>Tiết</th><th>Hình thức</th></tr></thead><tbody id="a21PreviewBody"><tr><td colspan="6">Chọn môn, lớp, ngày và tiết để xem trước.</td></tr></tbody></table></div>
+  <div class="a21-preview-scroll"><table class="a21-preview-table"><thead><tr><th>Lớp</th><th>Môn kiểm tra</th><th>Ngày</th><th>Buổi</th><th>Tiết</th><th>Hình thức</th><th>Địa điểm</th></tr></thead><tbody id="a21PreviewBody"><tr><td colspan="7">Chọn môn, lớp, ngày và tiết để xem trước.</td></tr></tbody></table></div>
   <p id="a21PreviewWarning" role="status" aria-live="polite">Bảng xem trước chỉ là thông tin đang nhập, chưa được lưu lên EDOS. Backend sẽ đối chiếu lịch toàn trường trước khi nhận đăng ký.</p>
  </section>
  <div class="actions"><button type="submit">Lưu đăng ký lên EDOS</button></div>
@@ -332,5 +346,5 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 <script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script>
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
-<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v5"></script>
+<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v6"></script>
 </body></html>
