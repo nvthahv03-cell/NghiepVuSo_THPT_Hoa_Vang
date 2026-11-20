@@ -530,7 +530,7 @@ body.pcdk-paper-mode .pcdk-electronic-block{display:none!important}
 @media(max-width:750px){.kt02u-fields{grid-template-columns:1fr}}
 @media print{body.kt02u-print header,body.kt02u-print .shell>section:not(#kt02Unified),body.kt02u-print #kt02Unified .kt02u-toolbar,body.kt02u-print #kt02Unified .kt02u-fields,body.kt02u-print #kt02Unified #uRestrictions,body.kt02u-print #kt02Unified #uRestrictionInfo,body.kt02u-print #kt02Unified #uMessage{display:none!important}body.kt02u-print .shell{max-width:none;padding:0;margin:0}body.kt02u-print #kt02Unified{border:none;background:white;box-shadow:none}body.kt02u-print .kt02u-scroll{overflow:visible;border:0}body.kt02u-print .kt02u-table{min-width:0;font-size:9pt}body.kt02u-print .kt02u-table input[type=datetime-local]{display:none!important}body.kt02u-print .kt02u-table input,body.kt02u-print .kt02u-table select{border:0;background:transparent;appearance:none} @page{size:A3 landscape;margin:12mm}}
 [id="pcdkAuth"]{display:none!important}
-</style><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="./HVA_Personnel.js"></script><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"></head><body><header class="hva-edos-standard-head" aria-label="HVA–EDOS">
+</style><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="./HVA_Personnel.js?v=20261120-backend-v5"></script><link rel="stylesheet" href="./HVA_EDOS_HEADER_CUOCHOP_STANDARD.css?v=20261117"></head><body><header class="hva-edos-standard-head" aria-label="HVA–EDOS">
   <div class="hva-edos-standard-inner">
     <a class="hva-edos-standard-back" href="./DieuHanh.html" aria-label="Quay lại Điều hành" title="Quay lại"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
     <div class="hva-edos-standard-brand">
@@ -777,54 +777,28 @@ function pcdkLoadTeamSelect(groups,preferred){
  if(target){select.value=String(target.groupKey||target.tenTo);pcdkSetTeam(select.value);}
  else{members=[];team='';$('identityCount').textContent='—';$('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Chưa xác định tổ chuyên môn thuộc tài khoản đăng nhập.';$('msg').textContent='Chưa xác định tổ chuyên môn theo quyền được cấp.';refreshSubjects();render();}
 }
-// Dung action kt02Personnel cua module 32 tren cung Backend voi index.html.
-async function pcdkLoadRosterFromV5(teamName){
- const me=session();
- if(!me.valid)throw Error('Phiên EDOS hết hạn; cần đăng nhập tại Trang chủ.');
- const args=new URL(API);
- args.searchParams.set('action','kt02Personnel');
- args.searchParams.set('sessionToken',me.token);
- if(teamName)args.searchParams.set('team',teamName);
- const cb='hvaKT02Roster_'+Date.now()+'_'+Math.floor(Math.random()*1e6);
- args.searchParams.set('callback',cb);
- return await new Promise((resolve,reject)=>{
-  const node=document.createElement('script');let settled=false;
-  const cleanup=()=>{clearTimeout(timer);node.remove();try{delete window[cb]}catch(_){}};
-  const timer=setTimeout(()=>{if(settled)return;settled=true;cleanup();reject(Error('Quá thời gian xác thực nhân sự KT02.'))},18000);
-  window[cb]=data=>{if(settled)return;settled=true;cleanup();
-   if(!data||(data.success!==true&&data.ok!==true))return reject(Error(data?.message||'Backend chưa cấp quyền nhân sự KT02.'));
-   if(!Array.isArray(data.teams)||!Array.isArray(data.danhSach))return reject(Error('Tuyến kt02Personnel chưa có dữ liệu hợp lệ.'));
-   resolve(data);
-  };
-  node.onerror=()=>{if(settled)return;settled=true;cleanup();reject(Error('Không kết nối được Backend KT02.'))};
-  node.src=args.toString();document.head.appendChild(node);
- });
+/* KT02: reuse the personnel path that has passed in CuocHop.html.
+   Server-side signature/publication permission remains mandatory and separate. */
+async function pcdkVerifyAssignmentPermission(){
+  try{
+    const d=await personnelJSONP(session().token,'getPhanCongDePersonnel');
+    if(!Array.isArray(d.danhSach))return false;
+    if(!actorIsBGH&&d.to&&norm(d.to)!==norm(team))return false;
+    if(!actorIsBGH&&!d.danhSach.some(m=>norm(m.username||m.tenDangNhap)===norm(actor)))return false;
+    return true;
+  }catch(e){
+    console.warn('[KT02] Assignment permission not verified; keep draft-only.',e);
+    return false;
+  }
 }
-async function pcdkApplyRosterResult(data){
- // Quyen luon xac dinh o server. BGH duoc xem to, TTCM chi xem to minh.
- actorIsBGH=data.role==='BGH';
- actorIsTTCM=data.role==='TTCM';
- const teams=[...new Set(data.teams.map(t=>String(t||'').trim()).filter(Boolean))];
- const name=String(data.to||'').trim();
- const select=$('pcdkTeamSelect');select.replaceChildren();
- if(actorIsBGH){const placeholder=new Option('Chọn tổ chuyên môn','');select.append(placeholder);}
- teams.forEach(t=>select.append(new Option(t,t)));
- select.disabled=!actorIsBGH||teams.length<2;
- const safeMembers=data.danhSach.map(pcdkMember).filter(m=>m.username&&m.hoTen);
- personnelGroups=name?[{groupKey:name,tenTo:name,kind:'TEAM',members:safeMembers}]:[];
- personnelTrusted=true;
- if(name){
-  select.value=name;
-  pcdkSetTeam(name);
- }else{
-  team='';members=[];
-  $('identityTeam').textContent='Chọn tổ';$('identityCount').textContent='—';
-  $('pcdkRosterCount').textContent='Chọn tổ chuyên môn';
-  $('pcdkTeamMembers').textContent='Chọn tổ để tải danh sách giáo viên đã xác thực.';
-  $('identityRole').textContent=actorIsBGH?'Ban Giám hiệu':'Tổ trưởng chuyên môn';
-  refreshSubjects();render();
- }
- $('msg').textContent=name?'Đã xác thực nhân sự '+name+' từ Backend V5.':'Đã xác thực BGH. Chọn tổ chuyên môn để tải nhân sự từ Backend V5.';
+async function pcdkActivateTeam(key){
+ const selected=personnelGroups.find(g=>String(g.groupKey||g.tenTo)===String(key));
+ if(!selected){personnelTrusted=false;members=[];team='';refreshSubjects();render();return;}
+ personnelTrusted=false;
+ pcdkSetTeam(key);
+ $('msg').textContent='Đã tải danh sách giáo viên từ nguồn Cuộc họp. Đang kiểm tra quyền phân công trên Backend...';
+ personnelTrusted=await pcdkVerifyAssignmentPermission();
+ $('msg').textContent='Đã tải '+members.length+' giáo viên thuộc '+team+' từ nguồn nhân sự Cuộc họp đã PASS. '+(personnelTrusted?'Backend đã xác nhận quyền phân công.':'Chưa xác nhận được quyền phân công từ Backend; chỉ được xem và soạn nháp, chưa chuyển phát hành.');
 }
 async function load(){
  if($('pcdkAuth'))$('pcdkAuth').hidden=true;
@@ -832,36 +806,57 @@ async function load(){
  $('identityName').textContent=me.hoTen||username||'Chưa đăng nhập';
  $('user').value=me.hoTen||username;
  $('pcdkRelogin').hidden=true;
+ personnelTrusted=false;
  if(!me.valid||!username){
-  personnelTrusted=false;members=[];team='';personnelGroups=[];
+  members=[];team='';personnelGroups=[];
   $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';
   $('pcdkRelogin').hidden=false;
-  $('msg').textContent='Chưa có phiên đăng nhập EDOS hợp lệ từ index.html. KT02 không yêu cầu nhập mật khẩu lần hai.';
+  $('msg').textContent='Phiên EDOS hết hạn hoặc chưa hợp lệ; vui lòng đăng nhập tại Trang chủ.';
   $('pcdkRosterCount').textContent='Chưa tải';$('pcdkTeamMembers').textContent='Chưa có phiên hợp lệ.';
   $('pcdkTeamSelect').disabled=true;refreshSubjects();render();return;
  }
  actor=username;actorName=me.hoTen||username;
- personnelTrusted=false;
- $('identityRole').textContent='Đang xác thực trên Backend...';
- $('msg').textContent='Đang xác thực phiên và quyền KT02 với Backend đăng nhập EDOS V5...';
+ const p=norm([me.chucVu,me.to].join(' '));
+ actorIsBGH=/pho hieu truong|hieu truong|ban giam hieu|(^| )pht( |$)|(^| )bgh( |$)/.test(p);
+ actorIsTTCM=/to truong|ttcm/.test(p);
+ $('identityRole').textContent=actorIsBGH?'Ban Giám hiệu':actorIsTTCM?'Tổ trưởng chuyên môn':'Đang đối chiếu chức danh...';
+ $('msg').textContent='Đang đồng bộ nhân sự theo đúng nguồn Cuộc họp...';
  try{
-  const data=await pcdkLoadRosterFromV5('');
-  await pcdkApplyRosterResult(data);
+  if(typeof window.HVAPersonnel?.buildGroups!=='function')throw Error('Chưa tải được thư viện HVA_Personnel.js');
+  // Exact same authenticated backend call and normalization as CuocHop.html.
+  const groups=pcdkNormalizePersonnelGroups(await window.HVAPersonnel.buildGroups());
+  if(!groups.some(g=>g.kind==='TEAM'))throw Error('Nguồn nhân sự chưa trả tổ chuyên môn.');
+  if(!actorIsBGH&&!actorIsTTCM)throw Error('Tài khoản không có vai trò BGH/TTCM để phân công.');
+  const own=groups.find(g=>g.kind==='TEAM'&&g.members.some(m=>norm(m.username)===norm(actor)));
+  if(!actorIsBGH&&!own)throw Error('Chưa xác định được tổ chuyên môn của tài khoản TTCM.');
+  // BGH chooses any team; TTCM sees own team only. Server independently checks all write actions.
+  pcdkLoadTeamSelect(groups,me.to||'');
+  if(team)await pcdkVerifyAndReportCurrentTeam();
+  else $('msg').textContent='Đã tải danh sách tổ chuyên môn từ nguồn Cuộc họp. Chọn tổ để tiếp tục.';
  }catch(error){
   personnelTrusted=false;members=[];team='';personnelGroups=[];
-  $('identityRole').textContent=me.chucVu||'Chưa xác minh';
   $('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';
-  $('pcdkTeamSelect').replaceChildren(new Option('Chưa kết nối Backend KT02',''));
+  $('pcdkTeamSelect').replaceChildren(new Option('Chưa tải được nhân sự',''));
   $('pcdkTeamSelect').disabled=true;
   $('pcdkRosterCount').textContent='Chưa tải';
-  $('pcdkTeamMembers').textContent='Backend chưa xác thực được nhân sự.';
+  $('pcdkTeamMembers').textContent='Không có danh sách nhân sự hợp lệ để phân công.';
   $('pcdkRelogin').hidden=false;
-  $('msg').textContent='KT02 chưa thông Backend V5: '+String(error.message||error)+'. Kiểm tra Router get kt02Personnel và deployment cùng tuyến login. Không dùng dữ liệu giả để phát hành.';
+  $('msg').textContent='Chưa tải được nhân sự KT02: '+String(error.message||error)+'. Nguồn dùng chung với Cuộc họp, không sử dụng danh sách giả.';
   refreshSubjects();render();
  }
 }
+async function pcdkVerifyAndReportCurrentTeam(){
+ personnelTrusted=false;
+ personnelTrusted=await pcdkVerifyAssignmentPermission();
+ $('msg').textContent='Đã tải '+members.length+' giáo viên '+team+' từ nguồn Cuộc họp. '+(personnelTrusted?'Quyền phân công đã được Backend xác nhận.':'Chưa xác minh được quyền phân công từ Backend; chỉ xem và lập bản nháp.');
+}
+$('pcdkTeamSelect').addEventListener('change',async e=>{
+ resetSignedDocument();
+ const key=e.target.value;
+ if(!key){team='';members=[];personnelTrusted=false;refreshSubjects();render();return;}
+ await pcdkActivateTeam(key);
+});
 
-$('pcdkTeamSelect').addEventListener('change',async e=>{resetSignedDocument();const selected=e.target.value;if(!selected){team='';members=[];personnelTrusted=false;refreshSubjects();render();return;}personnelTrusted=false;$('msg').textContent='Đang xác thực và tải nhân sự '+selected+'...';try{const data=await pcdkLoadRosterFromV5(selected);if(norm(data.to)!==norm(selected))throw Error('Backend trả tổ khác tổ đã chọn.');await pcdkApplyRosterResult(data);}catch(err){personnelTrusted=false;team='';members=[];$('identityTeam').textContent='Chưa tải';$('identityCount').textContent='—';$('msg').textContent='Chưa tải được nhân sự tổ: '+err.message;refreshSubjects();render();}});
 const SUBJECT_BY_UNIT={
 'MATH_IT':['Toán','Tin học'],'LITERATURE':['Ngữ văn'],'ENGLISH':['Tiếng Anh'],
 'HISTORY_GEO':['Lịch sử','Địa lí','GDKT&PL'],
