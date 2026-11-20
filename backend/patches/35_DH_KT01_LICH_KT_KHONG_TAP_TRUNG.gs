@@ -1,0 +1,142 @@
+/**
+ * HVA EDOS V5 — KT01 Lich kiem tra khong tap trung, KH 400/KH-THPTHV.
+ * Additive module only. Router wiring described separately. NO doGet/doPost.
+ * One shared EDOS_DH_DB spreadsheet; tabs DH_KT01_LICH_KTTT,
+ * DH_KT01_LICH_DUYET_TO, DH_KT01_LICH_LOG.
+ */
+var HVA_KTL_HEADERS_=['ID','Username','Ho ten','To CM','Mon','Lop','Ngay','Buoi','Tiet dau','Tiet cuoi','Hinh thuc','Trang thai','Ma dot','Lan cap nhat','JSON'];
+var HVA_KTL_BATCH_HEADERS_=['ID','To CM','Trang thai','TTCM','Ngay gui BGH','BGH','Ngay duyet','Ghi chu','Phien ban','JSON'];
+function hvaKTLSh_(){return CommonDb.ensureSheet('DH_KT01_LICH_KTTT',HVA_KTL_HEADERS_);}
+function hvaKTLBatchSh_(){return CommonDb.ensureSheet('DH_KT01_LICH_DUYET_TO',HVA_KTL_BATCH_HEADERS_);}
+function hvaKTLLog_(action,actor,id,detail){
+ CommonDb.ensureSheet('DH_KT01_LICH_LOG',['Ngay gio','Hanh dong','Nguoi thuc hien','ID','Chi tiet'])
+ .appendRow([new Date().toISOString(),action,actor.username,id,String(detail||'').slice(0,1000)]);
+}
+function hvaKTLNorm_(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').trim().toLowerCase();}
+function hvaKTLActor_(p){
+ var a=nvsActor_(p||{});
+ if(!a||!a.username)throw Error('Phiên EDOS hết hạn hoặc chưa hợp lệ.');
+ // Server always determines the identity, position and team from its own personnel table.
+ var people=nvsPCDKReadPeople_().filter(function(x){return hvaKTLNorm_(x.username)===hvaKTLNorm_(a.username);});
+ if(people.length!==1)throw Error('Không xác định được duy nhất nhân sự theo tài khoản EDOS.');
+ var x=people[0],role=hvaKTLNorm_([x.viTriViecLam,x.chucVu,x.vaiTro].join(' '));
+ return {username:String(x.username),name:String(x.hoTen||''),team:String(x.toBoPhan||''),
+  chief:/(^| )(to truong|to truong chuyen mon|ttcm)( |$)/.test(role),
+  bgh:/(^| )(pho hieu truong|hieu truong|hieu pho|bgh|pht|ht)( |$)/.test(role)};
+}
+function hvaKTLRead_(sheet,n){var last=sheet.getLastRow();if(last<=1)return [];
+ return sheet.getRange(2,1,last-1,n).getValues().map(function(v,i){try{return {row:i+2,data:JSON.parse(v[n-1])};}catch(_){return null;}}).filter(Boolean);}
+function hvaKTLRow_(d){return [d.id,d.username,d.teacher,d.team,d.subject,d.className,d.date,d.session,
+ d.start,d.end,d.assessment,d.status,d.batchId||'',d.updatedAt,JSON.stringify(d)];}
+function hvaKTLBatchRow_(d){return [d.id,d.team,d.status,d.chief||'',d.submittedAt||'',
+ d.approver||'',d.decidedAt||'',d.comment||'',d.version||1,JSON.stringify(d)];}
+function hvaKTLFind_(items,id){return items.find(function(x){return x.data.id===id;})||null;}
+function hvaKTLTime_(r){
+ var d=String(r.date||''),className=String(r.className||'').trim(),
+  sub=String(r.subject||'').trim(),ses=String(r.session||'').trim();
+ var a=Number(r.start),b=Number(r.end);
+ if(!/^20\d\d-\d\d-\d\d$/.test(d)||d<'2026-12-14'||d>'2027-01-05')throw Error('Ngày ngoài khoảng 14/12/2026–05/01/2027.');
+ var dt=new Date(d+'T00:00:00Z');if(isNaN(dt.getTime())||dt.toISOString().slice(0,10)!==d)throw Error('Ngày kiểm tra không hợp lệ.');
+ if(['2026-12-24','2026-12-25','2027-01-01'].indexOf(d)>=0||dt.getUTCDay()===0)throw Error('Không tổ chức kiểm tra vào ngày nghỉ hoặc ngày 24–25/12.');
+ if(!/^(10|11|12)\/(?:[1-9]|[1-9][0-9])$/.test(className))throw Error('Lớp phải đúng dạng 10/3, 11/5 hoặc 12/9.');
+ if(['Sáng','Chiều'].indexOf(ses)<0||!Number.isInteger(a)||!Number.isInteger(b)||a<1||b>5||a>b)throw Error('Buổi/tiết không hợp lệ.');
+ if(!sub||sub.length>120||!r.assessment||String(r.assessment).length>120)throw Error('Thiếu môn hoặc hình thức kiểm tra.');
+ var fixed={'2026-12-21':{'Sáng':'12','Chiều':'11'},'2026-12-22':{'Sáng':'10','Chiều':'12'},'2026-12-23':{'Sáng':'11','Chiều':'10'}};
+ if(fixed[d]&&fixed[d][ses]===className.split('/')[0])throw Error('Buổi này khối đã kiểm tra tập trung theo Phụ lục III Kế hoạch 400.');
+ return {date:d,className:className,subject:sub,session:ses,start:a,end:b,assessment:String(r.assessment).slice(0,120)};
+}
+function hvaKTLClash_(r,items,except){
+ var peers=items.map(function(x){return x.data;}).filter(function(x){
+ return x.id!==except&&x.status!=='CANCELLED'&&x.status!=='RETURNED'
+ &&x.className===r.className&&x.date===r.date&&x.session===r.session;
+ });
+ if(peers.some(function(x){return hvaKTLNorm_(x.subject)===hvaKTLNorm_(r.subject);}))
+  throw Error('Lớp đã có lịch cùng môn trong buổi này.');
+ if((new Set(peers.map(function(x){return hvaKTLNorm_(x.subject);}))).size>=2)
+  throw Error('Một lớp không được có quá 02 môn kiểm tra trong một buổi.');
+ if(peers.some(function(x){return Number(r.start)<=Number(x.end)&&Number(x.start)<=Number(r.end);}))
+  throw Error('Trùng tiết với một môn kiểm tra khác của lớp trong cùng buổi.');
+}
+function hvaKTLList_(action,p){
+ var actor=hvaKTLActor_(p),items=hvaKTLRead_(hvaKTLSh_(),15);
+ var batches=hvaKTLRead_(hvaKTLBatchSh_(),10);
+ if(action==='ktScheduleList'){
+  var mine=items.filter(function(x){return actor.bgh||actor.chief&&hvaKTLNorm_(x.data.team)===hvaKTLNorm_(actor.team)||x.data.username===actor.username;});
+  return {ok:true,success:true,items:mine.map(function(x){return x.data;}),actor:{username:actor.username,team:actor.team,name:actor.name,chief:actor.chief,bgh:actor.bgh}};
+ }
+ if(!actor.bgh&&!actor.chief)throw Error('Chỉ TTCM/BGH xem được hồ sơ trình duyệt.');
+ var bs=batches.filter(function(x){return actor.bgh||hvaKTLNorm_(x.data.team)===hvaKTLNorm_(actor.team);}).map(function(x){return x.data;});
+ return {ok:true,success:true,batches:bs,actor:{username:actor.username,team:actor.team,chief:actor.chief,bgh:actor.bgh}};
+}
+function hvaKTLPost_(action,p){
+ var lock=LockService.getScriptLock();try{
+ var actor=hvaKTLActor_(p),now=new Date().toISOString();
+ lock.waitLock(20000);
+ try{
+  var sh=hvaKTLSh_(),items=hvaKTLRead_(sh,15);
+  var bh=hvaKTLBatchSh_(),bs=hvaKTLRead_(bh,10);
+  var teamKey=hvaKTLNorm_(actor.team);
+  if(action==='ktScheduleSave'){
+   var raw=p.record||{},id=String(raw.id||'').trim();
+   var hit=id?hvaKTLFind_(items,id):null;
+   if(id&&!hit)throw Error('Không tìm thấy lịch cần sửa.');
+   if(hit&&(hit.data.username!==actor.username||hit.data.status!=='WAIT_TTCM'))
+    throw Error('Chỉ người đăng ký được sửa lịch còn chờ TTCM.');
+   var v=hvaKTLTime_(raw);hvaKTLClash_(v,items,id);
+   var d=Object.assign({},v,{id:id||'KTL-'+Utilities.getUuid(),username:actor.username,
+    teacher:actor.name,team:actor.team,status:'WAIT_TTCM',batchId:'',updatedAt:now});
+   if(!teamKey)throw Error('Tài khoản chưa có tổ chuyên môn chuẩn.');
+   if(bs.some(function(x){return hvaKTLNorm_(x.data.team)===teamKey&&['WAIT_BGH','APPROVED'].indexOf(x.data.status)>=0;}))
+    throw Error('Lịch của tổ đã trình BGH hoặc phê duyệt. Cần quy trình yêu cầu điều chỉnh.');
+   if(hit)sh.getRange(hit.row,1,1,15).setValues([hvaKTLRow_(d)]);else sh.appendRow(hvaKTLRow_(d));
+   hvaKTLLog_('SAVE',actor,d.id,'');return {ok:true,success:true,item:d,message:'Đã lưu đăng ký vào cơ sở dữ liệu chung; chờ TTCM xác nhận.'};
+  }
+  if(action==='ktScheduleTeamSubmit'){
+   if(!actor.chief||!teamKey)throw Error('Chỉ TTCM được xác nhận lịch tổ.');
+   var reason=String(p.completenessNote||'').trim();
+   if(!p.confirmComplete||reason.length<10)throw Error('TTCM phải rà danh sách GV, lớp, môn và xác nhận đầy đủ; ghi căn cứ rà soát ít nhất 10 ký tự.');
+   var teamRows=items.filter(function(x){return hvaKTLNorm_(x.data.team)===teamKey&&x.data.status==='WAIT_TTCM';});
+   if(!teamRows.length)throw Error('Tổ chưa có lịch đăng ký chờ xác nhận.');
+   var existing=bs.find(function(x){return hvaKTLNorm_(x.data.team)===teamKey&&['WAIT_BGH','APPROVED'].indexOf(x.data.status)>=0;});
+   if(existing)throw Error('Tổ đã có gói lịch đang chờ BGH hoặc đã duyệt.');
+   // Recheck all global records before team submission, including provisional registrations.
+   teamRows.forEach(function(x){hvaKTLClash_(x.data,items,x.data.id);});
+   var batch={id:'KTLTO-'+Utilities.getUuid(),team:actor.team,status:'WAIT_BGH',
+    chief:actor.username,submittedAt:now,approver:'',decidedAt:'',comment:'',
+    completenessNote:reason,count:teamRows.length,version:1};
+   teamRows.forEach(function(x){x.data.status='WAIT_BGH';x.data.batchId=batch.id;x.data.updatedAt=now;sh.getRange(x.row,1,1,15).setValues([hvaKTLRow_(x.data)]);});
+   bh.appendRow(hvaKTLBatchRow_(batch));hvaKTLLog_('TEAM_SUBMIT',actor,batch.id,reason);
+   return {ok:true,success:true,batch:batch,message:'TTCM đã xác nhận và chuyển lịch tổ đến BGH.'};
+  }
+  if(action==='ktScheduleDecide'){
+   if(!actor.bgh)throw Error('Chỉ BGH được quyết định lịch tổ.');
+   var bid=String(p.batchId||''),hit=hvaKTLFind_(bs,bid);
+   if(!hit||hit.data.status!=='WAIT_BGH')throw Error('Gói lịch không đang chờ BGH.');
+   var decision=String(p.decision||''),comment=String(p.comment||'').trim();
+   if(['APPROVED','RETURNED'].indexOf(decision)<0)throw Error('Quyết định không hợp lệ.');
+   if(decision==='RETURNED'&&comment.length<5)throw Error('BGH cần ghi lý do trả lại.');
+   var selected=items.filter(function(x){return x.data.batchId===bid;});
+   if(!selected.length)throw Error('Gói lịch không có bản đăng ký.');
+   if(decision==='APPROVED')selected.forEach(function(x){hvaKTLClash_(x.data,items,x.data.id);});
+   hit.data.status=decision;hit.data.approver=actor.username;hit.data.decidedAt=now;hit.data.comment=comment;
+   bh.getRange(hit.row,1,1,10).setValues([hvaKTLBatchRow_(hit.data)]);
+   selected.forEach(function(x){x.data.status=decision==='APPROVED'?'APPROVED':'WAIT_TTCM';x.data.updatedAt=now;
+     if(decision!=='APPROVED')x.data.batchId='';
+     sh.getRange(x.row,1,1,15).setValues([hvaKTLRow_(x.data)]);
+   });
+   hvaKTLLog_('BGH_'+decision,actor,bid,comment);
+   return {ok:true,success:true,batch:hit.data,message:decision==='APPROVED'?'BGH đã phê duyệt lịch tổ.':'BGH đã trả lại lịch cho TTCM điều chỉnh.'};
+  }
+  throw Error('Action KT01 không hợp lệ.');
+ }finally{lock.releaseLock();}
+ }catch(e){return {ok:false,success:false,message:String(e.message||e)};}
+}
+function hvaKTLGet_(action,p){
+ var d;try{d=hvaKTLList_(action,p);}catch(e){d={ok:false,success:false,message:String(e.message||e)};}
+ if(p&&p.callback){
+  var cb=String(p.callback);if(!/^[A-Za-z_$][A-Za-z0-9_$]{0,100}$/.test(cb))return hvaJSON_({ok:false,success:false,message:'Callback không hợp lệ.'});
+  return ContentService.createTextOutput(cb+'('+JSON.stringify(d).replace(/</g,'\\u003c')+');').setMimeType(ContentService.MimeType.JAVASCRIPT);
+ }
+ return hvaJSON_(d);
+}
+function hvaKTLPostDispatch_(action,p){return hvaJSON_(hvaKTLPost_(action,p));}
