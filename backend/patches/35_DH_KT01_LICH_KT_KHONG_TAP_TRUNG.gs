@@ -44,12 +44,18 @@ function hvaKTLTime_(r){
  if(!/^(10|11|12)\/(?:[1-9]|[1-9][0-9])$/.test(className))throw Error('Lớp phải đúng dạng 10/3, 11/5 hoặc 12/9.');
  if(['Sáng','Chiều'].indexOf(ses)<0||!Number.isInteger(a)||!Number.isInteger(b)||a<1||b>5||a>b)throw Error('Buổi/tiết không hợp lệ.');
  if(!sub||sub.length>120||!r.assessment||String(r.assessment).length>120)throw Error('Thiếu môn hoặc hình thức kiểm tra.');
+ var roomType=String(r.roomType||'CLASSROOM').trim();
+ var room=String(r.room||'').trim().replace(/\s+/g,' ');
+ if(['CLASSROOM','COMPUTER','LAB','FUNCTION','OUTDOOR'].indexOf(roomType)<0)
+  throw Error('Loại địa điểm kiểm tra không hợp lệ.');
+ if(!room||room.length>90)throw Error('Bắt buộc nhập phòng/khu vực kiểm tra (tối đa 90 ký tự), kể cả kiểm tra tại lớp.');
+
  
  if(['ngu van','toan','tieng anh','lich su'].indexOf(hvaKTLNorm_(sub))>=0)
   throw Error('Kế hoạch 400: môn này kiểm tra tập trung cuối kỳ I; không đăng ký lịch không tập trung trong đợt này.');
  var fixed={'2026-12-21':{'Sáng':'12','Chiều':'11'},'2026-12-22':{'Sáng':'10','Chiều':'12'},'2026-12-23':{'Sáng':'11','Chiều':'10'}};
  if(fixed[d]&&fixed[d][ses]===className.split('/')[0])throw Error('Buổi này khối đã kiểm tra tập trung theo Phụ lục III Kế hoạch 400.');
- return {date:d,className:className,subject:sub,session:ses,start:a,end:b,assessment:String(r.assessment).slice(0,120)};
+ return {date:d,className:className,subject:sub,session:ses,start:a,end:b,assessment:String(r.assessment).slice(0,120),roomType:roomType,room:room};
 }
 function hvaKTLClash_(r,items,except){
  var peers=items.map(function(x){return x.data;}).filter(function(x){
@@ -62,6 +68,18 @@ function hvaKTLClash_(r,items,except){
   throw Error('Một lớp không được có quá 02 môn kiểm tra trong một buổi.');
  if(peers.some(function(x){return Number(r.start)<=Number(x.end)&&Number(x.start)<=Number(r.end);}))
   throw Error('Trùng tiết với một môn kiểm tra khác của lớp trong cùng buổi.');
+ // Đối chiếu TOÀN TRƯỜNG: một phòng/khu vực không được cấp cho hai lớp trùng tiết.
+ var roomKey=hvaKTLNorm_(r.room).replace(/\s+/g,'');
+ var roomPeers=items.map(function(x){return x.data;}).filter(function(x){
+  return x.id!==except&&x.status!=='CANCELLED'&&x.status!=='RETURNED'
+    &&x.date===r.date&&x.session===r.session&&x.className!==r.className
+    &&hvaKTLNorm_(x.room||'').replace(/\s+/g,'')===roomKey
+    &&Number(r.start)<=Number(x.end)&&Number(x.start)<=Number(r.end);
+ });
+ if(roomPeers.length)
+  throw Error('Phòng '+r.room+' đã được đăng ký cho lớp '+roomPeers[0].className+
+    ' trong cùng buổi và trùng tiết. Hãy chọn phòng hoặc tiết khác.');
+
 }
 function hvaKTLList_(action,p){
  var actor=hvaKTLActor_(p),items=hvaKTLRead_(hvaKTLSh_(),15);
