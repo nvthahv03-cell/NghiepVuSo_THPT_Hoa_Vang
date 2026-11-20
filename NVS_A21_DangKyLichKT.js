@@ -1,85 +1,92 @@
-/* NVS A.2.1 – Đăng ký lịch kiểm tra không tập trung.
-   Safe phase 1: interactive form, local draft + deterministic constraints.
-   NO misleading server success, NO duplicate A2.5 menu. */
+/* NVS A.2.1 | GV direct registration, ONE EDOS V5 data store. Backend is authoritative.
+   Never claim submission before server ACK; no stale browser-only registrations. */
 (function(){
 'use strict';
-const by=id=>document.getElementById(id);
-const btn=by('a21ScheduleOpen'),panel=by('a21SchedulePanel'),form=by('a21ScheduleForm');
+const $=id=>document.getElementById(id);
+const btn=$('a21ScheduleOpen'),panel=$('a21SchedulePanel'),form=$('a21ScheduleForm');
 if(!btn||!panel||!form)return;
-const messages=by('a21ScheduleMessage'),review=by('a21ScheduleDrafts');
-const key='HVA_NVS_A21_SCHEDULE_DRAFT_2026_2027';
-const normal=s=>String(s||'').trim().toLocaleLowerCase('vi');
-function selected(){return by('code')?.value==='A.2.1';}
-function sync(){const show=selected();btn.hidden=!show;if(!show)panel.hidden=true;}
-function draftRows(){
- try{const items=JSON.parse(sessionStorage.getItem(key)||'[]');return Array.isArray(items)?items:[];}
- catch(_){return [];}
+const info=$('a21ScheduleMessage'),table=$('a21ScheduleDrafts');
+const API='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
+const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+let remote=[],actor=null,ready=false,busy=false,editingId='';
+const labels={WAIT_TTCM:'Chờ TTCM xác nhận',WAIT_BGH:'Đã gửi BGH',APPROVED:'Đã được BGH duyệt'};
+const byCode=()=>$('code')?.value==='A.2.1';
+function status(s,err=false){info.textContent=s;info.style.color=err?'#a22732':'#086e57';}
+function auth(){
+ const a=window.HVAPersonnel?.ensureAuth?.();
+ if(!a||!a.getSessionState().validLocal)throw Error('Phiên EDOS hết hạn, đăng nhập lại tại trang chủ.');
+ return a.withAuthBody({}).sessionToken;
 }
-function text(s){return String(s||'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));}
-function isOverlap(a,b){return a.start<=b.end&&b.start<=a.end;}
-function report(message,error=false){
- messages.textContent=message;messages.style.color=error?'#a92c31':'#155b86';
+function sync(){btn.hidden=!byCode();if(!byCode())panel.hidden=true;}
+function get(action,params={}){
+ const token=auth();
+ return new Promise((resolve,reject)=>{
+  const cb='hvaKTL_'+Date.now()+'_'+Math.floor(Math.random()*999999);
+  const url=new URL(API);url.searchParams.set('action',action);url.searchParams.set('sessionToken',token);
+  url.searchParams.set('callback',cb);
+  for(const [k,v] of Object.entries(params))url.searchParams.set(k,String(v));
+  const s=document.createElement('script');let timer,done=false;
+  function clean(){clearTimeout(timer);s.remove();try{delete window[cb]}catch(_){}}
+  window[cb]=data=>{if(done)return;done=true;clean();if(!data?.ok||!data?.success)reject(Error(data?.message||'Backend chưa có tuyến '+action));else resolve(data)};
+  s.onerror=()=>{if(done)return;done=true;clean();reject(Error('Không kết nối được EDOS V5.'))};
+  timer=setTimeout(()=>{if(done)return;done=true;clean();reject(Error('Hết thời gian kết nối Backend.'))},16000);
+  s.src=url.toString();document.head.appendChild(s);
+ });
+}
+async function post(action,data){
+ const sessionToken=auth();
+ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,sessionToken,...data})});
+ if(!r.ok)throw Error('Máy chủ HTTP '+r.status);
+ const d=await r.json();if(!d?.ok||!d?.success)throw Error(d?.message||'Backend chưa xác nhận lưu lịch.');return d;
+}
+function localCheck(r){
+ const problems=[];
+ if(!/^(10|11|12)\/(?:[1-9]|[1-9][0-9])$/.test(r.className))problems.push('Lớp chưa đúng định dạng.');
+ if(r.date<'2026-12-14'||r.date>'2027-01-05')problems.push('Ngày ngoài thời gian 14/12/2026–05/01/2027.');
+ if(['2026-12-24','2026-12-25','2027-01-01'].includes(r.date))problems.push('Ngày không được tổ chức kiểm tra.');
+ if(r.date){const d=new Date(r.date+'T00:00:00Z');if(d.getUTCDay()===0)problems.push('Không kiểm tra vào Chủ nhật.');}
+ if(+r.start>+r.end)problems.push('Tiết bắt đầu lớn hơn tiết kết thúc.');
+ const fixed={'2026-12-21':{'Sáng':'12','Chiều':'11'},'2026-12-22':{'Sáng':'10','Chiều':'12'},'2026-12-23':{'Sáng':'11','Chiều':'10'}};
+ if(fixed[r.date]?.[r.session]===r.className.split('/')[0])problems.push('Trùng buổi kiểm tra tập trung của khối.');
+ return problems;
 }
 function render(){
- const rows=draftRows();
- if(!rows.length){review.textContent='Chưa có lịch nháp trong phiên trình duyệt.';return;}
- review.innerHTML='<div style="font-weight:800;margin-bottom:8px">Lịch đã lưu nháp (chưa gửi TTCM)</div>'+rows.map((r,i)=>
- '<div class="a21-schedule-entry"><span>'+text(r.className)+' · '+text(r.subject)+' · '+text(r.date)+' · '+text(r.session)+' · tiết '+text(r.start)+(r.end!==r.start?'–'+text(r.end):'')+'</span><button type="button" class="secondary" data-delete="'+i+'">Xóa</button></div>').join('');
+ if(!ready){table.textContent='Chưa kết nối bảng lịch chung toàn trường.';return;}
+ const rows=remote.filter(x=>x.username===actor?.username);
+ if(!rows.length){table.textContent='Thầy/cô chưa đăng ký lịch kiểm tra nào trên Backend.';return;}
+ table.innerHTML='<strong>Đăng ký của tôi (dữ liệu Backend)</strong>'+rows.map(x=>`
+ <div class="a21-schedule-entry"><span><b>${esc(x.className)} – ${esc(x.subject)}</b> · ${esc(x.date)} · ${esc(x.session)} · Tiết ${esc(x.start)}–${esc(x.end)}
+ <small style="display:block;color:#52738d">${esc(labels[x.status]||x.status)}</small></span>
+ ${x.status==='WAIT_TTCM'?'<button type="button" class="secondary" data-edit="'+esc(x.id)+'">Sửa</button>':''}</div>`).join('');
 }
-function validate(r,rows){
- const errors=[];
- if(!r.className||!r.subject||!r.date||!r.session||!r.start||!r.end||!r.assessment)errors.push('Nhập đủ lớp, môn, ngày, buổi, tiết và hình thức đánh giá.');
- if(r.date<'2026-12-14'||r.date>'2027-01-05')errors.push('Ngày kiểm tra phải thuộc khoảng 14/12/2026–05/01/2027.');
- if(['2026-12-24','2026-12-25','2027-01-01'].includes(r.date))errors.push('Ngày đã chọn thuộc ngày không bố trí kiểm tra theo kế hoạch hoặc ngày nghỉ lễ.');
- if(Number(r.start)>Number(r.end))errors.push('Tiết bắt đầu không được sau tiết kết thúc.');
- if(/^(10|11|12)\//.test(r.className)){
-  const grade=r.className.split('/')[0];
-  if((grade==='12'&&r.date==='2026-12-21'&&r.session==='Sáng')||
-     (grade==='11'&&r.date==='2026-12-21'&&r.session==='Chiều')||
-     (grade==='10'&&r.date==='2026-12-22'&&r.session==='Sáng')||
-     (grade==='12'&&r.date==='2026-12-22'&&r.session==='Chiều')||
-     (grade==='11'&&r.date==='2026-12-23'&&r.session==='Sáng')||
-     (grade==='10'&&r.date==='2026-12-23'&&r.session==='Chiều'))
-     errors.push('Khối này đã có lịch kiểm tra tập trung trong buổi đăng ký.');
- }
- const same=rows.filter(x=>x.className===r.className&&x.date===r.date&&x.session===r.session);
- if(same.some(x=>normal(x.subject)===normal(r.subject)))errors.push('Môn này đã có lịch nháp cho lớp trong cùng buổi.');
- if(new Set([...same.map(x=>normal(x.subject)),normal(r.subject)]).size>2)
-  errors.push('Một lớp không được kiểm tra quá 02 môn trong cùng buổi.');
- if(same.some(x=>isOverlap({start:+x.start,end:+x.end},{start:+r.start,end:+r.end})))
-  errors.push('Đã có một môn kiểm tra trùng tiết của lớp trong cùng buổi.');
- return errors;
+async function refresh(){
+ ready=false;render();status('Đang tải đăng ký từ bảng chung EDOS…');
+ try{const d=await get('ktScheduleList');remote=d.items||[];actor=d.actor||{};ready=true;
+  render();status('Đã đồng bộ '+remote.filter(x=>x.username===actor.username).length+' lịch của thầy/cô. Lịch lưu trên máy chủ dùng chung toàn trường.');
+ }catch(e){status('Chưa kết nối được nơi lưu chung: '+e.message+'. Không thể gửi đăng ký lúc này.',true);}
 }
-btn.addEventListener('click',()=>{
- if(!selected())return;
- panel.hidden=!panel.hidden;
- if(!panel.hidden){render();panel.scrollIntoView({behavior:'smooth',block:'start'});}
+btn.addEventListener('click',()=>{if(!byCode())return;panel.hidden=!panel.hidden;if(!panel.hidden){refresh();panel.scrollIntoView({behavior:'smooth',block:'start'});}});
+$('a21ScheduleClose')?.addEventListener('click',()=>{panel.hidden=true;});
+table.addEventListener('click',e=>{
+ const id=e.target.closest('[data-edit]')?.dataset.edit;if(!id)return;
+ const x=remote.find(r=>r.id===id&&r.username===actor?.username&&r.status==='WAIT_TTCM');if(!x)return;
+ editingId=x.id;
+ const vals={a21Class:x.className,a21Subject:x.subject,a21Date:x.date,a21Session:x.session,a21Start:x.start,a21End:x.end,a21Assessment:x.assessment};
+ for(const [k,v] of Object.entries(vals))$(k).value=String(v);
+ status('Đang sửa lịch '+x.className+' – '+x.subject+'. Chọn “Lưu đăng ký lên EDOS” để cập nhật.');
 });
-by('a21ScheduleClose')?.addEventListener('click',()=>{panel.hidden=true;});
-form.addEventListener('submit',e=>{
- e.preventDefault();
- const r={
-  className:by('a21Class').value.trim(),subject:by('a21Subject').value.trim(),
-  date:by('a21Date').value,session:by('a21Session').value,
-  start:by('a21Start').value,end:by('a21End').value,
-  assessment:by('a21Assessment').value,teacher:by('owner')?.value||'',
-  team:by('team')?.value||''
- };
- const rows=draftRows(),errors=validate(r,rows);
- if(errors.length){report(errors.join(' • '),true);return;}
- try{
-  rows.push(r);sessionStorage.setItem(key,JSON.stringify(rows));
-  report('Đã lưu lịch nháp và kiểm tra xung đột trong các lịch nháp của phiên này. CHƯA gửi TTCM hoặc EDOS–KT01.');
-  render();form.reset();
- }catch(err){report('Không lưu được bản nháp: '+err.message,true);}
+form.addEventListener('submit',async e=>{
+ e.preventDefault();if(busy)return;
+ if(!ready){status('Chưa kết nối được Backend chung; không thể gửi đăng ký.',true);return;}
+ const r={id:editingId||'',className:$('a21Class').value.trim(),subject:$('a21Subject').value.trim(),
+ date:$('a21Date').value,session:$('a21Session').value,start:+$('a21Start').value,end:+$('a21End').value,
+ assessment:$('a21Assessment').value};
+ const issues=localCheck(r);if(issues.length){status(issues.join(' • '),true);return;}
+ busy=true;form.querySelector('button[type="submit"]').disabled=true;
+ try{const data=await post('ktScheduleSave',{record:r});editingId='';form.reset();
+  status(data.message||'Đã đăng ký thành công vào bảng chung, chờ TTCM xác nhận.');await refresh();
+ }catch(err){status('CHƯA ghi lịch: '+String(err.message||err),true);}
+ finally{busy=false;form.querySelector('button[type="submit"]').disabled=false;}
 });
-review.addEventListener('click',e=>{
- const index=e.target.closest('[data-delete]')?.dataset.delete;
- if(index===undefined)return;
- const rows=draftRows();rows.splice(Number(index),1);
- sessionStorage.setItem(key,JSON.stringify(rows));render();
- report('Đã xóa lịch nháp khỏi phiên này.');
-});
-by('code')?.addEventListener('change',sync);
-sync();render();
+$('code')?.addEventListener('change',sync);sync();render();
 })();
