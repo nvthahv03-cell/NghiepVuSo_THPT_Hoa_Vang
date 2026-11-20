@@ -43,36 +43,47 @@ function hvaPersonnelEnsureAuth(){
   const TOKEN_KEY='hvaSessionToken';
   const EXPIRES_KEY='hvaSessionExpiresAt';
 
-  function getSessionToken(){
-    return String(localStorage.getItem(TOKEN_KEY)||'').trim();
+  /* Chọn CÙNG một cặp token/hạn từ một kho, không ghép chéo.
+     Login EDOS có thể ghi vào localStorage HOẶC sessionStorage.
+     Ưu tiên phiên còn hạn, tuyệt đối không sử dụng token hết hạn. */
+  function hvaPersonnelReadSession(){
+    const now=Date.now(), candidates=[];
+    for(const storageName of ['localStorage','sessionStorage']){
+      try{
+        const storage=global[storageName];
+        if(!storage)continue;
+        const token=String(storage.getItem(TOKEN_KEY)||'').trim();
+        const raw=String(storage.getItem(EXPIRES_KEY)||'').trim();
+        const numeric=Number(raw);
+        const expiresAt=raw?(Number.isFinite(numeric)&&numeric>0
+          ?(numeric<1e12?numeric*1000:numeric):Date.parse(raw)):0;
+        candidates.push({token,expiresAt:Number.isFinite(expiresAt)?expiresAt:0,storageName});
+      }catch(e){/* Trình duyệt chặn một kho: tiếp tục kiểm tra kho còn lại. */}
+    }
+    return candidates.find(x=>x.token&&x.expiresAt>now)||
+      candidates.find(x=>x.token)||{token:'',expiresAt:0};
   }
-  function getSessionExpiresAt(){
-    const raw=String(localStorage.getItem(EXPIRES_KEY)||'').trim();
-    if(!raw) return 0;
-    const numeric=Number(raw);
-    if(Number.isFinite(numeric) && numeric>0) return numeric<1e12?numeric*1000:numeric;
-    const parsed=Date.parse(raw);
-    return Number.isFinite(parsed)?parsed:0;
-  }
+  function getSessionToken(){return hvaPersonnelReadSession().token;}
+  function getSessionExpiresAt(){return hvaPersonnelReadSession().expiresAt;}
   function getSessionState(){
-    const token=getSessionToken(), expiresAt=getSessionExpiresAt(), now=Date.now();
+    const session=hvaPersonnelReadSession(), now=Date.now();
     return {
-      hasToken:!!token,
-      tokenLength:token.length,
-      expiresAt,
-      expired:!!expiresAt&&expiresAt<=now,
-      validLocal:!!token&&!!expiresAt&&expiresAt>now
+      hasToken:!!session.token,
+      tokenLength:session.token.length,
+      expiresAt:session.expiresAt,
+      expired:!!session.expiresAt&&session.expiresAt<=now,
+      validLocal:!!session.token&&!!session.expiresAt&&session.expiresAt>now
     };
   }
   function requireLocalSession(){
-    const state=getSessionState();
-    if(!state.hasToken){
+    const session=hvaPersonnelReadSession();
+    if(!session.token){
       const e=new Error('AUTH_REQUIRED'); e.code='AUTH_REQUIRED'; throw e;
     }
-    if(!state.expiresAt||state.expired){
+    if(!session.expiresAt||session.expiresAt<=Date.now()){
       const e=new Error('SESSION_EXPIRED'); e.code='SESSION_EXPIRED'; throw e;
     }
-    return getSessionToken();
+    return session.token;
   }
   function withAuthQuery(url){
     const u=new URL(url,global.location.href);
