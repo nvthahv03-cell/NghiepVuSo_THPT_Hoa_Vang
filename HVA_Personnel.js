@@ -4,7 +4,6 @@
  */
 (function(global){
 'use strict';
-
 /* =========================================================
  * HVA PERSONNEL CORE V1 – DÙNG CHUNG TOÀN HVA
  *
