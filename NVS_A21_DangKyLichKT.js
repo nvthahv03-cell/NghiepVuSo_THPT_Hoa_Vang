@@ -61,11 +61,11 @@ async function post(action,data){
 }
 function localCheck(r){
  const problems=[];
- if(!/^(10|11|12)\/(?:[1-9]|[1-9][0-9])$/.test(r.className))problems.push('Lớp chưa đúng định dạng.');
- if(r.date<'2026-12-14'||r.date>'2027-01-05')problems.push('Ngày ngoài thời gian 14/12/2026–05/01/2027.');
+ if(r.className&&!/^(10|11|12)\/(?:[1-9]|[1-9][0-9])$/.test(r.className))problems.push('Lớp chưa đúng định dạng.');
+ if(r.date&&(r.date<'2026-12-14'||r.date>'2027-01-05'))problems.push('Ngày ngoài thời gian 14/12/2026–05/01/2027.');
  if(['2026-12-24','2026-12-25','2027-01-01'].includes(r.date))problems.push('Ngày không được tổ chức kiểm tra.');
  if(r.date){const d=new Date(r.date+'T00:00:00Z');if(d.getUTCDay()===0)problems.push('Không kiểm tra vào Chủ nhật.');}
- if(+r.start>+r.end)problems.push('Tiết bắt đầu lớn hơn tiết kết thúc.');
+ if(r.start&&r.end&&+r.start>+r.end)problems.push('Tiết bắt đầu lớn hơn tiết kết thúc.');
  const fixed={'2026-12-21':{'Sáng':'12','Chiều':'11'},'2026-12-22':{'Sáng':'10','Chiều':'12'},'2026-12-23':{'Sáng':'11','Chiều':'10'}};
  if(fixed[r.date]?.[r.session]===r.className.split('/')[0])problems.push('Trùng buổi kiểm tra tập trung của khối.');
  return problems;
