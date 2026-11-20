@@ -64,6 +64,22 @@
 #a21SchedulePanel .a21-preview-table{min-width:830px}
 @media(max-width:800px){#a21SchedulePanel .a21-schedule-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:540px){#a21SchedulePanel .a21-schedule-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* A.2.1 – dependable Vietnamese date-picker (independent of browser native picker) */
+#a21SchedulePanel .a21-date-wrap{position:relative;isolation:isolate}
+#a21SchedulePanel .a21-calendar-toggle{position:absolute;right:4px;top:4px;width:38px;height:36px;border-radius:8px;background:#e8f4ff;border:0;color:#126da5;cursor:pointer;font-size:20px;z-index:4;padding:0;display:grid;place-items:center}
+#a21SchedulePanel .a21-calendar-toggle:hover,#a21SchedulePanel .a21-calendar-toggle[aria-expanded="true"]{background:#cde9fc}
+#a21SchedulePanel .a21-calendar-popup[hidden]{display:none!important}
+#a21SchedulePanel .a21-calendar-popup{position:absolute;left:0;top:calc(100% + 7px);z-index:60;width:min(320px,calc(100vw - 40px));background:#fff;border:1px solid #94bfdc;box-shadow:0 12px 30px #103f6426;padding:12px;border-radius:13px}
+#a21SchedulePanel .a21-calendar-head{display:flex;justify-content:space-between;align-items:center;gap:9px;margin-bottom:10px;color:#114d79}
+#a21SchedulePanel .a21-calendar-head button{border:1px solid #c9e1f2;border-radius:7px;padding:4px 10px;font-size:20px;background:#f0f8ff;color:#125c93;min-height:34px}
+#a21SchedulePanel .a21-calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+#a21SchedulePanel .a21-calendar-days span{display:grid;place-items:center;font-weight:700;color:#57758c;font-size:11px;min-height:30px}
+#a21SchedulePanel .a21-calendar-days button{min-height:34px;border-radius:7px;border:1px solid transparent;background:#f2f8ff;color:#144e75;font-weight:700;font-size:12px;padding:4px 0}
+#a21SchedulePanel .a21-calendar-days button:hover:not(:disabled){background:#d9edfc;border-color:#a3cae6}
+#a21SchedulePanel .a21-calendar-days button:disabled{opacity:.28;background:transparent;cursor:not-allowed}
+#a21SchedulePanel .a21-calendar-days button[aria-pressed="true"]{background:#0d6dad;color:white}
+#a21SchedulePanel .a21-calendar-popup small{display:block;color:#67869d;margin-top:9px;line-height:1.4}
 </style><style id="hva-a1-a6-design-v1">
 :root{font-family:Inter,"Segoe UI",Arial,sans-serif}
 body{background:radial-gradient(circle at 88% 0,#d9efff,transparent 33%),#f5f8fc;color:#193951}
@@ -281,8 +297,12 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
  <div><label for="a21Subject">Môn kiểm tra *</label><select id="a21Subject" required><option value="">Chọn môn kiểm tra</option><option>Ngữ văn</option><option>Toán</option><option>Tiếng Anh</option><option>Lịch sử</option><option>Địa lí</option><option>Giáo dục kinh tế và pháp luật</option><option>Vật lí</option><option>Hóa học</option><option>Sinh học</option><option>Tin học</option><option>Công nghệ</option><option>Giáo dục thể chất</option><option>Giáo dục quốc phòng và an ninh</option><option>Hoạt động trải nghiệm, hướng nghiệp</option><option>Nội dung giáo dục của địa phương</option></select></div>
  <div><label for="a21Date">Ngày kiểm tra *</label><div class="a21-date-wrap">
   <input id="a21Date" required type="text" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off" aria-describedby="a21DateHelp">
-  <input id="a21NativeDate" type="date" min="2026-12-14" max="2027-01-05" lang="vi-VN" aria-label="Chọn ngày từ lịch">
-  <span class="a21-calendar-mark" aria-hidden="true">▦</span>
+  <button type="button" id="a21CalendarToggle" class="a21-calendar-toggle" aria-label="Mở lịch chọn ngày" aria-expanded="false" aria-controls="a21CalendarPopup">▦</button>
+  <div id="a21CalendarPopup" class="a21-calendar-popup" hidden>
+   <div class="a21-calendar-head"><button type="button" id="a21CalPrev" aria-label="Tháng trước">‹</button><strong id="a21CalMonth"></strong><button type="button" id="a21CalNext" aria-label="Tháng sau">›</button></div>
+   <div id="a21CalDays" class="a21-calendar-days" role="group" aria-label="Chọn ngày kiểm tra"></div>
+   <small>Chỉ chọn ngày thuộc đợt kiểm tra theo Kế hoạch 400.</small>
+  </div>
  </div><small id="a21DateHelp" class="a21-field-help">Định dạng Việt Nam: ngày/tháng/năm</small></div>
  <div><label for="a21Session">Buổi *</label><select id="a21Session" required><option value="">Chọn buổi</option><option>Sáng</option><option>Chiều</option></select></div>
  <div><label for="a21Assessment">Hình thức kiểm tra *</label><select id="a21Assessment" required><option value="">Chọn hình thức</option><option>Kiểm tra viết</option><option>Thực hành</option><option>Dự án / sản phẩm học tập</option><option>Hình thức khác</option></select></div>
@@ -346,5 +366,5 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 <script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script>
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
-<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v7"></script>
+<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v8"></script>
 </body></html>
