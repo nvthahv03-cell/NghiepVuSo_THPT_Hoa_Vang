@@ -17,7 +17,27 @@ function auth(){
  if(!a||!a.getSessionState().validLocal)throw Error('Phiên EDOS hết hạn, đăng nhập lại tại trang chủ.');
  return a.withAuthBody({}).sessionToken;
 }
-function sync(){btn.hidden=!byCode();if(!byCode())panel.hidden=true;}
+const submitAction=$('a22OpenSubmission'),submissionPanel=$('a22SubmissionEditor');
+function markAction(which){
+ if(!byCode())return;
+ btn.classList.toggle('a21-action-active',which==='schedule');
+ submitAction?.classList.toggle('a21-action-active',which==='submission');
+ btn.setAttribute('aria-pressed',String(which==='schedule'));
+ submitAction?.setAttribute('aria-pressed',String(which==='submission'));
+}
+function sync(){
+ const active=byCode();btn.hidden=!active;
+ if(!active){
+  panel.hidden=true;
+  btn.classList.remove('a21-action-active');
+  submitAction?.classList.remove('a21-action-active');
+ }else{
+  // A.2.1 defaults to schedule registration. Other A.2 menus retain old behavior.
+  markAction('schedule');
+  panel.hidden=false;
+  submissionPanel?.classList.add('hidden');
+ }
+}
 function get(action,params={}){
  const token=auth();
  return new Promise((resolve,reject)=>{
@@ -65,8 +85,20 @@ async function refresh(){
   render();status('Đã đồng bộ '+remote.filter(x=>x.username===actor.username).length+' lịch của thầy/cô. Lịch lưu trên máy chủ dùng chung toàn trường.');
  }catch(e){status('Chưa kết nối được nơi lưu chung: '+e.message+'. Không thể gửi đăng ký lúc này.',true);}
 }
-btn.addEventListener('click',()=>{if(!byCode())return;panel.hidden=!panel.hidden;if(!panel.hidden){refresh();panel.scrollIntoView({behavior:'smooth',block:'start'});}});
-$('a21ScheduleClose')?.addEventListener('click',()=>{panel.hidden=true;});
+btn.addEventListener('click',()=>{
+ if(!byCode())return;
+ markAction('schedule');panel.hidden=false;
+ submissionPanel?.classList.add('hidden');
+ $('previewPanel')?.classList.add('hidden');
+ refresh();panel.scrollIntoView({behavior:'smooth',block:'start'});
+});
+submitAction?.addEventListener('click',()=>{
+ if(!byCode())return;
+ markAction('submission');panel.hidden=true;
+ // The original NVS_A22_Controller listener still opens the existing submission form.
+});
+
+$('a21ScheduleClose')?.addEventListener('click',()=>{panel.hidden=true;btn.classList.remove('a21-action-active');btn.setAttribute('aria-pressed','false');});
 table.addEventListener('click',e=>{
  const id=e.target.closest('[data-edit]')?.dataset.edit;if(!id)return;
  const x=remote.find(r=>r.id===id&&r.username===actor?.username&&r.status==='WAIT_TTCM');if(!x)return;
@@ -88,5 +120,5 @@ form.addEventListener('submit',async e=>{
  }catch(err){status('CHƯA ghi lịch: '+String(err.message||err),true);}
  finally{busy=false;form.querySelector('button[type="submit"]').disabled=false;}
 });
-$('code')?.addEventListener('change',sync);sync();render();
+$('code')?.addEventListener('change',sync);sync();render();if(byCode())refresh();
 })();
