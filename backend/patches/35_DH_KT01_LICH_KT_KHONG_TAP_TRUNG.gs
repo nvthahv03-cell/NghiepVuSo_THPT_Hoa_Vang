@@ -16,10 +16,13 @@ function hvaKTLNorm_(v){return String(v||'').normalize('NFD').replace(/[\u0300-\
 function hvaKTLActor_(p){
  var a=nvsActor_(p||{});
  if(!a||!a.username)throw Error('Phiên EDOS hết hạn hoặc chưa hợp lệ.');
- // Server always determines the identity, position and team from its own personnel table.
- var people=nvsPCDKReadPeople_().filter(function(x){return hvaKTLNorm_(x.username)===hvaKTLNorm_(a.username);});
- if(people.length!==1)throw Error('Không xác định được duy nhất nhân sự theo tài khoản EDOS.');
- var x=people[0],role=hvaKTLNorm_([x.viTriViecLam,x.chucVu,x.vaiTro].join(' '));
+ // Canonical personnel lookup from the V5 backend supplied by the school.
+ // Do not use the old PCDK personnel workbook or trust actor roles supplied by client.
+ if(typeof hvaTraCuuNhanSuTheoUser_!=='function')throw Error('Backend chưa có tuyến nhân sự chuẩn V5.');
+ var x=hvaTraCuuNhanSuTheoUser_(String(a.username||''));
+ if(!x||hvaKTLNorm_(x.username||x.tenDangNhap)!==hvaKTLNorm_(a.username))
+  throw Error('Không xác định được nhân sự của phiên trên nguồn chuẩn.');
+ var role=hvaKTLNorm_([x.viTriViecLam,x.chucVu,x.vaiTro].join(' '));
  return {username:String(x.username),name:String(x.hoTen||''),team:String(x.toBoPhan||''),
   chief:/(^| )(to truong|to truong chuyen mon|ttcm)( |$)/.test(role),
   bgh:/(^| )(pho hieu truong|hieu truong|hieu pho|bgh|pht|ht)( |$)/.test(role)};
