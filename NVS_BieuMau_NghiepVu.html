@@ -5,6 +5,9 @@
 :root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#173b5e;background:#f3f8fe}*{box-sizing:border-box}body{margin:0}header{background:linear-gradient(110deg,#07408e,#0873c9,#02abc9);color:white;padding:15px max(14px,calc((100vw - 1040px)/2))}header a{color:white;text-decoration:none;font-weight:800;border:1px solid #ffffff80;border-radius:10px;padding:9px 12px;display:inline-block}header h1{font-size:clamp(19px,3vw,27px);margin:13px 0 4px}header p{margin:0;color:#e0f8ff;font-size:13px}main{max-width:1040px;margin:15px auto;padding:0 14px 55px}.panel{border-radius:17px;background:#fff;border:1px solid #d5e7f5;box-shadow:0 6px 24px #174c8111;padding:19px;margin:13px 0}.note{background:#fff8e7;border:1px solid #f4dca1;color:#795515;border-radius:11px;padding:12px;line-height:1.6;font-size:13px}h2{font-size:19px;color:#0b4d8a;margin:0 0 13px}label{display:block;font-size:13px;font-weight:750;color:#1d4e75;margin:12px 0 6px}input,select,textarea{font:inherit;width:100%;padding:11px;border:1px solid #bad4e7;border-radius:10px;background:white;color:#173b5e;min-height:43px}textarea{min-height:125px;resize:vertical}input:focus,textarea:focus,select:focus{outline:2px solid #49abe1;outline-offset:1px}.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.wide{grid-column:1/-1}button,.action{border:0;border-radius:10px;padding:12px 15px;cursor:pointer;font:750 13px Inter,Arial,sans-serif;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;background:#0966b0;color:white;min-height:43px}.secondary{background:#eaf4ff;color:#12508b;border:1px solid #b9d9ef}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}.hidden{display:none!important}.report{border:1px solid #bcd5e6;background:#fff;padding:30px 27px;white-space:pre-wrap;font:14px/1.7 "Times New Roman",serif;color:#111;min-height:250px}.tag{font-size:12px;color:#9b6120;font-weight:800}#feedback{min-height:22px;margin-top:10px;color:#a22532;font-weight:700;font-size:13px}footer{text-align:center;color:#637d96;font-size:12px;margin-top:20px}.a22-special{border-top:1px solid #d6e5f2;margin-top:18px;padding-top:17px}.a22-special h3{font-size:17px;color:#075e9a;margin:0 0 6px}.a22-hint{color:#58758d;font-size:12px;line-height:1.5;margin:5px 0 13px}.a22-special .cols>div{min-width:0}.a22-special input,.a22-special textarea,.a22-special select{font-size:14px}#send[disabled]{background:#d7e3ed!important;color:#49647d;cursor:not-allowed;border:1px solid #b3c6d6}
 @media(max-width:650px){.cols{grid-template-columns:1fr}.panel{padding:13px}.report{padding:15px}}@media print{header,.note,.edit,.actions,footer,#feedback{display:none!important}body{background:#fff}main{margin:0;max-width:100%;padding:0}.panel{border:0;box-shadow:none;padding:0}.report{border:0;padding:0}}
 .hva-a-download[hidden],#a22A21Policy[hidden]{display:none!important}
+#a21ScheduleOpen[hidden],#a21SchedulePanel[hidden]{display:none!important}
+#a21SchedulePanel .a21-schedule-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #dce9f2;font-size:13px}
+#a21SchedulePanel .a21-schedule-entry button{min-height:34px;padding:5px 12px}
 </style><style id="hva-a1-a6-design-v1">
 :root{font-family:Inter,"Segoe UI",Arial,sans-serif}
 body{background:radial-gradient(circle at 88% 0,#d9efff,transparent 33%),#f5f8fc;color:#193951}
@@ -199,10 +202,29 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
  <h2 id="a22LandingTitle">Chọn nghiệp vụ</h2>
  <p class="hva-a-landing-intro">Mở mẫu do nhà trường cung cấp trên Google Drive, hoàn thiện và lưu thành tệp riêng. Khi sẵn sàng, nhập liên kết hồ sơ để nộp. Khi sẵn sàng, chọn <strong>Nộp hồ sơ</strong> để nhập đường liên kết.</p>
  <div class="hva-a-landing-actions">
+  <button type="button" class="hva-a-submit-entry" id="a21ScheduleOpen" hidden><i aria-hidden="true">▦</i><span><strong>Đăng ký lịch KT</strong><small>Các môn kiểm tra không tập trung</small></span></button>
   <button type="button" class="hva-a-download" id="a22TemplateDownload"><i aria-hidden="true">↓</i><span><strong>Mở mẫu trên Drive</strong><small>Chỉ mở mẫu do nhà trường cung cấp</small></span></button>
   <button type="button" class="hva-a-submit-entry" id="a22OpenSubmission"><i aria-hidden="true">↗</i><span><strong>Nộp hồ sơ</strong><small>Nhập đường liên kết Google Drive</small></span></button>
  </div>
  <p class="hva-a-landing-note">Nếu nhà trường chưa cập nhật link mẫu, hệ thống sẽ thông báo rõ, không tự tạo mẫu thay thế. Hồ sơ chỉ được ghi nhận khi có mã tiếp nhận.</p>
+</section>
+<section class="panel" id="a21SchedulePanel" hidden aria-label="Đăng ký lịch kiểm tra các môn không tập trung">
+ <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h2>Đăng ký lịch kiểm tra không tập trung</h2><button type="button" id="a21ScheduleClose" class="secondary">Đóng</button></div>
+ <p class="note">Theo Kế hoạch 400/KH-THPTHV: từ 14/12/2026 đến 05/01/2027; không bố trí quá 02 môn/lớp/buổi, không kiểm tra 24–25/12 và các buổi khối đã kiểm tra tập trung. <b>Giai đoạn này chỉ kiểm tra và lưu bản nháp trong phiên trình duyệt; chưa gửi TTCM hoặc KT01.</b></p>
+ <form id="a21ScheduleForm">
+ <div class="cols">
+  <div><label for="a21Class">Lớp *</label><input id="a21Class" required maxlength="10" placeholder="Ví dụ: 10/3" pattern="(10|11|12)/[0-9]{1,2}"></div>
+  <div><label for="a21Subject">Môn kiểm tra *</label><input id="a21Subject" required maxlength="100" placeholder="Ví dụ: Hóa học"></div>
+  <div><label for="a21Date">Ngày kiểm tra *</label><input id="a21Date" required type="date" min="2026-12-14" max="2027-01-05"></div>
+  <div><label for="a21Session">Buổi *</label><select id="a21Session" required><option value="">Chọn buổi</option><option>Sáng</option><option>Chiều</option></select></div>
+  <div><label for="a21Start">Tiết bắt đầu *</label><select id="a21Start" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div><label for="a21End">Tiết kết thúc *</label><select id="a21End" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="wide"><label for="a21Assessment">Hình thức kiểm tra *</label><select id="a21Assessment" required><option value="">Chọn hình thức</option><option>Kiểm tra viết</option><option>Thực hành</option><option>Dự án / sản phẩm học tập</option><option>Hình thức khác</option></select></div>
+ </div>
+ <div class="actions"><button type="submit">Kiểm tra và lưu lịch nháp</button></div>
+ </form>
+ <div id="a21ScheduleMessage" role="status" aria-live="polite" style="font-size:13px;font-weight:700;margin:12px 0"></div>
+ <div id="a21ScheduleDrafts" aria-live="polite"></div>
 </section>
 <section class="panel edit hidden" id="a22SubmissionEditor">
 <div id="a22A21Policy" hidden role="note" style="margin:0 0 16px;padding:13px 16px;background:#edf7ff;border:1px solid #a9d4ef;border-left:4px solid #0875b6;border-radius:11px;color:#194c74;font-size:13px;line-height:1.6"></div>
@@ -243,4 +265,5 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 <footer>HVA–EDOS · Trường THPT Hòa Vang · Hồ sơ được ghi nhận theo phản hồi của hệ thống, không tự động được coi là đã phê duyệt.</footer></main>
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
+<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v1"></script>
 </body></html>
