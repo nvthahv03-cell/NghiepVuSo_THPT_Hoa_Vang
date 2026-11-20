@@ -11,6 +11,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&
 let remote=[],actor=null,ready=false,busy=false,editingId='';
 const labels={WAIT_TTCM:'Chờ TTCM xác nhận',WAIT_BGH:'Đã gửi BGH',APPROVED:'Đã được BGH duyệt'};
 const byCode=()=>$('code')?.value==='A.2.1';
+const relogin=$('a21LoginAgain');
+let requestId=0;
 function status(s,err=false){info.textContent=s;info.style.color=err?'#a22732':'#086e57';}
 function auth(){
  const a=window.HVAPersonnel?.ensureAuth?.();
@@ -48,8 +50,14 @@ function get(action,params={}){
   const s=document.createElement('script');let timer,done=false;
   function clean(){clearTimeout(timer);s.remove();try{delete window[cb]}catch(_){}}
   window[cb]=data=>{if(done)return;done=true;clean();if(!data?.ok||!data?.success)reject(Error(data?.message||'Backend chưa có tuyến '+action));else resolve(data)};
-  s.onerror=()=>{if(done)return;done=true;clean();reject(Error('Không kết nối được EDOS V5.'))};
-  timer=setTimeout(()=>{if(done)return;done=true;clean();reject(Error('Hết thời gian kết nối Backend.'))},16000);
+  s.onerror=()=>{if(done)return;done=true;clean();reject(Error('Không tải được phản hồi từ Backend V5. Kiểm tra triển khai Web App và quyền truy cập.'))};
+  // Nếu Router trả JSON thông thường thay vì JSONP, script tải xong nhưng
+  // không gọi callback. Báo chính xác thay vì treo thông báo "Đang tải".
+  s.onload=()=>{if(done)return;setTimeout(()=>{
+   if(done)return;done=true;clean();
+   reject(Error('Router chưa trả JSONP cho ktScheduleList. Kiểm tra đã cài module 35, nối action GET và Deploy phiên bản Web App mới.'));
+  },300)};
+  timer=setTimeout(()=>{if(done)return;done=true;clean();reject(Error('Backend quá thời gian phản hồi. Kiểm tra triển khai Web App, phiên đăng nhập và module 35.'))},20000);
   s.src=url.toString();document.head.appendChild(s);
  });
 }
@@ -119,11 +127,28 @@ function render(){
  ${x.status==='WAIT_TTCM'?'<button type="button" class="secondary" data-edit="'+esc(x.id)+'">Sửa</button>':''}</div>`).join('');
 }
 async function refresh(){
- ready=false;render();status('Đang tải đăng ký từ bảng chung EDOS…');
- try{const d=await get('ktScheduleList');remote=d.items||[];actor=d.actor||{};ready=true;
-  render();status('Đã đồng bộ '+remote.filter(x=>x.username===actor.username).length+' lịch của thầy/cô. Lịch lưu trên máy chủ dùng chung toàn trường.');
- }catch(e){status('Chưa kết nối được nơi lưu chung: '+e.message+'. Không thể gửi đăng ký lúc này.',true);}
+ const turn=++requestId;
+ ready=false;render();status('Đang kiểm tra phiên và kết nối bảng lịch chung EDOS…');
+ if(relogin)relogin.hidden=true;
+ try{
+  // Kiểm tra phiên trước khi mở kết nối, không để người dùng chờ timeout vô ích.
+  auth();
+  const d=await get('ktScheduleList');
+  if(turn!==requestId)return;
+  remote=d.items||[];actor=d.actor||{};ready=true;
+  render();
+  status('Kết nối Backend thành công. Đã tải '+remote.filter(x=>x.username===actor.username).length+' lịch đăng ký của thầy/cô.');
+ }catch(e){
+  if(turn!==requestId)return;
+  ready=false;render();
+  const msg=String(e.message||e);
+  const expired=/phiên|đăng nhập|hết hạn|AUTH_REQUIRED|SESSION_INVALID/i.test(msg);
+  if(relogin)relogin.hidden=!expired;
+  status((expired?'Cần đăng nhập lại EDOS: ':'Chưa kết nối được dữ liệu lịch chung: ')+msg+
+  (expired?'':' Không ghi nhận đăng ký cho đến khi Backend xác nhận.'),true);
+ }
 }
+$('a21RetryConnection')?.addEventListener('click',refresh);
 btn.addEventListener('click',()=>{
  if(!byCode())return;
  markAction('schedule');panel.hidden=false;
