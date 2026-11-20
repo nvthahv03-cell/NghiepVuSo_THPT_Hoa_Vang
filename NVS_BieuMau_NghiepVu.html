@@ -210,7 +210,7 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 </section>
 <section class="panel" id="a21SchedulePanel" hidden aria-label="Đăng ký lịch kiểm tra các môn không tập trung">
  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h2>Đăng ký lịch kiểm tra không tập trung</h2><button type="button" id="a21ScheduleClose" class="secondary">Đóng</button></div>
- <p class="note">Theo Kế hoạch 400/KH-THPTHV: từ 14/12/2026 đến 05/01/2027; không bố trí quá 02 môn/lớp/buổi, không kiểm tra 24–25/12 và các buổi khối đã kiểm tra tập trung. <b>Giai đoạn này chỉ kiểm tra và lưu bản nháp trong phiên trình duyệt; chưa gửi TTCM hoặc KT01.</b></p>
+ <p class="note">Theo Kế hoạch 400/KH-THPTHV: từ 14/12/2026 đến 05/01/2027; không bố trí quá 02 môn/lớp/buổi, không kiểm tra 24–25/12 và các buổi khối đã kiểm tra tập trung. <b>Hệ thống chỉ xác nhận đã đăng ký sau khi Backend chung phản hồi thành công. TTCM rà soát lịch toàn tổ và gửi BGH trên KT01.</b></p>
  <form id="a21ScheduleForm">
  <div class="cols">
   <div><label for="a21Class">Lớp *</label><input id="a21Class" required maxlength="10" placeholder="Ví dụ: 10/3" pattern="(10|11|12)/[0-9]{1,2}"></div>
@@ -221,7 +221,7 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
   <div><label for="a21End">Tiết kết thúc *</label><select id="a21End" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
   <div class="wide"><label for="a21Assessment">Hình thức kiểm tra *</label><select id="a21Assessment" required><option value="">Chọn hình thức</option><option>Kiểm tra viết</option><option>Thực hành</option><option>Dự án / sản phẩm học tập</option><option>Hình thức khác</option></select></div>
  </div>
- <div class="actions"><button type="submit">Kiểm tra và lưu lịch nháp</button></div>
+ <div class="actions"><button type="submit">Lưu đăng ký lên EDOS</button></div>
  </form>
  <div id="a21ScheduleMessage" role="status" aria-live="polite" style="font-size:13px;font-weight:700;margin:12px 0"></div>
  <div id="a21ScheduleDrafts" aria-live="polite"></div>
@@ -263,7 +263,8 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 <div id="feedback" aria-live="polite"></div></form></section>
 <section class="panel hidden" id="previewPanel"><div class="hva-a-kicker">KIỂM TRA NỘI DUNG TRƯỚC KHI GỬI</div><h2 id="a22PreviewTitle">Bản xem trước hồ sơ</h2><div class="report" id="preview"></div><div class="actions"><button type="button" id="print">In / lưu PDF bản nháp</button><button type="button" class="secondary" id="edit">← Quay lại chỉnh sửa</button><button type="button" class="secondary" id="a22PreviewBackToLanding">← Về lựa chọn biểu mẫu</button></div></section>
 <footer>HVA–EDOS · Trường THPT Hòa Vang · Hồ sơ được ghi nhận theo phản hồi của hệ thống, không tự động được coi là đã phê duyệt.</footer></main>
+<script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script>
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
-<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v1"></script>
+<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v2"></script>
 </body></html>
