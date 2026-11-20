@@ -96,6 +96,17 @@ function gate(){
   window.HVA_KT02_APPROVED_SCOPE_ID=chosen.id;
  }else window.HVA_KT02_APPROVED_SCOPE_ID='';
 }
+async function verifyApprovalOnline(){
+ if(!isApprovedCurrent())throw Error('Chưa có nội dung kiểm tra được BGH phê duyệt phù hợp tổ, môn, khối và kỳ.');
+ const r=await jsonp('kt02ScopeGet',{id:chosen.id});
+ const d=r.item;
+ if(d.status!=='APPROVED'||!same(d.team,team)||!same(d.grade,$('grade')?.value)||!same(d.subject,$('subject')?.value)||!same(d.exam,$('exam')?.value))
+  throw Error('Quyết định BGH chưa hợp lệ hoặc không khớp phân công hiện tại.');
+ // Cập nhật mã hồ sơ đã được server xác nhận để chuyển hồ sơ trình phát hành.
+ window.HVA_KT02_APPROVED_SCOPE_ID=d.id;
+ return d;
+}
+window.HVA_KT02_VERIFY_SCOPE=verifyApprovalOnline;
 function jsonp(action,params={}){
  const t=token();return new Promise((resolve,reject)=>{
   const cb='kt02ScopeCallback_'+Date.now()+'_'+Math.floor(Math.random()*999999);
