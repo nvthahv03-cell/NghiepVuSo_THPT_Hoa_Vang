@@ -44,6 +44,9 @@ function hvaKTLTime_(r){
  if(!/^(10|11|12)\/(?:[1-9]|[1-9][0-9])$/.test(className))throw Error('Lớp phải đúng dạng 10/3, 11/5 hoặc 12/9.');
  if(['Sáng','Chiều'].indexOf(ses)<0||!Number.isInteger(a)||!Number.isInteger(b)||a<1||b>5||a>b)throw Error('Buổi/tiết không hợp lệ.');
  if(!sub||sub.length>120||!r.assessment||String(r.assessment).length>120)throw Error('Thiếu môn hoặc hình thức kiểm tra.');
+ 
+ if(['ngu van','toan','tieng anh','lich su'].indexOf(hvaKTLNorm_(sub))>=0)
+  throw Error('Kế hoạch 400: môn này kiểm tra tập trung cuối kỳ I; không đăng ký lịch không tập trung trong đợt này.');
  var fixed={'2026-12-21':{'Sáng':'12','Chiều':'11'},'2026-12-22':{'Sáng':'10','Chiều':'12'},'2026-12-23':{'Sáng':'11','Chiều':'10'}};
  if(fixed[d]&&fixed[d][ses]===className.split('/')[0])throw Error('Buổi này khối đã kiểm tra tập trung theo Phụ lục III Kế hoạch 400.');
  return {date:d,className:className,subject:sub,session:ses,start:a,end:b,assessment:String(r.assessment).slice(0,120)};
