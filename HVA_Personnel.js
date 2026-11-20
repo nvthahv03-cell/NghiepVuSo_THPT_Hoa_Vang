@@ -115,7 +115,7 @@ async function hvaPersonnelGet(action, params={}){
   const auth=hvaPersonnelEnsureAuth();
   const user=hvaPersonnelCurrentUser();
   const api=global.PERSONNEL_SEARCH_API ||
-    'https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
+    'https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
   const u=new URL(api);
 
   u.searchParams.set('action',hvaPersonnelText(action));
@@ -292,7 +292,7 @@ function hvaPersonnelUnitKey(v){
 
 async function hvaPersonnelBuildGroups(){
   const api=global.PERSONNEL_SEARCH_API ||
-    'https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
+    'https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
   const auth=hvaPersonnelEnsureAuth();
   const token=auth.withAuthBody({}).sessionToken;
   return new Promise((resolve,reject)=>{
