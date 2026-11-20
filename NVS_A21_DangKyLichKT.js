@@ -11,6 +11,17 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&
 let remote=[],actor=null,ready=false,busy=false,editingId='';
 const labels={WAIT_TTCM:'Chờ TTCM xác nhận',WAIT_BGH:'Đã gửi BGH',APPROVED:'Đã được BGH duyệt'};
 const byCode=()=>$('code')?.value==='A.2.1';
+const roomTypes={CLASSROOM:'Phòng học của lớp',COMPUTER:'Phòng máy',LAB:'Phòng thí nghiệm / thực hành',FUNCTION:'Phòng chức năng',OUTDOOR:'Sân tập / ngoài trời'};
+function setRoomMode(){
+ const type=$('a21RoomType').value||'CLASSROOM',extra=type!=='CLASSROOM';
+ const wrap=$('a21RoomWrap');
+ if(wrap)wrap.hidden=!extra;
+ $('a21Room').required=extra;
+ if(!extra)$('a21Room').value='';
+ updatePreview();
+}
+$('a21RoomType')?.addEventListener('change',setRoomMode);
+
 const classMax=Object.freeze({'10':9,'11':9,'12':12});
 const gradeSelect=$('a21Grade'),classSelect=$('a21Class'),dateInput=$('a21Date'),nativeDate=$('a21NativeDate');
 function buildClassSelect(grade,selected=''){
@@ -136,7 +147,7 @@ function currentDraft(){
   className:$('a21Class').value.trim(),subject:$('a21Subject').value,
   date:viToIso($('a21Date').value),session:$('a21Session').value,
   start:$('a21Start').value,end:$('a21End').value,
-  assessment:$('a21Assessment').value
+  assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:$('a21Room').value.trim()
  };
 }
 function displayDate(s){
@@ -148,19 +159,20 @@ function updatePreview(){
  if(!row||!flag||!warning)return;
  const empty=!p.className&&!p.subject&&!p.date&&!p.session&&!p.start&&!p.end&&!p.assessment;
  if(empty){
-  row.innerHTML='<tr><td colspan="6">Chọn môn, lớp, ngày và tiết để xem trước.</td></tr>';
+  row.innerHTML='<tr><td colspan="7">Chọn môn, lớp, ngày và tiết để xem trước.</td></tr>';
   flag.textContent='Chưa đủ thông tin';warning.textContent='Bảng này thể hiện nội dung đang nhập; chưa gửi đến TTCM.';return;
  }
  const rawDay=dateInput.value.trim();
  const dateInvalid=!!rawDay&&!viToIso(rawDay);
  const r={...p,start:Number(p.start),end:Number(p.end)};
  const issues=localCheck(r);
+ if(p.roomType!=='CLASSROOM'&&!p.room)issues.push('Chọn địa điểm chuyên dụng cần ghi số hoặc tên phòng/khu vực.');
  if(dateInvalid)issues.unshift('Ngày không đúng định dạng Việt Nam dd/mm/yyyy hoặc không tồn tại.');
- const incomplete=!p.className||!p.subject||!p.date||!p.session||!p.start||!p.end||!p.assessment;
+ const incomplete=!p.className||!p.subject||!p.date||!p.session||!p.start||!p.end||!p.assessment||(p.roomType!=='CLASSROOM'&&!p.room);
  row.innerHTML='<tr>'+[
   p.className,p.subject,displayDate(p.date),p.session,
   p.start?(p.start+(p.end&&p.end!==p.start?'–'+p.end:'')):'—',
-  p.assessment
+  p.assessment,(roomTypes[p.roomType]||'Phòng học')+(p.room?' – '+p.room:'')
  ].map(x=>'<td>'+esc(x||'—')+'</td>').join('')+'</tr>';
  flag.textContent=issues.length?'Có lỗi cần sửa':incomplete?'Chưa đủ thông tin':'Sẵn sàng kiểm tra trên Backend';
  flag.style.color=issues.length?'#ab3032':incomplete?'#70511d':'#096947';
@@ -222,9 +234,9 @@ table.addEventListener('click',e=>{
  editingId=x.id;
  gradeSelect.value=String(x.className||'').split('/')[0];
  buildClassSelect(gradeSelect.value,x.className);
- const vals={a21Subject:x.subject,a21Date:isoToVi(x.date),a21Session:x.session,a21Start:x.start,a21End:x.end,a21Assessment:x.assessment};
+ const vals={a21Subject:x.subject,a21Date:isoToVi(x.date),a21Session:x.session,a21Start:x.start,a21End:x.end,a21Assessment:x.assessment,a21RoomType:x.roomType||'CLASSROOM',a21Room:x.room||''};
  for(const [k,v] of Object.entries(vals))$(k).value=String(v);
- nativeDate.value=x.date;updatePreview();
+ nativeDate.value=x.date;setRoomMode();updatePreview();
  status('Đang sửa lịch '+x.className+' – '+x.subject+'. Chọn “Lưu đăng ký lên EDOS” để cập nhật.');
 });
 form.addEventListener('submit',async e=>{
@@ -232,13 +244,13 @@ form.addEventListener('submit',async e=>{
  if(!ready){status('Chưa kết nối được Backend chung; không thể gửi đăng ký.',true);return;}
  const r={id:editingId||'',className:$('a21Class').value.trim(),subject:$('a21Subject').value.trim(),
  date:viToIso($('a21Date').value),session:$('a21Session').value,start:+$('a21Start').value,end:+$('a21End').value,
- assessment:$('a21Assessment').value};
- const issues=localCheck(r);if(!r.date)issues.unshift('Ngày kiểm tra phải nhập đúng định dạng dd/mm/yyyy.');if(issues.length){status(issues.join(' • '),true);return;}
+ assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:$('a21Room').value.trim()};
+ const issues=localCheck(r);if(r.roomType!=='CLASSROOM'&&!r.room)issues.unshift('Cần nhập số/tên phòng hoặc khu vực kiểm tra.');if(!r.date)issues.unshift('Ngày kiểm tra phải nhập đúng định dạng dd/mm/yyyy.');if(issues.length){status(issues.join(' • '),true);return;}
  busy=true;form.querySelector('button[type="submit"]').disabled=true;
- try{const data=await post('ktScheduleSave',{record:r});editingId='';form.reset();buildClassSelect('');nativeDate.value='';
+ try{const data=await post('ktScheduleSave',{record:r});editingId='';form.reset();buildClassSelect('');nativeDate.value='';setRoomMode();
   status(data.message||'Đã đăng ký thành công vào bảng chung, chờ TTCM xác nhận.');updatePreview();await refresh();
  }catch(err){status('CHƯA ghi lịch: '+String(err.message||err),true);}
  finally{busy=false;form.querySelector('button[type="submit"]').disabled=false;}
 });
-$('code')?.addEventListener('change',sync);sync();render();updateActorCard(null);updatePreview();if(byCode())refresh();
+$('code')?.addEventListener('change',sync);sync();render();updateActorCard(null);setRoomMode();updatePreview();if(byCode())refresh();
 })();
