@@ -20,7 +20,7 @@ root.innerHTML=`<div style="display:flex;align-items:center;justify-content:spac
 <div id="ktlBatchArea"><h3 style="color:#13547f">Hồ sơ lịch trình BGH</h3><div id="ktlBatches">Chưa tải danh sách.</div></div>
 <h3 style="color:#13547f">Lịch kiểm tra của giáo viên</h3>
 <div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12px" id="ktlTable"><thead><tr>
-<th>Giáo viên</th><th>Tổ</th><th>Lớp</th><th>Môn</th><th>Ngày</th><th>Buổi / Tiết</th><th>Trạng thái</th></tr></thead><tbody></tbody></table></div>
+<th>Giáo viên</th><th>Tổ</th><th>Lớp</th><th>Môn</th><th>Ngày</th><th>Buổi / Tiết</th><th>Phòng / Khu vực</th><th>Trạng thái</th></tr></thead><tbody></tbody></table></div>
 <div id="ktlDecision" hidden style="margin-top:18px;padding:14px;border:1px solid #b9d7e8;border-radius:10px">
 <strong id="ktlSelectedTitle"></strong>
 <label style="display:block;margin:9px 0">Ý kiến BGH<textarea id="ktlComment" rows="2" style="width:100%;padding:10px;border:1px solid #bdcfe2;border-radius:9px" placeholder="Lý do khi trả lại TTCM"></textarea></label>
@@ -67,8 +67,9 @@ function render(){
  const visible=records.slice().sort((a,b)=>String(a.date+a.session+a.className).localeCompare(String(b.date+b.session+b.className)));
  tbody.innerHTML=visible.map(x=>`<tr style="border-top:1px solid #dae8f1"><td style="padding:8px">${esc(x.teacher)}</td><td style="padding:8px">${esc(x.team)}</td><td style="padding:8px">${esc(x.className)}</td>
  <td style="padding:8px">${esc(x.subject)}</td><td style="padding:8px">${esc(x.date)}</td><td style="padding:8px">${esc(x.session)} · ${esc(x.start)}–${esc(x.end)}</td>
+ <td style="padding:8px">${esc(x.room||'Chưa có phòng')}</td>
  <td style="padding:8px">${esc(statusText[x.status]||x.status)}</td></tr>`).join('');
- if(!visible.length)tbody.innerHTML='<tr><td colspan="7" style="padding:12px">Chưa có lịch đăng ký trong phạm vi được xem.</td></tr>';
+ if(!visible.length)tbody.innerHTML='<tr><td colspan="8" style="padding:12px">Chưa có lịch đăng ký trong phạm vi được xem.</td></tr>';
  $('ktlBatches').innerHTML=batches.map(x=>`<div style="margin:7px 0;padding:10px;border:1px solid #d2e4ef;border-radius:10px">
  <b>${esc(x.team)}</b> · ${esc(x.count)} lịch · ${esc(statusText[x.status]||x.status)}
  <small style="display:block;color:#54738b">TTCM: ${esc(x.chief)} · ${esc(x.submittedAt)} ${x.comment?'· Ý kiến BGH: '+esc(x.comment):''}</small>
