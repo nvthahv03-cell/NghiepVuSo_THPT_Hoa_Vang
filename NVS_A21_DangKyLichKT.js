@@ -61,6 +61,9 @@ async function post(action,data){
 }
 function localCheck(r){
  const problems=[];
+ const centralized=['ngữ văn','toán','tiếng anh','lịch sử'];
+ if(centralized.includes(String(r.subject||'').trim().toLocaleLowerCase('vi')))
+  problems.push('Môn này kiểm tra tập trung cuối kỳ I theo Kế hoạch 400; không đăng ký lịch không tập trung trong đợt này.');
  if(r.className&&!/^(10|11|12)\/(?:[1-9]|[1-9][0-9])$/.test(r.className))problems.push('Lớp chưa đúng định dạng.');
  if(r.date&&(r.date<'2026-12-14'||r.date>'2027-01-05'))problems.push('Ngày ngoài thời gian 14/12/2026–05/01/2027.');
  if(['2026-12-24','2026-12-25','2027-01-01'].includes(r.date))problems.push('Ngày không được tổ chức kiểm tra.');
