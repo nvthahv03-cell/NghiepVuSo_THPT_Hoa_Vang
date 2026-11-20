@@ -677,6 +677,8 @@ window.hvaNotice=function(message){
 const WEB_APP_URL='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
 // HVA NHAN SU FULL: dung dung SEARCH_API dang PASS cua Kinh lup; khong thay WEB_APP_URL nghiep vu Cuoc hop.
 const PERSONNEL_SEARCH_API='https://script.google.com/macros/s/AKfycbzj-6VHIUrnRfIBvzpM2R9ImU3Ikov8C49xNfB8JhcrN9kJTSBqwRgK63fea_Jbyr4U/exec';
+// Chuyen dia chi nhan su Cuoc hop sang thu vien HVA_Personnel.js (doc window.PERSONNEL_SEARCH_API).
+window.PERSONNEL_SEARCH_API=PERSONNEL_SEARCH_API;
 let meetingAllToData=[]; const meetingSelectedUsernames=new Set();
 const $=id=>document.getElementById(id);
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
