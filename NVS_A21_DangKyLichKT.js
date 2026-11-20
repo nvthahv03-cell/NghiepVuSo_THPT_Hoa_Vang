@@ -13,11 +13,11 @@ const labels={WAIT_TTCM:'Chờ TTCM xác nhận',WAIT_BGH:'Đã gửi BGH',APPRO
 const byCode=()=>$('code')?.value==='A.2.1';
 const roomTypes={CLASSROOM:'Phòng học của lớp',COMPUTER:'Phòng máy',LAB:'Phòng thí nghiệm / thực hành',FUNCTION:'Phòng chức năng',OUTDOOR:'Sân tập / ngoài trời'};
 function setRoomMode(){
- const type=$('a21RoomType').value||'CLASSROOM',extra=type!=='CLASSROOM';
- const wrap=$('a21RoomWrap');
- if(wrap)wrap.hidden=!extra;
- $('a21Room').required=extra;
- if(!extra)$('a21Room').value='';
+ const type=$('a21RoomType').value||'CLASSROOM';
+ const wrap=$('a21RoomWrap'),room=$('a21Room');
+ if(wrap)wrap.hidden=false;
+ room.required=true;
+ room.placeholder=type==='CLASSROOM'?'Ví dụ: P.203, phòng học 10/3':type==='COMPUTER'?'Ví dụ: Phòng máy 1':type==='OUTDOOR'?'Ví dụ: Sân thể dục A':'Ví dụ: Phòng thí nghiệm 2';
  updatePreview();
 }
 $('a21RoomType')?.addEventListener('change',setRoomMode);
@@ -166,9 +166,9 @@ function updatePreview(){
  const dateInvalid=!!rawDay&&!viToIso(rawDay);
  const r={...p,start:Number(p.start),end:Number(p.end)};
  const issues=localCheck(r);
- if(p.roomType!=='CLASSROOM'&&!p.room)issues.push('Chọn địa điểm chuyên dụng cần ghi số hoặc tên phòng/khu vực.');
+ if(!p.room)issues.push('Bắt buộc nhập số/tên phòng hoặc khu vực, kể cả kiểm tra tại lớp.');
  if(dateInvalid)issues.unshift('Ngày không đúng định dạng Việt Nam dd/mm/yyyy hoặc không tồn tại.');
- const incomplete=!p.className||!p.subject||!p.date||!p.session||!p.start||!p.end||!p.assessment||(p.roomType!=='CLASSROOM'&&!p.room);
+ const incomplete=!p.className||!p.subject||!p.date||!p.session||!p.start||!p.end||!p.assessment||!p.room;
  row.innerHTML='<tr>'+[
   p.className,p.subject,displayDate(p.date),p.session,
   p.start?(p.start+(p.end&&p.end!==p.start?'–'+p.end:'')):'—',
@@ -245,7 +245,7 @@ form.addEventListener('submit',async e=>{
  const r={id:editingId||'',className:$('a21Class').value.trim(),subject:$('a21Subject').value.trim(),
  date:viToIso($('a21Date').value),session:$('a21Session').value,start:+$('a21Start').value,end:+$('a21End').value,
  assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:$('a21Room').value.trim()};
- const issues=localCheck(r);if(r.roomType!=='CLASSROOM'&&!r.room)issues.unshift('Cần nhập số/tên phòng hoặc khu vực kiểm tra.');if(!r.date)issues.unshift('Ngày kiểm tra phải nhập đúng định dạng dd/mm/yyyy.');if(issues.length){status(issues.join(' • '),true);return;}
+ const issues=localCheck(r);if(!r.room)issues.unshift('Cần nhập số/tên phòng hoặc khu vực kiểm tra.');if(!r.date)issues.unshift('Ngày kiểm tra phải nhập đúng định dạng dd/mm/yyyy.');if(issues.length){status(issues.join(' • '),true);return;}
  busy=true;form.querySelector('button[type="submit"]').disabled=true;
  try{const data=await post('ktScheduleSave',{record:r});editingId='';form.reset();buildClassSelect('');nativeDate.value='';setRoomMode();
   status(data.message||'Đã đăng ký thành công vào bảng chung, chờ TTCM xác nhận.');updatePreview();await refresh();
