@@ -8,6 +8,17 @@
 #a21ScheduleOpen[hidden],#a21SchedulePanel[hidden]{display:none!important}
 #a21SchedulePanel .a21-schedule-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #dce9f2;font-size:13px}
 #a21SchedulePanel .a21-schedule-entry button{min-height:34px;padding:5px 12px}
+/* A.2.1 – distinct active function; no impact on other menu pages. */
+.hva-a-brand .hva-a-brand-hva,.hva-a-brand .hva-a-brand-dash{color:#fff!important}
+.hva-a-brand .hva-a-brand-edos{color:#ffb33b!important}
+.hva-a-landing-actions button.a21-action-active{
+ background:#ffbf5a!important;color:#083d69!important;
+ border:2px solid #dc8d19!important;box-shadow:0 6px 17px rgba(150,88,7,.20)!important;
+}
+.hva-a-landing-actions button.a21-action-active i{background:rgba(132,72,0,.12)!important;color:#083d69!important}
+.hva-a-landing-actions button.a21-action-active strong,
+.hva-a-landing-actions button.a21-action-active small{color:#083d69!important}
+.hva-a-landing-actions button.a21-action-active:focus-visible{outline:3px solid #0b66ad;outline-offset:3px}
 </style><style id="hva-a1-a6-design-v1">
 :root{font-family:Inter,"Segoe UI",Arial,sans-serif}
 body{background:radial-gradient(circle at 88% 0,#d9efff,transparent 33%),#f5f8fc;color:#193951}
@@ -195,7 +206,7 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 }
 @media print{.hva-a-user-bar,.hva-a-a1-top{display:none!important}}
 </style></head><body>
-<header class="hva-a-header"><div class="hva-a-header-top"><a class="hva-a-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ số" title="Quay lại Nghiệp vụ số">←</a><div class="hva-a-identity"><div class="hva-a-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a-brand">HVA–EDOS</div></div></div><div class="hva-a-header-bottom"><div class="hva-a-section-code" id="a22HeaderCode">HỒ SƠ CHUYÊN MÔN</div><h1 id="a22HeaderTitle">Biểu mẫu nghiệp vụ số</h1><p>Soạn hồ sơ · Kiểm tra nội dung · Nộp theo quyền được cấp</p></div></header>
+<header class="hva-a-header"><div class="hva-a-header-top"><a class="hva-a-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ số" title="Quay lại Nghiệp vụ số">←</a><div class="hva-a-identity"><div class="hva-a-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a-brand"><span class="hva-a-brand-hva">HVA</span><span class="hva-a-brand-dash">–</span><b class="hva-a-brand-edos">EDOS</b></div></div></div><div class="hva-a-header-bottom"><div class="hva-a-section-code" id="a22HeaderCode">HỒ SƠ CHUYÊN MÔN</div><h1 id="a22HeaderTitle">Biểu mẫu nghiệp vụ số</h1><p>Soạn hồ sơ · Kiểm tra nội dung · Nộp theo quyền được cấp</p></div></header>
 <main><div class="hva-a-flow" aria-label="Quy trình hồ sơ"><span><b>1</b> Mở mẫu Drive</span><span><b>2</b> Nộp liên kết Drive</span><span><b>3</b> Nhận mã tiếp nhận</span></div><div class="hva-a-status" id="a22Connection" role="status" aria-live="polite"><span class="hva-a-status-dot" aria-hidden="true"></span><span id="a22ConnectionText">Đang kiểm tra quyền nộp hồ sơ…</span></div><div class="note hva-a-brief" role="note"><i class="hva-brief-icon" aria-hidden="true">i</i><span>Hồ sơ chỉ được coi là <b>đã nộp</b> khi máy chủ trả <b>mã tiếp nhận</b>. Nếu chưa kết nối, thầy/cô vẫn có thể soạn và lưu bản nháp. Không đưa thông tin cá nhân nhạy cảm của học sinh vào biểu mẫu.</span></div>
 <section class="panel hva-a-template-landing" id="a22TemplateLanding" aria-label="Quy trình tải mẫu và nộp liên kết">
  <div class="hva-a-kicker">BIỂU MẪU NGHIỆP VỤ</div>
