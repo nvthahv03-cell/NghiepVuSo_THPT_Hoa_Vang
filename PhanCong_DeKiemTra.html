@@ -1062,6 +1062,12 @@ $('add').addEventListener('click',()=>{resetSignedDocument();if(numberOfExams>=8
  if(!actorIsTTCM&&!actorIsBGH){$('result').textContent='Chỉ TTCM hoặc BGH có quyền lập phân công.';return;}
  if(signMethod==='PAPER'){showPaper();$('result').textContent='Đã chuẩn bị bản xem trước để in và ký tay. Chưa chuyển phát hành, chưa ghi Backend.';return;}
  if(!signatureState.signed||!signatureState.verified||!signatureState.proof||!signatureState.image){$('result').textContent='Với ký điện tử phải xác thực CCCD và ký xác nhận trước khi chuyển phát hành.';return;}
+ // Bắt buộc đối chiếu quyết định BGH trực tiếp với Backend.
+ if(typeof window.HVA_KT02_VERIFY_SCOPE!=='function'){
+  $('result').textContent='Chưa tải bộ kiểm tra phê duyệt KT02; không chuyển phát hành.';return;
+ }
+ try{await window.HVA_KT02_VERIFY_SCOPE()}
+ catch(err){$('result').textContent='Chưa được phát hành: '+String(err.message||err);return;}
  const tasks=[];
  for(let i=1;i<=numberOfExams;i++) stages.forEach((stage,j)=>tasks.push({examIndex:i,stageIndex:j,stage,username:$('person-'+i+'-'+j).value,deadline:$('deadline-'+i+'-'+j).value,time:$('time-'+i+'-'+j).value}));
  const assignees=[...new Set(tasks.map(x=>x.username))];
@@ -1074,8 +1080,8 @@ $('add').addEventListener('click',()=>{resetSignedDocument();if(numberOfExams>=8
   const recipients=response.recipients||[];
   if(!recipients.some(x=>x.nhom==='BGH'))throw Error('Danh sách BGH trống. Không thể chuyển phát hành.');
   const docId='PCDK-'+crypto.randomUUID();
-  const publicationDoc={docId,moduleSource:'PhanCongDeKiemTra',type:'PHÂN CÔNG KTĐG',title:'Phân công đề kiểm tra '+$('subject').value+' – '+$('grade').value+' – '+$('exam').value,author:actorName,
-    data:{team,createdBy:actor,subject:$('subject').value,grade:$('grade').value,exam:$('exam').value,tasks,reviewers:reviewActive()?[0,1].map(j=>$('reviewPerson'+j)?.value).filter(Boolean):[],signed:true,signatureImage:signatureState.image,signProof:signatureState.proof}};
+  const publicationDoc={scopeApprovalId:window.HVA_KT02_APPROVED_SCOPE_ID,docId,moduleSource:'PhanCongDeKiemTra',type:'PHÂN CÔNG KTĐG',title:'Phân công đề kiểm tra '+$('subject').value+' – '+$('grade').value+' – '+$('exam').value,author:actorName,
+    data:{scopeApprovalId:window.HVA_KT02_APPROVED_SCOPE_ID,team,createdBy:actor,subject:$('subject').value,grade:$('grade').value,exam:$('exam').value,tasks,reviewers:reviewActive()?[0,1].map(j=>$('reviewPerson'+j)?.value).filter(Boolean):[],signed:true,signatureImage:signatureState.image,signProof:signatureState.proof}};
   const handoff={...publicationDoc,recipients,signProof:signatureState.proof,sourceModule:'PhanCongDeKiemTra'};
   localStorage.setItem('TTDHS_CURRENT_DOC',JSON.stringify(handoff));
   $('result').textContent='Đã chuẩn bị '+recipients.length+' người nhận ('+recipients.filter(x=>x.nhom==='BGH').length+' BGH). Đang mở TT Phát hành; CHƯA PHÁT HÀNH.';
@@ -1208,4 +1214,4 @@ try{
 }catch(_){}
 restrictionRows();taskRows();
 })();
-</script></body></html>
+</script><script src="./KT02_Approval_Workflow.js?v=20261120-v2"></script></body></html>
