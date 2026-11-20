@@ -679,6 +679,8 @@ const WEB_APP_URL='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTj
 const PERSONNEL_SEARCH_API='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
 // Chuyen dia chi nhan su Cuoc hop sang thu vien HVA_Personnel.js (doc window.PERSONNEL_SEARCH_API).
 window.PERSONNEL_SEARCH_API=PERSONNEL_SEARCH_API;
+// QR manager GET must share the EDOS V5 login backend and its session cache.
+const HVA_MEETING_QR_API=PERSONNEL_SEARCH_API;
 let meetingAllToData=[]; const meetingSelectedUsernames=new Set();
 const $=id=>document.getElementById(id);
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -1679,11 +1681,13 @@ function syncMeetingUserCard(){
 function getMeetingOperatorUsername(){const u=getMeetingOperatorUser();return String(u.username||u.userName||u.maGV||'').trim()}
 let managedMeetingData=[]; let currentQrInfo=null;
 function getMeetingSessionToken(){
-  return String(
-    localStorage.getItem('hvaSessionToken') ||
-    sessionStorage.getItem('hvaSessionToken') ||
-    ''
-  ).trim();
+  // Use the same locally validated token as HVA_Personnel.js (no second login).
+  try {
+    const auth=window.HVAPersonnel?.ensureAuth?.();
+    const st=auth?.getSessionState?.();
+    if(st?.validLocal)return String(auth.withAuthBody({}).sessionToken||'').trim();
+  }catch(e){}
+  return '';
 }
 
 async function loadManagedMeetings(){
@@ -1704,11 +1708,12 @@ async function loadManagedMeetings(){
 
   if(box)box.innerHTML='Đang tải cuộc họp đã phát hành...';
   try{
-    const url = `${WEB_APP_URL}?action=getManagedMeetings&username=${encodeURIComponent(username)}&sessionToken=${encodeURIComponent(sessionToken)}`;
+    const url = `${HVA_MEETING_QR_API}?action=getManagedMeetings&username=${encodeURIComponent(username)}&sessionToken=${encodeURIComponent(sessionToken)}`;
     const r=await fetch(url,{cache:'no-store'});
     const d=await r.json();
 
     if(!d||d.success!==true){
+      if(d && /Action GET không hợp lệ|không hợp lệ: getManagedMeetings/i.test(String(d.message||'')))throw Error('Backend EDOS V5 chưa triển khai action getManagedMeetings. Cần cập nhật Router/V5, không dùng Backend Cuộc họp cũ để bỏ qua phiên.');
       if(d && (d.code==='AUTH_REQUIRED'||d.code==='SESSION_INVALID')){
         throw Error('Phiên đăng nhập HVA không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.');
       }
