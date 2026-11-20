@@ -80,6 +80,25 @@
 #a21SchedulePanel .a21-calendar-days button:disabled{opacity:.28;background:transparent;cursor:not-allowed}
 #a21SchedulePanel .a21-calendar-days button[aria-pressed="true"]{background:#0d6dad;color:white}
 #a21SchedulePanel .a21-calendar-popup small{display:block;color:#67869d;margin-top:9px;line-height:1.4}
+
+/* Repair calendar hit target: entire visible icon/button has one reliable click area. */
+#a21SchedulePanel .a21-date-wrap{position:relative!important;overflow:visible!important;isolation:isolate}
+#a21SchedulePanel .a21-date-wrap #a21Date{width:100%!important;padding-right:60px!important;position:relative;z-index:1}
+#a21SchedulePanel .a21-date-wrap #a21CalendarToggle{
+ display:flex!important;justify-content:center!important;align-items:center!important;
+ position:absolute!important;top:1px!important;right:1px!important;
+ width:52px!important;height:calc(100% - 2px)!important;min-width:52px!important;
+ border:0!important;border-left:1px solid #c0d9ea!important;
+ border-radius:0 9px 9px 0!important;background:#e6f4ff!important;
+ padding:0!important;margin:0!important;cursor:pointer!important;
+ color:#086aa6!important;z-index:10!important;pointer-events:auto!important;
+ touch-action:manipulation!important;box-shadow:none!important;transform:none!important;
+}
+#a21SchedulePanel .a21-date-wrap #a21CalendarToggle svg,
+#a21SchedulePanel .a21-date-wrap #a21CalendarToggle svg *{pointer-events:none!important}
+#a21SchedulePanel .a21-date-wrap #a21CalendarToggle:hover,
+#a21SchedulePanel .a21-date-wrap #a21CalendarToggle[aria-expanded="true"]{background:#c5e8ff!important}
+#a21SchedulePanel .a21-date-wrap #a21CalendarToggle:focus-visible{outline:3px solid #0a74b4!important;outline-offset:2px}
 </style><style id="hva-a1-a6-design-v1">
 :root{font-family:Inter,"Segoe UI",Arial,sans-serif}
 body{background:radial-gradient(circle at 88% 0,#d9efff,transparent 33%),#f5f8fc;color:#193951}
@@ -297,7 +316,7 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
  <div><label for="a21Subject">Môn kiểm tra *</label><select id="a21Subject" required><option value="">Chọn môn kiểm tra</option><option>Ngữ văn</option><option>Toán</option><option>Tiếng Anh</option><option>Lịch sử</option><option>Địa lí</option><option>Giáo dục kinh tế và pháp luật</option><option>Vật lí</option><option>Hóa học</option><option>Sinh học</option><option>Tin học</option><option>Công nghệ</option><option>Giáo dục thể chất</option><option>Giáo dục quốc phòng và an ninh</option><option>Hoạt động trải nghiệm, hướng nghiệp</option><option>Nội dung giáo dục của địa phương</option></select></div>
  <div><label for="a21Date">Ngày kiểm tra *</label><div class="a21-date-wrap">
   <input id="a21Date" required type="text" placeholder="dd/mm/yyyy" maxlength="10" inputmode="numeric" autocomplete="off" aria-describedby="a21DateHelp">
-  <button type="button" id="a21CalendarToggle" class="a21-calendar-toggle" aria-label="Mở lịch chọn ngày" aria-expanded="false" aria-controls="a21CalendarPopup">▦</button>
+  <button type="button" id="a21CalendarToggle" class="a21-calendar-toggle" aria-label="Mở lịch chọn ngày" aria-expanded="false" aria-controls="a21CalendarPopup" title="Chọn ngày kiểm tra"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path><path d="m9 16 2 2 4-4"></path></svg></button>
   <div id="a21CalendarPopup" class="a21-calendar-popup" hidden>
    <div class="a21-calendar-head"><button type="button" id="a21CalPrev" aria-label="Tháng trước">‹</button><strong id="a21CalMonth"></strong><button type="button" id="a21CalNext" aria-label="Tháng sau">›</button></div>
    <div id="a21CalDays" class="a21-calendar-days" role="group" aria-label="Chọn ngày kiểm tra"></div>
@@ -366,5 +385,5 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 <script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script>
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
-<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v8"></script>
+<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v9"></script>
 </body></html>
