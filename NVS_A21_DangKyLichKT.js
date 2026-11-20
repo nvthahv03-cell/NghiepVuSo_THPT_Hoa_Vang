@@ -23,7 +23,7 @@ function setRoomMode(){
 $('a21RoomType')?.addEventListener('change',setRoomMode);
 
 const classMax=Object.freeze({'10':9,'11':9,'12':12});
-const gradeSelect=$('a21Grade'),classSelect=$('a21Class'),dateInput=$('a21Date'),nativeDate=$('a21NativeDate');
+const gradeSelect=$('a21Grade'),classSelect=$('a21Class'),dateInput=$('a21Date');
 function buildClassSelect(grade,selected=''){
  classSelect.replaceChildren(new Option(grade?'Chọn lớp':'Chọn khối trước',''));
  const max=classMax[grade]||0;
@@ -58,17 +58,67 @@ function updateActorCard(d){
  }
 }
 gradeSelect?.addEventListener('change',()=>{buildClassSelect(gradeSelect.value);updatePreview();});
-nativeDate?.addEventListener('change',()=>{dateInput.value=isoToVi(nativeDate.value);updatePreview();});
-dateInput?.addEventListener('input',()=>{
- const v=dateInput.value.trim();
- const iso=viToIso(v);
- nativeDate.value=iso||'';
+// In-page calendar guarantees an open picker on click, including browsers that
+// restrict showPicker() on invisible/overlaid native date inputs.
+const calPopup=$('a21CalendarPopup'),calToggle=$('a21CalendarToggle'),
+ calDays=$('a21CalDays'),calLabel=$('a21CalMonth'),
+ calPrev=$('a21CalPrev'),calNext=$('a21CalNext');
+let calendarMonth=11,calendarYear=2026;
+function calendarIso(y,m,d){return String(y)+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
+function calendarDraw(){
+ if(!calDays)return;
+ calLabel.textContent='Tháng '+String(calendarMonth+1).padStart(2,'0')+'/'+calendarYear;
+ calDays.replaceChildren();
+ for(const d of ['T2','T3','T4','T5','T6','T7','CN']){
+  const cell=document.createElement('span');cell.textContent=d;calDays.appendChild(cell);
+ }
+ const offset=(new Date(Date.UTC(calendarYear,calendarMonth,1)).getUTCDay()+6)%7;
+ for(let i=0;i<offset;i++){const spacer=document.createElement('span');calDays.appendChild(spacer);}
+ const days=new Date(Date.UTC(calendarYear,calendarMonth+1,0)).getUTCDate();
+ for(let d=1;d<=days;d++){
+  const iso=calendarIso(calendarYear,calendarMonth,d);
+  const button=document.createElement('button');
+  button.type='button';button.textContent=String(d);button.dataset.date=iso;
+  button.disabled=iso<'2026-12-14'||iso>'2027-01-05';
+  button.setAttribute('aria-label',isoToVi(iso));
+  button.setAttribute('aria-pressed',String(viToIso(dateInput.value)===iso));
+  calDays.appendChild(button);
+ }
+ calPrev.disabled=calendarYear===2026&&calendarMonth===11;
+ calNext.disabled=calendarYear===2027&&calendarMonth===0;
+}
+function calendarOpen(){
+ const iso=viToIso(dateInput.value);
+ if(iso){calendarYear=+iso.slice(0,4);calendarMonth=+iso.slice(5,7)-1;}
+ else{calendarYear=2026;calendarMonth=11;}
+ calPopup.hidden=false;calToggle.setAttribute('aria-expanded','true');
+ calendarDraw();
+}
+function calendarClose(){
+ calPopup.hidden=true;calToggle.setAttribute('aria-expanded','false');
+}
+calToggle?.addEventListener('click',e=>{
+ e.stopPropagation();if(calPopup.hidden)calendarOpen();else calendarClose();
+});
+dateInput?.addEventListener('click',()=>{if(calPopup.hidden)calendarOpen();});
+dateInput?.addEventListener('input',()=>{updatePreview();if(!calPopup.hidden)calendarDraw();});
+dateInput?.addEventListener('blur',()=>{
+ const iso=viToIso(dateInput.value);if(iso)dateInput.value=isoToVi(iso);
  updatePreview();
 });
-dateInput?.addEventListener('blur',()=>{
- const iso=viToIso(dateInput.value);
- if(iso){dateInput.value=isoToVi(iso);nativeDate.value=iso;}
- updatePreview();
+calPrev?.addEventListener('click',()=>{calendarYear=2026;calendarMonth=11;calendarDraw();});
+calNext?.addEventListener('click',()=>{calendarYear=2027;calendarMonth=0;calendarDraw();});
+calDays?.addEventListener('click',e=>{
+ const button=e.target.closest('button[data-date]');
+ if(!button||button.disabled)return;
+ dateInput.value=isoToVi(button.dataset.date);
+ calendarClose();updatePreview();dateInput.focus();
+});
+document.addEventListener('click',e=>{
+ if(!calPopup.hidden&&!e.target.closest('.a21-date-wrap'))calendarClose();
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&!calPopup.hidden){calendarClose();calToggle.focus();}
 });
 buildClassSelect('');
 
@@ -236,7 +286,7 @@ table.addEventListener('click',e=>{
  buildClassSelect(gradeSelect.value,x.className);
  const vals={a21Subject:x.subject,a21Date:isoToVi(x.date),a21Session:x.session,a21Start:x.start,a21End:x.end,a21Assessment:x.assessment,a21RoomType:x.roomType||'CLASSROOM',a21Room:x.room||''};
  for(const [k,v] of Object.entries(vals))$(k).value=String(v);
- nativeDate.value=x.date;setRoomMode();updatePreview();
+ calendarClose();setRoomMode();updatePreview();
  status('Đang sửa lịch '+x.className+' – '+x.subject+'. Chọn “Lưu đăng ký lên EDOS” để cập nhật.');
 });
 form.addEventListener('submit',async e=>{
@@ -247,7 +297,7 @@ form.addEventListener('submit',async e=>{
  assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:$('a21Room').value.trim()};
  const issues=localCheck(r);if(!r.room)issues.unshift('Cần nhập số/tên phòng hoặc khu vực kiểm tra.');if(!r.date)issues.unshift('Ngày kiểm tra phải nhập đúng định dạng dd/mm/yyyy.');if(issues.length){status(issues.join(' • '),true);return;}
  busy=true;form.querySelector('button[type="submit"]').disabled=true;
- try{const data=await post('ktScheduleSave',{record:r});editingId='';form.reset();buildClassSelect('');nativeDate.value='';setRoomMode();
+ try{const data=await post('ktScheduleSave',{record:r});editingId='';form.reset();buildClassSelect('');calendarClose();setRoomMode();
   status(data.message||'Đã đăng ký thành công vào bảng chung, chờ TTCM xác nhận.');updatePreview();await refresh();
  }catch(err){status('CHƯA ghi lịch: '+String(err.message||err),true);}
  finally{busy=false;form.querySelector('button[type="submit"]').disabled=false;}
