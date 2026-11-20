@@ -289,7 +289,7 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
  <div><label for="a21Start">Tiết bắt đầu *</label><select id="a21Start" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
  <div><label for="a21End">Tiết kết thúc *</label><select id="a21End" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
  <div><label for="a21RoomType">Địa điểm kiểm tra *</label><select id="a21RoomType" required><option value="CLASSROOM">Phòng học của lớp</option><option value="COMPUTER">Phòng máy (Tin học)</option><option value="LAB">Phòng thí nghiệm / thực hành</option><option value="FUNCTION">Phòng chức năng khác</option><option value="OUTDOOR">Sân tập / khu vực ngoài trời</option></select></div>
- <div class="a21-room-detail" id="a21RoomWrap" hidden><label for="a21Room">Số hoặc tên phòng/khu vực *</label><input id="a21Room" maxlength="90" placeholder="Ví dụ: Phòng máy 1" autocomplete="off"><small class="a21-field-help">Ghi đúng tên phòng để tránh trùng lịch sử dụng</small></div>
+ <div class="a21-room-detail" id="a21RoomWrap"><label for="a21Room">Số hoặc tên phòng/khu vực *</label><input id="a21Room" required maxlength="90" placeholder="Ví dụ: P.203, Phòng máy 1" autocomplete="off"><small class="a21-field-help">Bắt buộc cả khi kiểm tra tại lớp, để đối chiếu phòng trùng tiết</small></div>
  </div>
  <div class="a21-form-title">02 · KIỂM TRA VÀ XEM TRƯỚC</div>
  <section class="a21-preview-block" aria-labelledby="a21PreviewTitle">
