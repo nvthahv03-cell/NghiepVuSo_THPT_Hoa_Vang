@@ -1,0 +1,67 @@
+/* HVA EDOS – Compact Header Standard V1 | 2026-11-21
+   One brand, one module title, back/home, verified identity when available.
+   Presentation only: never touches business logic or authentication. */
+:root{--hva-header-height:70px;--hva-header-blue:#074b97;--hva-header-cyan:#049ac4;--hva-header-orange:#ff9d32}
+@media screen{
+/* Calendar: single branded ribbon; preserve existing tabs and iframe workflows */
+body:has(>.mast)>.mast{
+ min-height:var(--hva-header-height)!important;padding:8px clamp(12px,2.5vw,28px)!important;
+ grid-template-columns:minmax(90px,1fr) minmax(0,2fr) minmax(100px,1fr)!important;
+ background:linear-gradient(105deg,#073f7f,#0864ae 61%,#079fba)!important;
+ border-bottom:2px solid #91d9e8!important;box-shadow:0 4px 15px #092b4e21!important
+}
+body:has(>.mast)>.mast .logo b{font-size:clamp(22px,2.3vw,29px)!important}
+body:has(>.mast)>.mast .logo small{display:none!important}
+body:has(>.mast)>.mast .back{padding:8px 12px!important;font-size:12px!important}
+body:has(>.mast)>.mast .online{padding:8px 11px!important;font-size:10px!important}
+body:has(>.mast)>.shell{padding-top:15px!important}
+body:has(>.mast)>.shell>.lead{margin-bottom:10px!important}
+body:has(>.mast)>.shell>.lead h1{font-size:23px!important}
+body:has(>.mast)>.shell>.lead p{margin-top:2px!important}
+body:has(>.mast)>.shell>.hint{padding:8px 12px!important;margin-bottom:10px!important}
+/* Dieuhanh: short header, preserve user menu and verified role */
+body.hva-ui-v1>.header{min-height:76px!important;padding:10px clamp(15px,2vw,30px)!important;
+ grid-template-columns:minmax(85px,1fr) minmax(0,1.8fr) minmax(140px,1fr)!important}
+body.hva-ui-v1>.header .brand h1{font-size:clamp(22px,2.4vw,30px)!important;margin:0!important}
+body.hva-ui-v1>.header .edos-english,body.hva-ui-v1>.header .edos-slogan{display:none!important}
+body.hva-ui-v1>.header .edos-system{font-size:10px!important;letter-spacing:0!important}
+body.hva-ui-v1>.header .square{width:40px!important;height:40px!important;flex-basis:40px!important;border-radius:11px!important}
+body.hva-ui-v1>.header .square svg{width:20px!important}
+body.hva-ui-v1>.header .who .avatar{height:34px!important;width:34px!important}
+body.hva-ui-v1>.header .online{font-size:10px!important;padding:8px 10px!important}
+/* PCCM: use same brand and compact module title, no empty hero */
+body[data-ops-mode="cm"]>header{min-height:68px!important;padding:10px max(16px,calc((100vw - 1240px)/2))!important;
+ background:linear-gradient(105deg,#073f7f,#0864ae 61%,#079fba)!important;box-shadow:0 4px 15px #092b4e21}
+body[data-ops-mode="cm"]>header strong{font-size:17px!important}
+body[data-ops-mode="cm"]>header small{font-size:10px!important}
+body[data-ops-mode="cm"]>main{margin-top:15px!important}
+/* KT01: preserve its already standard identity, collapse 5 brand lines to 2 */
+.hva-edos-standard-head{min-height:70px!important}
+.hva-edos-standard-head .hva-edos-standard-inner{min-height:68px!important;padding:7px 15px!important}
+.hva-edos-standard-head .hva-edos-identity .hva-edos-en,
+.hva-edos-standard-head .hva-edos-identity .hva-edos-school,
+.hva-edos-standard-head .hva-edos-identity .hva-edos-motto{display:none!important}
+.hva-edos-standard-head .hva-edos-head-menu{margin-top:1px!important;font-size:10px!important}
+.hva-edos-standard-head .hva-edos-logo{font-size:clamp(21px,2.25vw,29px)!important}
+.hva-edos-standard-head .hva-edos-standard-back{width:40px!important;height:40px!important;font-size:22px!important}
+.hva-edos-standard-head .hva-edos-standard-inner{grid-template-columns:42px minmax(0,1fr) auto!important}
+/* Forms: compact banner with visible module name; no blank gap */
+.hva-a-header{padding-top:9px!important;padding-bottom:12px!important;min-height:76px!important}
+.hva-a-header .hva-a-header-bottom{margin-top:5px!important}
+.hva-a-header .hva-a-header-bottom h1{font-size:clamp(17px,2.3vw,23px)!important;margin:2px 0!important}
+.hva-a-header .hva-a-header-bottom p{display:none!important}
+.hva-a-header .hva-a-brand{font-size:22px!important}
+body:has(.hva-a-header)>main{margin-top:12px!important}
+}
+@media(max-width:700px){
+ body:has(>.mast)>.mast{grid-template-columns:55px minmax(0,1fr) 45px!important;gap:5px!important}
+ body:has(>.mast)>.mast .online{font-size:0!important;padding:8px!important}
+ body:has(>.mast)>.mast .logo b{font-size:22px!important}
+ body.hva-ui-v1>.header{grid-template-columns:43px minmax(0,1fr) 43px!important;gap:6px!important}
+ body.hva-ui-v1>.header .who{display:none!important}
+ body.hva-ui-v1>.header .online{display:none!important}
+ body.hva-ui-v1>.header .edos-system{font-size:8px!important}
+ .hva-edos-standard-head .hva-edos-standard-inner{padding:7px!important;gap:5px!important}
+ .hva-edos-standard-head .hva-edos-standard-online{display:none!important}
+}
+@media print{body:has(>.mast)>.mast,body.hva-ui-v1>.header,body[data-ops-mode="cm"]>header{position:static!important}}
