@@ -8,6 +8,65 @@ var HVA_KTL_HEADERS_=['ID','Username','Ho ten','To CM','Mon','Lop','Ngay','Buoi'
 var HVA_KTL_BATCH_HEADERS_=['ID','To CM','Trang thai','TTCM','Ngay gui BGH','BGH','Ngay duyet','Ghi chu','Phien ban','JSON'];
 function hvaKTLSh_(){return CommonDb.ensureSheet('DH_KT01_LICH_KTTT',HVA_KTL_HEADERS_);}
 function hvaKTLBatchSh_(){return CommonDb.ensureSheet('DH_KT01_LICH_DUYET_TO',HVA_KTL_BATCH_HEADERS_);}
+
+/* KT01 isolated notifications, same EDOS DB; no new Router */
+function hvaKTLNoticeSh_(){return CommonDb.ensureSheet('DH_KT01_THONG_BAO',['ID','Loai','To CM','Nguoi gui','Noi dung','Thoi diem','Nguoi da doc','JSON']);}
+function hvaKTLPccmSh_(){return CommonDb.ensureSheet('DH_KT01_PCCM_DOT',['To CM','Username GV','Lop','Mon','Bat buoc 1/0']);}
+function hvaKTLNoticeRows_(){return hvaKTLRead_(hvaKTLNoticeSh_(),8);}
+function hvaKTLNotice_(kind,actor,id,body){
+ var key='KT01:'+kind+':'+id,sh=hvaKTLNoticeSh_();
+ if(hvaKTLNoticeRows_().some(function(x){return x.data.id===key;}))return;
+ var n={id:key,kind:kind,team:actor.team,actor:actor.username,
+ title:kind==='SEND_TTCM'?'KT01 – Đăng ký kiểm tra mới':'KT01 – Hồ sơ tổ chờ BGH',
+ content:body,createdAt:new Date().toISOString(),readBy:[]};
+ sh.appendRow([key,kind,actor.team,actor.username,body,n.createdAt,'',JSON.stringify(n)]);
+}
+function hvaKTLNoticeAllowed_(n,a){
+ return n.kind==='SEND_TTCM'&&a.chief&&hvaKTLNorm_(n.team)===hvaKTLNorm_(a.team)||
+ n.kind==='TEAM_SUBMIT'&&a.bgh;
+}
+function hvaKTLInbox_(a){
+ return hvaKTLNoticeRows_().filter(function(x){return hvaKTLNoticeAllowed_(x.data,a);})
+ .map(function(x){var n=x.data;return {id:n.id,title:n.title,content:n.content,createdAt:n.createdAt,
+ read:(n.readBy||[]).some(function(u){return hvaKTLNorm_(u)===hvaKTLNorm_(a.username);}),
+ link:'./KT01_QuanLyDotKiemTraVaThi.html'};})
+ .sort(function(a,b){return String(b.createdAt).localeCompare(String(a.createdAt));});
+}
+function hvaKTLMarkNotice_(a,id){
+ var x=hvaKTLNoticeRows_().find(function(y){return y.data.id===id;});
+ if(!x||!hvaKTLNoticeAllowed_(x.data,a))throw Error('Thông báo không tồn tại hoặc không được phép.');
+ var n=x.data;if(!Array.isArray(n.readBy))n.readBy=[];
+ if(!n.readBy.some(function(u){return hvaKTLNorm_(u)===hvaKTLNorm_(a.username);}))n.readBy.push(a.username);
+ hvaKTLNoticeSh_().getRange(x.row,1,1,8).setValues([[n.id,n.kind,n.team,n.actor,n.content,n.createdAt,n.readBy.join(','),JSON.stringify(n)]]);
+ return {ok:true,success:true,message:'Đã đọc.'};
+}
+function hvaKTLPccmReview_(team,items){
+ var sh=hvaKTLPccmSh_(),n=sh.getLastRow();
+ var raw=n>1?sh.getRange(2,1,n-1,5).getValues():[];
+ var source=raw.filter(function(x){return hvaKTLNorm_(x[0])===hvaKTLNorm_(team)&&['1','true','x','co'].indexOf(hvaKTLNorm_(x[4]))>=0;});
+ var required=[],seen={};source.forEach(function(x){
+  var teacher=String(x[1]||'').trim(),cls=String(x[2]||'').trim(),subject=String(x[3]||'').trim();
+  if(!teacher||!cls||!subject)return;
+  var key=hvaKTLNorm_(cls)+'|'+hvaKTLNorm_(subject);
+  if(!seen[key]){required.push({username:teacher,className:cls,subject:subject,key:key});seen[key]=true;}
+ });
+ if(!required.length)return {ready:false,total:0,submitted:0,missing:[],
+ errors:['Chưa có danh mục PCCM được xác nhận tại DH_KT01_PCCM_DOT. Không thể tự xác nhận đã đủ.']};
+ var rows=items.map(function(x){return x.data;}).filter(function(x){
+ return hvaKTLNorm_(x.team)===hvaKTLNorm_(team)&&x.status==='WAIT_TTCM';});
+ var got={};rows.forEach(function(x){got[hvaKTLNorm_(x.className)+'|'+hvaKTLNorm_(x.subject)]=x;});
+ var missing=required.filter(function(x){return !got[x.key];}),errors=[];
+ required.forEach(function(x){var d=got[x.key];if(d&&hvaKTLNorm_(d.username)!==hvaKTLNorm_(x.username))
+ errors.push('GV không khớp PCCM: '+x.className+' – '+x.subject);});
+ rows.forEach(function(x){
+ var key=hvaKTLNorm_(x.className)+'|'+hvaKTLNorm_(x.subject);
+ if(!seen[key])errors.push('Lịch ngoài danh mục PCCM: '+x.className+' – '+x.subject);
+ try{hvaKTLTime_(x);}catch(e){errors.push(x.className+' – '+x.subject+': '+String(e.message||e));}
+ });
+ return {ready:!missing.length&&!errors.length,total:required.length,submitted:required.length-missing.length,
+ missing:missing.map(function(x){return x.className+' – '+x.subject+' ('+x.username+')';}),errors:errors};
+}
+
 function hvaKTLLog_(action,actor,id,detail){
  CommonDb.ensureSheet('DH_KT01_LICH_LOG',['Ngay gio','Hanh dong','Nguoi thuc hien','ID','Chi tiet'])
  .appendRow([new Date().toISOString(),action,actor.username,id,String(detail||'').slice(0,1000)]);
@@ -121,7 +180,7 @@ function hvaKTLList_(action,p){
     confirmedAt:b.submittedAt||'',approver:b.approver||'',approverName:b.approverName||b.approver||'',
     approvedAt:b.decidedAt||'',comment:b.comment||'',batchStatus:b.status||''};}
    return d;
-  }),actor:{username:actor.username,team:actor.team,name:actor.name,chief:actor.chief,bgh:actor.bgh}};
+  }),inbox:hvaKTLInbox_(actor),pccm:actor.chief?hvaKTLPccmReview_(actor.team,items):null,actor:{username:actor.username,team:actor.team,name:actor.name,chief:actor.chief,bgh:actor.bgh}};
  }
  if(!actor.bgh&&!actor.chief)throw Error('Chỉ TTCM/BGH xem được hồ sơ trình duyệt.');
  var bs=batches.filter(function(x){return actor.bgh||hvaKTLNorm_(x.data.team)===hvaKTLNorm_(actor.team);}).map(function(x){return x.data;});
@@ -136,6 +195,7 @@ function hvaKTLPost_(action,p){
   var bh=hvaKTLBatchSh_(),bs=hvaKTLRead_(bh,10);
   var teamKey=hvaKTLNorm_(actor.team);
   if(action==='ktScheduleSave'){
+   if(p.notificationReadId)return hvaKTLMarkNotice_(actor,String(p.notificationReadId));
    if(!teamKey)throw Error('Tài khoản chưa có tổ chuyên môn chuẩn.');
    // Stay on the existing Router action; sendId is an explicit transition,
    // not a save that silently forwards a draft to TTCM.
@@ -150,6 +210,8 @@ function hvaKTLPost_(action,p){
     draftHit.data=Object.assign({},draftHit.data,checked,{status:'WAIT_TTCM',sentAt:now,updatedAt:now});
     sh.getRange(draftHit.row,1,1,15).setValues([hvaKTLRow_(draftHit.data)]);
     hvaKTLLog_('SEND_TTCM',actor,sendId,'Giáo viên gửi lịch cho TTCM tổ '+actor.team);
+    hvaKTLNotice_('SEND_TTCM',actor,sendId,'GV '+actor.name+' gửi '+draftHit.data.subject+
+     ' – lớp '+draftHit.data.className+' – ngày '+draftHit.data.date+'. Mở KT01 để rà soát.');
     return {ok:true,success:true,item:draftHit.data,message:'Đã gửi lịch cho TTCM '+actor.team+'; chờ TTCM xác nhận.'};
    }
    var raw=p.record||{},id=String(raw.id||'').trim();
@@ -188,6 +250,10 @@ function hvaKTLPost_(action,p){
    if(!p.confirmComplete||reason.length<10)throw Error('TTCM phải rà danh sách GV, lớp, môn và xác nhận đầy đủ; ghi căn cứ rà soát ít nhất 10 ký tự.');
    var teamRows=items.filter(function(x){return hvaKTLNorm_(x.data.team)===teamKey&&x.data.status==='WAIT_TTCM';});
    if(!teamRows.length)throw Error('Tổ chưa có lịch đăng ký chờ xác nhận.');
+   var review=hvaKTLPccmReview_(actor.team,items);
+   if(!review.ready)throw Error('Chưa đủ điều kiện gửi BGH. '+
+    (review.missing.length?'Thiếu '+review.missing.length+'/'+review.total+': '+review.missing.slice(0,8).join('; ')+'. ':'')+
+    review.errors.slice(0,8).join('; '));
    var existing=bs.find(function(x){return hvaKTLNorm_(x.data.team)===teamKey&&['WAIT_BGH','APPROVED'].indexOf(x.data.status)>=0;});
    if(existing)throw Error('Tổ đã có gói lịch đang chờ BGH hoặc đã duyệt.');
    // Recheck all global records before team submission, including provisional registrations.
@@ -202,6 +268,8 @@ function hvaKTLPost_(action,p){
     completenessNote:reason,count:teamRows.length,version:1};
    teamRows.forEach(function(x){x.data.status='WAIT_BGH';x.data.batchId=batch.id;x.data.updatedAt=now;sh.getRange(x.row,1,1,15).setValues([hvaKTLRow_(x.data)]);});
    bh.appendRow(hvaKTLBatchRow_(batch));hvaKTLLog_('TEAM_SUBMIT',actor,batch.id,'TTCM: '+actor.name+' | '+reason);
+   hvaKTLNotice_('TEAM_SUBMIT',actor,batch.id,'TTCM '+actor.name+' trình BGH '+teamRows.length+
+    ' lịch thuộc tổ '+actor.team+'. Mở KT01 để phê duyệt.');
    return {ok:true,success:true,batch:batch,message:'TTCM đã xác nhận và chuyển lịch tổ đến BGH.'};
   }
   if(action==='ktScheduleDecide'){
