@@ -24,6 +24,7 @@ root.innerHTML=`<div style="display:flex;align-items:center;justify-content:spac
 <th>Giáo viên</th><th>Tổ</th><th>Lớp</th><th>Môn</th><th>Ngày</th><th>Buổi / Tiết</th><th>Phòng / Khu vực</th><th>Trạng thái</th></tr></thead><tbody></tbody></table></div>
 <div id="ktlDecision" hidden style="margin-top:18px;padding:14px;border:1px solid #b9d7e8;border-radius:10px">
 <strong id="ktlSelectedTitle"></strong>
+<div id="ktlSelectedRecords" style="margin:11px 0;padding:12px;background:#f2f8ff;border-radius:10px;font-size:12px;line-height:1.75;max-height:320px;overflow:auto"></div>
 <label style="display:block;margin:9px 0">Ý kiến BGH<textarea id="ktlComment" rows="2" style="width:100%;padding:10px;border:1px solid #bdcfe2;border-radius:9px" placeholder="Lý do khi trả lại TTCM"></textarea></label>
 <div style="display:flex;gap:9px;flex-wrap:wrap">
 <button type="button" id="ktlApprove" style="padding:10px 14px">Phê duyệt lịch tổ</button>
@@ -112,7 +113,15 @@ $('ktlSubmit').addEventListener('click',async()=>{
 $('ktlBatches').addEventListener('click',e=>{
  const id=e.target.closest('[data-batch]')?.dataset.batch;if(!id||!actor?.bgh)return;
  selected=id;const x=batches.find(b=>b.id===id);$('ktlDecision').hidden=false;
- $('ktlSelectedTitle').textContent='BGH xem xét lịch tổ '+(x?.team||'');
+ const selectedRows=records.filter(v=>v.batchId===id);
+ $('ktlSelectedTitle').textContent='BGH xem xét lịch tổ '+(x?.team||'')+' · '+selectedRows.length+' đăng ký';
+ $('ktlSelectedRecords').innerHTML=selectedRows.length
+  ?'<b>Lịch thuộc đúng hồ sơ đang phê duyệt:</b>'+selectedRows.map(v=>
+  '<div style="padding:7px 0;border-bottom:1px solid #d5e4ef">'+esc(v.className)+' · '+esc(v.subject)+
+  ' · '+esc(formatVN(v.date+'T00:00:00+07:00').split(',')[0])+' · '+esc(v.session)+' · Tiết '+esc(v.start)+'–'+esc(v.end)+
+  ' · '+esc(v.room||'Chưa có phòng')+' · GV '+esc(v.teacher)+'</div>').join('')
+  :'<span style="color:#a42731">Không có bản đăng ký thuộc hồ sơ này. Không được phê duyệt.</span>';
+ $('ktlApprove').disabled=selectedRows.length===0;
  $('ktlComment').value='';
  $('ktlDecision').scrollIntoView({block:'nearest',behavior:'smooth'});
 });
