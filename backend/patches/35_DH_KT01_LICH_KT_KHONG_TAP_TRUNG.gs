@@ -70,6 +70,18 @@ function hvaKTLTime_(r){
  return {date:d,className:className,subject:sub,session:ses,start:a,end:b,assessment:String(r.assessment).slice(0,120),roomType:roomType,room:room};
 }
 function hvaKTLClash_(r,items,except){
+ // Một lớp – một môn – một đợt KH400: duy nhất một đăng ký,
+ // kể cả khi khác ngày/buổi và người đăng ký khác nhau.
+ // Đợt này được định nghĩa bởi khung ngày trong hvaKTLTime_.
+ // Chỉ bỏ qua chính ID khi sửa, hoặc bản ghi đã huỷ.
+ var sameClassSubject=items.map(function(x){return x.data;}).find(function(x){
+  return x.id!==except&&x.status!=='CANCELLED'&&x.status!=='RETURNED'
+   &&x.className===r.className&&hvaKTLNorm_(x.subject)===hvaKTLNorm_(r.subject);
+ });
+ if(sameClassSubject)
+  throw Error('Lớp '+r.className+' đã đăng ký môn '+r.subject+
+   ' trong đợt kiểm tra này (ngày '+sameClassSubject.date+
+   ', trạng thái '+sameClassSubject.status+'). Mỗi lớp/môn chỉ đăng ký 01 lần trong một đợt; hãy xem đăng ký đã có.');
  var peers=items.map(function(x){return x.data;}).filter(function(x){
  return x.id!==except&&x.status!=='CANCELLED'&&x.status!=='RETURNED'
  &&x.className===r.className&&x.date===r.date&&x.session===r.session;
