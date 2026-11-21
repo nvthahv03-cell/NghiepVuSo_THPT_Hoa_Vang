@@ -99,6 +99,24 @@
 #a21SchedulePanel .a21-date-wrap #a21CalendarToggle:hover,
 #a21SchedulePanel .a21-date-wrap #a21CalendarToggle[aria-expanded="true"]{background:#c5e8ff!important}
 #a21SchedulePanel .a21-date-wrap #a21CalendarToggle:focus-visible{outline:3px solid #0a74b4!important;outline-offset:2px}
+
+/* A.2.1 – tactile buttons and explicit send-to-TTCM actions */
+#a21SchedulePanel #a21SaveDraft,
+#a21SchedulePanel .a21-send-ttcm{
+ display:inline-flex!important;align-items:center;justify-content:center;gap:7px;
+ min-height:40px;border:1px solid #0864a8;border-radius:10px;
+ background:#086caf;color:#fff;font-weight:800;
+ box-shadow:0 4px 0 #07518a,0 6px 12px #0e558120;
+ transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;
+ cursor:pointer;touch-action:manipulation;
+}
+#a21SchedulePanel #a21SaveDraft:hover:not(:disabled),#a21SchedulePanel .a21-send-ttcm:hover:not(:disabled){filter:brightness(1.10);transform:translateY(-1px)}
+#a21SchedulePanel #a21SaveDraft:active:not(:disabled),#a21SchedulePanel .a21-send-ttcm:active:not(:disabled){transform:translateY(3px)!important;box-shadow:0 1px 0 #07518a!important}
+#a21SchedulePanel #a21SaveDraft:disabled,#a21SchedulePanel .a21-send-ttcm:disabled{opacity:.55;cursor:wait}
+#a21SchedulePanel .a21-entry-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+#a21SchedulePanel .a21-entry-actions .a21-send-ttcm{padding:7px 13px;min-height:36px;font-size:12px}
+#a21SchedulePanel .a21-submitted-tag{display:inline-flex;align-items:center;border-radius:20px;background:#edf8f0;color:#0e6d42;border:1px solid #a8dec0;font-size:11px;font-weight:800;padding:7px 11px;white-space:nowrap}
+@media(max-width:560px){#a21SchedulePanel .a21-schedule-entry{align-items:flex-start;flex-direction:column}#a21SchedulePanel .a21-entry-actions{width:100%}}
 </style><style id="hva-a1-a6-design-v1">
 :root{font-family:Inter,"Segoe UI",Arial,sans-serif}
 body{background:radial-gradient(circle at 88% 0,#d9efff,transparent 33%),#f5f8fc;color:#193951}
@@ -385,5 +403,5 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 <script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script>
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
-<script defer src="./NVS_A21_DangKyLichKT.js?v=20261121-v12"></script>
+<script defer src="./NVS_A21_DangKyLichKT.js?v=20261121-v13"></script>
 </body></html>
