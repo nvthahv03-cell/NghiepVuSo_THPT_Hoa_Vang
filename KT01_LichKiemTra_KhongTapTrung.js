@@ -9,6 +9,7 @@ root.innerHTML=`<div style="display:flex;align-items:center;justify-content:spac
 <p style="font-size:13px;color:#54758c;margin:0">Kế hoạch 400/KH-THPTHV · Giáo viên đăng ký tại NVS A.2.1 → TTCM xác nhận toàn tổ → BGH phê duyệt.</p></div>
 <button id="ktlRefresh" type="button" style="padding:11px 14px;border:1px solid #a8cde6;border-radius:9px">Làm mới lịch</button></div>
 <div id="ktlInfo" style="font-size:13px;margin:13px 0;padding:12px;background:#eef7ff;border-radius:9px" role="status">Đang kiểm tra kết nối Backend…</div>
+<div id="ktlActorInfo" style="font-size:12px;color:#164b73;padding:10px 12px;background:#f4faff;border:1px solid #d3e7f6;border-radius:9px" aria-live="polite">Đang xác minh tài khoản EDOS…</div>
 <div id="ktlTeamArea" hidden>
  <h3 style="color:#13547f">TTCM – Xác nhận lịch của tổ</h3>
  <label style="display:block;margin:9px 0">Xác nhận đã rà soát đủ giáo viên, lớp, môn phải đăng ký
@@ -61,8 +62,22 @@ async function post(action,payload){
  const d=await r.json();if(!d?.success||!d?.ok)throw Error(d?.message||'Backend chưa xác nhận.');
  return d;
 }
+function formatVN(t){
+ if(!t)return '';
+ const d=new Date(t);return Number.isFinite(d.getTime())?
+ d.toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit',year:'numeric'}):String(t);
+}
+function approvalLabel(x){
+ if(x.status==='APPROVED')return '✓ Đã được TTCM '+esc(x.chiefName||x.chief||'')+' xác nhận và BGH '+esc(x.approverName||x.approver||'')+' phê duyệt.';
+ if(x.status==='WAIT_BGH')return '✓ Đã được TTCM '+esc(x.chiefName||x.chief||'')+' xác nhận, chờ BGH phê duyệt.';
+ return esc(statusText[x.status]||x.status);
+}
 function render(){
  $('ktlTeamArea').hidden=!actor?.chief;
+ const identity=$('ktlActorInfo');
+ identity.textContent=actor
+  ?'Tài khoản EDOS: '+(actor.name||actor.username)+' · '+(actor.team||'Chưa rõ tổ')+' · Quyền: '+([actor.chief?'TTCM':'',actor.bgh?'BGH':''].filter(Boolean).join(', ')||'Giáo viên')
+  :'Chưa xác minh được tài khoản EDOS.';
  const tbody=$('ktlTable').querySelector('tbody');
  const visible=records.slice().sort((a,b)=>String(a.date+a.session+a.className).localeCompare(String(b.date+b.session+b.className)));
  tbody.innerHTML=visible.map(x=>`<tr style="border-top:1px solid #dae8f1"><td style="padding:8px">${esc(x.teacher)}</td><td style="padding:8px">${esc(x.team)}</td><td style="padding:8px">${esc(x.className)}</td>
@@ -71,8 +86,9 @@ function render(){
  <td style="padding:8px">${esc(statusText[x.status]||x.status)}</td></tr>`).join('');
  if(!visible.length)tbody.innerHTML='<tr><td colspan="8" style="padding:12px">Chưa có lịch đăng ký trong phạm vi được xem.</td></tr>';
  $('ktlBatches').innerHTML=batches.map(x=>`<div style="margin:7px 0;padding:10px;border:1px solid #d2e4ef;border-radius:10px">
- <b>${esc(x.team)}</b> · ${esc(x.count)} lịch · ${esc(statusText[x.status]||x.status)}
- <small style="display:block;color:#54738b">TTCM: ${esc(x.chief)} · ${esc(x.submittedAt)} ${x.comment?'· Ý kiến BGH: '+esc(x.comment):''}</small>
+ <b>${esc(x.team)}</b> · ${esc(x.count)} lịch
+ <small style="display:block;color:#176146;font-weight:700;line-height:1.7">${approvalLabel(x)}</small>
+ <small style="display:block;color:#54738b;line-height:1.6">Xác nhận: ${esc(formatVN(x.submittedAt))}${x.decidedAt?' · Quyết định BGH: '+esc(formatVN(x.decidedAt)):''}${x.comment?' · Ý kiến BGH: '+esc(x.comment):''}</small>
  ${actor?.bgh&&x.status==='WAIT_BGH'?'<button type="button" data-batch="'+esc(x.id)+'" style="margin-top:7px;padding:8px 12px">Xem và duyệt</button>':''}
  </div>`).join('')||'Chưa có tổ trình lịch.';
 }
@@ -81,7 +97,7 @@ async function load(){
  try{
  const [r,b]=await Promise.all([jsonp('ktScheduleList'),jsonp('ktScheduleBatches')]);
  actor=r.actor;records=r.items||[];batches=b.batches||[];ready=true;
- render();status('Đã đồng bộ '+records.length+' lịch và '+batches.length+' hồ sơ tổ từ Backend. Các xung đột được kiểm tra trước khi máy chủ xác nhận.');
+ render();status('Đã tải '+records.length+' lịch, '+batches.filter(x=>x.status==='WAIT_BGH').length+' hồ sơ chờ BGH và '+batches.filter(x=>x.status==='APPROVED').length+' hồ sơ đã phê duyệt.');
  }catch(e){actor=null;records=[];batches=[];render();status('KT01 chưa kết nối quy trình lịch: '+e.message,true);}
 }
 $('ktlRefresh').addEventListener('click',load);
