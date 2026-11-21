@@ -9,7 +9,7 @@ const info=$('a21ScheduleMessage'),table=$('a21ScheduleDrafts');
 const API='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
 const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
 let remote=[],actor=null,ready=false,busy=false,editingId='';
-const labels={WAIT_TTCM:'Chờ TTCM xác nhận',WAIT_BGH:'Đã gửi BGH',APPROVED:'Đã được BGH duyệt'};
+const labels={DRAFT:'Bản nháp – chưa gửi TTCM',WAIT_TTCM:'Đã gửi TTCM – chờ xác nhận',WAIT_BGH:'Đã gửi BGH',APPROVED:'Đã được BGH duyệt'};
 const byCode=()=>$('code')?.value==='A.2.1';
 const roomTypes={CLASSROOM:'Phòng học của lớp',COMPUTER:'Phòng máy',LAB:'Phòng thí nghiệm / thực hành',FUNCTION:'Phòng chức năng',OUTDOOR:'Sân tập / ngoài trời'};
 function chosenRoom(){
@@ -247,7 +247,8 @@ function approvalText(x){
   +' và BGH '+esc(approver||'của trường')+' phê duyệt'+(rv.approvedAt?' ('+esc(fmt(rv.approvedAt))+')':'')+'.';
  }
  if(x.status==='WAIT_BGH')return '✓ Đã được TTCM '+esc(chief||'của tổ')+' xác nhận'+(rv.confirmedAt?' ('+esc(fmt(rv.confirmedAt))+')':'')+'; đang chờ BGH phê duyệt.';
- if(x.status==='WAIT_TTCM')return 'Đã lưu đăng ký; đang chờ TTCM rà soát và xác nhận.';
+ if(x.status==='DRAFT')return 'Bản nháp đã lưu trên EDOS; chưa gửi TTCM.';
+ if(x.status==='WAIT_TTCM')return 'Đã gửi TTCM; đang chờ TTCM rà soát và xác nhận.';
  return esc(labels[x.status]||x.status||'');
 }
 function render(){
@@ -257,7 +258,7 @@ function render(){
  table.innerHTML='<strong>Đăng ký của tôi (dữ liệu Backend)</strong>'+rows.map(x=>`
  <div class="a21-schedule-entry"><span><b>${esc(x.className)} – ${esc(x.subject)}</b> · ${esc(displayDate(x.date))} · ${esc(x.session)} · Tiết ${esc(x.start)}–${esc(x.end)} · ${esc(x.room||'Chưa có phòng')}
  <small style="display:block;color:#52738d;line-height:1.6">${approvalText(x)}</small></span>
- ${x.status==='WAIT_TTCM'?'<button type="button" class="secondary" data-edit="'+esc(x.id)+'">Sửa</button>':''}</div>`).join('');
+ ${x.status==='DRAFT'?'<div style="display:flex;gap:7px;flex-wrap:wrap"><button type="button" class="secondary" data-edit="'+esc(x.id)+'">Sửa</button><button type="button" data-send="'+esc(x.id)+'" style="background:#086eaf;color:#fff;border-radius:8px;border:0;padding:8px 12px;font-weight:750">Gửi TTCM</button></div>':x.status==='WAIT_TTCM'&&!String(x.room||'').trim()?'<button type="button" class="secondary" data-edit="'+esc(x.id)+'">Bổ sung phòng</button>':''}</div>`).join('');
 }
 async function refresh(){
  const turn=++requestId;
@@ -296,9 +297,26 @@ submitAction?.addEventListener('click',()=>{
 });
 
 $('a21ScheduleClose')?.addEventListener('click',()=>{panel.hidden=true;btn.classList.remove('a21-action-active');btn.setAttribute('aria-pressed','false');});
-table.addEventListener('click',e=>{
- const id=e.target.closest('[data-edit]')?.dataset.edit;if(!id)return;
- const x=remote.find(r=>r.id===id&&r.username===actor?.username&&r.status==='WAIT_TTCM');if(!x)return;
+table.addEventListener('click',async e=>{
+ const sendId=e.target.closest('[data-send]')?.dataset.send;
+ if(sendId){
+  if(busy||!ready)return;
+  const draft=remote.find(x=>x.id===sendId&&x.username===actor?.username&&x.status==='DRAFT');
+  if(!draft)return;
+  // Ensure a deliberate user action; don't silently forward when saving.
+  if(!window.confirm('Gửi lịch '+draft.className+' – '+draft.subject+' cho TTCM '+(actor?.team||'')+'? Sau khi gửi, không thể sửa trực tiếp.'))return;
+  busy=true;const btn=e.target.closest('button');if(btn)btn.disabled=true;
+  try{
+   const sent=await post('ktScheduleSave',{sendId});
+   await refresh();
+   status(sent.message||'Đã gửi đăng ký cho TTCM.');
+  }catch(err){status('CHƯA gửi TTCM: '+String(err.message||err),true);}
+  finally{busy=false;if(btn?.isConnected)btn.disabled=false;}
+  return;
+ }
+ const id=e.target.closest('[data-edit]')?.dataset.edit;if(!id||busy)return;
+ const x=remote.find(r=>r.id===id&&r.username===actor?.username&&(
+  r.status==='DRAFT'||r.status==='WAIT_TTCM'&&!String(r.room||'').trim()));if(!x)return;
  editingId=x.id;
  gradeSelect.value=String(x.className||'').split('/')[0];
  buildClassSelect(gradeSelect.value,x.className);
@@ -306,7 +324,7 @@ table.addEventListener('click',e=>{
  $('a21RoomOther').value=vals.a21Room==='OTHER'?(x.room||''):'';
  for(const [k,v] of Object.entries(vals))$(k).value=String(v);
  calendarClose();setRoomMode();if($('a21Room').value==='OTHER')$('a21RoomOther').value=x.room||'';updatePreview();
- status('Đang sửa lịch '+x.className+' – '+x.subject+'. Chọn “Lưu đăng ký lên EDOS” để cập nhật.');
+ status('Đang chỉnh lịch '+x.className+' – '+x.subject+'. Chọn “Lưu nháp trên EDOS” để cập nhật.');
 });
 form.addEventListener('submit',async e=>{
  e.preventDefault();if(busy)return;
@@ -317,7 +335,7 @@ form.addEventListener('submit',async e=>{
  const issues=localCheck(r);if(!r.room)issues.unshift('Cần nhập số/tên phòng hoặc khu vực kiểm tra.');if(!r.date)issues.unshift('Ngày kiểm tra phải nhập đúng định dạng dd/mm/yyyy.');if(issues.length){status(issues.join(' • '),true);return;}
  busy=true;form.querySelector('button[type="submit"]').disabled=true;
  try{const data=await post('ktScheduleSave',{record:r});editingId='';form.reset();buildClassSelect('');calendarClose();setRoomMode();
-  status(data.message||'Đã đăng ký thành công vào bảng chung, chờ TTCM xác nhận.');updatePreview();await refresh();
+  updatePreview();await refresh();status(data.message||'Đã lưu bản nháp trên EDOS. Chọn Gửi TTCM ở danh sách bên dưới.');
  }catch(err){status('CHƯA ghi lịch: '+String(err.message||err),true);}
  finally{busy=false;form.querySelector('button[type="submit"]').disabled=false;}
 });
