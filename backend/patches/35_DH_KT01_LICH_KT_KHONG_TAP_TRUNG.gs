@@ -98,7 +98,10 @@ function hvaKTLList_(action,p){
  var batches=hvaKTLRead_(hvaKTLBatchSh_(),10);
  if(action==='ktScheduleList'){
   var batchIndex={};batches.forEach(function(x){batchIndex[x.data.id]=x.data;});
-  var mine=items.filter(function(x){return actor.bgh||actor.chief&&hvaKTLNorm_(x.data.team)===hvaKTLNorm_(actor.team)||x.data.username===actor.username;});
+  var mine=items.filter(function(x){
+   return x.data.username===actor.username ||
+    (x.data.status!=='DRAFT'&&(actor.bgh||actor.chief&&hvaKTLNorm_(x.data.team)===hvaKTLNorm_(actor.team)));
+  });
   return {ok:true,success:true,items:mine.map(function(x){
    var d=Object.assign({},x.data),b=batchIndex[d.batchId];
    // Server-originated approver details, never trust client-submitted names.
@@ -121,19 +124,39 @@ function hvaKTLPost_(action,p){
   var bh=hvaKTLBatchSh_(),bs=hvaKTLRead_(bh,10);
   var teamKey=hvaKTLNorm_(actor.team);
   if(action==='ktScheduleSave'){
+   if(!teamKey)throw Error('Tài khoản chưa có tổ chuyên môn chuẩn.');
+   // Stay on the existing Router action; sendId is an explicit transition,
+   // not a save that silently forwards a draft to TTCM.
+   var sendId=String(p.sendId||'').trim();
+   if(sendId){
+    var draftHit=hvaKTLFind_(items,sendId);
+    if(!draftHit||draftHit.data.username!==actor.username)throw Error('Không tìm thấy bản nháp thuộc tài khoản.');
+    if(draftHit.data.status!=='DRAFT')throw Error('Chỉ gửi được lịch đang ở trạng thái bản nháp.');
+    if(bs.some(function(x){return hvaKTLNorm_(x.data.team)===teamKey&&['WAIT_BGH','APPROVED'].indexOf(x.data.status)>=0;}))
+     throw Error('Tổ đã có lịch trình BGH hoặc đã được duyệt. Cần quy trình điều chỉnh.');
+    var checked=hvaKTLTime_(draftHit.data);hvaKTLClash_(checked,items,sendId);
+    draftHit.data=Object.assign({},draftHit.data,checked,{status:'WAIT_TTCM',sentAt:now,updatedAt:now});
+    sh.getRange(draftHit.row,1,1,15).setValues([hvaKTLRow_(draftHit.data)]);
+    hvaKTLLog_('SEND_TTCM',actor,sendId,'Giáo viên gửi lịch cho TTCM tổ '+actor.team);
+    return {ok:true,success:true,item:draftHit.data,message:'Đã gửi lịch cho TTCM '+actor.team+'; chờ TTCM xác nhận.'};
+   }
    var raw=p.record||{},id=String(raw.id||'').trim();
    var hit=id?hvaKTLFind_(items,id):null;
    if(id&&!hit)throw Error('Không tìm thấy lịch cần sửa.');
-   if(hit&&(hit.data.username!==actor.username||hit.data.status!=='WAIT_TTCM'))
-    throw Error('Chỉ người đăng ký được sửa lịch còn chờ TTCM.');
+   // Backward compatibility: old WAIT_TTCM rows were sent by the old "Save" button.
+   // They remain submitted. Only permit correction if a legacy row has no room.
+   var legacyCorrection=!!(hit&&hit.data.status==='WAIT_TTCM'&&!String(hit.data.room||'').trim());
+   if(hit&&(hit.data.username!==actor.username||(!legacyCorrection&&hit.data.status!=='DRAFT')))
+    throw Error('Lịch đã gửi TTCM hoặc đã duyệt; không được sửa trực tiếp.');
    var v=hvaKTLTime_(raw);hvaKTLClash_(v,items,id);
    var d=Object.assign({},v,{id:id||'KTL-'+Utilities.getUuid(),username:actor.username,
-    teacher:actor.name,team:actor.team,status:'WAIT_TTCM',batchId:'',updatedAt:now});
-   if(!teamKey)throw Error('Tài khoản chưa có tổ chuyên môn chuẩn.');
+    teacher:actor.name,team:actor.team,status:legacyCorrection?'WAIT_TTCM':'DRAFT',
+    batchId:'',sentAt:legacyCorrection?(hit.data.sentAt||hit.data.updatedAt||now):'',updatedAt:now});
    if(bs.some(function(x){return hvaKTLNorm_(x.data.team)===teamKey&&['WAIT_BGH','APPROVED'].indexOf(x.data.status)>=0;}))
     throw Error('Lịch của tổ đã trình BGH hoặc phê duyệt. Cần quy trình yêu cầu điều chỉnh.');
    if(hit)sh.getRange(hit.row,1,1,15).setValues([hvaKTLRow_(d)]);else sh.appendRow(hvaKTLRow_(d));
-   hvaKTLLog_('SAVE',actor,d.id,'');return {ok:true,success:true,item:d,message:'Đã lưu đăng ký vào cơ sở dữ liệu chung; chờ TTCM xác nhận.'};
+   hvaKTLLog_(legacyCorrection?'CORRECT_LEGACY':'SAVE_DRAFT',actor,d.id,'');
+   return {ok:true,success:true,item:d,message:legacyCorrection?'Đã bổ sung phòng cho lịch cũ đang chờ TTCM.':'Đã lưu bản nháp trên EDOS. Chọn Gửi TTCM khi kiểm tra xong.'};
   }
   if(action==='ktScheduleTeamSubmit'){
    if(!actor.chief||!teamKey)throw Error('Chỉ TTCM được xác nhận lịch tổ.');
