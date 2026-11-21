@@ -258,7 +258,7 @@ function render(){
  table.innerHTML='<strong>Đăng ký của tôi (dữ liệu Backend)</strong>'+rows.map(x=>`
  <div class="a21-schedule-entry"><span><b>${esc(x.className)} – ${esc(x.subject)}</b> · ${esc(displayDate(x.date))} · ${esc(x.session)} · Tiết ${esc(x.start)}–${esc(x.end)} · ${esc(x.room||'Chưa có phòng')}
  <small style="display:block;color:#52738d;line-height:1.6">${approvalText(x)}</small></span>
- ${x.status==='DRAFT'?'<div style="display:flex;gap:7px;flex-wrap:wrap"><button type="button" class="secondary" data-edit="'+esc(x.id)+'">Sửa</button><button type="button" data-send="'+esc(x.id)+'" style="background:#086eaf;color:#fff;border-radius:8px;border:0;padding:8px 12px;font-weight:750">Gửi TTCM</button></div>':x.status==='WAIT_TTCM'&&!String(x.room||'').trim()?'<button type="button" class="secondary" data-edit="'+esc(x.id)+'">Bổ sung phòng</button>':''}</div>`).join('');
+ ${x.status==='DRAFT'?'<div class="a21-entry-actions"><button type="button" class="secondary" data-edit="'+esc(x.id)+'">Sửa nháp</button><button type="button" class="a21-send-ttcm" data-send="'+esc(x.id)+'">Gửi TTCM <span aria-hidden="true">➜</span></button></div>':x.status==='WAIT_TTCM'?'<div class="a21-entry-actions">'+(!String(x.room||'').trim()?'<button type="button" class="secondary" data-edit="'+esc(x.id)+'">Bổ sung phòng</button>':'')+'<span class="a21-submitted-tag" title="Đã chuyển vào danh sách chờ xác nhận của TTCM">✓ Đã gửi TTCM</span></div>':''}</div>`).join('');
 }
 async function refresh(){
  const turn=++requestId;
@@ -317,6 +317,9 @@ table.addEventListener('click',async e=>{
  const id=e.target.closest('[data-edit]')?.dataset.edit;if(!id||busy)return;
  const x=remote.find(r=>r.id===id&&r.username===actor?.username&&(
   r.status==='DRAFT'||r.status==='WAIT_TTCM'&&!String(r.room||'').trim()));if(!x)return;
+ form.dataset.editingLegacy=x.status==='WAIT_TTCM'?'true':'false';
+ const save=$('a21SaveDraft');
+ if(save)save.textContent=x.status==='WAIT_TTCM'?'Cập nhật phòng cho lịch đã gửi':'Lưu nháp trên EDOS';
  editingId=x.id;
  gradeSelect.value=String(x.className||'').split('/')[0];
  buildClassSelect(gradeSelect.value,x.className);
@@ -324,17 +327,24 @@ table.addEventListener('click',async e=>{
  $('a21RoomOther').value=vals.a21Room==='OTHER'?(x.room||''):'';
  for(const [k,v] of Object.entries(vals))$(k).value=String(v);
  calendarClose();setRoomMode();if($('a21Room').value==='OTHER')$('a21RoomOther').value=x.room||'';updatePreview();
- status('Đang chỉnh lịch '+x.className+' – '+x.subject+'. Chọn “Lưu nháp trên EDOS” để cập nhật.');
+ status(x.status==='WAIT_TTCM'?'Đang bổ sung phòng cho lịch ĐÃ GỬI TTCM: '+x.className+' – '+x.subject+'. Không đăng ký lại lịch này.':'Đang sửa nháp '+x.className+' – '+x.subject+'.');form.scrollIntoView({block:'start',behavior:'smooth'});
 });
 form.addEventListener('submit',async e=>{
  e.preventDefault();if(busy)return;
  if(!ready){status('Chưa kết nối được Backend chung; không thể gửi đăng ký.',true);return;}
+ // A matching legacy WAIT_TTCM record without room must be updated, not duplicated.
+ if(!editingId){
+  const cls=$('a21Class').value.trim(),sub=$('a21Subject').value.trim();
+  const legacy=remote.filter(x=>x.username===actor?.username&&x.status==='WAIT_TTCM'&&!String(x.room||'').trim()
+    &&x.className===cls&&x.subject===sub&&x.date===viToIso($('a21Date').value)&&x.session===$('a21Session').value);
+  if(legacy.length===1){editingId=legacy[0].id;form.dataset.editingLegacy='true';}
+ }
  const r={id:editingId||'',className:$('a21Class').value.trim(),subject:$('a21Subject').value.trim(),
  date:viToIso($('a21Date').value),session:$('a21Session').value,start:+$('a21Start').value,end:+$('a21End').value,
  assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:chosenRoom()};
  const issues=localCheck(r);if(!r.room)issues.unshift('Cần nhập số/tên phòng hoặc khu vực kiểm tra.');if(!r.date)issues.unshift('Ngày kiểm tra phải nhập đúng định dạng dd/mm/yyyy.');if(issues.length){status(issues.join(' • '),true);return;}
  busy=true;form.querySelector('button[type="submit"]').disabled=true;
- try{const data=await post('ktScheduleSave',{record:r});editingId='';form.reset();buildClassSelect('');calendarClose();setRoomMode();
+ try{const data=await post('ktScheduleSave',{record:r});editingId='';delete form.dataset.editingLegacy;if($('a21SaveDraft'))$('a21SaveDraft').textContent='Lưu nháp trên EDOS';form.reset();buildClassSelect('');calendarClose();setRoomMode();
   updatePreview();await refresh();status(data.message||'Đã lưu bản nháp trên EDOS. Chọn Gửi TTCM ở danh sách bên dưới.');
  }catch(err){status('CHƯA ghi lịch: '+String(err.message||err),true);}
  finally{busy=false;form.querySelector('button[type="submit"]').disabled=false;}
