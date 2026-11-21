@@ -118,7 +118,7 @@ $('ktlBatches').addEventListener('click',e=>{
  $('ktlSelectedRecords').innerHTML=selectedRows.length
   ?'<b>Lịch thuộc đúng hồ sơ đang phê duyệt:</b>'+selectedRows.map(v=>
   '<div style="padding:7px 0;border-bottom:1px solid #d5e4ef">'+esc(v.className)+' · '+esc(v.subject)+
-  ' · '+esc(formatVN(v.date+'T00:00:00+07:00').split(',')[0])+' · '+esc(v.session)+' · Tiết '+esc(v.start)+'–'+esc(v.end)+
+  ' · '+esc(String(v.date||'').split('-').reverse().join('/'))+' · '+esc(v.session)+' · Tiết '+esc(v.start)+'–'+esc(v.end)+
   ' · '+esc(v.room||'Chưa có phòng')+' · GV '+esc(v.teacher)+'</div>').join('')
   :'<span style="color:#a42731">Không có bản đăng ký thuộc hồ sơ này. Không được phê duyệt.</span>';
  $('ktlApprove').disabled=selectedRows.length===0;
