@@ -148,10 +148,22 @@ function hvaKTLPost_(action,p){
    var legacyCorrection=!!(hit&&hit.data.status==='WAIT_TTCM'&&!String(hit.data.room||'').trim());
    if(hit&&(hit.data.username!==actor.username||(!legacyCorrection&&hit.data.status!=='DRAFT')))
     throw Error('Lịch đã gửi TTCM hoặc đã duyệt; không được sửa trực tiếp.');
+   if(legacyCorrection){
+    // Do not allow silent edits of a previously submitted schedule.
+    // Only fill its missing room and the room type; other fields stay unchanged.
+    var previous=hit.data;
+    ['className','subject','date','session','assessment'].forEach(function(k){
+     if(String(raw[k]||'').trim()!==String(previous[k]||'').trim())
+      throw Error('Lịch này đã gửi TTCM. Chỉ được bổ sung phòng; không được thay đổi '+k+'.');
+    });
+    if(Number(raw.start)!==Number(previous.start)||Number(raw.end)!==Number(previous.end))
+     throw Error('Lịch đã gửi TTCM, không được thay đổi tiết kiểm tra.');
+   }
    var v=hvaKTLTime_(raw);hvaKTLClash_(v,items,id);
-   var d=Object.assign({},v,{id:id||'KTL-'+Utilities.getUuid(),username:actor.username,
+   var d=Object.assign({},legacyCorrection?hit.data:{},v,{id:id||'KTL-'+Utilities.getUuid(),username:actor.username,
     teacher:actor.name,team:actor.team,status:legacyCorrection?'WAIT_TTCM':'DRAFT',
-    batchId:'',sentAt:legacyCorrection?(hit.data.sentAt||hit.data.updatedAt||now):'',updatedAt:now});
+    batchId:legacyCorrection?(hit.data.batchId||''):'',
+    sentAt:legacyCorrection?(hit.data.sentAt||hit.data.updatedAt||now):'',updatedAt:now});
    if(bs.some(function(x){return hvaKTLNorm_(x.data.team)===teamKey&&['WAIT_BGH','APPROVED'].indexOf(x.data.status)>=0;}))
     throw Error('Lịch của tổ đã trình BGH hoặc phê duyệt. Cần quy trình yêu cầu điều chỉnh.');
    if(hit)sh.getRange(hit.row,1,1,15).setValues([hvaKTLRow_(d)]);else sh.appendRow(hvaKTLRow_(d));
