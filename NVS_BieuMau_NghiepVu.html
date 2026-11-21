@@ -328,7 +328,7 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
  <div><label for="a21Start">Tiết bắt đầu *</label><select id="a21Start" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
  <div><label for="a21End">Tiết kết thúc *</label><select id="a21End" required><option value="">Chọn tiết</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
  <div><label for="a21RoomType">Địa điểm kiểm tra *</label><select id="a21RoomType" required><option value="CLASSROOM">Phòng học của lớp</option><option value="COMPUTER">Phòng máy (Tin học)</option><option value="LAB">Phòng thí nghiệm / thực hành</option><option value="FUNCTION">Phòng chức năng khác</option><option value="OUTDOOR">Sân tập / khu vực ngoài trời</option></select></div>
- <div class="a21-room-detail" id="a21RoomWrap"><label for="a21Room">Số hoặc tên phòng/khu vực *</label><input id="a21Room" required maxlength="90" placeholder="Ví dụ: P.203, Phòng máy 1" autocomplete="off"><small class="a21-field-help">Bắt buộc cả khi kiểm tra tại lớp, để đối chiếu phòng trùng tiết</small></div>
+ <div class="a21-room-detail" id="a21RoomWrap"><label for="a21Room">Phòng kiểm tra *</label><select id="a21Room" required><option value="">Chọn phòng kiểm tra</option><option value="P. 01">P. 01</option><option value="P. 02">P. 02</option><option value="P. 03">P. 03</option><option value="P. 04">P. 04</option><option value="P. 05">P. 05</option><option value="P. 06">P. 06</option><option value="P. 07">P. 07</option><option value="P. 08">P. 08</option><option value="P. 09">P. 09</option><option value="P. 10">P. 10</option><option value="P. 11">P. 11</option><option value="P. 12">P. 12</option><option value="P. 13">P. 13</option><option value="P. 14">P. 14</option><option value="P. 15">P. 15</option><option value="P. 16">P. 16 – Phòng bộ môn Vật lí</option><option value="P. 17">P. 17 – Phòng Hội đồng</option><option value="OTHER">Khu vực / phòng khác (ghi rõ)</option></select><input id="a21RoomOther" hidden maxlength="90" placeholder="Nhập tên phòng / khu vực khác" autocomplete="off"><small class="a21-field-help">Danh mục chuẩn P. 01–P. 17. Phòng khác phải ghi rõ để đối chiếu.</small></div>
  </div>
  <div class="a21-form-title">02 · KIỂM TRA VÀ XEM TRƯỚC</div>
  <section class="a21-preview-block" aria-labelledby="a21PreviewTitle">
@@ -385,5 +385,5 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 <script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script>
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
-<script defer src="./NVS_A21_DangKyLichKT.js?v=20261120-v9"></script>
+<script defer src="./NVS_A21_DangKyLichKT.js?v=20261121-v10"></script>
 </body></html>
