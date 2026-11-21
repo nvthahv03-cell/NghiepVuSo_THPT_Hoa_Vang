@@ -948,8 +948,8 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
       <div class="dtht-input-wrap">
         <span class="dtht-input-icon"><i class="bi bi-key"></i></span>
         <span class="dtht-pass-prefix">HVA@</span>
-        <input id="dthtLoginPass" type="password" maxlength="4" pattern="[0-9]*" inputmode="numeric"
-               autocomplete="current-password" placeholder="4 số bí mật"
+        <input id="dthtLoginPass" type="password"
+               autocomplete="current-password" placeholder="4 số ban đầu hoặc mật khẩu riêng"
                onkeydown="if(event.key==='Enter') dthtStandaloneLogin()">
         <button type="button" class="dtht-pass-eye" onclick="dthtTogglePassword()" aria-label="Hiện/ẩn mật khẩu">
           <i id="dthtPassEyeIcon" class="bi bi-eye"></i>
@@ -1132,10 +1132,7 @@ async function dthtStandaloneLogin(){
     msg.textContent = 'Vui lòng nhập tên đăng nhập và 4 số mật khẩu.';
     return;
   }
-  if(!/^\d{4}$/.test(rawPassword)){
-    msg.textContent = 'Mật khẩu HVA gồm đúng 4 chữ số.';
-    return;
-  }
+  if(rawPassword.length<4){msg.textContent='Mật khẩu không hợp lệ.';return;}
 
   btn.disabled = true;
   btnText.textContent = 'ĐANG XÁC THỰC...';
@@ -1149,7 +1146,7 @@ async function dthtStandaloneLogin(){
       body: JSON.stringify({
         action: 'login',
         tenDangNhap: username,
-        matKhau: 'HVA@' + rawPassword
+        matKhau: /^\d{4}$/.test(rawPassword) ? ('HVA@'+rawPassword) : rawPassword
       })
     });
     const data = await r.json();
@@ -1165,6 +1162,7 @@ async function dthtStandaloneLogin(){
 
     $('dthtAuth').classList.add('hidden');
     initPortal();
+    window.dispatchEvent(new Event('nvs:login-success'));
     window.NVS_refreshRoleQuickSlot?.();
     window.HVA_refreshDieuHanhGate?.();
     window.NVS_refreshNotifications?.();
@@ -1717,7 +1715,7 @@ detail.addEventListener('click',e=>{
 <!-- NVS PWA: nút cài ứng dụng -->
 <script src="./nvs-pwa.js" defer></script>
 <div id="nvsV14RoleAction" hidden aria-hidden="true"></div>
-<nav class="nvs-premium-nav" aria-label="Điều hướng NVS"><button type="button" data-nvs-nav="sdb" aria-label="Mở Sổ ghi đầu bài điện tử – đang hoàn thiện" title="Đang hoàn thiện – dùng để kiểm thử"><i class="bi bi-journal-text" aria-hidden="true"></i><span>Sổ ĐB điện tử</span></button><button type="button" data-nvs-nav="help"><i class="bi bi-book" aria-hidden="true"></i><span>Hướng dẫn sử dụng</span></button><button type="button" data-nvs-nav="connect" id="hvaDigitalUtilitiesToggle" aria-label="Mở Tiện ích số" aria-haspopup="dialog" aria-controls="hvaDigitalUtilities" aria-expanded="false"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Tiện ích số</span></button><button type="button" data-nvs-nav="chat" id="hvaChatToggle" aria-label="Mở HVA Chat" aria-haspopup="dialog" aria-controls="hvaChatPanel" aria-expanded="false"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i><span>HVA Chat</span></button></nav><div class="nvs-nav-dialog" id="nvsNavDialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="nvsNavDialogTitle"><div class="nvs-nav-dialog-box"><h2 id="nvsNavDialogTitle"></h2><p id="nvsNavDialogText"></p><button type="button" id="nvsNavDialogClose">Đóng</button></div></div><script id="nvs-premium-nav-script">(()=>{'use strict';const nav=document.querySelector('.nvs-premium-nav');if(!nav)return;const dialog=document.getElementById('nvsNavDialog'),close=document.getElementById('nvsNavDialogClose');let origin=null;const info={calendar:['Lịch công tác','Lịch nhà trường và Lịch của tôi sẽ được kết nối với lịch HVA hiện có sau khi xác nhận đường dẫn và quyền truy cập. Chưa có dữ liệu lịch trong NVS V2.'],help:['Hướng dẫn sử dụng','Tài liệu và video hướng dẫn sử dụng HVA-EDOS đang được hoàn thiện. Có thể mở các nghiệp vụ hiện có từ danh mục bên trái.'],connect:['Kết nối','Chức năng kết nối nội bộ HVA đang chờ xác nhận liên kết và quyền truy cập.'],person:['Cá nhân','Thông tin tài khoản đang được hiển thị trên Trang chủ NVS. Chức năng hồ sơ cá nhân chuyên biệt đang chờ kết nối.']};nav.querySelectorAll('button[data-nvs-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.nvsNav==='sdb'){location.href='./SoDauBai.html';return;}if(b.dataset.nvsNav==='calendar'){location.href='./LichCongTac.html';return;}if(b.dataset.nvsNav==='help'){location.href='./HuongDanSuDung.html';return;}if(b.dataset.nvsNav==='chat')return;origin=b;const x=info[b.dataset.nvsNav];document.getElementById('nvsNavDialogTitle').textContent=x[0];document.getElementById('nvsNavDialogText').textContent=x[1];dialog.setAttribute('aria-hidden','false');close.focus()}));function hide(){dialog.setAttribute('aria-hidden','true');origin?.focus()}close.addEventListener('click',hide);dialog.addEventListener('click',e=>{if(e.target===dialog)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog.getAttribute('aria-hidden')==='false')hide()})})();</script><div id="nvsRemindOverlay" class="nvs-remind-overlay" aria-hidden="true"><iframe id="nvsRemindFrame" class="nvs-remind-frame" title="Nhắc nhở công vụ" data-src="./NhacNho.html" loading="lazy"></iframe></div>
+<nav class="nvs-premium-nav" aria-label="Điều hướng NVS"><button type="button" id="nvsPasswordAccountButton" aria-label="Tài khoản cá nhân"><i class="bi bi-person-circle"></i><span>Cá nhân</span></button><button type="button" data-nvs-nav="sdb" aria-label="Mở Sổ ghi đầu bài điện tử – đang hoàn thiện" title="Đang hoàn thiện – dùng để kiểm thử"><i class="bi bi-journal-text" aria-hidden="true"></i><span>Sổ ĐB điện tử</span></button><button type="button" data-nvs-nav="help"><i class="bi bi-book" aria-hidden="true"></i><span>Hướng dẫn sử dụng</span></button><button type="button" data-nvs-nav="connect" id="hvaDigitalUtilitiesToggle" aria-label="Mở Tiện ích số" aria-haspopup="dialog" aria-controls="hvaDigitalUtilities" aria-expanded="false"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span>Tiện ích số</span></button><button type="button" data-nvs-nav="chat" id="hvaChatToggle" aria-label="Mở HVA Chat" aria-haspopup="dialog" aria-controls="hvaChatPanel" aria-expanded="false"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i><span>HVA Chat</span></button></nav><div class="nvs-nav-dialog" id="nvsNavDialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="nvsNavDialogTitle"><div class="nvs-nav-dialog-box"><h2 id="nvsNavDialogTitle"></h2><p id="nvsNavDialogText"></p><button type="button" id="nvsNavDialogClose">Đóng</button></div></div><script id="nvs-premium-nav-script">(()=>{'use strict';const nav=document.querySelector('.nvs-premium-nav');if(!nav)return;const dialog=document.getElementById('nvsNavDialog'),close=document.getElementById('nvsNavDialogClose');let origin=null;const info={calendar:['Lịch công tác','Lịch nhà trường và Lịch của tôi sẽ được kết nối với lịch HVA hiện có sau khi xác nhận đường dẫn và quyền truy cập. Chưa có dữ liệu lịch trong NVS V2.'],help:['Hướng dẫn sử dụng','Tài liệu và video hướng dẫn sử dụng HVA-EDOS đang được hoàn thiện. Có thể mở các nghiệp vụ hiện có từ danh mục bên trái.'],connect:['Kết nối','Chức năng kết nối nội bộ HVA đang chờ xác nhận liên kết và quyền truy cập.'],person:['Cá nhân','Thông tin tài khoản đang được hiển thị trên Trang chủ NVS. Chức năng hồ sơ cá nhân chuyên biệt đang chờ kết nối.']};nav.querySelectorAll('button[data-nvs-nav]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.nvsNav==='sdb'){location.href='./SoDauBai.html';return;}if(b.dataset.nvsNav==='calendar'){location.href='./LichCongTac.html';return;}if(b.dataset.nvsNav==='help'){location.href='./HuongDanSuDung.html';return;}if(b.dataset.nvsNav==='chat')return;origin=b;const x=info[b.dataset.nvsNav];document.getElementById('nvsNavDialogTitle').textContent=x[0];document.getElementById('nvsNavDialogText').textContent=x[1];dialog.setAttribute('aria-hidden','false');close.focus()}));function hide(){dialog.setAttribute('aria-hidden','true');origin?.focus()}close.addEventListener('click',hide);dialog.addEventListener('click',e=>{if(e.target===dialog)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dialog.getAttribute('aria-hidden')==='false')hide()})})();</script><div id="nvsRemindOverlay" class="nvs-remind-overlay" aria-hidden="true"><iframe id="nvsRemindFrame" class="nvs-remind-frame" title="Nhắc nhở công vụ" data-src="./NhacNho.html" loading="lazy"></iframe></div>
 <style id="nvs-remind-v7-permission-fix">#nvsOpenRemind[hidden],#nvsOpenRemind[style*="display: none"]{display:none!important;visibility:hidden!important}#nvsOpenRemind:not([hidden]){visibility:visible}</style>
 <script id="nvs-remind-v6-script">(function(){'use strict';
 const btn=document.getElementById('nvsOpenRemind'),layer=document.getElementById('nvsRemindOverlay'),frame=document.getElementById('nvsRemindFrame');
@@ -3703,5 +3701,55 @@ html body .hva-pro-header-inner>.hva-pro-tools .hva-pro-online-dot{
  html body .hva-pro-header-inner>.hva-pro-tools .hva-pro-online-dot{animation:none!important;opacity:1!important}
 }
 </style>
+<style id="nvs-pwd-styles">
+#nvs-pwd-notice[hidden],#nvs-pwd-modal[hidden]{display:none!important}
+#nvs-pwd-notice{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);width:min(560px,calc(100vw - 20px));z-index:8000;background:#edf7ff;border:1px solid #9fc7e9;border-radius:10px;padding:10px 13px;color:#0c4d7c;font:600 13px/1.4 Arial;box-shadow:0 4px 16px #0002}
+#nvs-pwd-notice button{background:none;border:0;color:#006baf;text-decoration:underline;cursor:pointer;font-weight:700}
+#nvs-pwd-modal{position:fixed;inset:0;z-index:12000;background:#061627bb;display:grid;place-items:center;padding:12px}
+#nvs-pwd-box{width:min(470px,100%);max-height:95dvh;overflow:auto;background:white;border-radius:14px;padding:20px;color:#173651;font:14px/1.5 Arial}
+#nvs-pwd-box h2{font-size:18px;margin:0 0 6px}
+#nvs-pwd-box label{display:block;margin:10px 0 3px;font-weight:700}
+#nvs-pwd-box input{display:block;box-sizing:border-box;width:100%;border:1px solid #bfd0e2;border-radius:8px;padding:10px;background:white;color:#123}
+#nvs-pwd-box .help{background:#f0f7ff;border-radius:9px;padding:10px;margin:12px 0;font-size:12px}
+#nvs-pwd-box .buttons{display:flex;justify-content:flex-end;gap:8px}
+#nvs-pwd-box button{padding:9px 13px;border:1px solid #bed0e0;border-radius:8px;cursor:pointer;font-weight:700}
+#nvs-pwd-save{background:#0869a9;color:white}
+#nvs-pwd-status{min-height:22px;color:#ae243b;font-size:12px}
+</style>
+<div id="nvs-pwd-notice" role="status" hidden>🔐 Thầy/Cô vui lòng đổi mật khẩu tại <b>Tài khoản cá nhân → Đổi mật khẩu.</b> <button id="nvs-pwd-now" type="button">Đổi ngay</button></div>
+<div id="nvs-pwd-modal" hidden><section id="nvs-pwd-box" role="dialog" aria-modal="true" aria-labelledby="nvs-pwd-heading"><h2 id="nvs-pwd-heading">🔐 Đổi mật khẩu NVS</h2><p>Nhập mật khẩu hiện tại và đặt mật khẩu mới.</p>
+<form id="nvs-pwd-form">
+<label for="nvs-pwd-old">Mật khẩu hiện tại</label><input id="nvs-pwd-old" type="password" autocomplete="current-password" required>
+<label for="nvs-pwd-new">Mật khẩu mới</label><input id="nvs-pwd-new" type="password" autocomplete="new-password" required>
+<label for="nvs-pwd-confirm">Xác nhận mật khẩu mới</label><input id="nvs-pwd-confirm" type="password" autocomplete="new-password" required>
+<div class="help">Mật khẩu mới có ít nhất <b>6 ký tự</b>, gồm <b>chữ hoa</b>, <b>chữ số</b> và <b>@</b> hoặc <b>!</b>.<br>Không dùng lại mật khẩu mặc định. Nếu quên, liên hệ quản trị để cấp mật khẩu tạm.</div>
+<div id="nvs-pwd-status" role="status"></div><div class="buttons"><button id="nvs-pwd-close" type="button">Đóng</button><button id="nvs-pwd-save" type="submit">Cập nhật mật khẩu</button></div></form></section></div>
+<script id="nvs-pwd-script">(function(){'use strict';
+const $=id=>document.getElementById(id),m=$('nvs-pwd-modal'),notice=$('nvs-pwd-notice'),form=$('nvs-pwd-form'),status=$('nvs-pwd-status');
+let busy=false;
+function tk(){return typeof authToken==='function'?authToken():''}
+function u(){try{return JSON.parse(NVS_localStore.getItem('user')||NVS_sessionStore.getItem('user')||'{}')}catch{return {}}}
+function refresh(){const x=u();notice.hidden=!tk()||x.passwordChanged===true||x.mustChangePassword===false||x.daDoiMatKhau===true}
+function open(){if(!tk())return;m.hidden=false;$('nvs-pwd-old').focus()}
+function close(){if(busy)return;m.hidden=true;form.reset();status.textContent=''}
+$('nvsPasswordAccountButton')?.addEventListener('click',open);$('nvs-pwd-now')?.addEventListener('click',open);$('nvs-pwd-close')?.addEventListener('click',close);
+m?.addEventListener('click',e=>{if(e.target===m)close()});
+window.addEventListener('nvs:login-success',refresh);
+form?.addEventListener('submit',async e=>{e.preventDefault();if(busy)return;
+const old=$('nvs-pwd-old').value,pwd=$('nvs-pwd-new').value,repeat=$('nvs-pwd-confirm').value;
+if(!(pwd.length>=6&&/[A-Z]/.test(pwd)&&/[0-9]/.test(pwd)&&/[@!]/.test(pwd))){status.textContent='Mật khẩu chưa đủ điều kiện.';return}
+if(pwd!==repeat){status.textContent='Xác nhận mật khẩu không khớp.';return}
+if(pwd===old){status.textContent='Mật khẩu mới phải khác mật khẩu cũ.';return}
+if(!tk()){status.textContent='Phiên đăng nhập đã hết hạn.';return}
+busy=true;$('nvs-pwd-save').disabled=true;status.textContent='Đang kiểm tra...';
+try{
+const resp=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'changePassword',sessionToken:tk(),matKhauCu:old,matKhauMoi:pwd})});const d=await resp.json();
+if(d?.ok===true||d?.success===true){const x=u();x.passwordChanged=true;x.mustChangePassword=false;NVS_localStore.setItem('user',JSON.stringify(x));notice.hidden=true;busy=false;close();alert('Đổi mật khẩu thành công. Vui lòng đăng nhập lại.')}
+else status.textContent=String(d?.thongBao||d?.message||'Backend chưa hỗ trợ đổi mật khẩu; chưa lưu thay đổi.');
+}catch(e){status.textContent='Chưa kết nối được Backend đổi mật khẩu; chưa lưu thay đổi.'}
+finally{busy=false;$('nvs-pwd-save').disabled=false}
+});
+window.NVS_PasswordUI={open,refresh};setTimeout(refresh,500);
+})();</script>
 </body>
 </html>
