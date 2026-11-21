@@ -1518,7 +1518,24 @@ document.addEventListener('DOMContentLoaded', initPortal);
    const scope=raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_|_$/g,'');
    return ['ALL','EVERYONE','GENERAL','PUBLIC','BROADCAST','TOAN_TRUONG','TOAN_HOI_DONG','HOI_DONG','HOI_DONG_SU_PHAM','CHUNG'].includes(scope);
  }
- function generalNotices(){return notices.filter(isGeneralNotice);}
+ 
+ // Merge KT01's targeted notifications into EDOS's existing personal-notice view.
+ function nvsKt01Inbox(token){
+  return new Promise((resolve,reject)=>{
+   const cb='nvsKT01Inbox'+Date.now()+'_'+Math.floor(Math.random()*1000000);
+   const u=new URL(DTHT_STANDALONE_BACKEND);
+   u.searchParams.set('action','ktScheduleList');
+   u.searchParams.set('sessionToken',token);
+   u.searchParams.set('callback',cb);
+   const s=document.createElement('script');let done=false;
+   const timer=setTimeout(()=>finish(new Error('KT01 timeout')),12000);
+   function finish(err,d){if(done)return;done=true;clearTimeout(timer);s.remove();delete window[cb];
+    if(err)reject(err);else resolve(Array.isArray(d?.inbox)?d.inbox:[]);}
+   window[cb]=d=>d?.ok&&d?.success?finish(null,d):finish(new Error(d?.message||'KT01 không khả dụng'));
+   s.onerror=()=>finish(new Error('Không thể tải KT01'));s.src=u.toString();document.head.appendChild(s);
+  });
+ }
+function generalNotices(){return notices.filter(isGeneralNotice);}
  function personalNotices(){return notices.filter(n=>!isGeneralNotice(n));}
  function noticeCards(list){
    return list.map(n=>'<article style="padding:12px 2px;border-top:1px solid #e1ebf3">'+
@@ -1526,7 +1543,8 @@ document.addEventListener('DOMContentLoaded', initPortal);
     (n.daDoc?'':' <span style="color:#be123c;font-size:11px;font-weight:800">Chưa đọc</span>')+
     '<div style="margin-top:6px;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere">'+esc(n.noiDung||n.content||'')+'</div>'+
     '<div style="margin-top:6px;color:#526b81;font-size:11px">'+esc(n.thoiGian||n.createdAt||'')+'</div>'+
-    (n.daDoc?'':'<button type="button" data-nvs-read="'+esc(n.id)+'" style="margin-top:9px;padding:7px 11px;border-radius:8px;background:#e7f6ff;border:1px solid #a5d8f4;color:#07518d;cursor:pointer">Đánh dấu đã đọc</button>')+'</article>').join('');
+    (n.daDoc?'':'<button type="button" '+(String(n.id||'').startsWith('KT01:')?'data-nvs-kt01-read':'data-nvs-read')+'="'+esc(n.id)+'" style="margin-top:9px;padding:7px 11px;border-radius:8px;background:#e7f6ff;border:1px solid #a5d8f4;color:#07518d;cursor:pointer">Đánh dấu đã đọc</button>')+
+    (String(n.id||'').startsWith('KT01:')?'<div style="margin-top:7px"><a href="./KT01_QuanLyDotKiemTraVaThi.html" style="color:#07518d;font-weight:700">Mở KT01 để xử lý</a></div>':'')+'</article>').join('');
  }
  function updateWorkCount(){
    const taskCount=workLoaded?myTasks.filter(t=>!['HOÀN THÀNH','ĐÃ HOÀN THÀNH'].includes(String(t.status||'').toUpperCase())).length:0;
@@ -1564,7 +1582,11 @@ document.addEventListener('DOMContentLoaded', initPortal);
     if(!data||data.ok!==true||data.success!==true||!Array.isArray(data.notifications))
       throw new Error(data&&data.message||'Dữ liệu thông báo không hợp lệ.');
     if(identity().username!==id.username||identity().token!==id.token)return;
-    notices=data.notifications;loaded=true;noticeError='';setNoticeCount();
+    let ktItems=[];try{
+     ktItems=(await nvsKt01Inbox(id.token)).map(n=>({id:n.id,tieuDe:n.title,noiDung:n.content,
+      thoiGian:n.createdAt,daDoc:!!n.read,phamVi:'CA_NHAN'}));
+    }catch(_){/* Preserve the currently PASS EDOS notification service. */}
+    notices=data.notifications.concat(ktItems);loaded=true;noticeError='';setNoticeCount();
    }catch(e){noticeError='Không tải được thông báo: '+(e.message||'Lỗi kết nối.');loaded=false;}
    finally{loading=null;if(!detail.hidden&&detail.dataset.current==='notice')renderNotice();if(!detail.hidden&&detail.dataset.current==='work')renderWork();}
   })();
@@ -1602,7 +1624,20 @@ document.addEventListener('DOMContentLoaded', initPortal);
    if(!detail.hidden&&detail.dataset.current==='work')renderWork();
   }
  }
- detail.addEventListener('click',e=>{
+ 
+ detail.addEventListener('click',async e=>{
+  const btn=e.target.closest('[data-nvs-kt01-read]');if(!btn)return;
+  const notificationId=btn.getAttribute('data-nvs-kt01-read'),id=identity();
+  if(!id.token)return;btn.disabled=true;btn.textContent='Đang ghi nhận...';
+  try{
+   await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=UTF-8'},
+    body:JSON.stringify({action:'ktScheduleSave',sessionToken:id.token,notificationReadId:notificationId})});
+   await loadNotices(true);
+   if(!notices.some(n=>n.id===notificationId&&n.daDoc))throw Error('Chưa xác minh được trạng thái đã đọc');
+  }catch(_){btn.disabled=false;btn.textContent='Đánh dấu đã đọc';}
+ });
+detail.addEventListener('click',e=>{
   const btn=e.target.closest('[data-nvs-accept]');
   if(btn&&detail.contains(btn))acceptTask(btn.getAttribute('data-nvs-accept'),btn);
  });
