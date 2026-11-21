@@ -97,8 +97,16 @@ function hvaKTLList_(action,p){
  var actor=hvaKTLActor_(p),items=hvaKTLRead_(hvaKTLSh_(),15);
  var batches=hvaKTLRead_(hvaKTLBatchSh_(),10);
  if(action==='ktScheduleList'){
+  var batchIndex={};batches.forEach(function(x){batchIndex[x.data.id]=x.data;});
   var mine=items.filter(function(x){return actor.bgh||actor.chief&&hvaKTLNorm_(x.data.team)===hvaKTLNorm_(actor.team)||x.data.username===actor.username;});
-  return {ok:true,success:true,items:mine.map(function(x){return x.data;}),actor:{username:actor.username,team:actor.team,name:actor.name,chief:actor.chief,bgh:actor.bgh}};
+  return {ok:true,success:true,items:mine.map(function(x){
+   var d=Object.assign({},x.data),b=batchIndex[d.batchId];
+   // Server-originated approver details, never trust client-submitted names.
+   if(b){d.review={chief:b.chief||'',chiefName:b.chiefName||b.chief||'',
+    confirmedAt:b.submittedAt||'',approver:b.approver||'',approverName:b.approverName||b.approver||'',
+    approvedAt:b.decidedAt||'',comment:b.comment||'',batchStatus:b.status||''};}
+   return d;
+  }),actor:{username:actor.username,team:actor.team,name:actor.name,chief:actor.chief,bgh:actor.bgh}};
  }
  if(!actor.bgh&&!actor.chief)throw Error('Chỉ TTCM/BGH xem được hồ sơ trình duyệt.');
  var bs=batches.filter(function(x){return actor.bgh||hvaKTLNorm_(x.data.team)===hvaKTLNorm_(actor.team);}).map(function(x){return x.data;});
@@ -136,12 +144,17 @@ function hvaKTLPost_(action,p){
    var existing=bs.find(function(x){return hvaKTLNorm_(x.data.team)===teamKey&&['WAIT_BGH','APPROVED'].indexOf(x.data.status)>=0;});
    if(existing)throw Error('Tổ đã có gói lịch đang chờ BGH hoặc đã duyệt.');
    // Recheck all global records before team submission, including provisional registrations.
-   teamRows.forEach(function(x){hvaKTLClash_(x.data,items,x.data.id);});
+   teamRows.forEach(function(x){
+    // Re-validate persisted data as well, including pre-room-catalog records.
+    // A schedule created before mandatory-room rollout must be corrected first.
+    try{hvaKTLTime_(x.data);hvaKTLClash_(x.data,items,x.data.id);}
+    catch(err){throw Error('Lịch '+x.data.className+' – '+x.data.subject+': '+String(err.message||err));}
+   });
    var batch={id:'KTLTO-'+Utilities.getUuid(),team:actor.team,status:'WAIT_BGH',
-    chief:actor.username,submittedAt:now,approver:'',decidedAt:'',comment:'',
+    chief:actor.username,chiefName:actor.name,submittedAt:now,approver:'',approverName:'',decidedAt:'',comment:'',
     completenessNote:reason,count:teamRows.length,version:1};
    teamRows.forEach(function(x){x.data.status='WAIT_BGH';x.data.batchId=batch.id;x.data.updatedAt=now;sh.getRange(x.row,1,1,15).setValues([hvaKTLRow_(x.data)]);});
-   bh.appendRow(hvaKTLBatchRow_(batch));hvaKTLLog_('TEAM_SUBMIT',actor,batch.id,reason);
+   bh.appendRow(hvaKTLBatchRow_(batch));hvaKTLLog_('TEAM_SUBMIT',actor,batch.id,'TTCM: '+actor.name+' | '+reason);
    return {ok:true,success:true,batch:batch,message:'TTCM đã xác nhận và chuyển lịch tổ đến BGH.'};
   }
   if(action==='ktScheduleDecide'){
@@ -153,14 +166,17 @@ function hvaKTLPost_(action,p){
    if(decision==='RETURNED'&&comment.length<5)throw Error('BGH cần ghi lý do trả lại.');
    var selected=items.filter(function(x){return x.data.batchId===bid;});
    if(!selected.length)throw Error('Gói lịch không có bản đăng ký.');
-   if(decision==='APPROVED')selected.forEach(function(x){hvaKTLClash_(x.data,items,x.data.id);});
-   hit.data.status=decision;hit.data.approver=actor.username;hit.data.decidedAt=now;hit.data.comment=comment;
+   if(decision==='APPROVED')selected.forEach(function(x){
+    try{hvaKTLTime_(x.data);hvaKTLClash_(x.data,items,x.data.id);}
+    catch(err){throw Error('Lịch '+x.data.className+' – '+x.data.subject+': '+String(err.message||err));}
+   });
+   hit.data.status=decision;hit.data.approver=actor.username;hit.data.approverName=actor.name;hit.data.decidedAt=now;hit.data.comment=comment;
    bh.getRange(hit.row,1,1,10).setValues([hvaKTLBatchRow_(hit.data)]);
    selected.forEach(function(x){x.data.status=decision==='APPROVED'?'APPROVED':'WAIT_TTCM';x.data.updatedAt=now;
      if(decision!=='APPROVED')x.data.batchId='';
      sh.getRange(x.row,1,1,15).setValues([hvaKTLRow_(x.data)]);
    });
-   hvaKTLLog_('BGH_'+decision,actor,bid,comment);
+   hvaKTLLog_('BGH_'+decision,actor,bid,'BGH: '+actor.name+' | '+comment);
    return {ok:true,success:true,batch:hit.data,message:decision==='APPROVED'?'BGH đã phê duyệt lịch tổ.':'BGH đã trả lại lịch cho TTCM điều chỉnh.'};
   }
   throw Error('Action KT01 không hợp lệ.');
