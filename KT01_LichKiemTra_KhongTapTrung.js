@@ -10,8 +10,12 @@ root.innerHTML=`<div style="display:flex;align-items:center;justify-content:spac
 <button id="ktlRefresh" type="button" style="padding:11px 14px;border:1px solid #a8cde6;border-radius:9px">Làm mới lịch</button></div>
 <div id="ktlInfo" style="font-size:13px;margin:13px 0;padding:12px;background:#eef7ff;border-radius:9px" role="status">Đang kiểm tra kết nối Backend…</div>
 <div id="ktlActorInfo" style="font-size:12px;color:#164b73;padding:10px 12px;background:#f4faff;border:1px solid #d3e7f6;border-radius:9px" aria-live="polite">Đang xác minh tài khoản EDOS…</div>
+<div id="ktlInboxPanel" style="margin:12px 0;padding:12px;background:#f3f9ff;border:1px solid #c4deef;border-radius:10px" hidden>
+<strong>Thông báo KT01 gửi đến tài khoản</strong>
+<div id="ktlInboxList" style="margin-top:7px;font-size:13px"></div></div>
 <div id="ktlTeamArea" hidden>
  <h3 style="color:#13547f">TTCM – Xác nhận lịch của tổ</h3>
+ <div id="ktlPccmReview" style="padding:11px 12px;border-radius:9px;background:#fff9eb;border:1px solid #e9d9aa;margin:9px 0;font-size:12px" aria-live="polite">Đang đối chiếu PCCM...</div>
  <label style="display:block;margin:9px 0">Xác nhận đã rà soát đủ giáo viên, lớp, môn phải đăng ký
  <input id="ktlComplete" type="checkbox"> <b>Đã đối chiếu phân công chuyên môn và xác nhận lịch tổ đầy đủ</b></label>
  <label style="display:block;margin:9px 0">Căn cứ rà soát / trường hợp không phải đăng ký
@@ -36,6 +40,7 @@ main.insertBefore(root,main.firstChild?.nextSibling||null);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
 let records=[],batches=[],actor=null,selected='',ready=false,busy=false;
+let inbox=[],pccm=null;
 const statusText={WAIT_TTCM:'Chờ TTCM',WAIT_BGH:'Chờ BGH',APPROVED:'Đã phê duyệt',RETURNED:'BGH trả lại'};
 function status(s,error=false){const e=$('ktlInfo');e.textContent=s;e.style.background=error?'#fff1eb':'#eef7ff';e.style.color=error?'#a93231':'#0b5686';}
 function auth(){
@@ -79,6 +84,26 @@ function render(){
  identity.textContent=actor
   ?'Tài khoản EDOS: '+(actor.name||actor.username)+' · '+(actor.team||'Chưa rõ tổ')+' · Quyền: '+([actor.chief?'TTCM':'',actor.bgh?'BGH':''].filter(Boolean).join(', ')||'Giáo viên')
   :'Chưa xác minh được tài khoản EDOS.';
+
+ const noticePanel=$('ktlInboxPanel'),noticeList=$('ktlInboxList');
+ noticePanel.hidden=!inbox.length;
+ noticeList.innerHTML=inbox.map(n=>'<div style="padding:8px 0;border-bottom:1px solid #d9e7f2">'+
+  '<b>'+esc(n.title)+'</b> '+(n.read?'':'<span style="color:#ac4a11;font-weight:700">• Chưa đọc</span>')+
+  '<div>'+esc(n.content)+'</div><small>'+esc(formatVN(n.createdAt))+'</small>'+
+  (n.read?'':' <button type="button" data-ktl-read="'+esc(n.id)+'" class="secondary" style="font-size:11px;padding:4px 9px">Đã đọc</button>')+
+  '</div>').join('');
+ const reviewBox=$('ktlPccmReview'),submitBtn=$('ktlSubmit');
+ if(actor?.chief){
+  const ok=!!pccm?.ready;
+  submitBtn.disabled=!ok;
+  submitBtn.title=ok?'Đã đối chiếu đầy đủ danh mục PCCM':'Cần hoàn tất danh mục PCCM và đủ đăng ký mới được gửi BGH';
+  reviewBox.style.background=ok?'#effaf0':'#fff9eb';
+  reviewBox.textContent=!pccm?'Chưa tải được kết quả đối chiếu PCCM.':
+   'PCCM: '+pccm.submitted+'/'+pccm.total+' lớp–môn đã gửi. '+
+   (ok?'Đủ điều kiện để TTCM xác nhận và trình BGH.':
+     'CHƯA ĐỦ: '+(pccm.missing||[]).slice(0,12).join('; ')+
+     (pccm.errors||[]).join('; '));
+ }
  const tbody=$('ktlTable').querySelector('tbody');
  const visible=records.slice().sort((a,b)=>String(a.date+a.session+a.className).localeCompare(String(b.date+b.session+b.className)));
  tbody.innerHTML=visible.map(x=>`<tr style="border-top:1px solid #dae8f1"><td style="padding:8px">${esc(x.teacher)}</td><td style="padding:8px">${esc(x.team)}</td><td style="padding:8px">${esc(x.className)}</td>
@@ -97,11 +122,17 @@ async function load(){
  ready=false;status('Đang đọc lịch đăng ký chung và hồ sơ các tổ...');
  try{
  const [r,b]=await Promise.all([jsonp('ktScheduleList'),jsonp('ktScheduleBatches')]);
- actor=r.actor;records=r.items||[];batches=b.batches||[];ready=true;
+ actor=r.actor;records=r.items||[];batches=b.batches||[];inbox=r.inbox||[];pccm=r.pccm||null;ready=true;
  render();status('Đã tải '+records.length+' lịch, '+batches.filter(x=>x.status==='WAIT_BGH').length+' hồ sơ chờ BGH và '+batches.filter(x=>x.status==='APPROVED').length+' hồ sơ đã phê duyệt.');
- }catch(e){actor=null;records=[];batches=[];render();status('KT01 chưa kết nối quy trình lịch: '+e.message,true);}
+ }catch(e){actor=null;records=[];batches=[];inbox=[];pccm=null;render();status('KT01 chưa kết nối quy trình lịch: '+e.message,true);}
 }
 $('ktlRefresh').addEventListener('click',load);
+$('ktlInboxList').addEventListener('click',async e=>{
+ const id=e.target.closest('[data-ktl-read]')?.dataset.ktlRead;if(!id||busy)return;
+ busy=true;try{await post('ktScheduleSave',{notificationReadId:id});await load();}
+ catch(err){status('Chưa đánh dấu được thông báo: '+String(err.message||err),true);}
+ finally{busy=false;}
+});
 $('ktlSubmit').addEventListener('click',async()=>{
  if(!ready||busy)return;busy=true;
  try{
