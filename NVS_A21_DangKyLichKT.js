@@ -237,13 +237,26 @@ function updatePreview(){
  warning.style.color=issues.length?'#a72a33':'#6b5b31';
 }
 ['input','change'].forEach(evt=>form.addEventListener(evt,updatePreview));
+function approvalText(x){
+ const rv=x.review||{};
+ const chief=rv.chiefName||rv.chief||'';
+ const approver=rv.approverName||rv.approver||'';
+ const fmt=t=>{if(!t)return '';const d=new Date(t);return Number.isFinite(d.getTime())?d.toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit',year:'numeric'}):'';};
+ if(x.status==='APPROVED'){
+  return '✓ Đã được TTCM '+esc(chief||'của tổ')+' xác nhận'+(rv.confirmedAt?' ('+esc(fmt(rv.confirmedAt))+')':'')
+  +' và BGH '+esc(approver||'của trường')+' phê duyệt'+(rv.approvedAt?' ('+esc(fmt(rv.approvedAt))+')':'')+'.';
+ }
+ if(x.status==='WAIT_BGH')return '✓ Đã được TTCM '+esc(chief||'của tổ')+' xác nhận'+(rv.confirmedAt?' ('+esc(fmt(rv.confirmedAt))+')':'')+'; đang chờ BGH phê duyệt.';
+ if(x.status==='WAIT_TTCM')return 'Đã lưu đăng ký; đang chờ TTCM rà soát và xác nhận.';
+ return esc(labels[x.status]||x.status||'');
+}
 function render(){
  if(!ready){table.textContent='Chưa kết nối bảng lịch chung toàn trường.';return;}
  const rows=remote.filter(x=>x.username===actor?.username);
  if(!rows.length){table.textContent='Thầy/cô chưa đăng ký lịch kiểm tra nào trên Backend.';return;}
  table.innerHTML='<strong>Đăng ký của tôi (dữ liệu Backend)</strong>'+rows.map(x=>`
- <div class="a21-schedule-entry"><span><b>${esc(x.className)} – ${esc(x.subject)}</b> · ${esc(x.date)} · ${esc(x.session)} · Tiết ${esc(x.start)}–${esc(x.end)}
- <small style="display:block;color:#52738d">${esc(labels[x.status]||x.status)}</small></span>
+ <div class="a21-schedule-entry"><span><b>${esc(x.className)} – ${esc(x.subject)}</b> · ${esc(displayDate(x.date))} · ${esc(x.session)} · Tiết ${esc(x.start)}–${esc(x.end)} · ${esc(x.room||'Chưa có phòng')}
+ <small style="display:block;color:#52738d;line-height:1.6">${approvalText(x)}</small></span>
  ${x.status==='WAIT_TTCM'?'<button type="button" class="secondary" data-edit="'+esc(x.id)+'">Sửa</button>':''}</div>`).join('');
 }
 async function refresh(){
