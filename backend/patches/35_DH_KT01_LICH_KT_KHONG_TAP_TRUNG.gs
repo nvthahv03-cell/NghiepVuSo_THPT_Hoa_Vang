@@ -13,6 +13,18 @@ function hvaKTLLog_(action,actor,id,detail){
  .appendRow([new Date().toISOString(),action,actor.username,id,String(detail||'').slice(0,1000)]);
 }
 function hvaKTLNorm_(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').trim().toLowerCase();}
+function hvaKTLRoomKey_(v){
+ var s=hvaKTLNorm_(v).replace(/\s+/g,' ').trim();
+ // Tránh tách P. 01 / P01 / Phòng 01 thành nhiều phòng.
+ var m=s.match(/^(?:p\.?|phong|room)\s*0*(\d{1,2})(?:\s*[-–].*)?$/);
+ if(m&&Number(m[1])>=1&&Number(m[1])<=17)
+  return 'P'+String(Number(m[1])).padStart(2,'0');
+ return s.replace(/[.\s_-]/g,'');
+}
+function hvaKTLRoomDisplay_(v){
+ var key=hvaKTLRoomKey_(v);
+ return /^P(?:0[1-9]|1[0-7])$/.test(key)?'P. '+key.slice(1):String(v||'').trim();
+}
 function hvaKTLActor_(p){
  var a=nvsActor_(p||{});
  if(!a||!a.username)throw Error('Phiên EDOS hết hạn hoặc chưa hợp lệ.');
@@ -45,7 +57,7 @@ function hvaKTLTime_(r){
  if(['Sáng','Chiều'].indexOf(ses)<0||!Number.isInteger(a)||!Number.isInteger(b)||a<1||b>5||a>b)throw Error('Buổi/tiết không hợp lệ.');
  if(!sub||sub.length>120||!r.assessment||String(r.assessment).length>120)throw Error('Thiếu môn hoặc hình thức kiểm tra.');
  var roomType=String(r.roomType||'CLASSROOM').trim();
- var room=String(r.room||'').trim().replace(/\s+/g,' ');
+ var room=hvaKTLRoomDisplay_(String(r.room||'').trim().replace(/\s+/g,' '));
  if(['CLASSROOM','COMPUTER','LAB','FUNCTION','OUTDOOR'].indexOf(roomType)<0)
   throw Error('Loại địa điểm kiểm tra không hợp lệ.');
  if(!room||room.length>90)throw Error('Bắt buộc nhập phòng/khu vực kiểm tra (tối đa 90 ký tự), kể cả kiểm tra tại lớp.');
@@ -69,11 +81,11 @@ function hvaKTLClash_(r,items,except){
  if(peers.some(function(x){return Number(r.start)<=Number(x.end)&&Number(x.start)<=Number(r.end);}))
   throw Error('Trùng tiết với một môn kiểm tra khác của lớp trong cùng buổi.');
  // Đối chiếu TOÀN TRƯỜNG: một phòng/khu vực không được cấp cho hai lớp trùng tiết.
- var roomKey=hvaKTLNorm_(r.room).replace(/\s+/g,'');
+ var roomKey=hvaKTLRoomKey_(r.room);
  var roomPeers=items.map(function(x){return x.data;}).filter(function(x){
   return x.id!==except&&x.status!=='CANCELLED'&&x.status!=='RETURNED'
     &&x.date===r.date&&x.session===r.session&&x.className!==r.className
-    &&hvaKTLNorm_(x.room||'').replace(/\s+/g,'')===roomKey
+    &&hvaKTLRoomKey_(x.room||'')===roomKey
     &&Number(r.start)<=Number(x.end)&&Number(x.start)<=Number(r.end);
  });
  if(roomPeers.length)
