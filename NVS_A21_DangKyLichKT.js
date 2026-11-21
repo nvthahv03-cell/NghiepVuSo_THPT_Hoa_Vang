@@ -344,9 +344,27 @@ form.addEventListener('submit',async e=>{
  assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:chosenRoom()};
  const issues=localCheck(r);if(!r.room)issues.unshift('Cần nhập số/tên phòng hoặc khu vực kiểm tra.');if(!r.date)issues.unshift('Ngày kiểm tra phải nhập đúng định dạng dd/mm/yyyy.');if(issues.length){status(issues.join(' • '),true);return;}
  busy=true;form.querySelector('button[type="submit"]').disabled=true;
- try{const data=await post('ktScheduleSave',{record:r});editingId='';delete form.dataset.editingLegacy;if($('a21SaveDraft'))$('a21SaveDraft').textContent='Lưu nháp trên EDOS';form.reset();buildClassSelect('');calendarClose();setRoomMode();
-  updatePreview();await refresh();status(data.message||'Đã lưu bản nháp trên EDOS. Chọn Gửi TTCM ở danh sách bên dưới.');
- }catch(err){status('CHƯA ghi lịch: '+String(err.message||err),true);}
+ try{
+  const data=await post('ktScheduleSave',{record:r});
+  // Older deployed module 35 may acknowledge the save without persisting room.
+  // Preserve the form and verify both the POST result and subsequent GET.
+  const ack=data.item||{};
+  if(!ack.id||String(ack.id)!==String(r.id||ack.id)||String(ack.room||'').trim()!==r.room){
+   throw Error('Backend đang dùng module 35 cũ hoặc không ghi phòng. Phòng '+r.room+
+    ' chưa được xác nhận. Giữ nguyên biểu mẫu; cần cập nhật module 35 trên Apps Script V5 và triển khai New version.');
+  }
+  await refresh();
+  const saved=remote.find(x=>x.id===ack.id&&x.username===actor?.username);
+  if(!ready||!saved||String(saved.room||'').trim()!==r.room){
+   throw Error('Backend phản hồi nhưng đọc lại không thấy phòng '+r.room+
+    ' của đúng lịch. Không tự xoá thông tin; kiểm tra module 35 và phiên bản triển khai.');
+  }
+  editingId='';delete form.dataset.editingLegacy;
+  if($('a21SaveDraft'))$('a21SaveDraft').textContent='Lưu nháp trên EDOS';
+  form.reset();buildClassSelect('');calendarClose();setRoomMode();updatePreview();
+  status(saved.status==='DRAFT'?'✓ Đã lưu bản nháp với phòng '+saved.room+'. Chọn Gửi TTCM trong danh sách bên dưới.':
+   '✓ Đã cập nhật phòng '+saved.room+' cho lịch ĐÃ GỬI TTCM; không cần gửi lại.');
+ }catch(err){status('CHƯA xác nhận cập nhật phòng: '+String(err.message||err),true);}
  finally{busy=false;form.querySelector('button[type="submit"]').disabled=false;}
 });
 $('code')?.addEventListener('change',sync);sync();render();updateActorCard(null);setRoomMode();updatePreview();if(byCode())refresh();
