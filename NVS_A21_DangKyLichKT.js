@@ -12,15 +12,20 @@ let remote=[],actor=null,ready=false,busy=false,editingId='';
 const labels={WAIT_TTCM:'Chờ TTCM xác nhận',WAIT_BGH:'Đã gửi BGH',APPROVED:'Đã được BGH duyệt'};
 const byCode=()=>$('code')?.value==='A.2.1';
 const roomTypes={CLASSROOM:'Phòng học của lớp',COMPUTER:'Phòng máy',LAB:'Phòng thí nghiệm / thực hành',FUNCTION:'Phòng chức năng',OUTDOOR:'Sân tập / ngoài trời'};
+function chosenRoom(){
+ const selected=$('a21Room').value;
+ return selected==='OTHER'?$('a21RoomOther').value.trim():selected;
+}
 function setRoomMode(){
- const type=$('a21RoomType').value||'CLASSROOM';
- const wrap=$('a21RoomWrap'),room=$('a21Room');
- if(wrap)wrap.hidden=false;
+ const room=$('a21Room'),other=$('a21RoomOther');
  room.required=true;
- room.placeholder=type==='CLASSROOM'?'Ví dụ: P.203, phòng học 10/3':type==='COMPUTER'?'Ví dụ: Phòng máy 1':type==='OUTDOOR'?'Ví dụ: Sân thể dục A':'Ví dụ: Phòng thí nghiệm 2';
+ const isOther=room.value==='OTHER';
+ other.hidden=!isOther;other.required=isOther;
+ if(!isOther)other.value='';
  updatePreview();
 }
-$('a21RoomType')?.addEventListener('change',setRoomMode);
+$('a21Room')?.addEventListener('change',setRoomMode);
+$('a21RoomOther')?.addEventListener('input',updatePreview);
 
 const classMax=Object.freeze({'10':9,'11':9,'12':12});
 const gradeSelect=$('a21Grade'),classSelect=$('a21Class'),dateInput=$('a21Date');
@@ -197,7 +202,7 @@ function currentDraft(){
   className:$('a21Class').value.trim(),subject:$('a21Subject').value,
   date:viToIso($('a21Date').value),session:$('a21Session').value,
   start:$('a21Start').value,end:$('a21End').value,
-  assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:$('a21Room').value.trim()
+  assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:chosenRoom()
  };
 }
 function displayDate(s){
@@ -216,7 +221,7 @@ function updatePreview(){
  const dateInvalid=!!rawDay&&!viToIso(rawDay);
  const r={...p,start:Number(p.start),end:Number(p.end)};
  const issues=localCheck(r);
- if(!p.room)issues.push('Bắt buộc nhập số/tên phòng hoặc khu vực, kể cả kiểm tra tại lớp.');
+ if(!p.room)issues.push('Chọn phòng P. 01–P. 17 hoặc ghi rõ phòng/khu vực khác.');
  if(dateInvalid)issues.unshift('Ngày không đúng định dạng Việt Nam dd/mm/yyyy hoặc không tồn tại.');
  const incomplete=!p.className||!p.subject||!p.date||!p.session||!p.start||!p.end||!p.assessment||!p.room;
  row.innerHTML='<tr>'+[
@@ -284,9 +289,10 @@ table.addEventListener('click',e=>{
  editingId=x.id;
  gradeSelect.value=String(x.className||'').split('/')[0];
  buildClassSelect(gradeSelect.value,x.className);
- const vals={a21Subject:x.subject,a21Date:isoToVi(x.date),a21Session:x.session,a21Start:x.start,a21End:x.end,a21Assessment:x.assessment,a21RoomType:x.roomType||'CLASSROOM',a21Room:x.room||''};
+ const vals={a21Subject:x.subject,a21Date:isoToVi(x.date),a21Session:x.session,a21Start:x.start,a21End:x.end,a21Assessment:x.assessment,a21RoomType:x.roomType||'CLASSROOM',a21Room: /^P\.\s*(?:0[1-9]|1[0-7])$/.test(x.room||'')?x.room:'OTHER'};
+ $('a21RoomOther').value=vals.a21Room==='OTHER'?(x.room||''):'';
  for(const [k,v] of Object.entries(vals))$(k).value=String(v);
- calendarClose();setRoomMode();updatePreview();
+ calendarClose();setRoomMode();if($('a21Room').value==='OTHER')$('a21RoomOther').value=x.room||'';updatePreview();
  status('Đang sửa lịch '+x.className+' – '+x.subject+'. Chọn “Lưu đăng ký lên EDOS” để cập nhật.');
 });
 form.addEventListener('submit',async e=>{
@@ -294,7 +300,7 @@ form.addEventListener('submit',async e=>{
  if(!ready){status('Chưa kết nối được Backend chung; không thể gửi đăng ký.',true);return;}
  const r={id:editingId||'',className:$('a21Class').value.trim(),subject:$('a21Subject').value.trim(),
  date:viToIso($('a21Date').value),session:$('a21Session').value,start:+$('a21Start').value,end:+$('a21End').value,
- assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:$('a21Room').value.trim()};
+ assessment:$('a21Assessment').value,roomType:$('a21RoomType').value,room:chosenRoom()};
  const issues=localCheck(r);if(!r.room)issues.unshift('Cần nhập số/tên phòng hoặc khu vực kiểm tra.');if(!r.date)issues.unshift('Ngày kiểm tra phải nhập đúng định dạng dd/mm/yyyy.');if(issues.length){status(issues.join(' • '),true);return;}
  busy=true;form.querySelector('button[type="submit"]').disabled=true;
  try{const data=await post('ktScheduleSave',{record:r});editingId='';form.reset();buildClassSelect('');calendarClose();setRoomMode();
