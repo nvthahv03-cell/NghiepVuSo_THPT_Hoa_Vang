@@ -22,16 +22,22 @@ function hvaPersonnelDirectoryGet_(params) {
         .replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d')
         .replace(/[^a-z0-9]/g,'');
       const cols=header.map(normalize);
-      const findCol=(names)=>{
+      const findCol=(names,patterns=[])=>{
         for(const name of names) {
           const key=normalize(name),i=cols.findIndex(x=>x===key);
           if(i>=0)return i;
         }
-        // Không đoán cột ngày sinh hoặc số điện thoại nếu header không khớp.
-        return -1;
+        // Chỉ nhận header có dấu hiệu rõ ràng; không đoán dựa vào vị trí cột.
+        return cols.findIndex(x=>patterns.some(re=>re.test(x)));
       };
-      const birthdayCol=findCol(['Ngày tháng năm sinh','Ngày sinh','Ngày, tháng, năm sinh','Năm sinh','NgayThangNamSinh','NgaySinh']);
-      const phoneCol=findCol(['Số điện thoại','Điện thoại','SĐT','Số ĐT','Điện thoại di động','Điện thoại liên hệ','Số điện thoại cá nhân','SoDienThoai']);
+      const birthdayCol=findCol(
+        ['Ngày tháng năm sinh','Ngày sinh','Ngày, tháng, năm sinh','Ngày/tháng/năm sinh','NgayThangNamSinh','NgaySinh','Ngày sinh (dd/mm/yyyy)','Ngày tháng năm sinh GV'],
+        [/^ngay(?:thang)?namsinh(?:gv)?$/, /^ngaysinh(?:gv|ddmmyyyy)?$/]
+      );
+      const phoneCol=findCol(
+        ['Số điện thoại','Điện thoại','SĐT','Số ĐT','Số điện thoại liên hệ','Điện thoại di động','Điện thoại liên hệ','Số điện thoại cá nhân','SoDienThoai','SĐT cá nhân','Điện thoại GV'],
+        [/^(?:so)?dienthoai(?:lienhe|didong|canhan|gv)?$/, /^sdt(?:lienhe|canhan|gv)?$/]
+      );
       const extraCol=findCol(['Kiêm nhiệm','Công tác kiêm nhiệm','Nhiệm vụ kiêm nhiệm']);
       const cell=(r,i)=>i>=0?String(r[i]||'').trim():'';
       const norm=v=>String(v||'').trim().toLowerCase().normalize('NFD')

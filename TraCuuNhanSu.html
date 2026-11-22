@@ -22,7 +22,7 @@ main{max-width:1100px;margin:20px auto;padding:0 15px 35px}.panel{background:whi
 .person h2{font-size:17px;margin:0;color:#0b518a;overflow-wrap:anywhere}.meta{font-size:13px;color:#59748b;margin:5px 0 13px}.fields{display:grid;gap:7px}
 .field{display:grid;grid-template-columns:minmax(95px,125px) 1fr;gap:8px;font-size:13px;align-items:start}.field b{color:#315875}.field span{overflow-wrap:anywhere}
 .tags{display:flex;flex-wrap:wrap;gap:5px}.tag{background:#e8f3fd;border:1px solid #d0e5fa;border-radius:100px;padding:2px 9px;font-size:12px}
-.call{display:inline-flex;align-items:center;gap:6px;color:#fff;background:#07816a;border-radius:9px;padding:6px 10px;text-decoration:none;font-weight:800;font-size:13px;margin-top:4px}
+.phone-number{font-weight:800;color:#075c9f;white-space:nowrap}.phone-number:hover{text-decoration:underline}.call{display:inline-flex;align-items:center;gap:6px;color:#fff;background:#07816a;border-radius:9px;padding:6px 10px;text-decoration:none;font-weight:800;font-size:13px;margin-top:4px}
 .empty{padding:28px 14px;text-align:center;color:#607992;background:#f7fbff;border:1px dashed #cbdfee;border-radius:13px}
 footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
 @media(max-width:480px){main{margin:12px auto}.panel{padding:13px}.field{grid-template-columns:minmax(80px,104px) 1fr}.person{padding:14px}}
@@ -58,11 +58,15 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
  const normalize=v=>plain(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
  const first=(obj,fields)=>{for(const key of fields){const value=obj?.[key];if(Array.isArray(value)){const t=value.map(plain).filter(Boolean).join(', ');if(t)return t}else if(value!=null && typeof value!=='object' && plain(value))return plain(value)}return ''};
  const formatDob=v=>{
-   if(!v)return '';
-   if(typeof v==='string'&&/^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(v)){
-     const [y,m,d]=v.slice(0,10).split('-');return d+'/'+m+'/'+y;
+   const value=plain(v);if(!value)return '';
+   // Giữ đầy đủ ngày/tháng/năm trên Sheet; không rút gọn thành năm sinh.
+   if(/^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(value)){
+     const [y,m,d]=value.slice(0,10).split('-');return d+'/'+m+'/'+y;
    }
-   return plain(v);
+   if(/^\d{1,2}[/.\-]\d{1,2}[/.\-]\d{4}$/.test(value)){
+     const [d,m,y]=value.split(/[/.\-]/);return d.padStart(2,'0')+'/'+m.padStart(2,'0')+'/'+y;
+   }
+   return value;
  };
  const validPhone=v=>{
    const raw=plain(v),digits=raw.replace(/[^\d+]/g,'');
@@ -171,7 +175,8 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
        field('Tổ / bộ phận',dept)+field('Môn dạy',subjects)+field('Chức vụ',role)+
        '<div class="field"><b>Kiêm nhiệm</b><span>'+(assignments.length?'<span class="tags">'+assignments.map(v=>'<span class="tag">'+escape(v)+'</span>').join('')+'</span>':'Chưa cập nhật')+'</span></div>'+
        field('Ngày sinh',birth)+
-       '<div class="field"><b>Điện thoại</b><span>'+escape(phone||'Chưa cập nhật')+
+       '<div class="field"><b>Số điện thoại</b><span>'+
+       (tel?'<a class="phone-number" href="tel:'+escape(tel)+'" title="Chạm để gọi" aria-label="Gọi '+escape(p.hoTen)+' tại số '+escape(phone)+'">'+escape(phone)+'</a>':escape(phone||'Chưa cập nhật'))+
        (tel?'<div><a class="call" href="tel:'+escape(tel)+'" aria-label="Gọi điện cho '+escape(p.hoTen)+'"><i class="bi bi-telephone-fill"></i> Gọi ngay</a></div>':'')+'</span></div>'+
        '</div></article>';
    }).join('');
