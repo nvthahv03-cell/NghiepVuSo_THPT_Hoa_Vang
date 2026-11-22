@@ -258,7 +258,21 @@ body.hva-receiver-mode #hva-module-content-viewer {
                         </h3>
                     </div>
 
-                    <div id="hvaRoleChooser" class="hva-role-box" hidden><b>ĐÍCH NHẬN THEO VAI TRÒ</b><div class="hva-role-grid"><label>Vai trò<select id="hvaRoleType"><option value="">Chọn vai trò</option><option value="ALL">Toàn bộ nhân sự</option><option value="BGH">Ban Giám hiệu (BGH)</option><option value="TTCM">Tổ trưởng chuyên môn (TTCM)</option><option value="TPCM">Nhóm trưởng chuyên môn (TPCM)</option></select></label><label>Tổ / nhóm<select id="hvaRoleTeam" disabled><option value="">Chọn tổ / nhóm</option></select></label></div><div id="hvaRolePeople"></div><div class="hva-role-grid"><label>Hình thức nhận<select id="hvaRoleKind"><option value="TO">Người nhận chính</option><option value="CC_INFO">CC – Để biết</option><option value="CC_REPORT">CC – Để báo cáo</option></select></label><button type="button" id="hvaRoleAdd" disabled>Thêm người nhận</button></div><p id="hvaRoleStatus">Nhân sự tham chiếu từ Cuộc họp.</p></div><div class="space-y-2" id="recipient-selector-container">
+                    <div id="hvaRoleChooser" class="hva-role-box" hidden>
+  <div class="flex items-center justify-between gap-3 flex-wrap"><b>CHỌN NGƯỜI NHẬN · NHÂN SỰ CUỘC HỌP</b><span id="hvaRoleSelectedCount" class="text-xs font-bold">0 người đã chọn</span></div>
+  <div class="mt-3"><label for="hvaRoleSearch" class="block font-bold mb-1">Tìm theo tên, tài khoản, tổ, lớp chủ nhiệm</label>
+  <input id="hvaRoleSearch" type="search" autocomplete="off" placeholder="Nhập tên giáo viên, tổ hoặc lớp..." class="w-full p-3 rounded-xl border border-blue-200 bg-white text-sm"></div>
+  <div class="mt-3 flex flex-wrap gap-2">
+    <button type="button" id="hvaRoleSelectAllFiltered" class="px-3 py-2 rounded-lg border border-blue-200 bg-white font-bold text-blue-800">Chọn tất cả kết quả lọc</button>
+    <button type="button" id="hvaRoleClearSelection" class="px-3 py-2 rounded-lg border border-rose-200 bg-white font-bold text-rose-700">Bỏ chọn tất cả</button>
+  </div>
+  <div id="hvaRolePeople" class="mt-3 space-y-3 max-h-[440px] overflow-y-auto"></div>
+  <div class="mt-3 flex items-center justify-between flex-wrap gap-2">
+    <label class="font-bold">Hình thức nhận <select id="hvaRoleKind" class="ml-2 rounded-lg border border-blue-200 bg-white p-2"><option value="TO">Người nhận chính</option><option value="CC_INFO">CC – Để biết</option><option value="CC_REPORT">CC – Để báo cáo</option></select></label>
+    <button type="button" id="hvaRoleAdd" class="px-4 py-2 rounded-lg bg-blue-700 text-white font-extrabold" disabled>Thêm người nhận đã chọn</button>
+  </div>
+  <p id="hvaRoleStatus" class="mt-3 text-xs">Đang tải nhân sự Cuộc họp...</p>
+</div><div class="space-y-2" id="recipient-selector-container">
                         <p class="text-xs text-slate-400 italic">Đang nhận danh sách đối tượng từ module nguồn...</p>
                     </div>
                 </div>
@@ -1603,21 +1617,109 @@ ContentViewerRouter.register(
 
 
 const HvaRoleDest={
- groups:[],ready:false,initialized:false,
+ groups:[],ready:false,initialized:false,chosen:new Set(),query:'',
  norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim()},
- user(m){return String(m.username||m.tenDangNhap||'').trim()},
- label(m){return String(m.hoTen||m.fullName||m.name||'')},
- role(m){return [m.chucVu,m.viTriViecLam,m.vaiTro,m.raw?.chucVu,m.raw?.viTriViecLam,m.raw?.vaiTro].filter(Boolean).join(' ')},
- is(m,type){if(type==='ALL')return true;const v=this.norm(this.role(m));return type==='BGH'?/hieu truong|ban giam hieu|bgh/.test(v):type==='TTCM'?/to truong|ttcm/.test(v):/nhom truong|truong nhom|tpcm/.test(v)},
- people(type,team){const map=new Map();for(const g of this.groups){if(type!=='BGH'&&String(g.kind).toUpperCase()!=='TEAM'&&String(g.kind).toUpperCase()!=='COUNCIL')continue;if(team&&String(g.groupKey||g.tenTo)!==team)continue;for(const m of g.members||[]){if(this.is(m,type)&&this.user(m))map.set(this.user(m).toLowerCase(),{...m,teamName:g.tenTo})}}return [...map.values()]},
- async init(){if(this.initialized)return;this.initialized=true;const el=id=>document.getElementById(id);el('hvaRoleChooser').hidden=false;el('hvaRoleType').addEventListener('change',()=>this.setType());el('hvaRoleTeam').addEventListener('change',()=>this.draw());el('hvaRoleAdd').addEventListener('click',()=>this.add());el('recipient-selector-container').addEventListener('click',e=>{const btn=e.target.closest('[data-hva-remove-recipient]');if(!btn)return;const username=btn.dataset.hvaRemoveRecipient;TTDHS_State.recipients=TTDHS_State.recipients.filter(r=>String(r.username||'')!==username);this.saveSelection();Controller.refreshUI();});
- try{if(!window.HVAPersonnel?.buildGroups)throw Error('Chưa có nguồn Nhân sự HVA');this.groups=await window.HVAPersonnel.buildGroups();if(!this.groups.length)throw Error('Chưa có nhóm nhân sự');this.ready=true;el('hvaRoleStatus').textContent='Đã tải nhân sự từ Cuộc họp; chọn đối tượng, tổ/nhóm và người nhận.';this.setType()}catch(e){el('hvaRoleStatus').textContent='Không tải được nhân sự Cuộc họp: '+e.message;el('hvaRolePeople').textContent='Chưa có dữ liệu được xác thực.'}},
- setType(){const type=document.getElementById('hvaRoleType').value,sel=document.getElementById('hvaRoleTeam');sel.replaceChildren(new Option('Chọn tổ / nhóm',''));if(type!=='BGH'&&type){for(const g of this.groups.filter(g=>String(g.kind).toUpperCase()==='TEAM'&&this.people(type,String(g.groupKey||g.tenTo)).length)){sel.add(new Option(g.tenTo,String(g.groupKey||g.tenTo)))}sel.disabled=sel.options.length<2}else sel.disabled=true;this.draw()},
- draw(){const type=document.getElementById('hvaRoleType').value,team=document.getElementById('hvaRoleTeam').value,root=document.getElementById('hvaRolePeople');root.replaceChildren();const list=this.ready&&type&&(type==='BGH'||team)?this.people(type,team):[];for(const m of list){const label=document.createElement('label'),inp=document.createElement('input');inp.type='checkbox';inp.value=this.user(m);inp.checked=false;label.append(inp,document.createTextNode(' '+this.label(m)+' · '+m.teamName));root.append(label)}if(!list.length)root.textContent=type==='TPCM'?'Chưa có chức danh Nhóm trưởng CM được nhận diện.':'Chọn tổ/nhóm hoặc chưa có dữ liệu tương ứng.';document.getElementById('hvaRoleAdd').disabled=!list.length},
- saveSelection(){if(String(TTDHS_State.document?.moduleSource||'')==='LichTuanEDOS'){TTDHS_State.rawSource={...TTDHS_State.rawSource,recipients:[...TTDHS_State.recipients],recipientSelectionConfirmed:true};StorageEngine.save(CONFIG.STORAGE_KEYS.CURRENT_DOC,TTDHS_State.rawSource)}},
- add(){if(!this.ready)return;const type=document.getElementById('hvaRoleType').value,team=document.getElementById('hvaRoleTeam').value,kind=document.getElementById('hvaRoleKind').value,checked=new Set([...document.querySelectorAll('#hvaRolePeople input:checked')].map(x=>x.value)),existing=new Set(TTDHS_State.recipients.map(r=>String(r.username||'').toLowerCase()));let count=0;for(const m of this.people(type,team)){const username=this.user(m);if(!checked.has(username)||existing.has(username.toLowerCase()))continue;TTDHS_State.recipients.push({username,hoTen:this.label(m),chucVu:this.role(m),to:m.teamName,nhom:type,deliveryRole:kind==='TO'?'TO':'CC',ccPurpose:kind==='CC_INFO'?'Để biết':kind==='CC_REPORT'?'Để báo cáo':''});existing.add(username.toLowerCase());count++}this.saveSelection();Controller.refreshUI();document.getElementById('hvaRoleStatus').textContent='Đã thêm '+count+' người nhận. Cần kiểm thử Backend về phân biệt người nhận chính/CC trước phát hành chính thức.'}
+ key(m){return String(m.username||m.maGV||m.tenDangNhap||'').trim()},
+ name(m){return String(m.hoTen||m.fullName||m.name||'').trim()},
+ matches(m,g,q){if(!q)return true;return [this.name(m),this.key(m),m.tenTo,m.chucVu,m.lopChuNhiem,g.tenTo,g.groupKey].some(v=>this.norm(v).includes(q))},
+ persons(groups){const map=new Map();groups.forEach(g=>(g.members||[]).forEach(m=>{const k=this.key(m);if(k&&!map.has(k.toLowerCase()))map.set(k.toLowerCase(),m)}));return [...map.values()]},
+ sectionTitle(g){return String(g.tenTo||g.groupKey||'Nhóm nhân sự')},
+ esc(v){return String(v??'').replace(/[&<>"']/g,t=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[t]))},
+ async init(){
+  if(this.initialized)return;this.initialized=true;
+  const el=id=>document.getElementById(id);
+  el('hvaRoleChooser').hidden=false;
+  el('hvaRoleSearch').addEventListener('input',e=>{this.query=this.norm(e.target.value);this.render()});
+  el('hvaRoleAdd').addEventListener('click',()=>this.add());
+  el('hvaRoleClearSelection').addEventListener('click',()=>{this.chosen.clear();this.render()});
+  el('hvaRoleSelectAllFiltered').addEventListener('click',()=>{this.persons(this.visibleGroups().map(x=>({...x.group,members:x.members}))).forEach(m=>this.chosen.add(this.key(m).toLowerCase()));this.render()});
+  el('hvaRolePeople').addEventListener('change',e=>{
+    const input=e.target.closest('input[data-hva-person],input[data-hva-group]');
+    if(!input)return;
+    if(input.dataset.hvaPerson!==undefined){const k=String(input.dataset.hvaPerson).toLowerCase();if(input.checked)this.chosen.add(k);else this.chosen.delete(k)}
+    else{const g=this.groups.find(x=>x.groupKey===input.dataset.hvaGroup);if(g){(g.members||[]).forEach(m=>{const k=this.key(m).toLowerCase();if(!k)return;if(input.checked)this.chosen.add(k);else this.chosen.delete(k)})}}
+    this.render();
+  });
+  el('recipient-selector-container').addEventListener('click',e=>{
+    const btn=e.target.closest('[data-hva-remove-recipient]');if(!btn)return;
+    const username=btn.dataset.hvaRemoveRecipient;
+    TTDHS_State.recipients=TTDHS_State.recipients.filter(r=>String(r.username||'')!==username);
+    this.saveSelection();Controller.refreshUI();
+  });
+  try{
+    if(!window.HVAPersonnel?.buildGroups)throw Error('Chưa có nguồn nhân sự Cuộc họp');
+    this.groups=await window.HVAPersonnel.buildGroups();
+    if(!this.groups.length)throw Error('Danh sách nhóm nhân sự trống');
+    this.ready=true;
+    el('hvaRoleStatus').textContent='Nguồn nhân sự trực tiếp từ Cuộc họp; có thể chọn nhiều nhóm và tìm kiếm theo tên/lớp.';
+    this.render();
+  }catch(e){el('hvaRoleStatus').textContent='Không tải được nhân sự Cuộc họp: '+e.message;el('hvaRolePeople').textContent='Không có dữ liệu nhân sự được xác thực.'}
+ },
+ visibleGroups(){
+  const q=this.query;
+  return this.groups.map(group=>{
+    const matchGroup=this.norm(group.tenTo).includes(q)||this.norm(group.groupKey).includes(q);
+    return {group,members:matchGroup||!q?group.members||[]:(group.members||[]).filter(m=>this.matches(m,group,q))}
+  }).filter(x=>x.members.length);
+ },
+ render(){
+  const el=id=>document.getElementById(id);
+  const root=el('hvaRolePeople');
+  if(!root)return;
+  const opened=new Set([...root.querySelectorAll('details[data-hva-picker-group][open]')].map(e=>e.dataset.hvaPickerGroup));
+  const groups=this.visibleGroups();
+  const sections=[
+    {name:'HỘI ĐỒNG',test:g=>g.kind==='COUNCIL'},
+    {name:'CHI BỘ',test:g=>g.groupKey==='CHIBO'},
+    {name:'BAN GIÁM HIỆU',test:g=>g.groupKey==='BGH'},
+    {name:'TỔ / BỘ PHẬN',test:g=>g.kind==='TEAM'},
+    {name:'GIÁO VIÊN CHỦ NHIỆM',test:g=>g.kind==='GVCN'},
+    {name:'NHÓM CÔNG TÁC KHÁC',test:g=>g.kind==='WORKGROUP'}
+  ];
+  const seen=new Set();
+  const makeGroup=({group:g,members})=>{
+    seen.add(String(g.groupKey));
+    const keys=(g.members||[]).map(m=>this.key(m).toLowerCase()).filter(Boolean);
+    const all=keys.length>0&&keys.every(k=>this.chosen.has(k));
+    const mixed=keys.some(k=>this.chosen.has(k))&&!all;
+    const rows=members.map(m=>{const k=this.key(m).toLowerCase();return '<label class="flex gap-2 items-start px-3 py-2 border-t border-slate-100 bg-white"><input type="checkbox" data-hva-person="'+this.esc(k)+'" '+(this.chosen.has(k)?'checked':'')+' class="mt-1"><span><b>'+this.esc(this.name(m))+'</b><small class="block text-slate-500">'+this.esc([m.lopChuNhiem?'GVCN '+m.lopChuNhiem:'',m.chucVu,m.tenTo].filter(Boolean).join(' · '))+'</small></span></label>'}).join('');
+    return '<details data-hva-picker-group="'+this.esc(g.groupKey)+'" class="bg-white border border-blue-200 rounded-xl overflow-hidden" '+(this.query||opened.has(String(g.groupKey))?'open':'')+'><summary class="cursor-pointer p-3 flex items-center gap-2 bg-blue-50"><input type="checkbox" data-hva-group="'+this.esc(g.groupKey)+'" '+(all?'checked':'')+' class="hva-group-check" aria-label="Chọn toàn nhóm" /><b class="flex-1">'+this.esc(this.sectionTitle(g))+'</b><small>'+members.length+' người</small></summary><div>'+rows+'</div></details>';
+  };
+  root.innerHTML=sections.map(s=>{
+    const list=groups.filter(x=>s.test(x.group));
+    return list.length?'<section class="space-y-2"><div class="font-extrabold text-blue-900 text-xs mt-3">'+s.name+'</div>'+list.map(makeGroup).join('')+'</section>':'';
+  }).join('')+((groups.filter(x=>!seen.has(String(x.group.groupKey))).length)?'<section class="space-y-2"><div class="font-extrabold text-blue-900 text-xs mt-3">NHÓM KHÁC</div>'+groups.filter(x=>!seen.has(String(x.group.groupKey))).map(makeGroup).join('')+'</section>':'');
+  if(!groups.length)root.innerHTML='<div class="p-3 text-slate-500">Không tìm thấy kết quả phù hợp.</div>';
+  el('hvaRoleSelectedCount').textContent=this.chosen.size+' người đang chọn';
+  el('hvaRoleAdd').disabled=!this.ready||this.chosen.size===0;
+  root.querySelectorAll('input[data-hva-group]').forEach(i=>{
+    const g=this.groups.find(x=>x.groupKey===i.dataset.hvaGroup);
+    const keys=(g?.members||[]).map(m=>this.key(m).toLowerCase()).filter(Boolean);
+    i.indeterminate=keys.some(k=>this.chosen.has(k))&&!keys.every(k=>this.chosen.has(k));
+    i.addEventListener('click',e=>e.stopPropagation());
+  });
+ },
+ saveSelection(){
+  if(String(TTDHS_State.document?.moduleSource||'')==='LichTuanEDOS'){
+    TTDHS_State.rawSource={...TTDHS_State.rawSource,recipients:[...TTDHS_State.recipients],recipientSelectionConfirmed:true};
+    StorageEngine.save(CONFIG.STORAGE_KEYS.CURRENT_DOC,TTDHS_State.rawSource);
+  }
+ },
+ add(){
+  if(!this.ready)return;
+  const kind=document.getElementById('hvaRoleKind').value;
+  const existing=new Set((TTDHS_State.recipients||[]).map(r=>String(r.username||'').toLowerCase()));
+  const matches=this.persons(this.groups).filter(m=>this.chosen.has(this.key(m).toLowerCase()));
+  let count=0;
+  for(const m of matches){
+    const username=this.key(m);if(!username||existing.has(username.toLowerCase()))continue;
+    TTDHS_State.recipients.push({username,hoTen:this.name(m),chucVu:m.chucVu||'',to:m.tenTo||'',lopChuNhiem:m.lopChuNhiem||'',deliveryRole:kind==='TO'?'TO':'CC',ccPurpose:kind==='CC_INFO'?'Để biết':kind==='CC_REPORT'?'Để báo cáo':''});
+    existing.add(username.toLowerCase());count++;
+  }
+  this.chosen.clear();this.saveSelection();Controller.refreshUI();this.render();
+  document.getElementById('hvaRoleStatus').textContent='Đã thêm '+count+' người nhận. Tổng '+TTDHS_State.recipients.length+' người, không trùng tài khoản.';
+ }
 };
-
     const RecipientEngine = {
         getResolvedRecipients: (recipientList) => Array.isArray(recipientList) ? [...recipientList] : [],
         displayName: (r) => {
