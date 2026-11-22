@@ -1119,6 +1119,7 @@ function nvsToggleLoginPasswordMode(){
   const btn=$('dthtPasswordModeButton'),pass=$('dthtLoginPass'),prefix=$('dthtPassFixedPrefix');
   const useCustom=btn.getAttribute('aria-pressed')!=='true';
   btn.setAttribute('aria-pressed',String(useCustom));
+  NVS_localStore.setItem('nvsLoginPrefCustom',useCustom?'1':'0');
   btn.textContent=useCustom?'Dùng mật khẩu ban đầu HVA@ + 4 số':'Đã đổi mật khẩu? Dùng mật khẩu mới';
   prefix.hidden=useCustom;
   pass.value='';
@@ -1153,6 +1154,14 @@ async function dthtStandaloneLogin(){
   const userInput = $('dthtLoginUser'), passInput = $('dthtLoginPass');
   const btn = $('dthtLoginBtn'), btnText = $('dthtLoginBtnText'), msg = $('dthtAuthMsg');
   const username = (userInput.value || '').trim();
+  // Trạng thái chuyển chế độ do chính người dùng chọn; không bao giờ gửi mật khẩu sang storage.
+  const pendingChangedUser=String(NVS_localStore.getItem('nvsPasswordRecentlyChangedFor')||'').trim().toLowerCase();
+  if(pendingChangedUser && username.toLowerCase()===pendingChangedUser && $('dthtPasswordModeButton')?.getAttribute('aria-pressed')!=='true'){
+    nvsToggleLoginPasswordMode();
+    $('dthtAuthMsg').textContent='Tài khoản đã đổi mật khẩu. Vui lòng nhập mật khẩu mới (không có HVA@ cố định).';
+    NVS_localStore.removeItem('nvsPasswordRecentlyChangedFor');
+    return;
+  }
   const rawPassword = (passInput.value || '').trim();
 
   if(!username || !rawPassword){
@@ -3746,15 +3755,15 @@ html body .hva-pro-header-inner>.hva-pro-tools .hva-pro-online-dot{
 #nvs-pwd-status{min-height:22px;color:#ae243b;font-size:12px}
 </style>
 <div id="nvs-pwd-notice" role="status" hidden>🔐 Thầy/Cô vui lòng đổi mật khẩu tại <b>Tài khoản cá nhân → Đổi mật khẩu.</b> <button id="nvs-pwd-now" type="button">Đổi ngay</button></div>
-<div id="nvs-pwd-modal" hidden><section id="nvs-pwd-box" role="dialog" aria-modal="true" aria-labelledby="nvs-pwd-heading"><h2 id="nvs-pwd-heading">🔐 Đổi mật khẩu NVS</h2><p>Nhập mật khẩu hiện tại và đặt mật khẩu mới.</p>
+<div id="nvs-pwd-modal" hidden><section id="nvs-pwd-box" role="dialog" aria-modal="true" aria-labelledby="nvs-pwd-heading"><h2 id="nvs-pwd-heading">🔐 Đổi mật khẩu HVA-EDOS</h2><p>Nhập mật khẩu hiện tại và đặt mật khẩu mới.</p>
 <form id="nvs-pwd-form">
 <label for="nvs-pwd-old">Mật khẩu hiện tại</label>
 <div class="nvs-pwd-old-wrap"><span class="nvs-pwd-fixed-prefix" id="nvs-pwd-fixed-prefix">HVA@</span><input id="nvs-pwd-old" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" placeholder="4 chữ số" required></div>
 <button id="nvs-pwd-mode-toggle" class="nvs-pwd-mode-toggle" type="button" aria-pressed="false">Đã đổi mật khẩu? Nhập mật khẩu hiện tại</button>
 <p class="nvs-pwd-legacy-hint" id="nvs-pwd-mode-hint">Nếu chưa từng đổi, chỉ nhập 4 số sau HVA@.</p>
-<label for="nvs-pwd-new">Mật khẩu mới</label><input id="nvs-pwd-new" type="password" autocomplete="new-password" required>
-<label for="nvs-pwd-confirm">Xác nhận mật khẩu mới</label><input id="nvs-pwd-confirm" type="password" autocomplete="new-password" required>
-<div class="help">Mật khẩu mới có ít nhất <b>6 ký tự</b>, gồm <b>chữ hoa</b>, <b>chữ số</b> và <b>@</b> hoặc <b>!</b>.<br>Không dùng lại mật khẩu mặc định. Nếu quên, liên hệ quản trị để cấp mật khẩu tạm.</div>
+<label for="nvs-pwd-new">Mật khẩu mới</label><input id="nvs-pwd-new" type="password" autocomplete="new-password" minlength="13" maxlength="128" required>
+<label for="nvs-pwd-confirm">Xác nhận mật khẩu mới</label><input id="nvs-pwd-confirm" type="password" autocomplete="new-password" minlength="13" maxlength="128" required>
+<div class="help">Mật khẩu mới phải có <b>trên 12 ký tự (tối thiểu 13)</b>, gồm <b>chữ hoa</b>, <b>chữ số</b> và <b>@</b> hoặc <b>!</b>.<br>Không dùng lại mật khẩu mặc định. Nếu quên, liên hệ quản trị để cấp mật khẩu tạm.</div>
 <div id="nvs-pwd-status" role="status"></div><div class="buttons"><button id="nvs-pwd-close" type="button">Đóng</button><button id="nvs-pwd-save" type="submit">Cập nhật mật khẩu</button></div></form></section></div>
 <script id="nvs-pwd-script">(function(){'use strict';
 const $=id=>document.getElementById(id),m=$('nvs-pwd-modal'),notice=$('nvs-pwd-notice'),form=$('nvs-pwd-form'),status=$('nvs-pwd-status');
@@ -3779,17 +3788,17 @@ window.addEventListener('nvs:login-success',refresh);
 form?.addEventListener('submit',async e=>{e.preventDefault();if(busy)return;
 const oldEntered=$('nvs-pwd-old').value,customMode=$('nvs-pwd-mode-toggle').getAttribute('aria-pressed')==='true',old=customMode?oldEntered:'HVA@'+oldEntered,pwd=$('nvs-pwd-new').value,repeat=$('nvs-pwd-confirm').value;
 if(!customMode&&!/^\d{4}$/.test(oldEntered)){status.textContent='Mật khẩu ban đầu phải có đúng 4 chữ số sau HVA@.';return}
-if(!(pwd.length>=6&&/[A-Z]/.test(pwd)&&/[0-9]/.test(pwd)&&/[@!]/.test(pwd))){status.textContent='Mật khẩu chưa đủ điều kiện.';return}
+if(!(pwd.length>=13&&pwd.length<=128&&/[A-Z]/.test(pwd)&&/[0-9]/.test(pwd)&&/[@!]/.test(pwd))){status.textContent='Mật khẩu cần từ 13–128 ký tự, có chữ hoa, chữ số và @ hoặc !.';return}
 if(pwd!==repeat){status.textContent='Xác nhận mật khẩu không khớp.';return}
 if(pwd===old){status.textContent='Mật khẩu mới phải khác mật khẩu cũ.';return}
 if(!tk()){status.textContent='Phiên đăng nhập đã hết hạn.';return}
-busy=true;$('nvs-pwd-save').disabled=true;status.textContent='Đang kiểm tra...';
+busy=true;$('nvs-pwd-save').disabled=true;status.textContent='Đang duyệt đổi mật khẩu...';
 try{
 const resp=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'changePassword',sessionToken:tk(),matKhauCu:old,matKhauMoi:pwd})});
 if(!resp.ok){status.textContent='Máy chủ phản hồi HTTP '+resp.status+'. Vui lòng quản trị viên kiểm tra bản triển khai Backend.';return;}
 let d;
 try{d=await resp.json()}catch(_){status.textContent='Backend chưa trả dữ liệu JSON hợp lệ. Kiểm tra phiên bản Web App đã triển khai.';return;}
-if(d?.ok===true||d?.success===true){notice.hidden=true;busy=false;close();alert('Đổi mật khẩu thành công. Thầy/Cô vui lòng đăng nhập lại bằng mật khẩu mới.');NVS_localStore.removeItem('user');NVS_localStore.removeItem('hvaSessionToken');NVS_localStore.removeItem('hvaSessionExpiresAt');NVS_sessionStore.removeItem('user');NVS_sessionStore.removeItem('hvaSessionToken');NVS_sessionStore.removeItem('hvaSessionExpiresAt');location.reload();}
+if(d?.ok===true||d?.success===true){notice.hidden=true;busy=false;close();window.NVS_localStore.setItem('nvsPasswordRecentlyChangedFor',String(u()?.username||u()?.tenDangNhap||'').toLowerCase());NVS_localStore.removeItem('user');NVS_localStore.removeItem('hvaSessionToken');NVS_localStore.removeItem('hvaSessionExpiresAt');NVS_sessionStore.removeItem('user');NVS_sessionStore.removeItem('hvaSessionToken');NVS_sessionStore.removeItem('hvaSessionExpiresAt');status.textContent='Đổi mật khẩu thành công. Đang chuyển sang đăng nhập bằng mật khẩu mới...';setTimeout(()=>location.reload(),850);}
 else {
  const m=String(d?.thongBao||d?.message||'Backend chưa hỗ trợ đổi mật khẩu; chưa lưu thay đổi.');
  const code=String(d?.errorCode||d?.code||'');
@@ -3908,5 +3917,21 @@ html body nav.nvs-premium-nav>button>i{
 #nvs-pwd-box .nvs-pwd-mode-toggle{display:block;width:auto;margin:7px 0 0;padding:3px 0;border:none;background:none;color:#095e9b;font:700 12px/1.5 "Segoe UI",Arial,sans-serif;text-align:left;text-decoration:underline;cursor:pointer}
 #nvs-pwd-box .nvs-pwd-legacy-hint{margin:4px 0 10px;font-size:12px;color:#49677f}
 </style>
+<script id="nvs-restore-login-custom-mode">
+(function(){
+ const activate=()=>{
+  const btn=document.getElementById('dthtPasswordModeButton');
+  const u=document.getElementById('dthtLoginUser');
+  if(!btn||!u||typeof window.nvsToggleLoginPasswordMode!=='function')return;
+  const last=String(NVS_localStore.getItem('nvsPasswordRecentlyChangedFor')||'').trim().toLowerCase();
+  if(last && last===String(u.value||NVS_localStore.getItem('hvaLastUsername')||'').trim().toLowerCase()){
+    if(btn.getAttribute('aria-pressed')!=='true')window.nvsToggleLoginPasswordMode();
+    NVS_localStore.removeItem('nvsPasswordRecentlyChangedFor');
+  }
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',activate);
+ else activate();
+})();
+</script>
 </body>
 </html>
