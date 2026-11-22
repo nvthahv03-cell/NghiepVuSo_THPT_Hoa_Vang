@@ -142,21 +142,41 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
    }));
    return [...map.values()].sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
  };
+ // Các bộ lọc là nhóm nghiệp vụ, không hiển thị lặp từng nhóm nguồn.
+ // Nhân sự vẫn được lấy duy nhất từ HVAPersonnel.buildGroups() của Cuộc họp.
+ function directoryGroupType(g){
+   const key=normalize(g.groupKey),label=normalize(g.tenTo),kind=plain(g.kind).toUpperCase();
+   if(key==='chibo'||label==='chi bo')return 'CHIBO';
+   if(key.startsWith('council:')||label==='hoi dong'||kind==='COUNCIL')return 'COUNCIL';
+   if(key==='bgh'||label==='ban giam hieu'||label==='bgh')return 'BGH';
+   if(label.includes('lien tich mo rong')||key.includes('lien tich mo rong'))return 'LT_EXTENDED';
+   if(label==='lien tich'||key.endsWith(':lien tich'))return 'LT';
+   if(kind==='TEAM'||key.startsWith('team:'))return 'TEAM';
+   if(kind==='GVCN'||key.startsWith('gvcn:'))return 'GVCN';
+   return 'OTHER';
+ }
+ const directoryTabs=[
+   {key:'ALL',label:'Tất cả'},
+   {key:'CHIBO',label:'Chi bộ'},
+   {key:'COUNCIL',label:'Hội đồng'},
+   {key:'BGH',label:'BGH'},
+   {key:'LT',label:'Liên tịch'},
+   {key:'LT_EXTENDED',label:'Liên tịch mở rộng'},
+   {key:'TEAM',label:'Các tổ'},
+   {key:'GVCN',label:'GVCN'},
+   {key:'OTHER',label:'Các nhóm khác'}
+ ];
  function drawFilters(){
-   const types=[{key:'ALL',label:'Tất cả'}];
-   for(const g of groups){
-     const key=plain(g.groupKey);
-     if(!key||types.some(x=>x.key===key))continue;
-     types.push({key,label:plain(g.tenTo)||key});
-   }
+   const types=directoryTabs.filter(t=>t.key==='ALL'||groups.some(g=>directoryGroupType(g)===t.key));
+   if(!types.some(t=>t.key===category))category='ALL';
    filters.innerHTML=types.map(t=>'<button type="button" data-filter="'+escape(t.key)+'" aria-pressed="'+String(category===t.key)+'">'+escape(t.label)+'</button>').join('');
  }
  function render(){
    const q=normalize($('q').value);
    let subset=people;
    if(category!=='ALL'){
-     const g=groups.find(x=>plain(x.groupKey)===category);
-     const names=new Set((g?.members||[]).map(x=>normalize(x.username||x.maGV)).filter(Boolean));
+     const names=new Set(groups.filter(g=>directoryGroupType(g)===category)
+       .flatMap(g=>g.members||[]).map(x=>normalize(x.username||x.maGV)).filter(Boolean));
      subset=subset.filter(p=>names.has(normalize(p.username||p.maGV)));
    }
    if(q)subset=subset.filter(p=>normalize([p.hoTen,p.tenTo,p.chucVu,p.lopChuNhiem,...p.groups,...p.positions,...p.subjects,...p.assignments].join(' ')).includes(q));
