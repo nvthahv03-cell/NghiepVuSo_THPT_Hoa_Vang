@@ -1797,6 +1797,8 @@ detail.addEventListener('click',e=>{
  if(identity().username&&identity().token){loadNotices(false);loadWork(false);loadPolls(false);}
  // Refresh when returning from the publishing center or reopening the EDOS tab.
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&identity().username&&identity().token)loadNotices(true);});
+ // Khi EDOS đang mở, kiểm tra tin mới định kỳ mà không cần tải lại trang.
+ setInterval(()=>{if(!document.hidden&&identity().username&&identity().token&&!loading)loadNotices(true);},90000);
 })();
 </script>
 
