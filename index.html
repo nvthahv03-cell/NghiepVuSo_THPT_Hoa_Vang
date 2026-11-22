@@ -1491,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
 
  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
  function identity(){
-  let u={};try{u=JSON.parse(NVS_localStore.getItem('user')||'{}')}catch(_){}
+  let u={};try{u=JSON.parse(NVS_localStore.getItem('user')||NVS_sessionStore.getItem('user')||'{}')}catch(_){}
   return {username:String(u.tenDangNhap||u.username||'').trim().toLowerCase(),
           token:String(NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||'').trim()};
  }
