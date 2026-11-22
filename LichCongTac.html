@@ -29,7 +29,7 @@ const data={school:document.getElementById('schoolSource').textContent,personal:
  const week=Math.floor((monday-first)/604800000)+1;
  const fmt=d=>String(d.getUTCDate()).padStart(2,'0')+'/'+String(d.getUTCMonth()+1).padStart(2,'0')+'/'+d.getUTCFullYear();
  if(week<1){out.textContent='Năm học 2026–2027 · Chưa bắt đầu tuần học';return;}
- const content='TUẦN HỌC THỨ '+week+'   •   LỊCH TUẦN '+fmt(monday)+' – '+fmt(saturday)+'   •   NGÀY LẬP LỊCH '+fmt(today);
+ const content='TUẦN HỌC THỨ '+week+'   •   LỊCH TUẦN '+fmt(monday)+' – '+fmt(saturday)+'   •   NGÀY LẬP LỊCH '+fmt(today)+'   •   NGÀY SỬA, BỔ SUNG: CHƯA GHI NHẬN';
  out.textContent=content;
  strip.title=content;
 })();
