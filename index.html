@@ -965,8 +965,8 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
     <div class="dtht-auth-field">
       <label for="dthtLoginPass">Mật khẩu</label>
       <div id="edosPasswordModeStatus" class="edos-mode-status" role="status" aria-live="polite">Nhập tên đăng nhập để nhận diện mật khẩu.</div><div class="edos-pass-modes" id="edosManualPasswordModes" role="group" aria-label="Chọn thủ công khi chưa có kết nối" hidden>
-        <button type="button" id="edosFirstLoginMode" class="edos-pass-mode is-active" aria-pressed="true" onclick="edosSetLoginPasswordMode('initial')">Đăng nhập lần đầu</button>
-        <button type="button" id="edosPersonalLoginMode" class="edos-pass-mode" aria-pressed="false" onclick="edosSetLoginPasswordMode('personal')">Đã đổi mật khẩu</button>
+        <button type="button" id="edosFirstLoginMode" class="edos-pass-mode is-active" aria-pressed="true" onclick="edosSetLoginPasswordMode('initial',{manual:true})">Đăng nhập lần đầu</button>
+        <button type="button" id="edosPersonalLoginMode" class="edos-pass-mode" aria-pressed="false" onclick="edosSetLoginPasswordMode('personal',{manual:true})">Đã đổi mật khẩu</button>
       </div>
       <div class="dtht-input-wrap">
         <span class="dtht-input-icon"><i class="bi bi-key"></i></span>
@@ -1372,7 +1372,7 @@ async function initPortal(){
   if(!token || !username){
     $('dthtAuth').classList.remove('hidden');
     const lastUser = NVS_localStore.getItem('hvaLastUsername') || '';
-    if(lastUser) $('dthtLoginUser').value = lastUser;
+    if(lastUser){ $('dthtLoginUser').value = lastUser; edosSchedulePasswordMode(); }
     return;
   }
 
