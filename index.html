@@ -1041,7 +1041,7 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
 
   <!-- NVS: Trung tâm cá nhân - giao diện tham khảo HVA, dữ liệu thực chờ kết nối -->
   <section class="nvs-quick" aria-label="Trung tâm cá nhân">
-    <button id="nvsQuickWork" class="nvs-quick-card" type="button" data-nvs-quick="work" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-person-lines-fill"></i><span class="nvs-quick-badge" data-nvs-count="work" hidden></span></span><strong>Việc của tôi</strong></button><a class="nvs-quick-card nvs-quick-calendar" href="./LichCongTac.html" aria-label="Mở Lịch công tác"><span class="nvs-quick-icon"><i class="bi bi-calendar2-week" aria-hidden="true"></i></span><strong>Lịch công tác</strong></a>
+    <button id="nvsQuickWork" class="nvs-quick-card" type="button" data-nvs-quick="work" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-person-lines-fill"></i><span class="nvs-quick-badge" data-nvs-count="work" hidden></span></span><strong>Việc của tôi</strong></button><a class="nvs-quick-card nvs-quick-calendar" href="#hvaLichTuan" aria-label="Xem lịch công tác đã công bố"><span class="nvs-quick-icon"><i class="bi bi-calendar2-week" aria-hidden="true"></i></span><strong>Lịch công tác</strong></a>
     <button class="nvs-quick-card" type="button" data-nvs-quick="notice" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-bell"></i><span class="nvs-quick-badge" data-nvs-count="notice" hidden></span></span><strong>Thông báo</strong></button>
     <button class="nvs-quick-card" type="button" data-nvs-quick="survey" aria-expanded="false"><span class="nvs-quick-icon"><i class="bi bi-clipboard-check"></i><span class="nvs-quick-badge" data-nvs-count="survey" hidden></span></span><strong>Khảo sát/Bình chọn</strong></button>
     <div id="nvsQuickRoleSlot" class="nvs-quick-role-slot" aria-label="Văn bản điện tử đã chuyển xuống menu Văn bản số" hidden></div>
@@ -3976,5 +3976,46 @@ form?.addEventListener('submit',async e=>{
 #nvs-pwd-box #nvs-pwd-old,
 #nvs-pwd-box .nvs-pwd-old-wrap:not(.is-custom) #nvs-pwd-old{padding-left:13px!important}
 </style>
+<style id="hva-lt-home-v1-style">
+#hvaLtHomeOverlay[hidden]{display:none!important}
+#hvaLtHomeOverlay{position:fixed;inset:0;z-index:22000;display:flex;align-items:center;justify-content:center;background:rgba(4,27,58,.74);padding:14px;font-family:Inter,Arial,sans-serif}
+.hva-lt-home-panel{width:min(960px,100%);max-height:94dvh;overflow:auto;background:#fff;border-radius:19px;box-shadow:0 25px 70px #001e48a0;border:1px solid #a7d6ed}
+.hva-lt-home-top{background:linear-gradient(105deg,#084987,#079fc9);color:#fff;padding:19px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hva-lt-home-top h2{font-size:19px;margin:0;font-weight:900}.hva-lt-home-top p{font-size:12px;margin:5px 0 0;color:#e5f7ff}
+.hva-lt-home-close{background:#ffffff25;border:1px solid #fff7;color:#fff;font-size:23px;border-radius:10px;min-width:40px;height:40px;cursor:pointer}
+.hva-lt-home-content{padding:19px}.hva-lt-home-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:13px}
+.hva-lt-home-tools button,.hva-lt-home-tools a,.hva-lt-home-action{border:1px solid #9ec5e7;background:#f1f8ff;color:#07518e;padding:9px 12px;border-radius:10px;font:800 12px Inter,Arial,sans-serif;text-decoration:none;cursor:pointer}
+.hva-lt-home-note{font-size:12px;color:#4a6280;line-height:1.6;margin-bottom:13px}.hva-lt-home-status{font-size:13px;min-height:22px;color:#095286;font-weight:700}
+.hva-lt-home-item{margin:10px 0;border:1px solid #c8ddeb;background:#f9fcff;padding:15px;border-radius:13px}.hva-lt-home-item strong{display:block;color:#074575;font-size:15px}.hva-lt-home-item small{display:block;margin:6px 0 11px;color:#536a7a}.hva-lt-home-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hva-lt-home-detail{margin-top:12px;border-top:1px solid #d6e8f2;padding-top:13px}.hva-lt-home-detail pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eef7ff;padding:12px;border-radius:10px;max-height:360px;overflow:auto;font-size:12px}
+@media(max-width:600px){.hva-lt-home-content{padding:12px}.hva-lt-home-top{padding:14px}.hva-lt-home-top h2{font-size:15px}}
+</style>
+<section id="hvaLtHomeOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="hvaLtHomeHeading">
+ <div class="hva-lt-home-panel">
+  <div class="hva-lt-home-top"><div><h2 id="hvaLtHomeHeading">LỊCH CÔNG TÁC TUẦN – THPT HÒA VANG</h2><p>Tra cứu lịch đã công bố trên HVA–EDOS V5</p></div><button class="hva-lt-home-close" type="button" id="hvaLtHomeClose" aria-label="Đóng">&times;</button></div>
+  <div class="hva-lt-home-content">
+   <div class="hva-lt-home-tools"><button type="button" id="hvaLtHomeRefresh">Làm mới danh sách</button><a href="./LichCongTac.html">Soạn / phát hành lịch (BGH)</a></div>
+   <div class="hva-lt-home-note">Chỉ hiển thị lịch đã công bố. Liên kết PDF trên Google Drive cần được cấp quyền xem; nếu bị từ chối truy cập, liên hệ quản trị EDOS.</div>
+   <p id="hvaLtHomeStatus" class="hva-lt-home-status" aria-live="polite"></p><div id="hvaLtHomeList"></div>
+  </div>
+ </div>
+</section>
+<script id="hva-lt-home-v1-script">
+(function(){'use strict';
+ const overlay=document.getElementById('hvaLtHomeOverlay'),status=document.getElementById('hvaLtHomeStatus'),list=document.getElementById('hvaLtHomeList');
+ const close=document.getElementById('hvaLtHomeClose');let lastFocus=null;
+ const html=(tag,cls,value)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(value!==undefined)el.textContent=String(value);return el};
+ function session(){const a=window.NVS_localStore,b=window.NVS_sessionStore;const token=String((a&&a.getItem('hvaSessionToken'))||(b&&b.getItem('hvaSessionToken'))||'').trim();const expiry=Number((a&&a.getItem('hvaSessionExpiresAt'))||(b&&b.getItem('hvaSessionExpiresAt'))||0);if(!token||!expiry||expiry<=Date.now())throw Error('Thầy/cô cần đăng nhập EDOS lại để xem lịch.');return token}
+ async function api(action,params){const backend=(typeof DTHT_STANDALONE_BACKEND!=='undefined')?DTHT_STANDALONE_BACKEND:'';if(!backend)throw Error('Chưa tìm thấy địa chỉ Backend EDOS.');const url=new URL(backend);url.searchParams.set('action',action);url.searchParams.set('sessionToken',session());Object.entries(params||{}).forEach(([k,v])=>url.searchParams.set(k,String(v)));const r=await fetch(url.toString(),{cache:'no-store'});if(!r.ok)throw Error('Không kết nối được Backend (HTTP '+r.status+').');const d=await r.json();if(!d||!(d.ok||d.success))throw Error(d&&d.message||'Backend chưa trả dữ liệu lịch hợp lệ.');return d}
+ async function view(item,area){area.replaceChildren();status.textContent='Đang tải chi tiết lịch…';try{const data=await api('ltGetPublished',{tuanBatDau:item.tuanBatDau});const found=data.item;if(!found)throw Error('Không tìm thấy lịch đã công bố.');const details=html('div','hva-lt-home-detail');details.append(html('strong','',found.tieuDe||'LỊCH CÔNG TÁC TUẦN'));const content=found.noiDung||{};details.append(html('pre','',JSON.stringify(content,null,2)));area.append(details);status.textContent='Đã tải lịch tuần '+found.tuanThu+'. Nội dung chi tiết được lấy từ CSDL EDOS.'}catch(e){status.textContent=e.message||String(e)}}
+ function make(item){const root=html('article','hva-lt-home-item');root.append(html('strong','',item.tieuDe||('Lịch công tác tuần '+item.tuanThu)));root.append(html('small','','Tuần '+item.tuanThu+' · '+item.tuanBatDau+' đến '+item.tuanKetThuc+' · Phiên bản '+item.phienBan));const tools=html('div','hva-lt-home-actions');const viewBtn=html('button','hva-lt-home-action','Xem nội dung');viewBtn.type='button';const area=html('div','');viewBtn.addEventListener('click',()=>view(item,area));tools.append(viewBtn);if(item.pdfUrl&&/^https:\/\/(drive|docs)\.google\.com\//.test(item.pdfUrl)){const pdf=html('a','hva-lt-home-action','Mở / tải PDF từ Drive');pdf.href=item.pdfUrl;pdf.target='_blank';pdf.rel='noopener noreferrer';tools.append(pdf)}root.append(tools,area);return root}
+ async function refresh(){status.textContent='Đang kiểm tra lịch được công bố…';list.replaceChildren();try{const d=await api('ltListPublished',{}),items=Array.isArray(d.items)?d.items:[];items.forEach(item=>list.append(make(item)));status.textContent=items.length?'Có '+items.length+' tuần đã công bố.':'Chưa có lịch tuần nào được công bố trên CSDL EDOS.'}catch(e){status.textContent='Không tải được lịch: '+(e.message||String(e))}}
+ function open(e){if(e)e.preventDefault();lastFocus=document.activeElement;overlay.hidden=false;close.focus();refresh()}
+ function hide(){overlay.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+ document.querySelectorAll('a.nvs-quick-calendar').forEach(x=>x.addEventListener('click',open));
+ window.hvaOpenPublishedCalendar=open;
+ close.addEventListener('click',hide);document.getElementById('hvaLtHomeRefresh').addEventListener('click',refresh);overlay.addEventListener('click',e=>{if(e.target===overlay)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)hide()});
+})();
+</script>
 </body>
 </html>
