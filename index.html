@@ -3785,9 +3785,20 @@ if(pwd===old){status.textContent='Mật khẩu mới phải khác mật khẩu c
 if(!tk()){status.textContent='Phiên đăng nhập đã hết hạn.';return}
 busy=true;$('nvs-pwd-save').disabled=true;status.textContent='Đang kiểm tra...';
 try{
-const resp=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'changePassword',sessionToken:tk(),matKhauCu:old,matKhauMoi:pwd})});const d=await resp.json();
+const resp=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'changePassword',sessionToken:tk(),matKhauCu:old,matKhauMoi:pwd})});
+if(!resp.ok){status.textContent='Máy chủ phản hồi HTTP '+resp.status+'. Vui lòng quản trị viên kiểm tra bản triển khai Backend.';return;}
+let d;
+try{d=await resp.json()}catch(_){status.textContent='Backend chưa trả dữ liệu JSON hợp lệ. Kiểm tra phiên bản Web App đã triển khai.';return;}
 if(d?.ok===true||d?.success===true){notice.hidden=true;busy=false;close();alert('Đổi mật khẩu thành công. Thầy/Cô vui lòng đăng nhập lại bằng mật khẩu mới.');NVS_localStore.removeItem('user');NVS_localStore.removeItem('hvaSessionToken');NVS_localStore.removeItem('hvaSessionExpiresAt');NVS_sessionStore.removeItem('user');NVS_sessionStore.removeItem('hvaSessionToken');NVS_sessionStore.removeItem('hvaSessionExpiresAt');location.reload();}
-else {const m=String(d?.thongBao||d?.message||'Backend chưa hỗ trợ đổi mật khẩu; chưa lưu thay đổi.');status.textContent=m+(d?.errorCode?' (Mã: '+String(d.errorCode)+')':'');}
+else {
+ const m=String(d?.thongBao||d?.message||'Backend chưa hỗ trợ đổi mật khẩu; chưa lưu thay đổi.');
+ const code=String(d?.errorCode||d?.code||'');
+ const legacy=/Không thể cập nhật mật khẩu\. Vui lòng liên hệ quản trị/i.test(m);
+ const missingAction=/Action POST không hợp lệ|Action không hỗ trợ/i.test(m);
+ status.textContent=m+(code?' (Mã: '+code+')':'')
+   +(legacy&&!code?'\nBackend đang trả thông báo lỗi chung của bản trước; kiểm tra phiên bản Web App đang triển khai và Nhật ký thực thi.':'')
+   +(missingAction?'\nRouter của bản triển khai chưa nhận action changePassword.':'');
+}
 }catch(e){status.textContent='Chưa kết nối được Backend đổi mật khẩu; chưa lưu thay đổi.'}
 finally{busy=false;$('nvs-pwd-save').disabled=false}
 });
