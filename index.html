@@ -925,11 +925,7 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
 #dthtAuth .dtht-pass-prefix{display:block!important;position:absolute;left:clamp(38px,5vw,46px);top:50%;transform:translateY(-50%);font-weight:900;color:#35445c;z-index:2;pointer-events:none}
 #dthtAuth .dtht-pass-prefix[hidden]{display:none!important}
 #dthtAuth #dthtLoginPass{padding-left:clamp(92px,11vw,100px)!important}
-#dthtAuth .nvs-login-mode{display:block;margin:6px 0 3px auto;padding:5px 2px;background:none;border:0;color:#0866a8;font:700 12px/1.4 "Segoe UI",Arial,sans-serif;text-decoration:underline;cursor:pointer;text-align:right}
-#dthtAuth .nvs-login-mode[aria-pressed="true"]{color:#a15600}
-#dthtAuth .nvs-login-mode[aria-pressed="true"]~.edos-login-recovery{margin-top:2px}
-#dthtAuth:has(#dthtPasswordModeButton[aria-pressed="true"]) #dthtLoginPass{padding-left:45px!important}
-@media(max-width:480px){#dthtAuth .nvs-login-mode{font-size:11px}}
+@media(max-width:480px){}
 </style>
 </head>
 <body>
@@ -962,9 +958,9 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
       <label for="dthtLoginPass">Mật khẩu</label>
       <div class="dtht-input-wrap">
         <span class="dtht-input-icon"><i class="bi bi-key"></i></span>
-        <span class="dtht-pass-prefix" id="dthtPassFixedPrefix" aria-label="Tiền tố HVA cố định">HVA@</span>
+        <span class="dtht-pass-prefix" id="dthtPassFixedPrefix" aria-label="Tiền tố mật khẩu ban đầu">HVA@</span>
         <input id="dthtLoginPass" type="password" maxlength="24"
-               autocomplete="current-password" placeholder="4 số bí mật"
+               autocomplete="current-password" placeholder="4 số ban đầu hoặc mật khẩu đã đổi"
                onkeydown="if(event.key==='Enter') dthtStandaloneLogin()">
         <button type="button" class="dtht-pass-eye" onclick="dthtTogglePassword()" aria-label="Hiện/ẩn mật khẩu">
           <i id="dthtPassEyeIcon" class="bi bi-eye"></i>
@@ -3745,7 +3741,7 @@ html body .hva-pro-header-inner>.hva-pro-tools .hva-pro-online-dot{
 <label for="nvs-pwd-old">Mật khẩu hiện tại</label>
 <div class="nvs-pwd-old-wrap"><span class="nvs-pwd-fixed-prefix" id="nvs-pwd-fixed-prefix">HVA@</span><input id="nvs-pwd-old" type="password" maxlength="24" autocomplete="current-password" placeholder="4 chữ số" required></div>
 
-<p class="nvs-pwd-legacy-hint" id="nvs-pwd-mode-hint">4 số ban đầu: tự thêm HVA@. Mật khẩu đã đổi: nhập trực tiếp.</p>
+<p class="nvs-pwd-legacy-hint" id="nvs-pwd-mode-hint">Nhập 4 số ban đầu hoặc mật khẩu đã đổi. HVA@ chỉ tự ghép khi nhập đúng 4 số.</p>
 <label for="nvs-pwd-new">Mật khẩu mới</label><input id="nvs-pwd-new" type="password" autocomplete="new-password" minlength="6" maxlength="24" required>
 <label for="nvs-pwd-confirm">Xác nhận mật khẩu mới</label><input id="nvs-pwd-confirm" type="password" autocomplete="new-password" minlength="6" maxlength="24" required>
 <div class="help">Mật khẩu mới phải có <b>ít nhất 6 ký tự</b>, gồm <b>chữ hoa</b>, <b>chữ số</b> và <b>@</b> hoặc <b>!</b>.<br>Không dùng lại mật khẩu mặc định. Nếu quên, liên hệ quản trị để cấp mật khẩu tạm.</div>
@@ -3780,7 +3776,7 @@ const resp=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-
 if(!resp.ok){status.textContent='Máy chủ phản hồi HTTP '+resp.status+'. Vui lòng quản trị viên kiểm tra bản triển khai Backend.';return;}
 let d;
 try{d=await resp.json()}catch(_){status.textContent='Backend chưa trả dữ liệu JSON hợp lệ. Kiểm tra phiên bản Web App đã triển khai.';return;}
-if(d?.ok===true||d?.success===true){notice.hidden=true;busy=false;close();window.NVS_localStore.setItem('nvsPasswordRecentlyChangedFor',String(u()?.username||u()?.tenDangNhap||'').toLowerCase());NVS_localStore.removeItem('user');NVS_localStore.removeItem('hvaSessionToken');NVS_localStore.removeItem('hvaSessionExpiresAt');NVS_sessionStore.removeItem('user');NVS_sessionStore.removeItem('hvaSessionToken');NVS_sessionStore.removeItem('hvaSessionExpiresAt');status.textContent='Đổi mật khẩu thành công. Đang chuyển sang đăng nhập bằng mật khẩu mới...';setTimeout(()=>location.reload(),850);}
+if(d?.ok===true||d?.success===true){notice.hidden=true;busy=false;close();NVS_localStore.removeItem('user');NVS_localStore.removeItem('hvaSessionToken');NVS_localStore.removeItem('hvaSessionExpiresAt');NVS_sessionStore.removeItem('user');NVS_sessionStore.removeItem('hvaSessionToken');NVS_sessionStore.removeItem('hvaSessionExpiresAt');status.textContent='Đổi mật khẩu thành công. Đang chuyển sang đăng nhập bằng mật khẩu mới...';setTimeout(()=>location.reload(),850);}
 else {
  const m=String(d?.thongBao||d?.message||'Backend chưa hỗ trợ đổi mật khẩu; chưa lưu thay đổi.');
  const code=String(d?.errorCode||d?.code||'');
@@ -3896,7 +3892,6 @@ html body nav.nvs-premium-nav>button>i{
 #nvs-pwd-box .nvs-pwd-fixed-prefix[hidden]{display:none!important}
 #nvs-pwd-box .nvs-pwd-old-wrap:not(.is-custom) #nvs-pwd-old{padding-left:66px!important}
 #nvs-pwd-box .nvs-pwd-old-wrap.is-custom #nvs-pwd-old{padding-left:12px!important}
-#nvs-pwd-box .nvs-pwd-mode-toggle{display:block;width:auto;margin:7px 0 0;padding:3px 0;border:none;background:none;color:#095e9b;font:700 12px/1.5 "Segoe UI",Arial,sans-serif;text-align:left;text-decoration:underline;cursor:pointer}
 #nvs-pwd-box .nvs-pwd-legacy-hint{margin:4px 0 10px;font-size:12px;color:#49677f}
 </style>
 
