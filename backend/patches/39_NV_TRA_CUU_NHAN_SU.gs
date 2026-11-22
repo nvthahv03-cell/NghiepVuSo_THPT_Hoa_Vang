@@ -54,7 +54,19 @@ function hvaPersonnelDirectoryGet_(params) {
         byUser.set(k,{
           username,
           hoTen:String(r[2]||'').trim(),
-          chucVu:String(r[9]||'').trim(),
+          // Cột J = Vị trí việc làm; cột Q = Vai trò (GV/TTCM/TPCM...).
+          // Chức vụ hiển thị theo vai trò đã được cập nhật tại nguồn nhân sự.
+          chucVu:(()=>{
+            const position=String(r[9]||'').trim();
+            const role=String(r[16]||'').trim().toUpperCase();
+            if(role==='TTCM')return 'Tổ trưởng chuyên môn';
+            if(role==='TPCM')return 'Tổ phó chuyên môn';
+            if(role==='HT')return 'Hiệu trưởng';
+            if(role==='PHT')return 'Phó Hiệu trưởng';
+            return position||String(r[16]||'').trim();
+          })(),
+          vaiTro:String(r[16]||'').trim(),
+          viTriViecLam:String(r[9]||'').trim(),
           tenTo:String(r[12]||'').trim(),
           monDay:String(r[13]||'').trim(),
           ngaySinh:cell(r,birthdayCol),
