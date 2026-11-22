@@ -921,7 +921,17 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
 #dthtAuth .edos-login-copyright strong{display:block;color:#fff!important;font-size:clamp(9px,1vw,11px);font-weight:800;letter-spacing:.012em;overflow-wrap:anywhere}
 #dthtAuth .dtht-auth-title{color:#075cad!important;text-shadow:none;font-weight:900}
 #dthtAuth .dtht-auth-title span{color:#ff992e!important;text-shadow:0 1px 3px #14314f}
-</style></head>
+</style><style id="nvs-legacy-prefix-restored-20261122">
+#dthtAuth .dtht-pass-prefix{display:block!important;position:absolute;left:clamp(38px,5vw,46px);top:50%;transform:translateY(-50%);font-weight:900;color:#35445c;z-index:2;pointer-events:none}
+#dthtAuth .dtht-pass-prefix[hidden]{display:none!important}
+#dthtAuth #dthtLoginPass{padding-left:clamp(92px,11vw,100px)!important}
+#dthtAuth .nvs-login-mode{display:block;margin:6px 0 3px auto;padding:5px 2px;background:none;border:0;color:#0866a8;font:700 12px/1.4 "Segoe UI",Arial,sans-serif;text-decoration:underline;cursor:pointer;text-align:right}
+#dthtAuth .nvs-login-mode[aria-pressed="true"]{color:#a15600}
+#dthtAuth .nvs-login-mode[aria-pressed="true"]~.edos-login-recovery{margin-top:2px}
+#dthtAuth .dtht-input-wrap:has(+ .nvs-login-mode[aria-pressed="true"]) #dthtLoginPass{padding-left:45px!important}
+@media(max-width:480px){#dthtAuth .nvs-login-mode{font-size:11px}}
+</style>
+</head>
 <body>
 
 <div id="hvaLogoutModal" class="hva-logout-overlay" role="dialog" aria-modal="true" aria-labelledby="hvaLogoutTitle">
@@ -952,15 +962,16 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
       <label for="dthtLoginPass">Mật khẩu</label>
       <div class="dtht-input-wrap">
         <span class="dtht-input-icon"><i class="bi bi-key"></i></span>
-        
-        <input id="dthtLoginPass" type="password"
-               autocomplete="current-password" placeholder="4 số ban đầu hoặc mật khẩu cá nhân"
+        <span class="dtht-pass-prefix" id="dthtPassFixedPrefix" aria-label="Tiền tố HVA cố định">HVA@</span>
+        <input id="dthtLoginPass" type="password" maxlength="4" inputmode="numeric"
+               autocomplete="current-password" placeholder="4 số bí mật"
                onkeydown="if(event.key==='Enter') dthtStandaloneLogin()">
         <button type="button" class="dtht-pass-eye" onclick="dthtTogglePassword()" aria-label="Hiện/ẩn mật khẩu">
           <i id="dthtPassEyeIcon" class="bi bi-eye"></i>
         </button>
       </div>
     </div>
+    <button type="button" id="dthtPasswordModeButton" class="nvs-login-mode" aria-pressed="false" onclick="nvsToggleLoginPasswordMode()">Đã đổi mật khẩu? Dùng mật khẩu mới</button>
 
     <div class="edos-login-recovery">Quên mật khẩu? Liên hệ ADMIN: <a href="tel:0913977722" aria-label="Gọi quản trị viên 0913 977 722">0913 977 722</a></div>
 
@@ -1104,6 +1115,17 @@ function authToken(){
   return token;
 }
 
+function nvsToggleLoginPasswordMode(){
+  const btn=$('dthtPasswordModeButton'),pass=$('dthtLoginPass'),prefix=$('dthtPassFixedPrefix');
+  const useCustom=btn.getAttribute('aria-pressed')!=='true';
+  btn.setAttribute('aria-pressed',String(useCustom));
+  btn.textContent=useCustom?'Dùng mật khẩu ban đầu HVA@ + 4 số':'Đã đổi mật khẩu? Dùng mật khẩu mới';
+  prefix.hidden=useCustom;
+  pass.value='';
+  if(useCustom){pass.removeAttribute('maxlength');pass.removeAttribute('inputmode');pass.placeholder='Nhập mật khẩu đã đổi'}
+  else {pass.maxLength=4;pass.setAttribute('inputmode','numeric');pass.placeholder='4 số bí mật'}
+  pass.focus();
+}
 function dthtTogglePassword(){
   const input = $('dthtLoginPass'), icon = $('dthtPassEyeIcon');
   const show = input.type === 'password';
@@ -1137,7 +1159,9 @@ async function dthtStandaloneLogin(){
     msg.textContent = 'Vui lòng nhập tên đăng nhập và 4 số mật khẩu.';
     return;
   }
-  if(rawPassword.length<4){msg.textContent='Mật khẩu phải có ít nhất 4 ký tự.';return;}
+  const customMode=$('dthtPasswordModeButton')?.getAttribute('aria-pressed')==='true';
+  if(!customMode && !/^\d{4}$/.test(rawPassword)){msg.textContent='Nhập đúng 4 chữ số sau HVA@.';return;}
+  if(customMode && rawPassword.length<6){msg.textContent='Mật khẩu đã đổi phải có ít nhất 6 ký tự.';return;}
 
   btn.disabled = true;
   btnText.textContent = 'ĐANG XÁC THỰC...';
@@ -1151,7 +1175,7 @@ async function dthtStandaloneLogin(){
       body: JSON.stringify({
         action: 'login',
         tenDangNhap: username,
-        matKhau: /^\d{4}$/.test(rawPassword) ? ('HVA@'+rawPassword) : rawPassword
+        matKhau: customMode ? rawPassword : ('HVA@'+rawPassword)
       })
     });
     const data = await r.json();
