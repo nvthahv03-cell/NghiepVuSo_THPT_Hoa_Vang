@@ -275,6 +275,14 @@ body.hva-receiver-mode #hva-module-content-viewer {
 </div><div class="space-y-2" id="recipient-selector-container">
                         <p class="text-xs text-slate-400 italic">Đang nhận danh sách đối tượng từ module nguồn...</p>
                     </div>
+                    <div id="hvaRecipientActions" class="mt-3 rounded-xl border border-blue-200 bg-blue-50/50 p-3" hidden>
+                        <div id="hvaRecipientConfirmationState" class="mb-3 text-xs font-semibold text-amber-700" role="status" aria-live="polite">Chưa xác nhận danh sách người nhận.</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          <button type="button" id="hvaRecipientConfirm" class="rounded-xl bg-emerald-700 text-white py-3 px-3 text-xs font-extrabold disabled:opacity-50">✓ Xác nhận đối tượng đã chọn</button>
+                          <button type="button" id="hvaRecipientRefresh" class="rounded-xl bg-white border border-blue-300 text-blue-800 py-3 px-3 text-xs font-bold">↻ Làm mới nhân sự</button>
+                          <button type="button" id="hvaRecipientCancel" class="rounded-xl bg-white border border-rose-300 text-rose-700 py-3 px-3 text-xs font-bold">✕ Hủy chọn</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- KHỐI ĐIỀU PHỐI CHÍNH (ACTION EXECUTION) -->
@@ -1629,6 +1637,10 @@ const HvaRoleDest={
   if(this.initialized)return;this.initialized=true;
   const el=id=>document.getElementById(id);
   el('hvaRoleChooser').hidden=false;
+  el('hvaRecipientActions').hidden=String(TTDHS_State.document?.moduleSource||'')!=='LichTuanEDOS';
+  el('hvaRecipientConfirm').addEventListener('click',()=>this.confirmRecipients());
+  el('hvaRecipientRefresh').addEventListener('click',()=>this.refreshPersonnel());
+  el('hvaRecipientCancel').addEventListener('click',()=>this.cancelRecipients());
   el('hvaRoleSearch').addEventListener('input',e=>{this.query=this.norm(e.target.value);this.render()});
   el('hvaRoleAdd').addEventListener('click',()=>this.add());
   el('hvaRoleClearSelection').addEventListener('click',()=>{this.chosen.clear();this.render()});
@@ -1644,7 +1656,7 @@ const HvaRoleDest={
     const btn=e.target.closest('[data-hva-remove-recipient]');if(!btn)return;
     const username=btn.dataset.hvaRemoveRecipient;
     TTDHS_State.recipients=TTDHS_State.recipients.filter(r=>String(r.username||'')!==username);
-    this.saveSelection();Controller.refreshUI();
+    this.invalidateConfirmation();this.saveSelection();Controller.refreshUI();this.render();
   });
   try{
     if(!window.HVAPersonnel?.buildGroups)throw Error('Chưa có nguồn nhân sự Cuộc họp');
@@ -1691,6 +1703,7 @@ const HvaRoleDest={
   }).join('')+((groups.filter(x=>!seen.has(String(x.group.groupKey))).length)?'<section class="space-y-2"><div class="font-extrabold text-blue-900 text-xs mt-3">NHÓM KHÁC</div>'+groups.filter(x=>!seen.has(String(x.group.groupKey))).map(makeGroup).join('')+'</section>':'');
   if(!groups.length)root.innerHTML='<div class="p-3 text-slate-500">Không tìm thấy kết quả phù hợp.</div>';
   el('hvaRoleSelectedCount').textContent=this.chosen.size+' người đang chọn';
+  this.renderConfirmation();
   el('hvaRoleAdd').disabled=!this.ready||this.chosen.size===0;
   root.querySelectorAll('input[data-hva-group]').forEach(i=>{
     const g=this.groups.find(x=>x.groupKey===i.dataset.hvaGroup);
@@ -1699,11 +1712,54 @@ const HvaRoleDest={
     i.addEventListener('click',e=>e.stopPropagation());
   });
  },
+ isCalendar(){return String(TTDHS_State.document?.moduleSource||'')==='LichTuanEDOS'},
+ invalidateConfirmation(){
+   if(this.isCalendar()){TTDHS_State.rawSource={...TTDHS_State.rawSource,recipientSelectionConfirmed:false,recipientConfirmedV2:false}}
+ },
+ renderConfirmation(){
+   const wrapper=document.getElementById('hvaRecipientActions');
+   if(!wrapper)return;
+   wrapper.hidden=!this.isCalendar();
+   if(wrapper.hidden)return;
+   const n=TTDHS_State.recipients.length;
+   const confirmed=TTDHS_State.rawSource?.recipientConfirmedV2===true&&n>0;
+   const info=document.getElementById('hvaRecipientConfirmationState');
+   info.textContent=confirmed?'✓ Đã xác nhận '+n+' người nhận. Có thể thực hiện phát hành.':(n?'Đã chọn '+n+' người; cần bấm “Xác nhận đối tượng đã chọn” trước khi phát hành.':'Chưa có người nhận. Hãy chọn và thêm người nhận trước.');
+   info.className='mb-3 text-xs font-semibold '+(confirmed?'text-emerald-700':'text-amber-700');
+   document.getElementById('hvaRecipientConfirm').disabled=!n||confirmed;
+   document.getElementById('hvaRecipientCancel').disabled=!n&&!this.chosen.size;
+ },
  saveSelection(){
-  if(String(TTDHS_State.document?.moduleSource||'')==='LichTuanEDOS'){
-    TTDHS_State.rawSource={...TTDHS_State.rawSource,recipients:[...TTDHS_State.recipients],recipientSelectionConfirmed:true};
-    StorageEngine.save(CONFIG.STORAGE_KEYS.CURRENT_DOC,TTDHS_State.rawSource);
-  }
+   if(this.isCalendar()){
+     TTDHS_State.rawSource={...TTDHS_State.rawSource,recipients:[...TTDHS_State.recipients],recipientSelectionInitialized:true,recipientSelectionConfirmed:TTDHS_State.rawSource?.recipientConfirmedV2===true,recipientConfirmedV2:TTDHS_State.rawSource?.recipientConfirmedV2===true};
+     StorageEngine.save(CONFIG.STORAGE_KEYS.CURRENT_DOC,TTDHS_State.rawSource);
+   }
+ },
+ confirmRecipients(){
+   if(!this.isCalendar()||!TTDHS_State.recipients.length)return;
+   TTDHS_State.rawSource={...TTDHS_State.rawSource,recipientConfirmedV2:true,recipientSelectionConfirmed:true};
+   this.saveSelection();Controller.refreshUI();this.render();
+   document.getElementById('hvaRoleStatus').textContent='Đã xác nhận '+TTDHS_State.recipients.length+' người nhận. Chưa gửi thông báo; chỉ bấm PHÁT HÀNH khi nội dung đã được duyệt.';
+ },
+ async refreshPersonnel(){
+   const btn=document.getElementById('hvaRecipientRefresh');
+   btn.disabled=true;btn.textContent='Đang làm mới...';
+   try{
+     if(!window.HVAPersonnel?.buildGroups)throw Error('Chưa có nguồn nhân sự Cuộc họp');
+     const groups=await window.HVAPersonnel.buildGroups();
+     if(!groups.length)throw Error('Nguồn nhân sự Cuộc họp trả về danh sách rỗng');
+     this.groups=groups;this.ready=true;this.chosen.clear();this.render();
+     document.getElementById('hvaRoleStatus').textContent='Đã tải lại '+groups.length+' nhóm nhân sự Cuộc họp. Danh sách người nhận đã thêm được giữ nguyên.';
+   }catch(e){document.getElementById('hvaRoleStatus').textContent='Không làm mới được nhân sự: '+String(e?.message||e)}
+   finally{btn.disabled=false;btn.textContent='↻ Làm mới nhân sự'}
+ },
+ cancelRecipients(){
+   if(!this.isCalendar())return;
+   if(!TTDHS_State.recipients.length&&!this.chosen.size)return;
+   if(!window.confirm('Hủy toàn bộ người nhận đã chọn cho lịch này? Nội dung lịch và PDF vẫn được giữ nguyên.'))return;
+   TTDHS_State.recipients=[];this.chosen.clear();this.invalidateConfirmation();this.saveSelection();
+   Controller.refreshUI();this.render();
+   document.getElementById('hvaRoleStatus').textContent='Đã hủy chọn người nhận. Chưa gửi thông báo.';
  },
  add(){
   if(!this.ready)return;
@@ -1716,6 +1772,7 @@ const HvaRoleDest={
     TTDHS_State.recipients.push({username,hoTen:this.name(m),chucVu:m.chucVu||'',to:m.tenTo||'',lopChuNhiem:m.lopChuNhiem||'',deliveryRole:kind==='TO'?'TO':'CC',ccPurpose:kind==='CC_INFO'?'Để biết':kind==='CC_REPORT'?'Để báo cáo':''});
     existing.add(username.toLowerCase());count++;
   }
+  if(count>0)this.invalidateConfirmation();
   this.chosen.clear();this.saveSelection();Controller.refreshUI();this.render();
   document.getElementById('hvaRoleStatus').textContent='Đã thêm '+count+' người nhận. Tổng '+TTDHS_State.recipients.length+' người, không trùng tài khoản.';
  }
@@ -1778,14 +1835,15 @@ const HvaRoleDest={
             const versionStatus = VersionEngine.checkConflict(state.document.version);
             const hasSource = state.document.moduleSource !== 'UnknownModule';
             const documentCount = Array.isArray(state.documents) && state.documents.length ? state.documents.length : 1;
-            const hasRecipients = state.recipients.length > 0;
+            const isCalendarRecipientCheck=String(state.document?.moduleSource||'')==='LichTuanEDOS';
+            const hasRecipients = state.recipients.length > 0 && (!isCalendarRecipientCheck || state.rawSource?.recipientConfirmedV2===true);
             const hasDestinations = state.destinations.some(d => d.selected);
 
             const checks = [
                 { label: "Kiểm tra module nguồn", pass: hasSource, msg: hasSource ? `${state.document.moduleSource} • ${documentCount} văn bản` : "Chưa có dữ liệu nguồn" },
                 { label: "Kiểm tra quyền phát hành", pass: isPermitted, msg: isPermitted ? "Đủ thẩm quyền" : "Thiếu thẩm quyền" },
                 { label: "Kiểm tra phiên bản mới hơn", pass: !versionStatus.conflict, msg: "Phiên bản mới nhất" },
-                { label: "Kiểm tra đối tượng nhận", pass: hasRecipients, msg: hasRecipients ? `${state.recipients.length} người nhận` : "Chưa chọn người nhận" },
+                { label: "Kiểm tra đối tượng nhận", pass: hasRecipients, msg: hasRecipients ? `${state.recipients.length} người nhận đã xác nhận` : (isCalendarRecipientCheck&&state.recipients.length ? "Chưa xác nhận người nhận" : "Chưa chọn người nhận") },
                 { label: "Kiểm tra điểm đến phát hành", pass: hasDestinations, msg: hasDestinations ? "Đã chọn điểm đến" : "Chưa chọn điểm đến" },
                 { label: "Kiểm tra cấu hình Workflow", pass: true, msg: "Đã tối ưu luồng" }
             ];
@@ -2453,7 +2511,7 @@ return;
                 TTDHS_State.documents = [TTDHS_State.document];
                 TTDHS_State.recipients = ModuleAdapter.getRecipients(storedDoc);
                 // Lịch tuần: danh sách toàn trường từ nguồn chỉ là dữ liệu tham khảo, không được tự chọn người nhận.
-                if (String(TTDHS_State.document?.moduleSource || '') === 'LichTuanEDOS' && storedDoc.recipientSelectionConfirmed !== true) {
+                if (String(TTDHS_State.document?.moduleSource || '') === 'LichTuanEDOS' && storedDoc.recipientSelectionInitialized !== true && storedDoc.recipientSelectionConfirmed !== true) {
                     TTDHS_State.recipients = [];
                     TTDHS_State.rawSource = {...storedDoc,recipients:[],recipientSelectionConfirmed:false};
                     StorageEngine.save(CONFIG.STORAGE_KEYS.CURRENT_DOC,TTDHS_State.rawSource);
@@ -2720,6 +2778,9 @@ return;
     },
     executePublishing: async () => {
         if (TTDHS_State.isPublishing) return;
+        if(String(TTDHS_State.document?.moduleSource||'')==='LichTuanEDOS' && TTDHS_State.rawSource?.recipientConfirmedV2!==true){
+            Controller.showPublishResult(false,'Thầy cần bấm “Xác nhận đối tượng đã chọn” trước khi phát hành Lịch tuần.','Chưa xác nhận người nhận');return;
+        }
         // Không gửi CC như người thực hiện khi Backend chưa có hợp đồng phân biệt TO/CC.
         if((TTDHS_State.recipients||[]).some(r=>r.deliveryRole==='CC')){
             Controller.showPublishResult(false,'Đã chọn người nhận CC. Backend phát hành hiện chưa được kiểm chứng lưu và phân phối riêng CC – Để biết/Để báo cáo. Tạm dừng phát hành để tránh giao nhầm nhiệm vụ.','Cần kết nối CC ở Backend');return;
