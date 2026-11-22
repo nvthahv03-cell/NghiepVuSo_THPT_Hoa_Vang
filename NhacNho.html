@@ -121,6 +121,19 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
      const people=new Map();
      groups.forEach(g=>(g.members||[]).forEach(p=>{const u=String(p.username||p.userName||"").trim();if(u&&!people.has(u))people.set(u,{username:u,hoTen:p.hoTen||p.name||u,to:p.tenTo||p.to||g.tenTo||"",chucVu:p.chucVu||p.vaiTro||""})}));
      return [...people.values()];
+   },
+   // Gửi nhắc nhở qua Web App EDOS V5. Chỉ Backend xác nhận mới báo thành công.
+   sendReminder:async function(input){
+     const url='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
+     const res=await fetch(url,{
+       method:'POST',redirect:'follow',
+       headers:{'Content-Type':'text/plain;charset=utf-8'},
+       body:JSON.stringify(Object.assign({},input,{action:'nvsReminderSend'}))
+     });
+     if(!res.ok)throw Error('Máy chủ trả về HTTP '+res.status);
+     const raw=await res.text();let result;
+     try{result=JSON.parse(raw)}catch(e){throw Error('Không nhận được JSON từ EDOS. Kiểm tra quyền triển khai và URL Web App.');}
+     return result;
    }
  },window.NVS_REMINDER_BRIDGE||{});
 })();
@@ -344,7 +357,7 @@ if(!state.selected.size||!title||!content||!state.templates.size)return status('
 if(!$('verified').checked)return status('sendStatus','BGH cần xác nhận đã rà soát trước khi gửi.','error');
 if(!window.confirm('Xác nhận gửi nhắc nhở đến '+state.selected.size+' người? Hệ thống sẽ lưu lịch sử và gửi thông báo.'))return;
 $('sendBtn').disabled=true;status('sendStatus','Đang gửi và chờ Backend xác nhận…');
-try{const r=await call('sendReminder',{...p,recipientUsernames:[...state.selected],title,content,acknowledged:true});if(!r?.success)throw Error(r?.message||'Backend không xác nhận gửi thành công.');status('sendStatus','Đã gửi thành công. Mã: '+(r.id||r.batchId||'đã ghi nhận tại Backend')+'.','ok');$('verified').checked=false;}
+try{const r=await call('sendReminder',{...p,recipientUsernames:[...state.selected],title,content,acknowledged:true,requestId:(window.crypto&&crypto.randomUUID?crypto.randomUUID():'NN-'+Date.now()+'-'+Math.random().toString(36).slice(2))});if(!r?.success)throw Error(r?.message||'Backend không xác nhận gửi thành công.');status('sendStatus','Đã gửi thành công. Mã: '+(r.id||r.batchId||'đã ghi nhận tại Backend')+'.','ok');$('verified').checked=false;}
 catch(e){status('sendStatus','Chưa gửi thành công: '+err(e),'error');}finally{$('sendBtn').disabled=false;}};
 if(nvsReminderBGHGuard()) initialize();
 })();
