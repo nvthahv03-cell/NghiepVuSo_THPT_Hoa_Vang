@@ -81,7 +81,16 @@ body.hva-receiver-mode #hva-module-content-viewer {
         .hva-dest-tile.is-selected:after { content:'✓'; position:absolute;right:8px;top:6px;font-size:12px;font-weight:900;color:#078b7c; }
         .hva-dest-tile.is-archive { cursor:default; background:linear-gradient(150deg,#f0f5ff,#e9f8f5);border-color:#b7d6df; }
         .hva-section-card { padding:14px 16px; }
-        @media (max-width:640px) { .hva-gateway-head .hva-head-row { height:auto;min-height:70px;padding-top:9px;padding-bottom:9px;align-items:flex-start;gap:8px; } .hva-head-actions { flex-wrap:wrap;justify-content:flex-end; } .hva-gateway-title { font-size:12px; } .hva-main { padding-top:10px; } }
+        .hva-origin-badge{display:inline-flex;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .hva-origin-badge #source-module-name{overflow:hidden;text-overflow:ellipsis}
+        @media (max-width:640px) {
+          .hva-gateway-head .hva-head-row{min-height:62px;align-items:center;gap:6px}
+          .hva-gateway-title{font-size:12px;white-space:nowrap}
+          .hva-head-actions{gap:5px;flex-wrap:nowrap}
+          .hva-head-actions .hva-action-label,.hva-origin-badge{display:none}
+          .hva-head-control,.hva-home-link{width:40px;height:40px;padding:0;flex:none}
+          .hva-main{padding-top:10px}
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased">
@@ -93,27 +102,30 @@ body.hva-receiver-mode #hva-module-content-viewer {
         </div>
     </div>
 
-    <!-- HEADER HỆ THỐNG -->
+    <!-- HEADER HỆ THỐNG: gọn, có lối về EDOS trên máy tính và điện thoại -->
     <header class="hva-gateway-head text-white sticky top-0 z-50 border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 hva-head-row flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="hva-brand-mark w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg">
-                    <i class="bi bi-broadcast-pin text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="hva-gateway-title text-base font-extrabold tracking-wide uppercase text-white">TRUNG TÂM ĐIỀU PHỐI PHÁT HÀNH SỐ <span class="text-[10px] px-2 py-0.5 rounded-full bg-teal-300/15 text-teal-200 font-mono">EDOS</span></h1>
-                    <p class="text-[11px] text-slate-400">TRƯỜNG THPT HÒA VANG · QUẢN TRỊ NVS</p>
-                </div>
-            </div>
-            <div class="hva-head-actions flex items-center gap-3">
-                <span id="module-origin-badge" class="px-3 py-1 bg-slate-800 border border-slate-700 text-teal-300 text-xs font-semibold rounded-full flex items-center gap-1.5">
-                    <i class="bi bi-layers-fill"></i> Nguồn: <span id="source-module-name">Đang tải...</span>
-                </span>
-                <button onclick="Controller.resetDraft()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700 transition flex items-center gap-1">
-                    <i class="bi bi-arrow-counterclockwise"></i> Tải lại dữ liệu
-                </button>
-            </div>
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 hva-head-row flex items-center justify-between gap-3 min-h-[68px] py-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="hva-brand-mark w-9 h-9 rounded-xl flex-none flex items-center justify-center text-white" aria-hidden="true">
+            <i class="bi bi-broadcast-pin text-lg"></i>
+          </div>
+          <div class="min-w-0">
+            <h1 class="hva-gateway-title text-sm sm:text-base font-extrabold tracking-wide text-white leading-tight">TRUNG TÂM PHÁT HÀNH <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-teal-300/15 text-teal-200">EDOS</span></h1>
+            <p class="text-[11px] text-slate-300 truncate mt-0.5">Trường THPT Hòa Vang</p>
+          </div>
         </div>
+        <nav class="hva-head-actions flex items-center gap-2 flex-none" aria-label="Điều hướng Trung tâm Phát hành">
+          <span id="module-origin-badge" class="hva-origin-badge px-2.5 py-1 bg-slate-800/70 border border-white/15 text-teal-200 text-xs font-semibold rounded-full items-center gap-1.5" title="Phân hệ nguồn">
+            <i class="bi bi-layers-fill"></i> <span class="hva-origin-label">Nguồn:</span> <span id="source-module-name">Đang tải...</span>
+          </span>
+          <button type="button" onclick="Controller.resetDraft()" class="hva-head-control inline-flex items-center justify-center gap-1.5 px-2.5 py-2 bg-slate-800/70 hover:bg-slate-700 text-slate-100 rounded-lg text-xs font-bold border border-white/15" aria-label="Tải lại dữ liệu" title="Tải lại dữ liệu">
+            <i class="bi bi-arrow-clockwise text-base"></i><span class="hva-action-label">Tải lại</span>
+          </button>
+          <a href="./main.html" class="hva-home-link inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-extrabold border border-teal-300/60" aria-label="Về trang chủ EDOS" title="Về trang chủ EDOS">
+            <i class="bi bi-house-door-fill text-base"></i><span class="hva-action-label">Trang chủ</span>
+          </a>
+        </nav>
+      </div>
     </header>
 
     <!-- METRICS DASHBOARD STATUS BAR -->
