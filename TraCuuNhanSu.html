@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Tra cứu nhân sự | HVA–EDOS</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<style>
+:root{font:15px/1.5 "Segoe UI",Arial,sans-serif;color:#173a5b;background:#f3f7fd}
+*{box-sizing:border-box}body{margin:0;min-height:100vh}button,input,a{font:inherit}
+header{background:linear-gradient(105deg,#073568,#0965a8);color:white;padding:16px clamp(14px,4vw,36px);display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+header h1{font-size:clamp(17px,2.6vw,23px);margin:0}header p{font-size:12px;margin:2px 0 0;color:#d0e9ff}
+.back{display:inline-flex;gap:8px;align-items:center;text-decoration:none;background:#e1f7ff;color:#064e83;padding:9px 13px;border-radius:11px;font-weight:750}
+main{max-width:1100px;margin:20px auto;padding:0 15px 35px}.panel{background:white;border:1px solid #d8e7f4;border-radius:18px;padding:20px;box-shadow:0 7px 25px #0c45810d}
+.intro{margin:0 0 16px;color:#5a718b}.search{display:flex;gap:10px;flex-wrap:wrap}.search input{flex:1;min-width:180px;width:100%;border:1.5px solid #b7cfe3;border-radius:12px;padding:13px 14px;outline:none}.search input:focus{border-color:#1377b9;box-shadow:0 0 0 3px #1592dc21}
+.btn{border:0;border-radius:11px;background:#096da9;color:white;padding:11px 14px;font-weight:750;cursor:pointer}.btn:disabled{opacity:.5;cursor:wait}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.filters button{border:1px solid #c7dcef;background:#f6faff;color:#285b83;border-radius:20px;padding:7px 12px;cursor:pointer;font-size:13px}.filters button[aria-pressed=true]{background:#d9efff;border-color:#1481ba;color:#084f83;font-weight:800}
+#status{color:#526e86;font-size:13px;min-height:20px;margin:12px 0}#status[data-error=true]{color:#ae2637}
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:13px}
+.person{border:1px solid #d6e5f3;border-radius:15px;padding:16px;background:linear-gradient(125deg,#fff,#f7fbff);min-width:0}
+.person h2{font-size:17px;margin:0;color:#0b518a;overflow-wrap:anywhere}.meta{font-size:13px;color:#59748b;margin:5px 0 13px}.fields{display:grid;gap:7px}
+.field{display:grid;grid-template-columns:minmax(95px,125px) 1fr;gap:8px;font-size:13px;align-items:start}.field b{color:#315875}.field span{overflow-wrap:anywhere}
+.tags{display:flex;flex-wrap:wrap;gap:5px}.tag{background:#e8f3fd;border:1px solid #d0e5fa;border-radius:100px;padding:2px 9px;font-size:12px}
+.call{display:inline-flex;align-items:center;gap:6px;color:#fff;background:#07816a;border-radius:9px;padding:6px 10px;text-decoration:none;font-weight:800;font-size:13px;margin-top:4px}
+.empty{padding:28px 14px;text-align:center;color:#607992;background:#f7fbff;border:1px dashed #cbdfee;border-radius:13px}
+footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
+@media(max-width:480px){main{margin:12px auto}.panel{padding:13px}.field{grid-template-columns:minmax(80px,104px) 1fr}.person{padding:14px}}
+</style>
+</head>
+<body>
+<header>
+ <div><h1><i class="bi bi-people-fill" aria-hidden="true"></i> TRA CỨU NHÂN SỰ</h1><p>HVA–EDOS · Nguồn nhân sự dùng chung với Cuộc họp</p></div>
+ <a class="back" href="./index.html" aria-label="Về EDOS"><i class="bi bi-house-door-fill" aria-hidden="true"></i> Trang chủ EDOS</a>
+</header>
+<main>
+<section class="panel" aria-labelledby="search-heading">
+ <h2 id="search-heading" style="font-size:18px;margin:0 0 6px">Danh bạ nhân sự</h2>
+ <p class="intro">Tra cứu theo họ tên, tổ/bộ phận, môn dạy, chức vụ hoặc kiêm nhiệm. Chỉ hiển thị thông tin có trong nguồn nhân sự EDOS và theo quyền truy cập.</p>
+ <div class="search">
+  <input id="q" type="search" autocomplete="off" placeholder="Nhập tên giáo viên, tổ, môn hoặc chức vụ..." aria-label="Tìm nhân sự">
+  <button class="btn" type="button" id="refresh" title="Tải lại danh sách từ nguồn Cuộc họp"><i class="bi bi-arrow-clockwise"></i> Làm mới</button>
+ </div>
+ <div class="filters" id="filters" aria-label="Bộ lọc nhóm nhân sự"></div>
+ <p id="status" role="status" aria-live="polite">Đang kiểm tra phiên đăng nhập EDOS...</p>
+ <div id="results" class="results"></div>
+</section>
+<footer>Thông tin nhân sự dùng cho công tác nội bộ, không chia sẻ ra ngoài EDOS.</footer>
+</main>
+<script src="./HVA_Personnel.js"></script>
+<script>
+(function(){
+ 'use strict';
+ const $=id=>document.getElementById(id),status=$('status'),results=$('results'),filters=$('filters');
+ let people=[],groups=[],category='ALL',isLoading=false;
+ const escape=v=>String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+ const plain=v=>String(v??'').trim();
+ const normalize=v=>plain(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
+ const first=(obj,fields)=>{for(const key of fields){const value=obj?.[key];if(Array.isArray(value)){const t=value.map(plain).filter(Boolean).join(', ');if(t)return t}else if(value!=null && typeof value!=='object' && plain(value))return plain(value)}return ''};
+ const formatDob=v=>{
+   if(!v)return '';
+   if(typeof v==='string'&&/^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(v)){
+     const [y,m,d]=v.slice(0,10).split('-');return d+'/'+m+'/'+y;
+   }
+   return plain(v);
+ };
+ const validPhone=v=>{
+   const raw=plain(v),digits=raw.replace(/[^\d+]/g,'');
+   return /^(?:\+84|0)\d{9,10}$/.test(digits)?digits:'';
+ };
+ const rowsByGroup=(list)=>{
+   const map=new Map();
+   list.forEach(g=>(g.members||[]).forEach(entry=>{
+     const p=window.HVAPersonnel.normalize(entry,g.tenTo||'');
+     const raw=p.raw||entry.raw||entry;
+     const key=normalize(p.username||p.maGV);
+     if(!key)return;
+     let item=map.get(key);
+     if(!item){
+       item={...p,raw,groups:new Set(),positions:new Set(),assignments:new Set(),subjects:new Set()};
+       map.set(key,item);
+     }
+     item.groups.add(plain(g.tenTo||''));
+     if(p.chucVu)item.positions.add(p.chucVu);
+     if(g.kind==='GVCN'){
+       item.assignments.add(p.lopChuNhiem?'Giáo viên chủ nhiệm '+p.lopChuNhiem:'Giáo viên chủ nhiệm');
+     }else if(g.kind==='WORKGROUP' && g.tenTo){
+       item.assignments.add(plain(g.tenTo));
+     }
+     // Thông tin chi tiết: ưu tiên trường gốc, không suy diễn môn dạy từ tên tổ.
+     const subject=first(raw,['monDay','monGiangDay','monHoc','monPhuTrach','boMon','subject','subjects','mon']);
+     if(subject)item.subjects.add(subject);
+     const extra=first(raw,['kiemNhiem','nhiemVuKiemNhiem','congTacKiemNhiem','nhiemVuKhac','otherRoles']);
+     if(extra)item.assignments.add(extra);
+     const role=first(raw,['chucVuKiemNhiem','chucDanhDoanThe']);
+     if(role)item.assignments.add(role);
+     // Thiếu trường ở một nhóm có thể được điền bởi bản ghi từ nhóm khác.
+     for(const k of ['hoTen','tenTo','chucVu','dienThoai','ngaySinh','lopChuNhiem']){
+       if(!item[k]&&p[k])item[k]=p[k];
+     }
+   }));
+   return [...map.values()].sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
+ };
+ function drawFilters(){
+   const types=[{key:'ALL',label:'Tất cả'}];
+   for(const g of groups){
+     const key=plain(g.groupKey);
+     if(!key||types.some(x=>x.key===key))continue;
+     types.push({key,label:plain(g.tenTo)||key});
+   }
+   filters.innerHTML=types.map(t=>'<button type="button" data-filter="'+escape(t.key)+'" aria-pressed="'+String(category===t.key)+'">'+escape(t.label)+'</button>').join('');
+ }
+ function render(){
+   const q=normalize($('q').value);
+   let subset=people;
+   if(category!=='ALL'){
+     const g=groups.find(x=>plain(x.groupKey)===category);
+     const names=new Set((g?.members||[]).map(x=>normalize(x.username||x.maGV)).filter(Boolean));
+     subset=subset.filter(p=>names.has(normalize(p.username||p.maGV)));
+   }
+   if(q)subset=subset.filter(p=>normalize([p.hoTen,p.tenTo,p.chucVu,p.lopChuNhiem,...p.groups,...p.positions,...p.subjects,...p.assignments].join(' ')).includes(q));
+   status.dataset.error='false';
+   status.textContent=subset.length+' / '+people.length+' nhân sự phù hợp';
+   if(!subset.length){results.innerHTML='<div class="empty">Không tìm thấy nhân sự phù hợp. Thử từ khóa hoặc nhóm khác.</div>';return}
+   results.innerHTML=subset.map(p=>{
+     const raw=p.raw||{},phone=plain(p.dienThoai||first(raw,['dienThoai','soDienThoai','phone','mobile'])),tel=validPhone(phone);
+     const birth=formatDob(p.ngaySinh||first(raw,['ngaySinh','birthDate','ngayThangNamSinh']));
+     const dept=plain(p.tenTo||[...p.groups].find(Boolean));
+     const role=plain(p.chucVu||[...p.positions].find(Boolean));
+     const subjects=[...p.subjects].join(', ');
+     const assignments=[...p.assignments].filter(Boolean);
+     const field=(label,value)=>'<div class="field"><b>'+escape(label)+'</b><span>'+escape(value||'Chưa cập nhật')+'</span></div>';
+     return '<article class="person"><h2>'+escape(p.hoTen||p.username)+'</h2><div class="meta">'+escape(dept||'Chưa cập nhật tổ/bộ phận')+'</div><div class="fields">'+
+       field('Tổ / bộ phận',dept)+field('Môn dạy',subjects)+field('Chức vụ',role)+
+       '<div class="field"><b>Kiêm nhiệm</b><span>'+(assignments.length?'<span class="tags">'+assignments.map(v=>'<span class="tag">'+escape(v)+'</span>').join('')+'</span>':'Chưa cập nhật')+'</span></div>'+
+       field('Ngày sinh',birth)+
+       '<div class="field"><b>Điện thoại</b><span>'+escape(phone||'Chưa cập nhật')+
+       (tel?'<div><a class="call" href="tel:'+escape(tel)+'" aria-label="Gọi điện cho '+escape(p.hoTen)+'"><i class="bi bi-telephone-fill"></i> Gọi ngay</a></div>':'')+'</span></div>'+
+       '</div></article>';
+   }).join('');
+ }
+ async function load(){
+   if(isLoading)return;
+   isLoading=true;$('refresh').disabled=true;status.dataset.error='false';status.textContent='Đang lấy nhân sự từ Cuộc họp...';
+   try{
+     if(!window.HVAPersonnel?.buildGroups)throw Error('Thư viện nhân sự Cuộc họp chưa được tải.');
+     const state=window.HVAPersonnel.ensureAuth().getSessionState();
+     if(!state.validLocal)throw Error('Phiên đăng nhập EDOS hết hạn. Hãy đăng nhập lại.');
+     const fresh=await window.HVAPersonnel.buildGroups();
+     if(!Array.isArray(fresh)||!fresh.length)throw Error('Nguồn nhân sự Cuộc họp chưa trả dữ liệu.');
+     groups=fresh;people=rowsByGroup(groups);drawFilters();render();
+   }catch(e){
+     groups=[];people=[];filters.innerHTML='';results.innerHTML='';
+     status.dataset.error='true';status.textContent='Không thể tra cứu nhân sự: '+plain(e?.message||e);
+   }finally{isLoading=false;$('refresh').disabled=false}
+ }
+ $('q').addEventListener('input',render);
+ $('refresh').addEventListener('click',load);
+ filters.addEventListener('click',e=>{
+   const btn=e.target.closest('button[data-filter]');if(!btn)return;
+   category=btn.dataset.filter;drawFilters();render();
+ });
+ // Không lưu thông tin cá nhân trong localStorage hoặc bất kỳ tệp phía người dùng.
+ load();
+})();
+</script>
+</body>
+</html>
