@@ -4022,7 +4022,18 @@ html body nav.nvs-premium-nav>button>i{
 <div id="nvsPersonalHub" hidden role="presentation"><section class="nvs-personal-panel" role="dialog" aria-modal="true" aria-labelledby="nvsPersonalTitle"><header class="nvs-personal-top"><h2 id="nvsPersonalTitle"><i class="bi bi-person-circle"></i> Cá nhân</h2><button class="nvs-personal-close" id="nvsPersonalClose" type="button">Đóng</button></header><div class="nvs-personal-grid">
 <button class="nvs-personal-choice" id="nvsPersonalChange" type="button"><i class="bi bi-shield-lock"></i><span>Đổi mật khẩu<small>Thay mật khẩu tài khoản HVA-EDOS</small></span></button>
 <button class="nvs-personal-choice" id="nvsPersonalFeedback" type="button"><i class="bi bi-chat-left-text"></i><span>Góp ý EDOS<small>Gửi ý kiến, báo lỗi đến Quản trị</small></span></button>
-<button class="nvs-personal-choice" id="nvsPersonalWork" type="button"><i class="bi bi-person-check"></i><span>Việc của tôi<small>Tìm nhanh công việc được giao</small></span></button>
+<button class="nvs-personal-choice" id="nvsPersonalWork" type="button"><i class="bi bi-search"></i><span>Tra cứu nhanh<small>Tra cứu công tác, hồ sơ và kết quả từ mục B – NVS</small></span></button>
+</div></section></div>
+<div id="nvsPersonalLookupModal" hidden role="presentation"><section class="nvs-personal-panel" role="dialog" aria-modal="true" aria-labelledby="nvsPersonalLookupTitle">
+<header class="nvs-personal-top"><h2 id="nvsPersonalLookupTitle"><i class="bi bi-search"></i> Tra cứu nhanh</h2><button class="nvs-personal-close" id="nvsPersonalLookupClose" type="button">Đóng</button></header>
+<div class="nvs-personal-grid">
+<a class="nvs-personal-choice" href="./LichCongTac.html"><i class="bi bi-calendar-week"></i><span>B.1.2 – Lịch công tác, cuộc họp<small>Mở lịch công tác hiện hành</small></span></a>
+<a class="nvs-personal-choice" href="./NVS_GiaoViec_TheoDoi.html?view=mine"><i class="bi bi-person-check"></i><span>B.1.4 – Nhiệm vụ được giao<small>Tra cứu nhiệm vụ và tiến độ</small></span></a>
+<a class="nvs-personal-choice" href="./VanBan_QuyDinh.html"><i class="bi bi-journal-text"></i><span>B.2.1 – Văn bản, quy định<small>Tra cứu văn bản hiện có</small></span></a>
+<a class="nvs-personal-choice" href="./KhoHocLieuSo.html"><i class="bi bi-folder2-open"></i><span>B.2.2 – Học liệu theo quyền<small>Truy cập kho học liệu</small></span></a>
+<a class="nvs-personal-choice" href="./NVS_TraCuu_CaNhan.html?view=files"><i class="bi bi-file-earmark-check"></i><span>B.2.3 – Hồ sơ chuyên môn<small>Tra cứu hồ sơ đã nộp</small></span></a>
+<a class="nvs-personal-choice" href="./NVS_TraCuu_CaNhan.html?view=results"><i class="bi bi-check2-square"></i><span>B.2.4 – Kết quả xử lý nghiệp vụ<small>Tra cứu trạng thái xử lý</small></span></a>
+<div class="nvs-quick-note" style="padding:10px;border-radius:10px;background:#f1f5f9;color:#526b81">B.1.1 – Phân công chuyên môn, TKB và B.1.3 – Lịch kiểm tra đang phát triển trong NVS, chưa mở liên kết giả.</div>
 </div></section></div>
 <div id="nvsFeedbackModal" hidden role="presentation"><section class="nvs-personal-panel" role="dialog" aria-modal="true" aria-labelledby="nvsFeedbackHeading"><header class="nvs-personal-top"><h2 id="nvsFeedbackHeading">Góp ý HVA-EDOS</h2><button class="nvs-personal-close" id="nvsFeedbackClose" type="button">Đóng</button></header>
 <form id="nvsFeedbackForm">
@@ -4034,7 +4045,7 @@ html body nav.nvs-premium-nav>button>i{
 <div id="nvsFeedbackStatus" role="status" aria-live="polite"></div><button id="nvsFeedbackSend" type="submit">Gửi góp ý đến Quản trị</button>
 </form></section></div>
 <script id="nvs-personal-hub-script">(function(){'use strict';
-const $=id=>document.getElementById(id),hub=$('nvsPersonalHub'),feedback=$('nvsFeedbackModal'),form=$('nvsFeedbackForm'),status=$('nvsFeedbackStatus');
+const $=id=>document.getElementById(id),hub=$('nvsPersonalHub'),lookup=$('nvsPersonalLookupModal'),feedback=$('nvsFeedbackModal'),form=$('nvsFeedbackForm'),status=$('nvsFeedbackStatus');
 const display=(x,on)=>{x.hidden=!on;};let sending=false;
 function session(){return NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||''}
 function closeHub(){display(hub,false)}
@@ -4043,10 +4054,11 @@ $('nvsPasswordAccountButton')?.addEventListener('click',()=>{if(!session())retur
 $('nvsPersonalClose')?.addEventListener('click',closeHub);
 $('nvsPersonalChange')?.addEventListener('click',()=>{closeHub();$('nvs-pwd-now')?.click()});
 $('nvsPersonalFeedback')?.addEventListener('click',()=>{closeHub();status.textContent='';display(feedback,true);form.querySelector('select').focus()});
-$('nvsPersonalWork')?.addEventListener('click',()=>{closeHub();if(typeof window.NVS_openMyWork==='function')window.NVS_openMyWork();else $('nvsQuickWork')?.click()});
+$('nvsPersonalWork')?.addEventListener('click',()=>{closeHub();display(lookup,true);$('nvsPersonalLookupClose')?.focus()});
+$('nvsPersonalLookupClose')?.addEventListener('click',()=>display(lookup,false));
 $('nvsFeedbackClose')?.addEventListener('click',closeFeedback);
-[hub,feedback].forEach(el=>el.addEventListener('click',e=>{if(e.target===el){if(el===hub)closeHub();else closeFeedback()}}));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!feedback.hidden)closeFeedback();else if(!hub.hidden)closeHub()}});
+[hub,lookup,feedback].forEach(el=>el.addEventListener('click',e=>{if(e.target===el){if(el===hub)closeHub();else if(el===lookup)display(lookup,false);else closeFeedback()}}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!feedback.hidden)closeFeedback();else if(!lookup.hidden)display(lookup,false);else if(!hub.hidden)closeHub()}});
 form?.addEventListener('submit',async e=>{
  e.preventDefault();if(sending)return;
  const token=session();if(!token){status.textContent='Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';return;}
