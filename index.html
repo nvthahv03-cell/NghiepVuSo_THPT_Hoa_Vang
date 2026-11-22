@@ -1424,6 +1424,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
   const inProgress=count('ĐANG THỰC HIỆN');
   const overdue=count('QUÁ HẠN');
   let html='<h3><i class="bi bi-person-check-fill"></i> VIỆC CỦA TÔI</h3>';
+  html+='<div class="nvs-work-find"><label for="nvs-work-search">Tìm nhanh việc của tôi</label><input id="nvs-work-search" type="search" placeholder="Tìm theo nội dung, môn, hạn, trạng thái..." autocomplete="off"><span id="nvs-work-search-count" aria-live="polite"></span></div>';
   html+='<section class="nvs-reminder-in-work"><h4>THÔNG TIN GỬI ĐÍCH DANH</h4>';
   if(noticeError)html+='<p class="nvs-quick-note" role="status">'+esc(noticeError)+'</p>';
   else if(!loaded)html+='<p class="nvs-quick-note">Đang tải thông tin cá nhân...</p>';
@@ -1446,7 +1447,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
   else {
    html+='<div class="nvs-work-status"><div><b>'+count('ĐƯỢC GIAO')+'</b>Việc được giao</div><div><b>'+inProgress+'</b>Đang thực hiện</div><div><b>'+overdue+'</b>Quá hạn</div><div><b>'+complete+'</b>Hoàn thành</div></div>';
    if(!myTasks.length)html+='<p class="nvs-quick-note">Chưa có nhiệm vụ KTĐG được giao cho tài khoản này.</p>';
-   else html+=myTasks.map(t=>'<article style="padding:13px 2px;border-top:1px solid #e1ebf3">'+
+   else html+=myTasks.map(t=>'<article data-nvs-work-item style="padding:13px 2px;border-top:1px solid #e1ebf3">'+
      '<strong style="color:#074b88">'+esc(t.stage||'Công đoạn KTĐG')+'</strong>'+
      '<div class="nvs-quick-note">'+esc([t.subject,t.grade,t.exam].filter(Boolean).join(' • '))+'</div>'+
      '<div class="nvs-quick-note">Hạn: '+esc(t.deadline||'Chưa xác định')+' '+esc(t.time||'')+' • Trạng thái: '+esc(t.status||'ĐƯỢC GIAO')+'</div>'+
@@ -1454,6 +1455,16 @@ document.addEventListener('DOMContentLoaded', initPortal);
      (t.productUrl?'<a href="'+esc(t.productUrl)+'" target="_blank" rel="noopener noreferrer">Xem sản phẩm</a>':'')+'</article>').join('');
   }
   detail.innerHTML=html;
+  const input=detail.querySelector('#nvs-work-search');
+  if(input)input.addEventListener('input',()=>{
+    const word=input.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    let shown=0;
+    detail.querySelectorAll('[data-nvs-work-item]').forEach(el=>{
+      const match=el.textContent.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(word);
+      el.hidden=!match;if(match)shown++;
+    });
+    detail.querySelector('#nvs-work-search-count').textContent=word?shown+' mục phù hợp':'';
+  });
  }
  async function reminderRequest(action,data,post){
   const id=identity();
@@ -1687,6 +1698,7 @@ detail.addEventListener('click',e=>{
   }
  };
  cards.forEach(c=>c.addEventListener('click',()=>open(c.dataset.nvsQuick)));
+ window.NVS_openMyWork=()=>{open('work');requestAnimationFrame(()=>{detail.scrollIntoView({behavior:'smooth',block:'start'});detail.querySelector('#nvs-work-search')?.focus()});};
  document.getElementById('nvsBell')?.addEventListener('click',()=>open('notice'));
  // Đồng bộ khi đăng nhập hoàn tất và khi mở lại trang.
  window.NVS_refreshNotifications=()=>{loadNotices(true);loadPolls(true)};
@@ -3748,7 +3760,7 @@ function u(){try{return JSON.parse(NVS_localStore.getItem('user')||NVS_sessionSt
 function refresh(){const x=u();notice.hidden=!tk()||x.passwordChanged===true||x.mustChangePassword===false||x.daDoiMatKhau===true}
 function open(){if(!tk())return;m.hidden=false;$('nvs-pwd-old').focus()}
 function close(){if(busy)return;m.hidden=true;form.reset();status.textContent=''}
-$('nvsPasswordAccountButton')?.addEventListener('click',open);$('nvs-pwd-now')?.addEventListener('click',open);$('nvs-pwd-close')?.addEventListener('click',close);
+$('nvs-pwd-now')?.addEventListener('click',open);$('nvs-pwd-close')?.addEventListener('click',close);
 m?.addEventListener('click',e=>{if(e.target===m)close()});
 window.addEventListener('nvs:login-success',refresh);
 form?.addEventListener('submit',async e=>{e.preventDefault();if(busy)return;
@@ -3887,7 +3899,77 @@ html body nav.nvs-premium-nav>button>i{
 #dthtAuth #dthtLoginPass.nvs-login-custom-password{padding-left:45px!important}
 #nvs-pwd-box .nvs-pwd-old-wrap.is-custom #nvs-pwd-old{padding-left:12px!important}
 #dthtPassFixedPrefix[hidden],#nvs-pwd-fixed-prefix[hidden]{display:none!important}
-</style><style id="nvs-one-password-input-final">
+</style>
+<style id="nvs-personal-hub-styles">
+#nvsPersonalHub[hidden],#nvsFeedbackModal[hidden]{display:none!important}
+#nvsPersonalHub,#nvsFeedbackModal{position:fixed;inset:0;z-index:11990;display:grid;place-items:center;background:#0b2641aa;padding:14px}
+#nvsFeedbackModal{z-index:12020}
+.nvs-personal-panel{width:min(490px,100%);max-height:92dvh;overflow:auto;background:#fff;border:1px solid #d7e5f0;border-radius:19px;box-shadow:0 20px 65px #102d4e45;padding:22px;color:#153856;font:14px/1.5 "Segoe UI",Arial,sans-serif}
+.nvs-personal-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.nvs-personal-top h2{font-size:20px;margin:0;color:#0b518b}
+.nvs-personal-close{background:#f3f7fc;border:1px solid #d5e1ef;border-radius:10px;padding:7px 12px;cursor:pointer;color:#173d5c;font-weight:700}
+.nvs-personal-grid{display:grid;gap:11px}
+.nvs-personal-choice{display:flex;align-items:center;gap:14px;width:100%;padding:14px;border:1px solid #d1e1ef;border-radius:13px;background:#f6fbff;color:#104e84;text-align:left;cursor:pointer;font-weight:750;font-size:15px}
+.nvs-personal-choice i{font-size:25px;color:#0572bd}
+.nvs-personal-choice small{display:block;font-size:12px;color:#667f94;font-weight:500}
+#nvsFeedbackForm{display:grid;gap:10px}
+#nvsFeedbackForm label{display:grid;gap:5px;font-weight:700;color:#153856}
+#nvsFeedbackForm input,#nvsFeedbackForm select,#nvsFeedbackForm textarea,.nvs-work-find input{width:100%;min-height:40px;padding:10px;border:1px solid #c5d7e7;border-radius:10px;background:white;color:#132e47;font:inherit;box-sizing:border-box}
+#nvsFeedbackForm textarea{min-height:115px;resize:vertical}
+#nvsFeedbackSend{padding:11px;background:#0875bd;color:white;border:0;border-radius:10px;font-weight:750;cursor:pointer}
+#nvsFeedbackSend:disabled{opacity:.6;cursor:wait}
+#nvsFeedbackStatus{min-height:20px;font-weight:600;color:#9b2a32;white-space:pre-wrap}
+.nvs-work-find{padding:12px;margin:8px 0 14px;background:#f4f9fe;border-radius:12px;display:grid;gap:5px}
+.nvs-work-find label{font-weight:700}
+[data-nvs-work-item][hidden]{display:none!important}
+</style>
+<div id="nvsPersonalHub" hidden role="presentation"><section class="nvs-personal-panel" role="dialog" aria-modal="true" aria-labelledby="nvsPersonalTitle"><header class="nvs-personal-top"><h2 id="nvsPersonalTitle"><i class="bi bi-person-circle"></i> Cá nhân</h2><button class="nvs-personal-close" id="nvsPersonalClose" type="button">Đóng</button></header><div class="nvs-personal-grid">
+<button class="nvs-personal-choice" id="nvsPersonalChange" type="button"><i class="bi bi-shield-lock"></i><span>Đổi mật khẩu<small>Thay mật khẩu tài khoản HVA-EDOS</small></span></button>
+<button class="nvs-personal-choice" id="nvsPersonalFeedback" type="button"><i class="bi bi-chat-left-text"></i><span>Góp ý EDOS<small>Gửi ý kiến, báo lỗi đến Quản trị</small></span></button>
+<button class="nvs-personal-choice" id="nvsPersonalWork" type="button"><i class="bi bi-person-check"></i><span>Việc của tôi<small>Tìm nhanh công việc được giao</small></span></button>
+</div></section></div>
+<div id="nvsFeedbackModal" hidden role="presentation"><section class="nvs-personal-panel" role="dialog" aria-modal="true" aria-labelledby="nvsFeedbackHeading"><header class="nvs-personal-top"><h2 id="nvsFeedbackHeading">Góp ý HVA-EDOS</h2><button class="nvs-personal-close" id="nvsFeedbackClose" type="button">Đóng</button></header>
+<form id="nvsFeedbackForm">
+<p style="margin:0;color:#52718a">Ý kiến được chuyển đến <b>Quản trị hệ thống</b> khi máy chủ xác nhận tiếp nhận.</p>
+<label>Loại góp ý<select name="loaiGopY" required><option value="BAO_LOI">Báo lỗi chức năng</option><option value="GIAO_DIEN">Giao diện, trải nghiệm</option><option value="DE_XUAT">Đề xuất tính năng</option><option value="KHAC">Khác</option></select></label>
+<label>Tiêu đề<input name="tieuDe" type="text" maxlength="150" required placeholder="Mô tả ngắn vấn đề hoặc đề xuất"></label>
+<label>Nội dung<textarea name="noiDung" minlength="10" maxlength="3000" required placeholder="Nêu rõ vị trí chức năng, vấn đề gặp phải và đề xuất..."></textarea></label>
+<label>Mức độ<select name="mucDo" required><option value="BINH_THUONG">Bình thường</option><option value="CAN_XU_LY">Cần xử lý</option><option value="KHAN">Khẩn</option></select></label>
+<div id="nvsFeedbackStatus" role="status" aria-live="polite"></div><button id="nvsFeedbackSend" type="submit">Gửi góp ý đến Quản trị</button>
+</form></section></div>
+<script id="nvs-personal-hub-script">(function(){'use strict';
+const $=id=>document.getElementById(id),hub=$('nvsPersonalHub'),feedback=$('nvsFeedbackModal'),form=$('nvsFeedbackForm'),status=$('nvsFeedbackStatus');
+const display=(x,on)=>{x.hidden=!on;};let sending=false;
+function session(){return NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||''}
+function closeHub(){display(hub,false)}
+function closeFeedback(){if(sending)return;display(feedback,false)}
+$('nvsPasswordAccountButton')?.addEventListener('click',()=>{if(!session())return;display(hub,true);$('nvsPersonalChange').focus()});
+$('nvsPersonalClose')?.addEventListener('click',closeHub);
+$('nvsPersonalChange')?.addEventListener('click',()=>{closeHub();$('nvs-pwd-now')?.click()});
+$('nvsPersonalFeedback')?.addEventListener('click',()=>{closeHub();status.textContent='';display(feedback,true);form.querySelector('select').focus()});
+$('nvsPersonalWork')?.addEventListener('click',()=>{closeHub();if(typeof window.NVS_openMyWork==='function')window.NVS_openMyWork();else $('nvsQuickWork')?.click()});
+$('nvsFeedbackClose')?.addEventListener('click',closeFeedback);
+[hub,feedback].forEach(el=>el.addEventListener('click',e=>{if(e.target===el){if(el===hub)closeHub();else closeFeedback()}}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!feedback.hidden)closeFeedback();else if(!hub.hidden)closeHub()}});
+form?.addEventListener('submit',async e=>{
+ e.preventDefault();if(sending)return;
+ const token=session();if(!token){status.textContent='Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';return;}
+ const fd=new FormData(form),payload={action:'submitEdosFeedback',sessionToken:token,loaiGopY:fd.get('loaiGopY'),tieuDe:String(fd.get('tieuDe')||'').trim(),noiDung:String(fd.get('noiDung')||'').trim(),mucDo:fd.get('mucDo'),nguon:'NVS_CA_NHAN'};
+ if(!payload.tieuDe||payload.noiDung.length<10){status.textContent='Vui lòng nhập tiêu đề và nội dung ít nhất 10 ký tự.';return;}
+ sending=true;$('nvsFeedbackSend').disabled=true;status.style.color='#225886';status.textContent='Đang gửi góp ý đến Quản trị...';
+ try{
+   const response=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)});
+   if(!response.ok)throw Error('Máy chủ phản hồi HTTP '+response.status);
+   const out=await response.json();
+   if(out?.ok===true||out?.success===true){
+     status.style.color='#087457';status.textContent='Đã gửi góp ý đến Quản trị.'+(out.maGopY?' Mã: '+String(out.maGopY):'');
+     form.reset();
+   }else throw Error(out?.thongBao||out?.message||'Máy chủ chưa hỗ trợ tiếp nhận góp ý EDOS.');
+ }catch(err){status.style.color='#a72b37';status.textContent='Chưa gửi được đến Quản trị. Nội dung vẫn ở biểu mẫu để thầy/cô thử lại. '+(err?.message||'Lỗi kết nối.')}
+ finally{sending=false;$('nvsFeedbackSend').disabled=false}
+});
+})();</script>
+<style id="nvs-one-password-input-final">
 /* Cùng một ô mật khẩu: không dùng tiền tố cố định ở bất cứ trạng thái nào. */
 #dthtAuth #dthtLoginPass,
 #dthtAuth #dthtLoginPass.nvs-login-custom-password{padding-left:45px!important}
