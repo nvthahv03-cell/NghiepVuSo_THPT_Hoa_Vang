@@ -963,7 +963,7 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
       <div class="dtht-input-wrap">
         <span class="dtht-input-icon"><i class="bi bi-key"></i></span>
         <span class="dtht-pass-prefix" id="dthtPassFixedPrefix" aria-label="Tiền tố HVA cố định">HVA@</span>
-        <input id="dthtLoginPass" type="password" maxlength="4" inputmode="numeric"
+        <input id="dthtLoginPass" type="password" maxlength="24"
                autocomplete="current-password" placeholder="4 số bí mật"
                onkeydown="if(event.key==='Enter') dthtStandaloneLogin()">
         <button type="button" class="dtht-pass-eye" onclick="dthtTogglePassword()" aria-label="Hiện/ẩn mật khẩu">
@@ -971,7 +971,7 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
         </button>
       </div>
     </div>
-    <button type="button" id="dthtPasswordModeButton" class="nvs-login-mode" aria-pressed="false" onclick="nvsToggleLoginPasswordMode()">Đã đổi mật khẩu? Dùng mật khẩu mới</button>
+    
 
     <div class="edos-login-recovery">Quên mật khẩu? Liên hệ ADMIN: <a href="tel:0913977722" aria-label="Gọi quản trị viên 0913 977 722">0913 977 722</a></div>
 
@@ -1115,18 +1115,12 @@ function authToken(){
   return token;
 }
 
-function nvsToggleLoginPasswordMode(){
-  const btn=$('dthtPasswordModeButton'),pass=$('dthtLoginPass'),prefix=$('dthtPassFixedPrefix');
-  const useCustom=btn.getAttribute('aria-pressed')!=='true';
-  btn.setAttribute('aria-pressed',String(useCustom));
-  NVS_localStore.setItem('nvsLoginPrefCustom',useCustom?'1':'0');
-  btn.textContent=useCustom?'Dùng mật khẩu ban đầu HVA@ + 4 số':'Đã đổi mật khẩu? Dùng mật khẩu mới';
-  prefix.hidden=useCustom;
-  pass.value='';
-  if(useCustom){pass.removeAttribute('maxlength');pass.removeAttribute('inputmode');pass.placeholder='Nhập mật khẩu đã đổi'}
-  else {pass.maxLength=4;pass.setAttribute('inputmode','numeric');pass.placeholder='4 số bí mật'}
-  pass.focus();
+function nvsSyncLoginPasswordPrefix_(){
+ const pass=$('dthtLoginPass'),prefix=$('dthtPassFixedPrefix');if(!pass||!prefix)return;
+ const initial=!pass.value || /^[0-9]{1,4}$/.test(pass.value);
+ prefix.hidden=!initial;pass.classList.toggle('nvs-login-custom-password',!initial);
 }
+document.addEventListener('input',e=>{if(e.target?.id==='dthtLoginPass')nvsSyncLoginPasswordPrefix_()});
 function dthtTogglePassword(){
   const input = $('dthtLoginPass'), icon = $('dthtPassEyeIcon');
   const show = input.type === 'password';
@@ -1154,23 +1148,14 @@ async function dthtStandaloneLogin(){
   const userInput = $('dthtLoginUser'), passInput = $('dthtLoginPass');
   const btn = $('dthtLoginBtn'), btnText = $('dthtLoginBtnText'), msg = $('dthtAuthMsg');
   const username = (userInput.value || '').trim();
-  // Trạng thái chuyển chế độ do chính người dùng chọn; không bao giờ gửi mật khẩu sang storage.
-  const pendingChangedUser=String(NVS_localStore.getItem('nvsPasswordRecentlyChangedFor')||'').trim().toLowerCase();
-  if(pendingChangedUser && username.toLowerCase()===pendingChangedUser && $('dthtPasswordModeButton')?.getAttribute('aria-pressed')!=='true'){
-    nvsToggleLoginPasswordMode();
-    $('dthtAuthMsg').textContent='Tài khoản đã đổi mật khẩu. Vui lòng nhập mật khẩu mới (không có HVA@ cố định).';
-    NVS_localStore.removeItem('nvsPasswordRecentlyChangedFor');
-    return;
-  }
   const rawPassword = (passInput.value || '').trim();
 
   if(!username || !rawPassword){
-    msg.textContent = 'Vui lòng nhập tên đăng nhập và 4 số mật khẩu.';
+    msg.textContent = 'Vui lòng nhập tên đăng nhập và mật khẩu.';
     return;
   }
-  const customMode=$('dthtPasswordModeButton')?.getAttribute('aria-pressed')==='true';
-  if(!customMode && !/^\d{4}$/.test(rawPassword)){msg.textContent='Nhập đúng 4 chữ số sau HVA@.';return;}
-  if(customMode && rawPassword.length<6){msg.textContent='Mật khẩu đã đổi phải có ít nhất 6 ký tự.';return;}
+  const legacy=/^[0-9]{4}$/.test(rawPassword);
+  if(!legacy&&(rawPassword.length<6||rawPassword.length>24)){msg.textContent='Mật khẩu cá nhân phải từ 6–24 ký tự.';return;}
 
   btn.disabled = true;
   btnText.textContent = 'ĐANG XÁC THỰC...';
@@ -1184,7 +1169,7 @@ async function dthtStandaloneLogin(){
       body: JSON.stringify({
         action: 'login',
         tenDangNhap: username,
-        matKhau: customMode ? rawPassword : ('HVA@'+rawPassword)
+        matKhau: legacy ? ('HVA@'+rawPassword) : rawPassword
       })
     });
     const data = await r.json();
@@ -3758,9 +3743,9 @@ html body .hva-pro-header-inner>.hva-pro-tools .hva-pro-online-dot{
 <div id="nvs-pwd-modal" hidden><section id="nvs-pwd-box" role="dialog" aria-modal="true" aria-labelledby="nvs-pwd-heading"><h2 id="nvs-pwd-heading">🔐 Đổi mật khẩu HVA-EDOS</h2><p>Nhập mật khẩu hiện tại và đặt mật khẩu mới.</p>
 <form id="nvs-pwd-form">
 <label for="nvs-pwd-old">Mật khẩu hiện tại</label>
-<div class="nvs-pwd-old-wrap"><span class="nvs-pwd-fixed-prefix" id="nvs-pwd-fixed-prefix">HVA@</span><input id="nvs-pwd-old" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" placeholder="4 chữ số" required></div>
-<button id="nvs-pwd-mode-toggle" class="nvs-pwd-mode-toggle" type="button" aria-pressed="false">Đã đổi mật khẩu? Nhập mật khẩu hiện tại</button>
-<p class="nvs-pwd-legacy-hint" id="nvs-pwd-mode-hint">Nếu chưa từng đổi, chỉ nhập 4 số sau HVA@.</p>
+<div class="nvs-pwd-old-wrap"><span class="nvs-pwd-fixed-prefix" id="nvs-pwd-fixed-prefix">HVA@</span><input id="nvs-pwd-old" type="password" maxlength="24" autocomplete="current-password" placeholder="4 chữ số" required></div>
+
+<p class="nvs-pwd-legacy-hint" id="nvs-pwd-mode-hint">4 số ban đầu: tự thêm HVA@. Mật khẩu đã đổi: nhập trực tiếp.</p>
 <label for="nvs-pwd-new">Mật khẩu mới</label><input id="nvs-pwd-new" type="password" autocomplete="new-password" minlength="6" maxlength="24" required>
 <label for="nvs-pwd-confirm">Xác nhận mật khẩu mới</label><input id="nvs-pwd-confirm" type="password" autocomplete="new-password" minlength="6" maxlength="24" required>
 <div class="help">Mật khẩu mới phải có <b>ít nhất 6 ký tự</b>, gồm <b>chữ hoa</b>, <b>chữ số</b> và <b>@</b> hoặc <b>!</b>.<br>Không dùng lại mật khẩu mặc định. Nếu quên, liên hệ quản trị để cấp mật khẩu tạm.</div>
@@ -3772,22 +3757,19 @@ function tk(){return typeof authToken==='function'?authToken():''}
 function u(){try{return JSON.parse(NVS_localStore.getItem('user')||NVS_sessionStore.getItem('user')||'{}')}catch{return {}}}
 function refresh(){const x=u();notice.hidden=!tk()||x.passwordChanged===true||x.mustChangePassword===false||x.daDoiMatKhau===true}
 function open(){if(!tk())return;m.hidden=false;$('nvs-pwd-old').focus()}
-function close(){if(busy)return;m.hidden=true;form.reset();setPasswordMode(false);status.textContent=''}
-function setPasswordMode(custom){
-  const toggle=$('nvs-pwd-mode-toggle'),prefix=$('nvs-pwd-fixed-prefix'),input=$('nvs-pwd-old'),hint=$('nvs-pwd-mode-hint'),wrap=input.parentElement;
-  toggle.setAttribute('aria-pressed',String(custom));
-  prefix.hidden=custom;wrap.classList.toggle('is-custom',custom);
-  input.value='';
-  if(custom){input.removeAttribute('maxlength');input.removeAttribute('inputmode');input.placeholder='Nhập mật khẩu đã đổi';hint.textContent='Nhập đầy đủ mật khẩu hiện tại đã đổi.';toggle.textContent='Dùng mật khẩu ban đầu HVA@ + 4 số';}
-  else {input.maxLength=4;input.setAttribute('inputmode','numeric');input.placeholder='4 chữ số';hint.textContent='Nếu chưa từng đổi, chỉ nhập 4 số sau HVA@.';toggle.textContent='Đã đổi mật khẩu? Nhập mật khẩu hiện tại';}
+function close(){if(busy)return;m.hidden=true;form.reset();syncPwdOldPrefix();status.textContent=''}
+function syncPwdOldPrefix(){
+ const input=$('nvs-pwd-old'),prefix=$('nvs-pwd-fixed-prefix'),wrap=input.parentElement;
+ const initial=!input.value || /^[0-9]{1,4}$/.test(input.value);
+ prefix.hidden=!initial;wrap.classList.toggle('is-custom',!initial);
 }
-$('nvs-pwd-mode-toggle')?.addEventListener('click',()=>{setPasswordMode($('nvs-pwd-mode-toggle').getAttribute('aria-pressed')!=='true');$('nvs-pwd-old').focus()});
+$('nvs-pwd-old')?.addEventListener('input',syncPwdOldPrefix);
 $('nvsPasswordAccountButton')?.addEventListener('click',open);$('nvs-pwd-now')?.addEventListener('click',open);$('nvs-pwd-close')?.addEventListener('click',close);
 m?.addEventListener('click',e=>{if(e.target===m)close()});
 window.addEventListener('nvs:login-success',refresh);
 form?.addEventListener('submit',async e=>{e.preventDefault();if(busy)return;
-const oldEntered=$('nvs-pwd-old').value,customMode=$('nvs-pwd-mode-toggle').getAttribute('aria-pressed')==='true',old=customMode?oldEntered:'HVA@'+oldEntered,pwd=$('nvs-pwd-new').value,repeat=$('nvs-pwd-confirm').value;
-if(!customMode&&!/^\d{4}$/.test(oldEntered)){status.textContent='Mật khẩu ban đầu phải có đúng 4 chữ số sau HVA@.';return}
+const oldEntered=$('nvs-pwd-old').value,old=/^[0-9]{4}$/.test(oldEntered)?'HVA@'+oldEntered:oldEntered,pwd=$('nvs-pwd-new').value,repeat=$('nvs-pwd-confirm').value;
+if(!/^[0-9]{4}$/.test(oldEntered)&&(oldEntered.length<6||oldEntered.length>24)){status.textContent='Mật khẩu hiện tại không hợp lệ.';return}
 if(!(pwd.length>=6&&pwd.length<=24&&/[A-Z]/.test(pwd)&&/[0-9]/.test(pwd)&&/[@!]/.test(pwd))){status.textContent='Mật khẩu cần từ 6–24 ký tự, có chữ hoa, chữ số và @ hoặc !.';return}
 if(pwd!==repeat){status.textContent='Xác nhận mật khẩu không khớp.';return}
 if(pwd===old){status.textContent='Mật khẩu mới phải khác mật khẩu cũ.';return}
@@ -3917,21 +3899,10 @@ html body nav.nvs-premium-nav>button>i{
 #nvs-pwd-box .nvs-pwd-mode-toggle{display:block;width:auto;margin:7px 0 0;padding:3px 0;border:none;background:none;color:#095e9b;font:700 12px/1.5 "Segoe UI",Arial,sans-serif;text-align:left;text-decoration:underline;cursor:pointer}
 #nvs-pwd-box .nvs-pwd-legacy-hint{margin:4px 0 10px;font-size:12px;color:#49677f}
 </style>
-<script id="nvs-restore-login-custom-mode">
-(function(){
- const activate=()=>{
-  const btn=document.getElementById('dthtPasswordModeButton');
-  const u=document.getElementById('dthtLoginUser');
-  if(!btn||!u||typeof window.nvsToggleLoginPasswordMode!=='function')return;
-  const last=String(NVS_localStore.getItem('nvsPasswordRecentlyChangedFor')||'').trim().toLowerCase();
-  if(last && last===String(u.value||NVS_localStore.getItem('hvaLastUsername')||'').trim().toLowerCase()){
-    if(btn.getAttribute('aria-pressed')!=='true')window.nvsToggleLoginPasswordMode();
-    NVS_localStore.removeItem('nvsPasswordRecentlyChangedFor');
-  }
- };
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',activate);
- else activate();
-})();
-</script>
-</body>
+
+<style id="nvs-password-auto-detect-20261122">
+#dthtAuth #dthtLoginPass.nvs-login-custom-password{padding-left:45px!important}
+#nvs-pwd-box .nvs-pwd-old-wrap.is-custom #nvs-pwd-old{padding-left:12px!important}
+#dthtPassFixedPrefix[hidden],#nvs-pwd-fixed-prefix[hidden]{display:none!important}
+</style></body>
 </html>
