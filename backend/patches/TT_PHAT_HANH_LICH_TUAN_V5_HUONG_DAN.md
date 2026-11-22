@@ -30,3 +30,9 @@ if (action === 'ltPublishNotification') {
 - Bản ghi lịch trùng \`lichId + driveFileId\` chỉ được tiếp tục phát hành với **cùng** danh sách người nhận; nếu cần đổi, phải tạo phiên bản điều chỉnh.
 - Chỉ báo thành công sau khi đối chiếu đủ thông báo.
 - Chưa triển khai trực tiếp hoặc nghiệm thu trên Apps Script. Pull Request được giữ ở trạng thái nháp, không đẩy giao diện mới lên \`main\` trước khi Backend V5 sẵn sàng.
+
+## Chốt an toàn (preflight)
+
+TTPH gọi `ltPublishNotification` với `dryRun:true` **trước** `ltPublish`, xác thực phiên + người nhận + PDF nhưng **không ghi CSDL**, rồi mới công bố. Nếu Backend chưa triển khai tuyến mới, nút phát hành báo thiếu Backend và không công bố thêm phiên bản.
+
+**Triển khai Apps Script không tự động được thực hiện bởi commit GitHub này.** Mã .gs và Router phải được cập nhật trong chính dự án Apps Script V5 (nơi đang có doPost) rồi triển khai `New version`. Chỉ nghiệm thu sau khi `DB_02_PhatHanh` và `DB_04_ThongBao` có dữ liệu đúng và giáo viên nhận được thông báo.
