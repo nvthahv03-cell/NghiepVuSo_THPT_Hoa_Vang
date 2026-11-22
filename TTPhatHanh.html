@@ -865,7 +865,7 @@ window.HVAKSBCAction = {
                     username,
                     fullName: user.hoTen || user.fullName || user.name || '',
                     answers,
-                    sessionToken: String(localStorage.getItem('hvaSessionToken') || '').trim()
+                    sessionToken: String(localStorage.getItem('hvaSessionToken') || sessionStorage.getItem('hvaSessionToken') || '').trim()
                 })
             });
             if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -1746,7 +1746,7 @@ const HvaRoleDest={
                 issuedAt: new Date().toISOString(),
                 status: 'PUBLISHING',
                 signature: { mode: 'ACCOUNT', signer: user.fullName || state.document.author || '' },
-                sessionToken: String(localStorage.getItem('hvaSessionToken') || '').trim()
+                sessionToken: String(localStorage.getItem('hvaSessionToken') || sessionStorage.getItem('hvaSessionToken') || '').trim()
             };
         },
         postToBackend: async (payload) => {
@@ -2723,11 +2723,20 @@ return;
                     });
                     if(!r.ok)throw new Error('Không công bố được lịch trên EDOS: HTTP '+r.status);
                     const out=await r.json();
-                    if(!out.success)throw new Error(out.message||'Không công bố được lịch.');
+                    if(!out.success)throw new Error('Bước công bố Lịch tuần: '+String(out.message||'Backend chưa xác nhận công bố lịch.'));
                     localStorage.setItem(phaseKey,JSON.stringify({...phase,calendarPublished:true,pdfUrl:out.pdfUrl||d.pdfUrl}));
                 }
+                // Trước khi phân phối phải dùng cùng token phiên với bước công bố lịch.
+                // Không thử phát hành nếu thiếu token; tránh công bố một phần không rõ trạng thái.
+                if (!String(payload.sessionToken || '').trim()) {
+                    throw new Error('Bước Thông báo: thiếu phiên đăng nhập EDOS. Vui lòng đăng nhập lại.');
+                }
                 // Chống việc lặp lại phát hành khi không nhận được xác nhận từ TTPH.
-                result=await PublishEngine.postToBackend(payload);
+                try {
+                    result=await PublishEngine.postToBackend(payload);
+                } catch (err) {
+                    throw new Error('Bước Thông báo TTPH: ' + String(err?.message || err));
+                }
                 if(result.success===true)localStorage.setItem(phaseKey,JSON.stringify({...phase,publishId:payload.publishId,calendarPublished:true,notificationPublished:true}));
             } else {
                 // Không thay đổi tuyến tổng quát đang được Backend khóa.
