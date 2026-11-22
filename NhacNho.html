@@ -86,7 +86,7 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 <div class="field"><label for="content">Nội dung gửi <span style="color:#b42332">*</span></label><textarea id="content" rows="9" placeholder="BGH kiểm tra và chỉnh sửa nội dung tại đây…"></textarea></div>
 <div class="record"><strong>Thông báo ghi vết (NVS tự đính kèm khi gửi thành công)</strong><p id="traceText" style="margin:6px 0 0">Nội dung nhắc nhở này được lưu trong lịch sử công vụ NVS để theo dõi việc tiếp nhận, phản hồi và đối chiếu khi cần thiết. Việc ghi nhận không đồng nghĩa với kết luận vi phạm khi chưa được xác minh.</p></div>
 <div class="field"><label style="font-weight:500"><input type="checkbox" id="verified" style="width:auto;margin-right:7px">Tôi xác nhận đã rà soát sự việc, người nhận và nội dung trước khi gửi.</label></div>
-<div class="actions"><button class="btn outline" id="previewBtn" type="button">Xem trước</button><button class="btn primary" id="sendBtn" type="button">Gửi nhắc nhở</button></div><div class="status" id="sendStatus" role="status">Chưa gửi nội dung nào.</div>
+<div class="actions"><button class="btn outline" id="previewBtn" type="button">Xem trước</button><button class="btn primary" id="sendBtn" type="button">Đến Trung tâm Phát hành</button></div><div class="status" id="sendStatus" role="status">Chưa gửi nội dung nào.</div>
 </div>
 
 </section>
@@ -122,19 +122,7 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
      groups.forEach(g=>(g.members||[]).forEach(p=>{const u=String(p.username||p.userName||"").trim();if(u&&!people.has(u))people.set(u,{username:u,hoTen:p.hoTen||p.name||u,to:p.tenTo||p.to||g.tenTo||"",chucVu:p.chucVu||p.vaiTro||""})}));
      return [...people.values()];
    },
-   // Gửi nhắc nhở qua Web App EDOS V5. Chỉ Backend xác nhận mới báo thành công.
-   sendReminder:async function(input){
-     const url='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
-     const res=await fetch(url,{
-       method:'POST',redirect:'follow',
-       headers:{'Content-Type':'text/plain;charset=utf-8'},
-       body:JSON.stringify(Object.assign({},input,{action:'nvsReminderSend'}))
-     });
-     if(!res.ok)throw Error('Máy chủ trả về HTTP '+res.status);
-     const raw=await res.text();let result;
-     try{result=JSON.parse(raw)}catch(e){throw Error('Không nhận được JSON từ EDOS. Kiểm tra quyền triển khai và URL Web App.');}
-     return result;
-   }
+
  },window.NVS_REMINDER_BRIDGE||{});
 })();
 </script>
@@ -286,7 +274,7 @@ if(!isBGH())throw Error('Chỉ Ban Giám hiệu được quyền soạn và gử
 $('headUserText').textContent=(state.session.hoTen||state.session.username||'Tài khoản BGH')+' · '+(state.session.role||'Ban Giám hiệu');
 $('headUser').classList.add('authenticated');
 $('authInfo').textContent='Đã xác thực tài khoản Ban Giám hiệu. Nội dung gửi riêng được nhận tại “Việc của tôi”.';
-const connected=typeof BRIDGE.sendReminder==='function';
+const connected=true; // Chuyển sang TTPH; không phát hành trực tiếp
 $('sendBtn').disabled=!connected;
 if(!connected)status('sendStatus','Đang ở chế độ chuẩn bị nội dung. Backend chưa có chức năng gửi và lưu nhắc nhở; nút Gửi được khóa để tránh ghi nhận sai.','error');
 $('geminiBtn').disabled=typeof BRIDGE.generateDraft!=='function';
@@ -357,8 +345,19 @@ if(!state.selected.size||!title||!content||!state.templates.size)return status('
 if(!$('verified').checked)return status('sendStatus','BGH cần xác nhận đã rà soát trước khi gửi.','error');
 if(!window.confirm('Xác nhận gửi nhắc nhở đến '+state.selected.size+' người? Hệ thống sẽ lưu lịch sử và gửi thông báo.'))return;
 $('sendBtn').disabled=true;status('sendStatus','Đang gửi và chờ Backend xác nhận…');
-try{const r=await call('sendReminder',{...p,recipientUsernames:[...state.selected],title,content,acknowledged:true,requestId:(window.crypto&&crypto.randomUUID?crypto.randomUUID():'NN-'+Date.now()+'-'+Math.random().toString(36).slice(2))});if(!r?.success)throw Error(r?.message||'Backend không xác nhận gửi thành công.');status('sendStatus','Đã gửi thành công. Mã: '+(r.id||r.batchId||'đã ghi nhận tại Backend')+'.','ok');$('verified').checked=false;}
-catch(e){status('sendStatus','Chưa gửi thành công: '+err(e),'error');}finally{$('sendBtn').disabled=false;}};
+try{
+  const selected=[...state.selected].map(username=>{const x=state.people.find(p=>p.username===username);return {username,hoTen:x?.hoTen||username,to:x?.to||'',chucVu:x?.chucVu||'',deliveryRole:'TO'};});
+  const requestId=(window.crypto&&crypto.randomUUID?crypto.randomUUID():'NN-'+Date.now()+'-'+Math.random().toString(36).slice(2));
+  const doc={moduleSource:'NhacNhoCongVu',docId:'NN-'+requestId,title,type:'NHẮC NHỞ CÔNG VỤ',
+    version:'v1',author:state.session.hoTen||state.session.username,createdAt:new Date().toISOString(),
+    data:{noiDung:content,scenarioCode:p.scenarioCode,scenarioCodes:p.scenarioCodes,
+      level:p.level,eventDate:p.eventDate,deadline:p.deadline,requestId},
+    recipients:selected,workflow:[{id:'CONFIRM_READ'}]};
+  localStorage.setItem('TTDHS_CURRENT_DOC',JSON.stringify(doc));
+  // Không gửi API ở trang Nhắc nhở; chỉ chuyển bản dự thảo. TTPH mới có quyền phát hành.
+  status('sendStatus','Đã chuyển dự thảo sang Trung tâm Phát hành. Chưa gửi cho người nhận.');
+  window.top.location.href=window.HVA_TTPH_PAGE||'./TTPhatHanh.html';
+}catch(e){status('sendStatus','Chưa chuyển được sang TTPH: '+err(e),'error');}finally{$('sendBtn').disabled=false;}};
 if(nvsReminderBGHGuard()) initialize();
 })();
 </script>
