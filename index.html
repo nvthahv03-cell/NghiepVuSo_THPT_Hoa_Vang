@@ -1557,8 +1557,15 @@ document.addEventListener('DOMContentLoaded', initPortal);
    s.onerror=()=>finish(new Error('Không thể tải KT01'));s.src=u.toString();document.head.appendChild(s);
   });
  }
-function generalNotices(){return notices.filter(isGeneralNotice);}
- function personalNotices(){return notices.filter(n=>!isGeneralNotice(n));}
+// Chuông hiển thị mọi thông báo đã gửi cho chính tài khoản (API đã lọc username).
+ function bellNotices(){return notices.slice();}
+ // Việc của tôi chỉ chứa thông báo có nhiệm vụ/tiếp nhận, không phải mọi thông báo đích danh.
+ function isActionableNotice(n){
+   const destination=String(n.dich||n.destinations||'').toLowerCase();
+   const type=String(n.loai||n.type||'').toLowerCase();
+   return destination.includes('vieccuatoi')||destination.includes('việc của tôi')||/giao viec|giao việc|nhiem vu|nhiệm vụ|nhac nho|nhắc nhở/.test(type);
+ }
+ function personalNotices(){return notices.filter(isActionableNotice);}
  function noticeCards(list){
    return list.map(n=>'<article style="padding:12px 2px;border-top:1px solid #e1ebf3">'+
     '<strong style="color:#074b88;font-size:13px">'+esc(n.tieuDe||n.title||'Thông tin công vụ')+'</strong>'+
@@ -1575,17 +1582,17 @@ function generalNotices(){return notices.filter(isGeneralNotice);}
    window.NVS_setQuickCounts({work:taskCount+privateCount+reminderCount});
  }
  function renderNotice(){
-  let html='<h3><i class="bi bi-bell-fill"></i> THÔNG BÁO CHUNG</h3>';
-  const items=generalNotices();
+  let html='<h3><i class="bi bi-bell-fill"></i> THÔNG BÁO CỦA TÔI</h3>';
+  const items=bellNotices();
   if(noticeError) html+='<p class="nvs-quick-note" role="alert">'+esc(noticeError)+'</p>';
-  else if(!loaded) html+='<p class="nvs-quick-note">Đang tải thông tin chung...</p>';
-  else if(!items.length) html+='<p class="nvs-quick-note">Chưa có thông báo chung được xác định. Thông tin đích danh hoặc chưa phân loại sẽ ở Việc của tôi.</p>';
+  else if(!loaded) html+='<p class="nvs-quick-note">Đang tải thông báo gửi đến tài khoản...</p>';
+  else if(!items.length) html+='<p class="nvs-quick-note">Chưa có thông báo gửi đến tài khoản này.</p>';
   else html+=noticeCards(items);
   detail.innerHTML=html;
  }
  function setNoticeCount(){
   if(!loaded||noticeError)return;
-  window.NVS_setQuickCounts({notice:generalNotices().filter(n=>!n.daDoc).length});updateWorkCount();
+  window.NVS_setQuickCounts({notice:bellNotices().filter(n=>!n.daDoc).length});updateWorkCount();
  }
  async function loadNotices(force){
   const id=identity();
@@ -1703,6 +1710,8 @@ detail.addEventListener('click',e=>{
  // Đồng bộ khi đăng nhập hoàn tất và khi mở lại trang.
  window.NVS_refreshNotifications=()=>{loadNotices(true);loadPolls(true)};
  if(identity().username&&identity().token){loadNotices(false);loadWork(false);loadPolls(false);}
+ // Refresh when returning from the publishing center or reopening the EDOS tab.
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&identity().username&&identity().token)loadNotices(true);});
 })();
 </script>
 
