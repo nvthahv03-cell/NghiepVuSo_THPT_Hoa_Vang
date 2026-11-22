@@ -3978,6 +3978,12 @@ form?.addEventListener('submit',async e=>{
 </style>
 <style id="hva-lt-home-v2-style">
 #hvaLtHomeOverlay[hidden],#hvaLtHomeOverlay [hidden]{display:none!important}
+.hva-lt-week-table{width:100%;border-collapse:collapse;margin-top:14px;font:14px/1.5 'Times New Roman',serif;color:#163b61}
+.hva-lt-week-table th,.hva-lt-week-table td{border:1px solid #b8cde0;padding:10px;text-align:left;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}
+.hva-lt-week-table th{background:#123f82;color:#fff;font-weight:700}
+.hva-lt-week-table th:first-child{width:20%}
+.hva-lt-week-fields p{margin:8px 0;white-space:pre-wrap}
+
 #hvaLtHomeOverlay{position:fixed;inset:0;z-index:22000;display:flex;align-items:center;justify-content:center;background:rgba(4,27,58,.74);padding:14px;font-family:Inter,Arial,sans-serif}
 .hva-lt-home-panel{width:min(1090px,100%);max-height:94dvh;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 25px 70px #001e48a0;border:1px solid #a7d6ed}
 .hva-lt-home-top{background:linear-gradient(105deg,#084987,#079fc9);color:#fff;padding:21px 25px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -4029,7 +4035,48 @@ form?.addEventListener('submit',async e=>{
  function session(){const a=window.NVS_localStore,b=window.NVS_sessionStore;const token=String((a&&a.getItem('hvaSessionToken'))||(b&&b.getItem('hvaSessionToken'))||'').trim();const expiry=Number((a&&a.getItem('hvaSessionExpiresAt'))||(b&&b.getItem('hvaSessionExpiresAt'))||0);if(!token||!expiry||expiry<=Date.now())throw Error('Thầy/cô cần đăng nhập EDOS lại để xem lịch.');return token}
  async function api(action,params){const backend=(typeof DTHT_STANDALONE_BACKEND!=='undefined')?DTHT_STANDALONE_BACKEND:'';if(!backend)throw Error('Chưa tìm thấy địa chỉ Backend EDOS.');const url=new URL(backend);url.searchParams.set('action',action);url.searchParams.set('sessionToken',session());Object.entries(params||{}).forEach(([k,v])=>url.searchParams.set(k,String(v)));const r=await fetch(url.toString(),{cache:'no-store'});if(!r.ok)throw Error('Không kết nối được Backend (HTTP '+r.status+').');const d=await r.json();if(!d||!(d.ok||d.success))throw Error(d&&d.message||'Backend chưa trả dữ liệu hợp lệ.');return d}
  function dateStr(x){if(!x)return '—';const s=String(x);let m=s.match(/^(\d{4})-(\d\d)-(\d\d)$/);if(m)return m[3]+'/'+m[2]+'/'+m[1];const d=new Date(s);if(Number.isNaN(d.getTime()))return s;return new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'Asia/Ho_Chi_Minh'}).format(d)}
- async function view(item,area){area.replaceChildren();const local=html('p','hva-lt-home-status','Đang tải nội dung lịch…');area.append(local);try{const data=await api('ltGetPublished',{tuanBatDau:item.tuanBatDau});const found=data.item;if(!found)throw Error('Không tìm thấy chi tiết của lịch tuần này.');const details=html('div','hva-lt-home-detail');details.append(html('strong','',found.tieuDe||'LỊCH CÔNG TÁC TUẦN'));const content=found.noiDung||{};details.append(html('pre','',typeof content==='string'?content:JSON.stringify(content,null,2)));area.replaceChildren(details)}catch(e){local.textContent='Không tải được nội dung: '+(e.message||String(e))}}
+ async function view(item,area){
+  area.replaceChildren();
+  const message=html('p','hva-lt-home-status','Đang tải nội dung lịch…');area.append(message);
+  try {
+   const data=await api('ltGetPublished',{id:item.id});
+   const found=data.item;
+   if(!found)throw Error('Không tìm thấy bản lịch đã công bố.');
+   const details=html('div','hva-lt-home-detail');
+   details.append(html('strong','',found.tieuDe||'LỊCH CÔNG TÁC TUẦN'));
+   const content=found.noiDung||{};
+   const fields=content.fields&&typeof content.fields==='object'?content.fields:null;
+   if(fields){
+    const grid=html('table','hva-lt-week-table');
+    const head=html('thead',''),hr=html('tr','');
+    ['NGÀY','SÁNG','CHIỀU','GHI CHÚ'].forEach(t=>hr.append(html('th','',t)));
+    head.append(hr);grid.append(head);
+    const body=html('tbody','');
+    const days=[['2','Thứ Hai'],['3','Thứ Ba'],['4','Thứ Tư'],['5','Thứ Năm'],['6','Thứ Sáu'],['7','Thứ Bảy'],['CN','Chủ nhật']];
+    const lookup=(day,part)=>{
+      const suffixes=part==='sang'?['sang','Sang','SANG','morning']:part==='chieu'?['chieu','Chieu','CHIEU','afternoon']:['ghiChu','ghichu','GhiChu','note'];
+      const candidates=[];
+      for(const suf of suffixes){candidates.push(suf+'_'+day,day+'_'+suf,suf+day,day+suf,'input'+suf+'_'+day,'input'+suf+day)}
+      for(const key of candidates){if(fields[key]!==undefined&&fields[key]!==null&&String(fields[key]).trim())return String(fields[key])}
+      return '';
+    };
+    let hasScheduled=false;
+    for(const [day,label] of days){
+     const tr=html('tr','');const date=fields['date_'+day]||'';
+     tr.append(html('td','',label+(date?' · '+dateStr(date):'')));
+     for(const part of ['sang','chieu','note']){const val=lookup(day,part);if(val)hasScheduled=true;tr.append(html('td','',val))}
+     body.append(tr);
+    }
+    grid.append(body);
+    if(hasScheduled){details.append(grid)}else{
+      const block=html('div','hva-lt-week-fields');
+      Object.entries(fields).filter(([key,value])=>!/^date_|^input(TuanSo|ThangSo|NamSo)$/.test(key)&&value!==null&&String(value).trim()).forEach(([key,val])=>{const p=html('p','');p.append(html('b','',key+': '),document.createTextNode(String(val)));block.append(p)});
+      details.append(block.childNodes.length?block:html('p','','Bản lịch không có nội dung chi tiết.'));
+    }
+   } else details.append(html('pre','',typeof content==='string'?content:JSON.stringify(content,null,2)));
+   area.replaceChildren(details);
+  } catch(e){message.textContent='Không tải được nội dung: '+(e.message||String(e))}
+ }
  function make(item){const root=html('article','hva-lt-home-item');root.append(html('strong','',item.tieuDe||('Lịch công tác tuần '+item.tuanThu)));root.append(html('small','','Tuần '+item.tuanThu+' · '+dateStr(item.tuanBatDau)+' – '+dateStr(item.tuanKetThuc)+' · Phiên bản '+item.phienBan));const actions=html('div','hva-lt-home-actions');const viewBtn=html('button','hva-lt-home-action','Xem nội dung');viewBtn.type='button';const area=html('div','');viewBtn.addEventListener('click',()=>view(item,area));actions.append(viewBtn);if(item.pdfUrl&&/^https:\/\/(drive|docs)\.google\.com\//.test(item.pdfUrl)){const pdf=html('a','hva-lt-home-action','Mở / tải PDF từ Drive');pdf.href=item.pdfUrl;pdf.target='_blank';pdf.rel='noopener noreferrer';actions.append(pdf)}root.append(actions,area);return root}
  async function week(){tools.hidden=false;note.hidden=false;status.textContent='Đang tải lịch tuần đã công bố…';list.replaceChildren();try{const d=await api('ltListPublished',{}),items=Array.isArray(d.items)?d.items:[];items.forEach(item=>list.append(make(item)));status.textContent=items.length?'Có '+items.length+' tuần đã công bố.':'Chưa có lịch tuần nào được công bố trên CSDL EDOS.'}catch(e){status.textContent='Không tải được lịch tuần: '+(e.message||String(e))}}
  function placeholder(which){tools.hidden=true;note.hidden=true;status.textContent='';list.replaceChildren();const labels={month:'Lịch tháng',department:'Lịch công tác Sở GD&ĐT',urgent:'Lịch đột xuất'};const card=html('div','hva-lt-empty');card.append(html('strong','',labels[which]));card.append(html('p','','Mục này thuộc Trung tâm Lịch - TKB. Chưa có tuyến tra cứu riêng được xác nhận trên Backend V5; không hiển thị dữ liệu giả hoặc lịch chưa công bố.'));const link=html('a','hva-lt-home-action','Mở trang quản lý Lịch - TKB');link.href='./LichCongTac.html';card.append(link);list.append(card)}
