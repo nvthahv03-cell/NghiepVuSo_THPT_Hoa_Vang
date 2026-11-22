@@ -68,6 +68,43 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
    const raw=plain(v),digits=raw.replace(/[^\d+]/g,'');
    return /^(?:\+84|0)\d{9,10}$/.test(digits)?digits:'';
  };
+ async function loadDetailedDirectory(){
+   const session=window.HVAPersonnel.ensureAuth().withAuthBody({}).sessionToken;
+   const url=new URL('https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec');
+   return new Promise((resolve,reject)=>{
+     const callback='hvaDirectory_'+Date.now()+'_'+Math.floor(Math.random()*1000000);
+     const script=document.createElement('script');let finished=false;
+     const finish=(error,data)=>{
+       if(finished)return;finished=true;clearTimeout(timer);script.remove();delete window[callback];
+       if(error)reject(error);else resolve(data);
+     };
+     const timer=setTimeout(()=>finish(new Error('Hết thời gian lấy chi tiết nhân sự.')),15000);
+     window[callback]=data=>{
+       if(data?.success===true && Array.isArray(data.people))finish(null,data.people);
+       else finish(new Error(data?.message||'Backend chưa có tuyến tra cứu chi tiết nhân sự.'));
+     };
+     script.onerror=()=>finish(new Error('Không thể kết nối nguồn chi tiết nhân sự.'));
+     url.searchParams.set('action','getPersonnelDirectory');
+     url.searchParams.set('sessionToken',session);
+     url.searchParams.set('callback',callback);
+     url.searchParams.set('_',String(Date.now()));
+     script.src=url.toString();document.head.appendChild(script);
+   });
+ }
+ function enrichWithDirectory(members,detailed){
+   const lookups=new Map((detailed||[]).map(p=>[normalize(p.username),p]));
+   return members.map(p=>{
+     const ext=lookups.get(normalize(p.username));
+     if(!ext)return p;
+     const out={...p};
+     if(ext.monDay)out.subjects.add(plain(ext.monDay));
+     if(ext.kiemNhiem)out.assignments.add(plain(ext.kiemNhiem));
+     for(const key of ['hoTen','tenTo','chucVu','dienThoai','ngaySinh']){
+       if(ext[key])out[key]=plain(ext[key]);
+     }
+     return out;
+   });
+ }
  const rowsByGroup=(list)=>{
    const map=new Map();
    list.forEach(g=>(g.members||[]).forEach(entry=>{
@@ -148,7 +185,14 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
      if(!state.validLocal)throw Error('Phiên đăng nhập EDOS hết hạn. Hãy đăng nhập lại.');
      const fresh=await window.HVAPersonnel.buildGroups();
      if(!Array.isArray(fresh)||!fresh.length)throw Error('Nguồn nhân sự Cuộc họp chưa trả dữ liệu.');
-     groups=fresh;people=rowsByGroup(groups);drawFilters();render();
+     groups=fresh;people=rowsByGroup(groups);
+     let detailsMissing=false;
+     try{people=enrichWithDirectory(people,await loadDetailedDirectory())}catch(_){detailsMissing=true}
+     drawFilters();render();
+     if(detailsMissing){
+       status.dataset.error='false';
+       status.textContent+=' · Chi tiết môn dạy, ngày sinh, số điện thoại có thể chưa đủ: Backend cần module 39.';
+     }
    }catch(e){
      groups=[];people=[];filters.innerHTML='';results.innerHTML='';
      status.dataset.error='true';status.textContent='Không thể tra cứu nhân sự: '+plain(e?.message||e);
