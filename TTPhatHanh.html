@@ -2622,6 +2622,23 @@ return;
         if (btn) { btn.disabled = true; btn.innerHTML = '<i class="bi bi-hourglass-split"></i> ĐANG PHÁT HÀNH...'; }
         try {
             const payload = PublishEngine.preparePayload(TTDHS_State);
+            // Lịch tuần: dùng cùng mã phát hành khi thử lại sau lỗi mạng.
+            // Backend phải kiểm tra tính duy nhất của publishId để chống gửi trùng thực sự.
+            if (String(TTDHS_State.document?.moduleSource || '') === 'LichTuanEDOS') {
+                const data = TTDHS_State.document?.data || {};
+                const key = 'HVA_LT_GATEWAY_PUBLISH:' + String(data.lichId || '') + ':' + String(data.driveFileId || '');
+                let phase = {};
+                try { phase = JSON.parse(localStorage.getItem(key) || '{}'); } catch (_) {}
+                if (phase.notificationPublished === true) {
+                    throw new Error('Phiên bản lịch này đã được TTPH xác nhận phát hành trên trình duyệt. Hãy kiểm tra lịch sử trước khi gửi lại.');
+                }
+                if (phase.publishId) {
+                    payload.publishId = phase.publishId;
+                    payload.batchPublishId = phase.publishId;
+                } else {
+                    localStorage.setItem(key, JSON.stringify({ publishId: payload.publishId, calendarPublished: false }));
+                }
+            }
             const isMeeting = /cuochop/i.test(String(TTDHS_State.document?.moduleSource || TTDHS_State.rawSource?.moduleSource || ''));
             let result;
             if(String(TTDHS_State.document?.moduleSource||'')==='PhanCongDeKiemTra'){
@@ -2697,7 +2714,7 @@ return;
                 const token=String(localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'').trim();
                 if(!token) throw new Error('Phiên đăng nhập không hợp lệ.');
                 if(!d.lichId||!d.driveFileId) throw new Error('Chưa có mã lịch hoặc PDF đã chuẩn bị.');
-                const phaseKey='HVA_LT_GATEWAY_PUBLISH:'+String(d.lichId);
+                const phaseKey='HVA_LT_GATEWAY_PUBLISH:'+String(d.lichId)+':'+String(d.driveFileId);
                 let phase={};try{phase=JSON.parse(localStorage.getItem(phaseKey)||'{}');}catch(_){ }
                 if(!phase.calendarPublished){
                     const r=await fetch('https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec',{
@@ -2707,11 +2724,11 @@ return;
                     if(!r.ok)throw new Error('Không công bố được lịch trên EDOS: HTTP '+r.status);
                     const out=await r.json();
                     if(!out.success)throw new Error(out.message||'Không công bố được lịch.');
-                    localStorage.setItem(phaseKey,JSON.stringify({calendarPublished:true,pdfUrl:out.pdfUrl||d.pdfUrl}));
+                    localStorage.setItem(phaseKey,JSON.stringify({...phase,calendarPublished:true,pdfUrl:out.pdfUrl||d.pdfUrl}));
                 }
                 // Chống việc lặp lại phát hành khi không nhận được xác nhận từ TTPH.
                 result=await PublishEngine.postToBackend(payload);
-                if(result.success===true)localStorage.removeItem(phaseKey);
+                if(result.success===true)localStorage.setItem(phaseKey,JSON.stringify({...phase,publishId:payload.publishId,calendarPublished:true,notificationPublished:true}));
             } else {
                 // Không thay đổi tuyến tổng quát đang được Backend khóa.
                 result = await PublishEngine.postToBackend(payload);
