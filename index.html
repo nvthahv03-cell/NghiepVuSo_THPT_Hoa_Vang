@@ -1437,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
   work:'',
   survey:''
  };
- let notices=[],loaded=false,loading=null,noticeError='';
+ let notices=[],loaded=false,loading=null,noticeError='',noticeCheckedAt='',noticeLoadedFor='';
  let myTasks=[],workLoaded=false,workLoading=null,workError='';
  let myReminders=[],remindersLoaded=false,remindersLoading=null,remindersError='';
 
@@ -1493,7 +1493,7 @@ document.addEventListener('DOMContentLoaded', initPortal);
  function identity(){
   let u={};try{u=JSON.parse(NVS_localStore.getItem('user')||'{}')}catch(_){}
   return {username:String(u.tenDangNhap||u.username||'').trim().toLowerCase(),
-          token:String(NVS_localStore.getItem('hvaSessionToken')||'').trim()};
+          token:String(NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||'').trim()};
  }
 
  function renderWork(){
@@ -1660,11 +1660,16 @@ document.addEventListener('DOMContentLoaded', initPortal);
    window.NVS_setQuickCounts({work:taskCount+privateCount+reminderCount});
  }
  function renderNotice(){
+  const id=identity(),items=bellNotices(),unread=items.filter(n=>!n.daDoc).length;
   let html='<h3><i class="bi bi-bell-fill"></i> THÔNG BÁO CỦA TÔI</h3>';
-  const items=bellNotices();
-  if(noticeError) html+='<p class="nvs-quick-note" role="alert">'+esc(noticeError)+'</p>';
-  else if(!loaded) html+='<p class="nvs-quick-note">Đang tải thông báo gửi đến tài khoản...</p>';
-  else if(!items.length) html+='<p class="nvs-quick-note">Chưa có thông báo gửi đến tài khoản này.</p>';
+  html+='<div class="nvs-quick-note" role="status" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;padding:10px 0">';
+  html+='<span>Tài khoản: <strong>'+esc(id.username||'Chưa đăng nhập')+'</strong>'+
+    (loaded?' · '+items.length+' tin ('+unread+' chưa đọc)':'')+
+    (noticeCheckedAt?' · Kiểm tra: '+esc(noticeCheckedAt):'')+'</span>';
+  html+='<button type="button" data-nvs-notice-refresh style="padding:8px 12px;border-radius:9px;background:#e7f6ff;border:1px solid #a5d8f4;color:#07518d;font-weight:800;cursor:pointer">↻ Kiểm tra tin mới</button></div>';
+  if(noticeError) html+='<p class="nvs-quick-note" role="alert" style="color:#b42332">'+esc(noticeError)+'</p>';
+  else if(!loaded) html+='<p class="nvs-quick-note">Đang kiểm tra thông báo trên máy chủ...</p>';
+  else if(!items.length) html+='<p class="nvs-quick-note">Máy chủ đã trả kết quả: chưa có thông báo dành cho tài khoản <strong>'+esc(id.username)+'</strong>. Chỉ người có tên trong danh sách phát hành mới nhận được tin.</p>';
   else html+=noticeCards(items);
   detail.innerHTML=html;
  }
@@ -1674,9 +1679,9 @@ document.addEventListener('DOMContentLoaded', initPortal);
  }
  async function loadNotices(force){
   const id=identity();
-  if(!id.username||!id.token){noticeError='Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.';loaded=false;if(!detail.hidden&&detail.dataset.current==='notice')renderNotice();return;}
+  if(!id.username||!id.token){noticeError='Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.';loaded=false;noticeCheckedAt='';window.NVS_setQuickCounts?.({notice:0});if(!detail.hidden&&detail.dataset.current==='notice')renderNotice();return;}
   if(loading)return loading;
-  if(loaded&&!force)return;
+  if(loaded&&!force&&noticeLoadedFor===id.username)return;
   noticeError='';
   loading=(async()=>{
    try{
@@ -1693,8 +1698,8 @@ document.addEventListener('DOMContentLoaded', initPortal);
      ktItems=(await nvsKt01Inbox(id.token)).map(n=>({id:n.id,tieuDe:n.title,noiDung:n.content,
       thoiGian:n.createdAt,daDoc:!!n.read,phamVi:'CA_NHAN'}));
     }catch(_){/* Preserve the currently PASS EDOS notification service. */}
-    notices=data.notifications.concat(ktItems);loaded=true;noticeError='';setNoticeCount();
-   }catch(e){noticeError='Không tải được thông báo: '+(e.message||'Lỗi kết nối.');loaded=false;}
+    notices=data.notifications.concat(ktItems);loaded=true;noticeLoadedFor=id.username;noticeCheckedAt=new Date().toLocaleTimeString('vi-VN');noticeError='';setNoticeCount();
+   }catch(e){noticeError='Không tải được thông báo từ Backend V5: '+(e.message||'Lỗi kết nối.');loaded=false;noticeCheckedAt='';window.NVS_setQuickCounts?.({notice:0});}
    finally{loading=null;if(!detail.hidden&&detail.dataset.current==='notice')renderNotice();if(!detail.hidden&&detail.dataset.current==='work')renderWork();}
   })();
   return loading;
@@ -1749,6 +1754,8 @@ detail.addEventListener('click',e=>{
   if(btn&&detail.contains(btn))acceptTask(btn.getAttribute('data-nvs-accept'),btn);
  });
  detail.addEventListener('click',e=>{
+  const refresh=e.target.closest('[data-nvs-notice-refresh]');
+  if(refresh&&detail.contains(refresh)){refresh.disabled=true;refresh.textContent='Đang kiểm tra...';loadNotices(true);return;}
   const btn=e.target.closest('[data-nvs-read]');
   if(btn&&detail.contains(btn))markRead(btn.getAttribute('data-nvs-read'),btn);
  });
