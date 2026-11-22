@@ -2716,6 +2716,10 @@ return;
                 // Không thay đổi tuyến tổng quát đang được Backend khóa.
                 result = await PublishEngine.postToBackend(payload);
             }
+            // Chỉ xác nhận thành công nếu Backend trả trạng thái thành công thực sự.
+            if (!result || result.success !== true) {
+                throw new Error(String(result?.message || result?.error || result?.code || 'Backend chưa xác nhận phát hành thành công.'));
+            }
             StorageEngine.save(CONFIG.STORAGE_KEYS.LAST_RESULT, result);
             Controller.showPublishResult(true,
                 result.duplicated ? 'Nội dung đã được phát hành trước đó, hệ thống không gửi trùng.' :
@@ -2723,8 +2727,9 @@ return;
                 result.duplicated ? 'Đã phát hành trước đó' : 'Phát hành thành công');
         } catch (err) {
             console.error(err);
+            const reason = String(err?.message || err || 'Máy chủ chưa cung cấp nguyên nhân lỗi.');
             Controller.showPublishResult(false,
-                'Thầy/cô vui lòng kiểm tra thông tin, thao tác lại hoặc liên hệ Quản trị NVS để được hỗ trợ.',
+                reason + ' Nếu trạng thái công bố lịch chưa rõ, vui lòng kiểm tra lịch sử trước khi thử lại để tránh gửi trùng.',
                 'Phát hành chưa thành công');
         } finally {
             TTDHS_State.isPublishing = false;
