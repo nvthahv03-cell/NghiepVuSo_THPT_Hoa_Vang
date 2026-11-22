@@ -1910,8 +1910,8 @@ const HvaRoleDest={
                 sessionToken: String(localStorage.getItem('hvaSessionToken') || sessionStorage.getItem('hvaSessionToken') || '').trim()
             };
         },
-        postToBackend: async (payload) => {
-            const response = await fetch(CONFIG.SCRIPT_URL, {
+        postToBackend: async (payload, backendUrl = CONFIG.SCRIPT_URL) => {
+            const response = await fetch(backendUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
@@ -2910,7 +2910,7 @@ return;
                 }
                 // Chống việc lặp lại phát hành khi không nhận được xác nhận từ TTPH.
                 try {
-                    result=await PublishEngine.postToBackend(payload);
+                    result=await PublishEngine.postToBackend({...payload,action:'ltPublishNotification'}, 'https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec');
                 } catch (err) {
                     throw new Error('Bước Thông báo TTPH: ' + String(err?.message || err));
                 }
