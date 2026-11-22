@@ -1666,6 +1666,7 @@ const HvaRoleDest={
   const el=id=>document.getElementById(id);
   const root=el('hvaRolePeople');
   if(!root)return;
+  const opened=new Set([...root.querySelectorAll('details[data-hva-picker-group][open]')].map(e=>e.dataset.hvaPickerGroup));
   const groups=this.visibleGroups();
   const sections=[
     {name:'HỘI ĐỒNG',test:g=>g.kind==='COUNCIL'},
@@ -1682,7 +1683,7 @@ const HvaRoleDest={
     const all=keys.length>0&&keys.every(k=>this.chosen.has(k));
     const mixed=keys.some(k=>this.chosen.has(k))&&!all;
     const rows=members.map(m=>{const k=this.key(m).toLowerCase();return '<label class="flex gap-2 items-start px-3 py-2 border-t border-slate-100 bg-white"><input type="checkbox" data-hva-person="'+this.esc(k)+'" '+(this.chosen.has(k)?'checked':'')+' class="mt-1"><span><b>'+this.esc(this.name(m))+'</b><small class="block text-slate-500">'+this.esc([m.lopChuNhiem?'GVCN '+m.lopChuNhiem:'',m.chucVu,m.tenTo].filter(Boolean).join(' · '))+'</small></span></label>'}).join('');
-    return '<details class="bg-white border border-blue-200 rounded-xl overflow-hidden" '+(this.query?'open':'')+'><summary class="cursor-pointer p-3 flex items-center gap-2 bg-blue-50"><input type="checkbox" data-hva-group="'+this.esc(g.groupKey)+'" '+(all?'checked':'')+' class="hva-group-check" aria-label="Chọn toàn nhóm" /><b class="flex-1">'+this.esc(this.sectionTitle(g))+'</b><small>'+members.length+' người</small></summary><div>'+rows+'</div></details>';
+    return '<details data-hva-picker-group="'+this.esc(g.groupKey)+'" class="bg-white border border-blue-200 rounded-xl overflow-hidden" '+(this.query||opened.has(String(g.groupKey))?'open':'')+'><summary class="cursor-pointer p-3 flex items-center gap-2 bg-blue-50"><input type="checkbox" data-hva-group="'+this.esc(g.groupKey)+'" '+(all?'checked':'')+' class="hva-group-check" aria-label="Chọn toàn nhóm" /><b class="flex-1">'+this.esc(this.sectionTitle(g))+'</b><small>'+members.length+' người</small></summary><div>'+rows+'</div></details>';
   };
   root.innerHTML=sections.map(s=>{
     const list=groups.filter(x=>s.test(x.group));
