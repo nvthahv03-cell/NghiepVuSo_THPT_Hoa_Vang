@@ -3761,8 +3761,8 @@ html body .hva-pro-header-inner>.hva-pro-tools .hva-pro-online-dot{
 <div class="nvs-pwd-old-wrap"><span class="nvs-pwd-fixed-prefix" id="nvs-pwd-fixed-prefix">HVA@</span><input id="nvs-pwd-old" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" placeholder="4 chữ số" required></div>
 <button id="nvs-pwd-mode-toggle" class="nvs-pwd-mode-toggle" type="button" aria-pressed="false">Đã đổi mật khẩu? Nhập mật khẩu hiện tại</button>
 <p class="nvs-pwd-legacy-hint" id="nvs-pwd-mode-hint">Nếu chưa từng đổi, chỉ nhập 4 số sau HVA@.</p>
-<label for="nvs-pwd-new">Mật khẩu mới</label><input id="nvs-pwd-new" type="password" autocomplete="new-password" minlength="6" maxlength="128" required>
-<label for="nvs-pwd-confirm">Xác nhận mật khẩu mới</label><input id="nvs-pwd-confirm" type="password" autocomplete="new-password" minlength="6" maxlength="128" required>
+<label for="nvs-pwd-new">Mật khẩu mới</label><input id="nvs-pwd-new" type="password" autocomplete="new-password" minlength="6" maxlength="24" required>
+<label for="nvs-pwd-confirm">Xác nhận mật khẩu mới</label><input id="nvs-pwd-confirm" type="password" autocomplete="new-password" minlength="6" maxlength="24" required>
 <div class="help">Mật khẩu mới phải có <b>ít nhất 6 ký tự</b>, gồm <b>chữ hoa</b>, <b>chữ số</b> và <b>@</b> hoặc <b>!</b>.<br>Không dùng lại mật khẩu mặc định. Nếu quên, liên hệ quản trị để cấp mật khẩu tạm.</div>
 <div id="nvs-pwd-status" role="status"></div><div class="buttons"><button id="nvs-pwd-close" type="button">Đóng</button><button id="nvs-pwd-save" type="submit">Cập nhật mật khẩu</button></div></form></section></div>
 <script id="nvs-pwd-script">(function(){'use strict';
@@ -3788,7 +3788,7 @@ window.addEventListener('nvs:login-success',refresh);
 form?.addEventListener('submit',async e=>{e.preventDefault();if(busy)return;
 const oldEntered=$('nvs-pwd-old').value,customMode=$('nvs-pwd-mode-toggle').getAttribute('aria-pressed')==='true',old=customMode?oldEntered:'HVA@'+oldEntered,pwd=$('nvs-pwd-new').value,repeat=$('nvs-pwd-confirm').value;
 if(!customMode&&!/^\d{4}$/.test(oldEntered)){status.textContent='Mật khẩu ban đầu phải có đúng 4 chữ số sau HVA@.';return}
-if(!(pwd.length>=6&&pwd.length<=128&&/[A-Z]/.test(pwd)&&/[0-9]/.test(pwd)&&/[@!]/.test(pwd))){status.textContent='Mật khẩu cần từ 6–128 ký tự, có chữ hoa, chữ số và @ hoặc !.';return}
+if(!(pwd.length>=6&&pwd.length<=24&&/[A-Z]/.test(pwd)&&/[0-9]/.test(pwd)&&/[@!]/.test(pwd))){status.textContent='Mật khẩu cần từ 6–24 ký tự, có chữ hoa, chữ số và @ hoặc !.';return}
 if(pwd!==repeat){status.textContent='Xác nhận mật khẩu không khớp.';return}
 if(pwd===old){status.textContent='Mật khẩu mới phải khác mật khẩu cũ.';return}
 if(!tk()){status.textContent='Phiên đăng nhập đã hết hạn.';return}
