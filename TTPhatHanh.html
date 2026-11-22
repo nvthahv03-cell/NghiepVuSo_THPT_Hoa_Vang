@@ -258,7 +258,7 @@ body.hva-receiver-mode #hva-module-content-viewer {
                         </h3>
                     </div>
 
-                    <div id="hvaRoleChooser" class="hva-role-box" hidden><b>ĐÍCH NHẬN THEO VAI TRÒ</b><div class="hva-role-grid"><label>Vai trò<select id="hvaRoleType"><option value="">Chọn vai trò</option><option value="BGH">Ban Giám hiệu (BGH)</option><option value="TTCM">Tổ trưởng chuyên môn (TTCM)</option><option value="TPCM">Nhóm trưởng chuyên môn (TPCM)</option></select></label><label>Tổ / nhóm<select id="hvaRoleTeam" disabled><option value="">Chọn tổ / nhóm</option></select></label></div><div id="hvaRolePeople"></div><div class="hva-role-grid"><label>Hình thức nhận<select id="hvaRoleKind"><option value="TO">Người nhận chính</option><option value="CC_INFO">CC – Để biết</option><option value="CC_REPORT">CC – Để báo cáo</option></select></label><button type="button" id="hvaRoleAdd" disabled>Thêm người nhận</button></div><p id="hvaRoleStatus">Nhân sự tham chiếu từ Cuộc họp.</p></div><div class="space-y-2" id="recipient-selector-container">
+                    <div id="hvaRoleChooser" class="hva-role-box" hidden><b>ĐÍCH NHẬN THEO VAI TRÒ</b><div class="hva-role-grid"><label>Vai trò<select id="hvaRoleType"><option value="">Chọn vai trò</option><option value="ALL">Toàn bộ nhân sự</option><option value="BGH">Ban Giám hiệu (BGH)</option><option value="TTCM">Tổ trưởng chuyên môn (TTCM)</option><option value="TPCM">Nhóm trưởng chuyên môn (TPCM)</option></select></label><label>Tổ / nhóm<select id="hvaRoleTeam" disabled><option value="">Chọn tổ / nhóm</option></select></label></div><div id="hvaRolePeople"></div><div class="hva-role-grid"><label>Hình thức nhận<select id="hvaRoleKind"><option value="TO">Người nhận chính</option><option value="CC_INFO">CC – Để biết</option><option value="CC_REPORT">CC – Để báo cáo</option></select></label><button type="button" id="hvaRoleAdd" disabled>Thêm người nhận</button></div><p id="hvaRoleStatus">Nhân sự tham chiếu từ Cuộc họp.</p></div><div class="space-y-2" id="recipient-selector-container">
                         <p class="text-xs text-slate-400 italic">Đang nhận danh sách đối tượng từ module nguồn...</p>
                     </div>
                 </div>
@@ -1608,13 +1608,14 @@ const HvaRoleDest={
  user(m){return String(m.username||m.tenDangNhap||'').trim()},
  label(m){return String(m.hoTen||m.fullName||m.name||'')},
  role(m){return [m.chucVu,m.viTriViecLam,m.vaiTro,m.raw?.chucVu,m.raw?.viTriViecLam,m.raw?.vaiTro].filter(Boolean).join(' ')},
- is(m,type){const v=this.norm(this.role(m));return type==='BGH'?/hieu truong|ban giam hieu|bgh/.test(v):type==='TTCM'?/to truong|ttcm/.test(v):/nhom truong|truong nhom|tpcm/.test(v)},
- people(type,team){const map=new Map();for(const g of this.groups){if(type!=='BGH'&&String(g.kind).toUpperCase()!=='TEAM')continue;if(team&&String(g.groupKey||g.tenTo)!==team)continue;for(const m of g.members||[]){if(this.is(m,type)&&this.user(m))map.set(this.user(m).toLowerCase(),{...m,teamName:g.tenTo})}}return [...map.values()]},
- async init(){if(this.initialized)return;this.initialized=true;const el=id=>document.getElementById(id);el('hvaRoleChooser').hidden=false;el('hvaRoleType').addEventListener('change',()=>this.setType());el('hvaRoleTeam').addEventListener('change',()=>this.draw());el('hvaRoleAdd').addEventListener('click',()=>this.add());
+ is(m,type){if(type==='ALL')return true;const v=this.norm(this.role(m));return type==='BGH'?/hieu truong|ban giam hieu|bgh/.test(v):type==='TTCM'?/to truong|ttcm/.test(v):/nhom truong|truong nhom|tpcm/.test(v)},
+ people(type,team){const map=new Map();for(const g of this.groups){if(type!=='BGH'&&String(g.kind).toUpperCase()!=='TEAM'&&String(g.kind).toUpperCase()!=='COUNCIL')continue;if(team&&String(g.groupKey||g.tenTo)!==team)continue;for(const m of g.members||[]){if(this.is(m,type)&&this.user(m))map.set(this.user(m).toLowerCase(),{...m,teamName:g.tenTo})}}return [...map.values()]},
+ async init(){if(this.initialized)return;this.initialized=true;const el=id=>document.getElementById(id);el('hvaRoleChooser').hidden=false;el('hvaRoleType').addEventListener('change',()=>this.setType());el('hvaRoleTeam').addEventListener('change',()=>this.draw());el('hvaRoleAdd').addEventListener('click',()=>this.add());el('recipient-selector-container').addEventListener('click',e=>{const btn=e.target.closest('[data-hva-remove-recipient]');if(!btn)return;const username=btn.dataset.hvaRemoveRecipient;TTDHS_State.recipients=TTDHS_State.recipients.filter(r=>String(r.username||'')!==username);this.saveSelection();Controller.refreshUI();});
  try{if(!window.HVAPersonnel?.buildGroups)throw Error('Chưa có nguồn Nhân sự HVA');this.groups=await window.HVAPersonnel.buildGroups();if(!this.groups.length)throw Error('Chưa có nhóm nhân sự');this.ready=true;el('hvaRoleStatus').textContent='Đã tải nhân sự từ Cuộc họp; chọn đối tượng, tổ/nhóm và người nhận.';this.setType()}catch(e){el('hvaRoleStatus').textContent='Không tải được nhân sự Cuộc họp: '+e.message;el('hvaRolePeople').textContent='Chưa có dữ liệu được xác thực.'}},
  setType(){const type=document.getElementById('hvaRoleType').value,sel=document.getElementById('hvaRoleTeam');sel.replaceChildren(new Option('Chọn tổ / nhóm',''));if(type!=='BGH'&&type){for(const g of this.groups.filter(g=>String(g.kind).toUpperCase()==='TEAM'&&this.people(type,String(g.groupKey||g.tenTo)).length)){sel.add(new Option(g.tenTo,String(g.groupKey||g.tenTo)))}sel.disabled=sel.options.length<2}else sel.disabled=true;this.draw()},
- draw(){const type=document.getElementById('hvaRoleType').value,team=document.getElementById('hvaRoleTeam').value,root=document.getElementById('hvaRolePeople');root.replaceChildren();const list=this.ready&&type&&(type==='BGH'||team)?this.people(type,team):[];for(const m of list){const label=document.createElement('label'),inp=document.createElement('input');inp.type='checkbox';inp.value=this.user(m);inp.checked=true;label.append(inp,document.createTextNode(' '+this.label(m)+' · '+m.teamName));root.append(label)}if(!list.length)root.textContent=type==='TPCM'?'Chưa có chức danh Nhóm trưởng CM được nhận diện.':'Chọn tổ/nhóm hoặc chưa có dữ liệu tương ứng.';document.getElementById('hvaRoleAdd').disabled=!list.length},
- add(){if(!this.ready)return;const type=document.getElementById('hvaRoleType').value,team=document.getElementById('hvaRoleTeam').value,kind=document.getElementById('hvaRoleKind').value,checked=new Set([...document.querySelectorAll('#hvaRolePeople input:checked')].map(x=>x.value)),existing=new Set(TTDHS_State.recipients.map(r=>String(r.username||'').toLowerCase()));let count=0;for(const m of this.people(type,team)){const username=this.user(m);if(!checked.has(username)||existing.has(username.toLowerCase()))continue;TTDHS_State.recipients.push({username,hoTen:this.label(m),chucVu:this.role(m),to:m.teamName,nhom:type,deliveryRole:kind==='TO'?'TO':'CC',ccPurpose:kind==='CC_INFO'?'Để biết':kind==='CC_REPORT'?'Để báo cáo':''});existing.add(username.toLowerCase());count++}Controller.refreshUI();document.getElementById('hvaRoleStatus').textContent='Đã thêm '+count+' người nhận. Cần kiểm thử Backend về phân biệt người nhận chính/CC trước phát hành chính thức.'}
+ draw(){const type=document.getElementById('hvaRoleType').value,team=document.getElementById('hvaRoleTeam').value,root=document.getElementById('hvaRolePeople');root.replaceChildren();const list=this.ready&&type&&(type==='BGH'||team)?this.people(type,team):[];for(const m of list){const label=document.createElement('label'),inp=document.createElement('input');inp.type='checkbox';inp.value=this.user(m);inp.checked=false;label.append(inp,document.createTextNode(' '+this.label(m)+' · '+m.teamName));root.append(label)}if(!list.length)root.textContent=type==='TPCM'?'Chưa có chức danh Nhóm trưởng CM được nhận diện.':'Chọn tổ/nhóm hoặc chưa có dữ liệu tương ứng.';document.getElementById('hvaRoleAdd').disabled=!list.length},
+ saveSelection(){if(String(TTDHS_State.document?.moduleSource||'')==='LichTuanEDOS'){TTDHS_State.rawSource={...TTDHS_State.rawSource,recipients:[...TTDHS_State.recipients],recipientSelectionConfirmed:true};StorageEngine.save(CONFIG.STORAGE_KEYS.CURRENT_DOC,TTDHS_State.rawSource)}},
+ add(){if(!this.ready)return;const type=document.getElementById('hvaRoleType').value,team=document.getElementById('hvaRoleTeam').value,kind=document.getElementById('hvaRoleKind').value,checked=new Set([...document.querySelectorAll('#hvaRolePeople input:checked')].map(x=>x.value)),existing=new Set(TTDHS_State.recipients.map(r=>String(r.username||'').toLowerCase()));let count=0;for(const m of this.people(type,team)){const username=this.user(m);if(!checked.has(username)||existing.has(username.toLowerCase()))continue;TTDHS_State.recipients.push({username,hoTen:this.label(m),chucVu:this.role(m),to:m.teamName,nhom:type,deliveryRole:kind==='TO'?'TO':'CC',ccPurpose:kind==='CC_INFO'?'Để biết':kind==='CC_REPORT'?'Để báo cáo':''});existing.add(username.toLowerCase());count++}this.saveSelection();Controller.refreshUI();document.getElementById('hvaRoleStatus').textContent='Đã thêm '+count+' người nhận. Cần kiểm thử Backend về phân biệt người nhận chính/CC trước phát hành chính thức.'}
 };
 
     const RecipientEngine = {
@@ -1682,7 +1683,7 @@ const HvaRoleDest={
                 { label: "Kiểm tra module nguồn", pass: hasSource, msg: hasSource ? `${state.document.moduleSource} • ${documentCount} văn bản` : "Chưa có dữ liệu nguồn" },
                 { label: "Kiểm tra quyền phát hành", pass: isPermitted, msg: isPermitted ? "Đủ thẩm quyền" : "Thiếu thẩm quyền" },
                 { label: "Kiểm tra phiên bản mới hơn", pass: !versionStatus.conflict, msg: "Phiên bản mới nhất" },
-                { label: "Kiểm tra đối tượng nhận", pass: hasRecipients, msg: hasRecipients ? `${state.recipients.length} nhóm nhận` : "Chưa chọn người nhận" },
+                { label: "Kiểm tra đối tượng nhận", pass: hasRecipients, msg: hasRecipients ? `${state.recipients.length} người nhận` : "Chưa chọn người nhận" },
                 { label: "Kiểm tra điểm đến phát hành", pass: hasDestinations, msg: hasDestinations ? "Đã chọn điểm đến" : "Chưa chọn điểm đến" },
                 { label: "Kiểm tra cấu hình Workflow", pass: true, msg: "Đã tối ưu luồng" }
             ];
@@ -1944,17 +1945,24 @@ ContentViewerRouter.register(['NhacNhoCongVu','NHẮC NHỞ CÔNG VỤ'],{
                 container.innerHTML=group('BAN GIÁM HIỆU',list.filter(r=>r.nhom==='BGH'))+group('GIÁO VIÊN ĐƯỢC PHÂN CÔNG',list.filter(r=>r.nhom!=='BGH'));
                 return;
             }
-            if (!recipients || recipients.length === 0) {
-                container.innerHTML = '<p class="text-xs text-rose-600 font-semibold">Chưa có đối tượng nhận từ module nguồn.</p>';
+            const isCalendar = String(state?.document?.moduleSource || '') === 'LichTuanEDOS';
+            const list = Array.isArray(recipients) ? recipients : [];
+            if (!list.length) {
+                container.innerHTML = '<p class="text-xs text-slate-500 font-semibold">Chưa chọn người nhận. Chọn từ danh sách nhân sự Cuộc họp ở trên và bấm “Thêm người nhận”.</p>';
                 return;
             }
-            container.innerHTML = recipients.map((r) => `
-                <div class="flex items-start gap-2 p-2.5 rounded-xl border border-blue-100 bg-blue-50/60">
-                    <i class="bi bi-person-check-fill text-blue-600 mt-0.5"></i>
-                    <div class="min-w-0">
-                        <div class="text-xs font-bold text-slate-800">${RecipientEngine.displayName(r)}</div>
-                        <div class="text-[10px] text-slate-500">${RecipientEngine.displayMeta(r)}</div>
+            const esc = v => String(v ?? '').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+            container.innerHTML = '<div class="text-xs font-bold text-[#0F4C81] mb-2">ĐÃ CHỌN: '+list.length+' NGƯỜI NHẬN</div>' +
+                list.map(r => `
+                <div class="flex items-start justify-between gap-2 p-2.5 rounded-xl border border-blue-100 bg-blue-50/60">
+                    <div class="flex gap-2 min-w-0">
+                        <i class="bi bi-person-check-fill text-blue-600 mt-0.5"></i>
+                        <div class="min-w-0">
+                            <div class="text-xs font-bold text-slate-800">${esc(RecipientEngine.displayName(r))}</div>
+                            <div class="text-[10px] text-slate-500">${esc(RecipientEngine.displayMeta(r))}</div>
+                        </div>
                     </div>
+                    ${isCalendar && r.username ? '<button type="button" data-hva-remove-recipient="'+esc(r.username)+'" class="text-rose-600 text-xs font-bold shrink-0" title="Bỏ người nhận">Bỏ</button>' : ''}
                 </div>
             `).join('');
         },
@@ -2342,6 +2350,12 @@ return;
                 TTDHS_State.document = ModuleAdapter.toStandardDocument(storedDoc);
                 TTDHS_State.documents = [TTDHS_State.document];
                 TTDHS_State.recipients = ModuleAdapter.getRecipients(storedDoc);
+                // Lịch tuần: danh sách toàn trường từ nguồn chỉ là dữ liệu tham khảo, không được tự chọn người nhận.
+                if (String(TTDHS_State.document?.moduleSource || '') === 'LichTuanEDOS' && storedDoc.recipientSelectionConfirmed !== true) {
+                    TTDHS_State.recipients = [];
+                    TTDHS_State.rawSource = {...storedDoc,recipients:[],recipientSelectionConfirmed:false};
+                    StorageEngine.save(CONFIG.STORAGE_KEYS.CURRENT_DOC,TTDHS_State.rawSource);
+                }
                 TTDHS_State.linkedDocs = ModuleAdapter.getLinkedDocs(storedDoc);
                 Controller.applySourceDefaults(TTDHS_State.document.moduleSource);
             }
