@@ -3724,7 +3724,7 @@ html body .hva-pro-header-inner>.hva-pro-tools .hva-pro-online-dot{
 <div id="nvs-pwd-notice" role="status" hidden>🔐 Thầy/Cô vui lòng đổi mật khẩu tại <b>Tài khoản cá nhân → Đổi mật khẩu.</b> <button id="nvs-pwd-now" type="button">Đổi ngay</button></div>
 <div id="nvs-pwd-modal" hidden><section id="nvs-pwd-box" role="dialog" aria-modal="true" aria-labelledby="nvs-pwd-heading"><h2 id="nvs-pwd-heading">🔐 Đổi mật khẩu NVS</h2><p>Nhập mật khẩu hiện tại và đặt mật khẩu mới.</p>
 <form id="nvs-pwd-form">
-<label for="nvs-pwd-old">Mật khẩu hiện tại</label><input id="nvs-pwd-old" type="password" autocomplete="current-password" required>
+<label for="nvs-pwd-old">Mật khẩu hiện tại</label><input id="nvs-pwd-old" type="password" autocomplete="current-password" placeholder="4 số ban đầu hoặc mật khẩu đã đổi" required><p class="nvs-pwd-legacy-hint">Nếu chưa từng đổi, mật khẩu gốc là <b>HVA@</b> + 4 chữ số; Thầy/Cô chỉ cần nhập 4 số hoặc nhập đầy đủ.</p>
 <label for="nvs-pwd-new">Mật khẩu mới</label><input id="nvs-pwd-new" type="password" autocomplete="new-password" required>
 <label for="nvs-pwd-confirm">Xác nhận mật khẩu mới</label><input id="nvs-pwd-confirm" type="password" autocomplete="new-password" required>
 <div class="help">Mật khẩu mới có ít nhất <b>6 ký tự</b>, gồm <b>chữ hoa</b>, <b>chữ số</b> và <b>@</b> hoặc <b>!</b>.<br>Không dùng lại mật khẩu mặc định. Nếu quên, liên hệ quản trị để cấp mật khẩu tạm.</div>
@@ -3741,7 +3741,7 @@ $('nvsPasswordAccountButton')?.addEventListener('click',open);$('nvs-pwd-now')?.
 m?.addEventListener('click',e=>{if(e.target===m)close()});
 window.addEventListener('nvs:login-success',refresh);
 form?.addEventListener('submit',async e=>{e.preventDefault();if(busy)return;
-const old=$('nvs-pwd-old').value,pwd=$('nvs-pwd-new').value,repeat=$('nvs-pwd-confirm').value;
+const oldEntered=$('nvs-pwd-old').value,old=/^\d{4}$/.test(oldEntered)?'HVA@'+oldEntered:oldEntered,pwd=$('nvs-pwd-new').value,repeat=$('nvs-pwd-confirm').value;
 if(!(pwd.length>=6&&/[A-Z]/.test(pwd)&&/[0-9]/.test(pwd)&&/[@!]/.test(pwd))){status.textContent='Mật khẩu chưa đủ điều kiện.';return}
 if(pwd!==repeat){status.textContent='Xác nhận mật khẩu không khớp.';return}
 if(pwd===old){status.textContent='Mật khẩu mới phải khác mật khẩu cũ.';return}
@@ -3750,7 +3750,7 @@ busy=true;$('nvs-pwd-save').disabled=true;status.textContent='Đang kiểm tra..
 try{
 const resp=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'changePassword',sessionToken:tk(),matKhauCu:old,matKhauMoi:pwd})});const d=await resp.json();
 if(d?.ok===true||d?.success===true){notice.hidden=true;busy=false;close();alert('Đổi mật khẩu thành công. Thầy/Cô vui lòng đăng nhập lại bằng mật khẩu mới.');NVS_localStore.removeItem('user');NVS_localStore.removeItem('hvaSessionToken');NVS_localStore.removeItem('hvaSessionExpiresAt');NVS_sessionStore.removeItem('user');NVS_sessionStore.removeItem('hvaSessionToken');NVS_sessionStore.removeItem('hvaSessionExpiresAt');location.reload();}
-else status.textContent=String(d?.thongBao||d?.message||'Backend chưa hỗ trợ đổi mật khẩu; chưa lưu thay đổi.');
+else {const m=String(d?.thongBao||d?.message||'Backend chưa hỗ trợ đổi mật khẩu; chưa lưu thay đổi.');status.textContent=m+(d?.errorCode?' (Mã: '+String(d.errorCode)+')':'');}
 }catch(e){status.textContent='Chưa kết nối được Backend đổi mật khẩu; chưa lưu thay đổi.'}
 finally{busy=false;$('nvs-pwd-save').disabled=false}
 });
@@ -3850,5 +3850,6 @@ html body nav.nvs-premium-nav>button>i{
  }
 })();
 </script>
+<style id="nvs-pwd-legacy-hint-20261122">#nvs-pwd-box .nvs-pwd-legacy-hint{font-size:12px;line-height:1.45;color:#476884;margin:4px 0 8px}#nvs-pwd-status{white-space:pre-wrap;overflow-wrap:anywhere}</style>
 </body>
 </html>
