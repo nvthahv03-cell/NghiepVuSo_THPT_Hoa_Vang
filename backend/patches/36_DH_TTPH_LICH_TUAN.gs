@@ -35,6 +35,8 @@ function hvaLtNotificationPost_(p) {
     }
     pdfUrl=file.getUrl();
   }catch(e){return nvsResp_({success:false,message:'Không xác thực được PDF trên Drive: '+String(e.message||e)});}
+  // Kiểm tra trước không ghi dữ liệu: TTPH xác thực endpoint trước khi công bố lịch.
+  if(p.dryRun===true)return nvsResp_({success:true,ready:true,message:'Backend V5 sẵn sàng phát hành thông báo Lịch tuần.'});
   const lock=LockService.getScriptLock();
   if(!lock.tryLock(20000))return nvsResp_({success:false,message:'Đang có phiên phát hành khác.'});
   try{
