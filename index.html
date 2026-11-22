@@ -3997,8 +3997,8 @@ html body nav.nvs-premium-nav>button>i{
 #dthtPassFixedPrefix[hidden],#nvs-pwd-fixed-prefix[hidden]{display:none!important}
 </style>
 <style id="nvs-personal-hub-styles">
-#nvsPersonalHub[hidden],#nvsFeedbackModal[hidden]{display:none!important}
-#nvsPersonalHub,#nvsFeedbackModal{position:fixed;inset:0;z-index:11990;display:grid;place-items:center;background:#0b2641aa;padding:14px}
+#nvsPersonalHub[hidden],#nvsPersonalLookupModal[hidden],#nvsFeedbackModal[hidden]{display:none!important}
+#nvsPersonalHub,#nvsPersonalLookupModal,#nvsFeedbackModal{position:fixed;inset:0;z-index:11990;display:grid;place-items:center;background:#0b2641aa;padding:14px}
 #nvsFeedbackModal{z-index:12020}
 .nvs-personal-panel{width:min(490px,100%);max-height:92dvh;overflow:auto;background:#fff;border:1px solid #d7e5f0;border-radius:19px;box-shadow:0 20px 65px #102d4e45;padding:22px;color:#153856;font:14px/1.5 "Segoe UI",Arial,sans-serif}
 .nvs-personal-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
@@ -4027,6 +4027,7 @@ html body nav.nvs-premium-nav>button>i{
 <div id="nvsPersonalLookupModal" hidden role="presentation"><section class="nvs-personal-panel" role="dialog" aria-modal="true" aria-labelledby="nvsPersonalLookupTitle">
 <header class="nvs-personal-top"><h2 id="nvsPersonalLookupTitle"><i class="bi bi-search"></i> Tra cứu nhanh</h2><button class="nvs-personal-close" id="nvsPersonalLookupClose" type="button">Đóng</button></header>
 <div class="nvs-personal-grid">
+<a class="nvs-personal-choice" href="./TraCuuNhanSu.html"><i class="bi bi-people-fill"></i><span>Tra cứu nhân sự<small>Tìm tên, tổ, môn dạy, chức vụ, kiêm nhiệm, ngày sinh và gọi điện</small></span></a>
 <a class="nvs-personal-choice" href="./LichCongTac.html"><i class="bi bi-calendar-week"></i><span>B.1.2 – Lịch công tác, cuộc họp<small>Mở lịch công tác hiện hành</small></span></a>
 <a class="nvs-personal-choice" href="./NVS_GiaoViec_TheoDoi.html?view=mine"><i class="bi bi-person-check"></i><span>B.1.4 – Nhiệm vụ được giao<small>Tra cứu nhiệm vụ và tiến độ</small></span></a>
 <a class="nvs-personal-choice" href="./VanBan_QuyDinh.html"><i class="bi bi-journal-text"></i><span>B.2.1 – Văn bản, quy định<small>Tra cứu văn bản hiện có</small></span></a>
