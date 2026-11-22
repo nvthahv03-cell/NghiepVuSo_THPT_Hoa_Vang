@@ -124,6 +124,8 @@
 /* Đăng nhập lần đầu: tiền tố cố định, mật khẩu riêng giữ nguyên. */
 .edos-pass-modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}
 .edos-pass-mode{min-height:40px;padding:6px 8px;border-radius:10px;border:1px solid #b7cee4;background:#f5f9fe;color:#315778;font-size:12px;font-weight:800}
+.edos-mode-status{font-size:12px;font-weight:700;color:#07578e;margin:7px 0 9px;line-height:1.5}
+.edos-pass-modes[hidden]{display:none!important}
 .edos-pass-mode.is-active{background:#e4f4ff;border-color:#087fc4;color:#07578e;box-shadow:inset 0 0 0 1px #087fc4}
 .edos-fixed-password-prefix{font-size:16px;font-weight:900;white-space:nowrap;color:#07578e;margin-left:8px;padding:0 8px 0 3px;border-right:1px solid #c5d6e7}
 .edos-fixed-password-prefix[hidden]{display:none!important}
@@ -956,13 +958,13 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
       <label for="dthtLoginUser">Tên đăng nhập</label>
       <div class="dtht-input-wrap">
         <span class="dtht-input-icon"><i class="bi bi-person"></i></span>
-        <input id="dthtLoginUser" autocomplete="username" placeholder="Nhập tên đăng nhập (ví dụ: thanv)">
+        <input id="dthtLoginUser" autocomplete="username" placeholder="Nhập tên đăng nhập (ví dụ: thanv)" oninput="edosSchedulePasswordMode()" onblur="edosDetectPasswordMode()">
       </div>
     </div>
 
     <div class="dtht-auth-field">
       <label for="dthtLoginPass">Mật khẩu</label>
-      <div class="edos-pass-modes" role="group" aria-label="Loại mật khẩu đăng nhập">
+      <div id="edosPasswordModeStatus" class="edos-mode-status" role="status" aria-live="polite">Nhập tên đăng nhập để nhận diện mật khẩu.</div><div class="edos-pass-modes" id="edosManualPasswordModes" role="group" aria-label="Chọn thủ công khi chưa có kết nối" hidden>
         <button type="button" id="edosFirstLoginMode" class="edos-pass-mode is-active" aria-pressed="true" onclick="edosSetLoginPasswordMode('initial')">Đăng nhập lần đầu</button>
         <button type="button" id="edosPersonalLoginMode" class="edos-pass-mode" aria-pressed="false" onclick="edosSetLoginPasswordMode('personal')">Đã đổi mật khẩu</button>
       </div>
@@ -1122,26 +1124,60 @@ function authToken(){
   return token;
 }
 
-let edosLoginPasswordMode = 'initial';
-function edosSetLoginPasswordMode(mode) {
-  edosLoginPasswordMode = mode === 'personal' ? 'personal' : 'initial';
-  const first = edosLoginPasswordMode === 'initial';
-  const input = document.getElementById('dthtLoginPass');
-  const prefix = document.getElementById('edosFixedPasswordPrefix');
-  const firstBtn = document.getElementById('edosFirstLoginMode');
-  const personalBtn = document.getElementById('edosPersonalLoginMode');
-  if(!input)return;
-  input.value='';
-  input.maxLength=first?4:24;
-  input.inputMode=first?'numeric':'text';
-  input.placeholder=first?'4 chữ số được cấp':'Nhập mật khẩu cá nhân đã đổi';
-  if(first)input.setAttribute('pattern','[0-9]{4}');
-  else input.removeAttribute('pattern');
-  if(prefix)prefix.hidden=!first;
-  if(firstBtn){firstBtn.classList.toggle('is-active',first);firstBtn.setAttribute('aria-pressed',String(first))}
-  if(personalBtn){personalBtn.classList.toggle('is-active',!first);personalBtn.setAttribute('aria-pressed',String(!first))}
-  document.getElementById('dthtAuthMsg').textContent='';
-  input.focus();
+let edosLoginPasswordMode='initial',edosPasswordModeVerifiedFor='',edosPasswordModeRequest=0,edosPasswordModeTimer=null,edosPasswordModePending=null;
+function edosSetLoginPasswordMode(mode,options={}){
+ const first=mode!=='personal',chosen=first?'initial':'personal';
+ const input=document.getElementById('dthtLoginPass');
+ if(!input)return;
+ if(edosLoginPasswordMode!==chosen&&!options.preserveInput)input.value='';
+ edosLoginPasswordMode=chosen;
+ input.maxLength=first?4:24;input.inputMode=first?'numeric':'text';
+ input.placeholder=first?'4 chữ số được cấp':'Nhập mật khẩu cá nhân đã đổi';
+ if(first)input.setAttribute('pattern','[0-9]{4}');else input.removeAttribute('pattern');
+ document.getElementById('edosFixedPasswordPrefix').hidden=!first;
+ const a=document.getElementById('edosFirstLoginMode'),b=document.getElementById('edosPersonalLoginMode');
+ for(const [btn,selected] of [[a,first],[b,!first]]){btn.classList.toggle('is-active',selected);btn.setAttribute('aria-pressed',String(selected))}
+ if(options.manual){edosPasswordModeVerifiedFor='';document.getElementById('edosPasswordModeStatus').textContent='Đã chọn hình thức nhập thủ công.'}
+ if(!options.silent)document.getElementById('dthtAuthMsg').textContent='';
+}
+function edosSchedulePasswordMode(){
+ clearTimeout(edosPasswordModeTimer);
+ edosPasswordModeVerifiedFor='';edosPasswordModeRequest++;
+ const username=String(document.getElementById('dthtLoginUser').value||'').trim().toLowerCase();
+ document.getElementById('dthtLoginPass').value='';
+ document.getElementById('edosPasswordModeStatus').textContent=username?'Đang nhận diện tài khoản...':'Nhập tên đăng nhập để nhận diện mật khẩu.';
+ document.getElementById('edosManualPasswordModes').hidden=true;
+ if(username.length>=2)edosPasswordModeTimer=setTimeout(()=>edosDetectPasswordMode(),500);
+}
+async function edosDetectPasswordMode(){
+ clearTimeout(edosPasswordModeTimer);
+ const userField=document.getElementById('dthtLoginUser');
+ const username=String(userField.value||'').trim().toLowerCase();
+ const status=document.getElementById('edosPasswordModeStatus'),manual=document.getElementById('edosManualPasswordModes');
+ if(!username){status.textContent='Nhập tên đăng nhập trước.';return false}
+ if(edosPasswordModeVerifiedFor===username)return true;
+ if(edosPasswordModePending?.username===username)return edosPasswordModePending.promise;
+ const req=++edosPasswordModeRequest,ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),8000);
+ status.textContent='Đang nhận diện hình thức mật khẩu...';
+ const promise=(async()=>{
+  try{
+   const response=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'getLoginPasswordMode',username}),signal:ctrl.signal});
+   if(!response.ok)throw Error('Không kết nối được máy chủ');
+   const result=await response.json();
+   if(result?.success!==true||!['INITIAL','PERSONAL'].includes(result.mode))throw Error('Tuyến nhận diện chưa sẵn sàng');
+   if(req!==edosPasswordModeRequest||String(userField.value||'').trim().toLowerCase()!==username)return false;
+   edosSetLoginPasswordMode(result.mode==='PERSONAL'?'personal':'initial',{silent:true});
+   edosPasswordModeVerifiedFor=username;manual.hidden=true;
+   status.textContent=result.mode==='PERSONAL'?'Đã đổi mật khẩu: nhập mật khẩu cá nhân.':'Đăng nhập lần đầu: HVA@ cố định, chỉ nhập 4 chữ số.';
+   return true;
+  }catch(err){
+   if(req!==edosPasswordModeRequest)return false;
+   edosPasswordModeVerifiedFor='';manual.hidden=false;
+   status.textContent='Chưa tự nhận diện được. Có thể chọn hình thức mật khẩu bên dưới để đăng nhập.';
+   return false;
+  }finally{clearTimeout(timeout);if(edosPasswordModePending?.username===username)edosPasswordModePending=null}
+ })();
+ edosPasswordModePending={username,promise};return promise;
 }
 function dthtTogglePassword(){
   const input = $('dthtLoginPass'), icon = $('dthtPassEyeIcon');
@@ -1170,6 +1206,10 @@ async function dthtStandaloneLogin(){
   const userInput = $('dthtLoginUser'), passInput = $('dthtLoginPass');
   const btn = $('dthtLoginBtn'), btnText = $('dthtLoginBtnText'), msg = $('dthtAuthMsg');
   const username = (userInput.value || '').trim();
+  // Đảm bảo hình thức mật khẩu tương ứng với username trước khi đăng nhập.
+  if(username && edosPasswordModeVerifiedFor!==username && document.getElementById('edosManualPasswordModes').hidden){
+    await edosDetectPasswordMode();
+  }
   const rawPassword = (passInput.value || '').trim();
 
   if(!username || !rawPassword){
