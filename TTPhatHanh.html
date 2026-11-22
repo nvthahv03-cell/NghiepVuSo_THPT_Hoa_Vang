@@ -1910,8 +1910,8 @@ const HvaRoleDest={
                 sessionToken: String(localStorage.getItem('hvaSessionToken') || sessionStorage.getItem('hvaSessionToken') || '').trim()
             };
         },
-        postToBackend: async (payload) => {
-            const response = await fetch(CONFIG.SCRIPT_URL, {
+        postToBackend: async (payload, backendUrl = CONFIG.SCRIPT_URL) => {
+            const response = await fetch(backendUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
@@ -2893,6 +2893,18 @@ return;
                 if(!d.lichId||!d.driveFileId) throw new Error('Chưa có mã lịch hoặc PDF đã chuẩn bị.');
                 const phaseKey='HVA_LT_GATEWAY_PUBLISH:'+String(d.lichId)+':'+String(d.driveFileId);
                 let phase={};try{phase=JSON.parse(localStorage.getItem(phaseKey)||'{}');}catch(_){ }
+                // Kiểm tra tuyến V5 và phiên đăng nhập trước khi công bố lịch, không ghi dữ liệu.
+                // Nếu Backend chưa được triển khai, dừng tại đây để tránh công bố nửa chừng.
+                if (!String(payload.sessionToken || '').trim()) {
+                    throw new Error('Thiếu phiên đăng nhập EDOS V5. Vui lòng đăng nhập lại.');
+                }
+                try {
+                    const ready=await PublishEngine.postToBackend({...payload,action:'ltPublishNotification',dryRun:true},
+                        'https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec');
+                    if(ready.ready!==true)throw new Error('Backend chưa xác nhận tuyến phát hành Lịch tuần.');
+                } catch(err){
+                    throw new Error('Backend V5 chưa sẵn sàng phát hành Lịch tuần: '+String(err?.message||err));
+                }
                 if(!phase.calendarPublished){
                     const r=await fetch('https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec',{
                         method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
@@ -2910,7 +2922,7 @@ return;
                 }
                 // Chống việc lặp lại phát hành khi không nhận được xác nhận từ TTPH.
                 try {
-                    result=await PublishEngine.postToBackend(payload);
+                    result=await PublishEngine.postToBackend({...payload,action:'ltPublishNotification'}, 'https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec');
                 } catch (err) {
                     throw new Error('Bước Thông báo TTPH: ' + String(err?.message || err));
                 }
