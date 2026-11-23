@@ -65,7 +65,12 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
      const [y,m,d]=value.slice(0,10).split('-');return d+'/'+m+'/'+y;
    }
    if(/^\d{1,2}[/.\-]\d{1,2}[/.\-]\d{4}$/.test(value)){
-     const [d,m,y]=value.split(/[/.\-]/);return d.padStart(2,'0')+'/'+m.padStart(2,'0')+'/'+y;
+     let [d,m,y]=value.split(/[/.\-]/);
+     // Tương thích bản Backend cũ: MM/dd/yyyy chỉ đảo khi chắc chắn
+     // (thành phần thứ hai > 12). Ngày mơ hồ sẽ do Backend mới xác định
+     // chính xác từ ô Date gốc, không tự đoán.
+     if(Number(m)>12&&Number(d)<=12){const temp=d;d=m;m=temp}
+     return d.padStart(2,'0')+'/'+m.padStart(2,'0')+'/'+y;
    }
    return value;
  };
