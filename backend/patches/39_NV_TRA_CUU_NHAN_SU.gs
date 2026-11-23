@@ -57,7 +57,7 @@ function hvaPersonnelDirectoryGet_(params) {
           return Utilities.formatDate(raw,dateZone,'yyyy-MM-dd');
         // Trường ngày lưu dạng văn bản: không đoán những ngày/tháng mơ hồ.
         const displayed=cell(row,birthdayCol);
-        const m=displayed.match(/^(\\d{1,2})[\\/.-](\\d{1,2})[\\/.-](\\d{4})$/);
+        const m=displayed.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
         if(m){
           const a=Number(m[1]),b=Number(m[2]);
           if(a>12&&b<=12)return m[3]+'-'+String(b).padStart(2,'0')+'-'+String(a).padStart(2,'0');
