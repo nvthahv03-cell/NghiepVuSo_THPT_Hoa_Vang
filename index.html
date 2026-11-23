@@ -4263,7 +4263,7 @@ form?.addEventListener('submit',async e=>{
     <section class="hva-lt-group"><h3 class="hva-lt-group-title"><i class="bi bi-calendar3"></i> LỊCH</h3><div class="hva-lt-tabgrid" role="group" aria-label="Loại lịch">
       <button type="button" class="hva-lt-tab" data-calendar-view="week" aria-selected="true">Tuần</button><button type="button" class="hva-lt-tab" data-calendar-view="month" aria-selected="false">Tháng</button><button type="button" class="hva-lt-tab" data-calendar-view="department" aria-selected="false">Sở</button><button type="button" class="hva-lt-tab" data-calendar-view="urgent" aria-selected="false">Đột xuất</button>
     </div></section>
-    <section class="hva-lt-group"><h3 class="hva-lt-group-title"><i class="bi bi-table"></i> THỜI KHÓA BIỂU</h3><div class="hva-lt-tabgrid" role="group" aria-label="Tra cứu thời khóa biểu">
+    <section class="hva-lt-group"><div class="hva-lt-tkb-header"><h3 class="hva-lt-group-title"><i class="bi bi-table"></i> THỜI KHÓA BIỂU</h3><a class="hva-lt-tkb-download" href="https://docs.google.com/spreadsheets/d/176tICCCsDPOnffCH4GAKO1p9YEcyc2ODEEaOa39Gyg4/export?format=xlsx" target="_blank" rel="noopener noreferrer" download aria-label="Tải Excel TKB lần 2, ngày 02/11/2026"><i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Tải Excel TKB <small>(Lần 2 · 02/11/2026)</small></a></div><div class="hva-lt-tabgrid" role="group" aria-label="Tra cứu thời khóa biểu">
       <button type="button" class="hva-lt-tab" data-calendar-view="personal" aria-selected="false">Cá nhân</button><button type="button" class="hva-lt-tab" data-calendar-view="morning" aria-selected="false">Sáng</button><button type="button" class="hva-lt-tab" data-calendar-view="afternoon" aria-selected="false">Chiều</button><button type="button" class="hva-lt-tab" data-calendar-view="class" aria-selected="false">Lớp</button><button type="button" class="hva-lt-tab" data-calendar-view="teacher" aria-selected="false">GV</button>
     </div></section>
    </nav>
@@ -4703,6 +4703,15 @@ html body .nvs-chooser .nvs-two-gates #nvsWorkGate>strong{
 <style id="hva-tkb-native-layout-20261123">
 #hvaLtHomeOverlay .hva-lt-group:nth-child(2) .hva-lt-tabgrid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
 @media(max-width:550px){#hvaLtHomeOverlay .hva-lt-group:nth-child(2) .hva-lt-tab{font-size:10px!important;padding:9px 2px!important}}
+</style>
+
+<style id="hva-lt-download-tkb-header-20261123">
+#hvaLtHomeOverlay .hva-lt-tkb-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:0 0 10px}
+#hvaLtHomeOverlay .hva-lt-tkb-header .hva-lt-group-title{margin:0;white-space:nowrap}
+#hvaLtHomeOverlay .hva-lt-tkb-download{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;max-width:100%;padding:6px 9px;border:1px solid #9ecce7;background:#e7f4fc;border-radius:8px;color:#07568c;font:700 11px/1.25 Inter,"Segoe UI",Arial,sans-serif;text-decoration:none;white-space:nowrap}
+#hvaLtHomeOverlay .hva-lt-tkb-download small{font-size:10px;font-weight:600;color:#426a86}
+#hvaLtHomeOverlay .hva-lt-tkb-download:hover{background:#d4ebfa}
+@media(max-width:620px){#hvaLtHomeOverlay .hva-lt-tkb-header{align-items:flex-start}#hvaLtHomeOverlay .hva-lt-tkb-download{white-space:normal}}
 </style>
 </body>
 </html>
