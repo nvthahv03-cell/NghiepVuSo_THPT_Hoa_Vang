@@ -22,7 +22,7 @@ main{max-width:1100px;margin:20px auto;padding:0 15px 35px}.panel{background:whi
 .person h2{font-size:17px;margin:0;color:#0b518a;overflow-wrap:anywhere}.meta{font-size:13px;color:#59748b;margin:5px 0 13px}.fields{display:grid;gap:7px}
 .field{display:grid;grid-template-columns:minmax(95px,125px) 1fr;gap:8px;font-size:13px;align-items:start}.field b{color:#315875}.field span{overflow-wrap:anywhere}
 .tags{display:flex;flex-wrap:wrap;gap:5px}.tag{background:#e8f3fd;border:1px solid #d0e5fa;border-radius:100px;padding:2px 9px;font-size:12px}
-.phone-number{font-weight:800;color:#075c9f;white-space:nowrap}.phone-number:hover{text-decoration:underline}.call{display:inline-flex;align-items:center;gap:6px;color:#fff;background:#07816a;border-radius:9px;padding:6px 10px;text-decoration:none;font-weight:800;font-size:13px;margin-top:4px}
+.phone-number{font-weight:800;color:#075c9f;white-space:nowrap}.phone-number:hover{text-decoration:underline}.contact-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}.call{display:inline-flex;align-items:center;justify-content:center;gap:6px;color:#fff;background:#07816a;border-radius:9px;padding:7px 11px;text-decoration:none;font-weight:800;font-size:13px;min-height:36px}.zalo-contact{display:inline-flex;align-items:center;justify-content:center;gap:6px;color:#fff;background:#0068ff;border-radius:9px;padding:7px 11px;text-decoration:none;font-weight:800;font-size:13px;min-height:36px}.zalo-contact .zalo-mark{display:inline-grid;place-items:center;background:#fff;color:#0068ff;font-size:10px;font-weight:900;line-height:1;border-radius:4px;width:22px;height:19px}.call:focus-visible,.zalo-contact:focus-visible{outline:3px solid #ffce52;outline-offset:2px}
 .empty{padding:28px 14px;text-align:center;color:#607992;background:#f7fbff;border:1px dashed #cbdfee;border-radius:13px}
 footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
 @media(max-width:480px){main{margin:12px auto}.panel{padding:13px}.field{grid-template-columns:minmax(80px,104px) 1fr}.person{padding:14px}}
@@ -222,7 +222,8 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
        field('Ngày sinh',birth)+
        '<div class="field"><b>Số điện thoại</b><span>'+
        (tel?'<a class="phone-number" href="tel:'+escape(tel)+'" title="Chạm để gọi" aria-label="Gọi '+escape(p.hoTen)+' tại số '+escape(phone)+'">'+escape(phone)+'</a>':escape(phone||'Chưa cập nhật'))+
-       (tel?'<div><a class="call" href="tel:'+escape(tel)+'" aria-label="Gọi điện cho '+escape(p.hoTen)+'"><i class="bi bi-telephone-fill"></i> Gọi ngay</a></div>':'')+'</span></div>'+
+       (tel?'<div class="contact-actions"><a class="call" href="tel:'+escape(tel)+'" aria-label="Gọi điện cho '+escape(p.hoTen)+'"><i class="bi bi-telephone-fill"></i> Gọi ngay</a>'+ 
+         '<a class="zalo-contact" href="https://zalo.me/'+escape(tel.startsWith('+84')?'0'+tel.slice(3):tel)+'" target="_blank" rel="noopener noreferrer" aria-label="Mở Zalo của '+escape(p.hoTen)+'" title="Mở Zalo để nhắn tin hoặc gọi trong ứng dụng"><span class="zalo-mark" aria-hidden="true">Z</span> Zalo</a></div>':'')+'</span></div>'+
        '</div></article>';
    }).join('');
  }
