@@ -153,7 +153,7 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 .hva-remind-preview-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #dbe8f1;padding:12px 17px;font-size:12px;color:#587086}
 .assistant-btn:not(:disabled){background:#0b648e;color:#fff;opacity:1}
 @media(max-width:600px){.hva-remind-preview-modal{padding:6px}.hva-remind-preview-panel{max-height:96dvh;border-radius:11px}.hva-remind-preview-body{padding:14px}.hva-remind-preview-footer{align-items:flex-start;flex-direction:column}}
-</style><style id="hva-remind-one-draft-action">.draft-actions{display:block}.draft-actions .assistant-btn{width:100%;min-height:43px;font-weight:800}.draft-actions .assistant-btn:disabled{opacity:.72}</style></head>
+</style><style id="hva-remind-one-draft-action">.draft-actions{display:block}.draft-actions .assistant-btn{width:100%;min-height:43px;font-weight:800}.draft-actions .assistant-btn:disabled{opacity:.72}</style><style id="hva-remind-quick-length-note">.hva-remind-quick-note{margin:5px 0 10px;font-size:12px;color:#4b6d87}</style></head>
 <body>
 <div class="shell">
 <header class="head" aria-label="Điều hành nhắc nhở công vụ">
@@ -189,7 +189,7 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 <div class="two"><div class="field"><label for="level">Mức độ</label><select id="level"><option value="NHAC_NHO">Mức 1 · Nhắc nhở</option><option value="CANH_BAO">Mức 2 · Cảnh báo</option><option value="GIAI_TRINH">Mức 3 · Yêu cầu giải trình</option></select></div><div class="field"><label for="tone">Văn phong dự thảo</label><select id="tone"><option value="LICH_SU_NGHIEM_KHAC">Lịch sự, nghiêm khắc</option><option value="CHUAN_HANH_CHINH">Chuẩn hành chính</option><option value="NGAN_GON">Ngắn gọn, dứt khoát</option></select></div></div>
 <div class="two"><div class="field"><label for="eventDate">Ngày ghi nhận sự việc</label><input type="date" id="eventDate"></div><div class="field"><label for="deadline">Hạn phản hồi (nếu có)</label><input type="datetime-local" id="deadline"></div></div>
 <div class="field"><label for="facts">Thông tin thực tế đã ghi nhận / yêu cầu cụ thể</label><textarea id="facts" placeholder="Ví dụ: Buổi chào cờ ngày…, theo lịch công tác; chưa nhận được thông tin xin phép. Chỉ nhập dữ kiện đã kiểm tra."></textarea><div class="hint">Không đưa nhận định chưa xác minh thành kết luận vi phạm.</div></div>
-<div class="draft-actions"><button class="btn assistant-btn" id="geminiBtn" type="button">✦ Trợ lý EDOS – Soạn nhắc nhở</button></div>
+<div id="hvaQuickNote" class="hva-remind-quick-note">Nhắc nhở nhanh: tối đa 2 câu, ưu tiên hiển thị gọn trong 2 dòng; ghi đích danh và chỉ dùng dữ kiện đã có.</div><div class="draft-actions"><button class="btn assistant-btn" id="geminiBtn" type="button">✦ Trợ lý EDOS – Soạn nhắc nhở</button></div>
 <h2 class="step-heading"><span>03</span> Kiểm tra và chuyển phát hành <small>Trung tâm Phát hành là nơi xác nhận gửi chính thức</small></h2>
 <div class="field"><label for="subject">Tiêu đề <span style="color:#b42332">*</span></label><input id="subject" placeholder="Nhắc nhở về việc chấp hành lịch công tác"></div>
 <div class="field"><label for="content">Nội dung dự thảo <span style="color:#b42332">*</span></label><textarea id="content" rows="9" placeholder="BGH kiểm tra và chỉnh sửa nội dung tại đây…"></textarea></div>
@@ -431,7 +431,30 @@ function reminderSalutation(){
 function reminderTopics(){
  return scenarioCodes().filter(code=>code!=='NN-OTHER').map(code=>scenarios.find(x=>x[0]===code)?.[1]).filter(Boolean);
 }
+function quickMode(){return window.HVA_REMINDER_MODE==='quick'}
+function compactQuickFallback(){
+ const p=payload(),names=reminderRecipientNames(),topics=reminderTopics();
+ const who=names.length===1?'Thầy/Cô '+names[0]:'các Thầy/Cô '+names.join(', ');
+ const topic=topics.length===1?topics[0]:topics.length>1?topics.slice(0,2).join('; '):'nội dung cần trao đổi';
+ const facts=String(p.facts||'').replace(/\s+/g,' ').trim().replace(/[.!?]+$/,'');
+ const date=p.eventDate?' ngày '+p.eventDate.split('-').reverse().join('/'):'';
+ const context=facts?facts:(topics.length?'cần đối chiếu về việc '+topic:'có nội dung cần trao đổi');
+ const first='Nhà trường ghi nhận thông tin liên quan đến '+who+date+': '+context+'.';
+ const second='Đề nghị Thầy/Cô kiểm tra, phản hồi và thực hiện đúng quy định.';
+ const message=first+' '+second;
+ if(message.length>235)throw Error('Dữ kiện quá dài để viết nhắc nhở nhanh trong 2 dòng. Thầy rút gọn sự việc hoặc chuyển sang Nhắc nhở khác.');
+ $('subject').value='Nhắc nhở nhanh – '+topic;
+ $('content').value=message;
+ $('verified').checked=false;
+}
+function quickCheck(text){
+ const compact=String(text||'').replace(/\s+/g,' ').trim();
+ const cleaned=compact.replace(/^Kính gửi[^,.!?\n]*[,.:]?\s*/i,'').replace(/\bTrân trọng[.!]?\s*$/i,'').trim();
+ const sentences=(cleaned.match(/[.!?](?=\s|$)/g)||[]).length;
+ return cleaned.length<=235&&sentences<=2&&!/kính gửi|trân trọng/i.test(cleaned)?cleaned:null;
+}
 function reminderFallback(){
+ if(quickMode())return compactQuickFallback();
  const p=payload(),names=reminderRecipientNames(),topics=reminderTopics();
  const greeting=reminderSalutation();
  const descriptions=topics.length?topics.join('; '):'nội dung cần trao đổi';
@@ -463,7 +486,7 @@ async function generate(){
  try{
   const question=[
    'Bạn là Trợ lý EDOS hỗ trợ BGH Trường THPT Hòa Vang soạn NHẮC NHỞ CÔNG VỤ cá nhân. Trả lời DUY NHẤT nội dung văn bản, không giải thích. Viết đúng tên NGƯỜI NHẬN. Không tự nhận định là có vi phạm khi chưa xác minh. Không bịa dữ kiện, không đặt ngày nếu không được nhập. Không đưa tên nhãn mẫu Khác – BGH tự mô tả tình huống cụ thể vào văn bản.',
-   'Dòng mở đầu bắt buộc: '+reminderSalutation(),
+   quickMode()?'NHẮC NHỞ NHANH: chỉ 1-2 câu, tối đa 235 ký tự; không lời chào Kính gửi, không Trân trọng; ghi đích danh người nhận, nêu sự việc có căn cứ và đề nghị khắc phục/phản hồi.':'Dòng mở đầu bắt buộc: '+reminderSalutation(),
    'Người nhận: '+recipients.join('; '),
    'Tình huống đã chọn: '+(topics.join('; ')||'(tình huống khác, mô tả bằng dữ kiện bên dưới)'),
    'Dữ kiện cụ thể: '+(p.facts||'(chưa ghi nhận thêm dữ kiện)'),
@@ -483,15 +506,19 @@ async function generate(){
    if(response.draft.title)$('subject').value=String(response.draft.title);
   }else throw Error('Dịch vụ AI chưa sẵn sàng');
   if(!draft)throw Error('Trợ lý chưa trả nội dung.');
-  $('content').value=normalizeReminderGreeting(draft);
+  if(quickMode()){
+   const quick=quickCheck(draft);
+   if(quick&&reminderRecipientNames().every(n=>quick.toLocaleLowerCase('vi').includes(n.toLocaleLowerCase('vi'))))$('content').value=quick;
+   else compactQuickFallback();
+  }else $('content').value=normalizeReminderGreeting(draft);
   $('subject').value=$('subject').value.trim()||'Nhắc nhở công vụ – '+(topics.join('; ')||'Nội dung cần trao đổi');
   $('verified').checked=false;
   status('sendStatus','Trợ lý đã tạo dự thảo đích danh '+recipients.join(', ')+'. BGH vui lòng xem trước, rà soát dữ kiện và duyệt.','ok');
  }catch(error){
   $('subject').value=oldTitle;
   $('content').value=oldText;
-  reminderFallback();
-  status('sendStatus','AI chưa phản hồi ('+err(error)+'). Đã soạn theo mẫu dự phòng với đúng tên giáo viên; thầy rà soát trước khi chuyển phát hành.','error');
+  try{reminderFallback();status('sendStatus','AI chưa phản hồi ('+err(error)+'). Đã tạo mẫu dự phòng ngắn; thầy rà soát trước khi chuyển phát hành.','error');}
+  catch(fallbackError){status('sendStatus',err(fallbackError),'error');}
  }finally{btn.disabled=false}
 }
 $('geminiBtn').onclick=generate;
@@ -500,6 +527,7 @@ function closePreview(){
  $('previewBtn').focus();
 }
 function preview(){
+ if(quickMode()&&!quickCheck($('content').value)){status('sendStatus','Nhắc nhở nhanh phải tối đa 2 câu ngắn, không lời chào/kết thư và không quá 235 ký tự.','error');return}
  const title=$('subject').value.trim(),body=$('content').value.trim();
  const names=[...state.selected].map(u=>state.people.find(p=>p.username===u)?.hoTen||u);
  const meta='Người nhận: '+(names.length?names.join(', '):'Chưa chọn')+' · Mức độ: '+$('level').selectedOptions[0].textContent;
@@ -515,6 +543,7 @@ $('hvaRemindPreviewModal').addEventListener('click',e=>{if(e.target===$('hvaRemi
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('hvaRemindPreviewModal').hidden){e.stopImmediatePropagation();closePreview()}},true);
 $('sendBtn').onclick=async()=>{if(!isBGH())return status('sendStatus','Chỉ Ban Giám hiệu được chuyển dự thảo nhắc nhở.','error');
 const p=payload(),title=$('subject').value.trim(),content=$('content').value.trim();
+if(quickMode()&&!quickCheck(content))return status('sendStatus','Nhắc nhở nhanh chỉ tối đa 2 câu ngắn, không có lời chào/kết thư, không quá 235 ký tự.','error');
 if(!state.selected.size||!title||!content||!state.templates.size)return status('sendStatus','Cần chọn người nhận, ít nhất một mẫu, tiêu đề và nội dung.','error');
 if(!$('verified').checked)return status('sendStatus','BGH cần xác nhận đã rà soát trước khi chuyển dự thảo.','error');
 if(!window.confirm('Chuyển dự thảo nhắc nhở dành cho '+state.selected.size+' người đến Trung tâm Phát hành để rà soát? Chưa gửi cho người nhận ở bước này.'))return;
@@ -551,7 +580,7 @@ if(!btn)return;btn.addEventListener('click',()=>{
 'use strict';
 const $=id=>document.getElementById(id),modes=[...document.querySelectorAll('[data-remind-mode]')];
 const API='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
-let all=[],loaded=false,busy=false,mode='quick';
+let all=[],loaded=false,busy=false,mode='quick';window.HVA_REMINDER_MODE='quick';
 const norm=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().replace(/[^a-z0-9]/g,'');
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const token=()=>localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'';
@@ -626,7 +655,7 @@ function choose(t){
  $('subject').scrollIntoView({behavior:'smooth',block:'center'});
 }
 function selectMode(v){
- mode=v;modes.forEach(b=>{const active=b.dataset.remindMode===v;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+ mode=v;window.HVA_REMINDER_MODE=v;const quickNote=$('hvaQuickNote');if(quickNote)quickNote.hidden=v!=='quick';modes.forEach(b=>{const active=b.dataset.remindMode===v;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
  $('hvaRemindTasks').hidden=v!=='tasks';$('hvaRemindOtherNote').hidden=v!=='other';
  if(v==='other')ensureTemplate('NN-OTHER');
  if(v==='other')$('facts').placeholder='Mô tả tình huống riêng, thời gian, sự việc đã kiểm chứng, yêu cầu cụ thể…';
