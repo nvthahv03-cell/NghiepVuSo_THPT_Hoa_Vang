@@ -465,7 +465,7 @@ async function generate(){
      'Tình huống chọn: '+topics.join('; '),
      'Mức độ: '+p.level+'. Hạn phản hồi: '+(p.deadline||'không nêu'),
      'Bản thảo hiện có để biên tập: '+($('content').value.trim()||'(chưa có)')
-    ].join('\\n').slice(0,3950);
+    ].join('\n').slice(0,3950);
     const answer=await service.ask({question,context:'Công việc',sessionToken:state.session.sessionToken});
     if(!String(answer||'').trim())throw Error('Trợ lý chưa trả nội dung.');
     $('content').value=String(answer).trim();
