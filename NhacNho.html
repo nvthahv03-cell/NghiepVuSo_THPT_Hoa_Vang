@@ -117,6 +117,28 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
  .search-wrap input{font-size:14px}
  .group-label{font-size:12px}
 }
+</style><style id="hva-remind-three-modes-20261123">
+.hva-remind-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0 0 12px}
+.hva-remind-mode{border:1px solid #c7dce9;background:#f6fafd;border-radius:11px;padding:11px 8px;text-align:left;cursor:pointer;color:#154c74;min-width:0}
+.hva-remind-mode b{display:block;font-size:13px;line-height:1.3}
+.hva-remind-mode small{display:block;margin-top:3px;font-size:10px;color:#5c7284;line-height:1.4}
+.hva-remind-mode.active{background:#e4f3fb;border:1.5px solid #1b83b8}
+.hva-remind-modes .hva-remind-mode:focus-visible{outline:2px solid #1278ae;outline-offset:2px}
+.hva-remind-tasks{padding:12px;border-radius:12px;border:1px solid #c8deec;background:#f8fcff;margin-bottom:12px}
+.hva-remind-tasks[hidden],.hva-remind-other-note[hidden]{display:none!important}
+.hva-remind-taskhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hva-remind-taskhead strong{font-size:13px;color:#0d4f7d}.hva-remind-taskhead p{font-size:11px;color:#657d91;margin:3px 0 7px}
+.hva-remind-taskfilters{display:flex;align-items:center;gap:9px;margin:8px 0}
+.hva-remind-taskfilters label{margin:0;white-space:nowrap}.hva-remind-taskfilters select{max-width:260px;padding:6px 8px;font-size:12px}
+.hva-remind-taskstats{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.hva-remind-taskstats span{display:block;padding:5px 8px;background:#e6f3fc;border-radius:7px;font-size:11px;color:#184d74}
+.hva-remind-tasklist{display:grid;gap:7px;max-height:340px;overflow-y:auto}
+.hva-remind-taskitem{padding:10px;border:1px solid #d7e6f0;border-radius:9px;background:#fff}
+.hva-remind-taskitem strong{font-size:13px;display:block;color:#133e61}
+.hva-remind-taskitem p{font-size:11px;color:#57728a;margin:4px 0}
+.hva-remind-taskitem button{padding:7px 10px;border:1px solid #7bb8df;border-radius:8px;color:#075886;background:#eaf7ff;font-weight:700;cursor:pointer;font-size:11px}
+.hva-remind-other-note{padding:11px 12px;border:1px solid #c6deed;border-radius:9px;background:#f1f9fe;margin-bottom:12px;font-size:12px;color:#315d7b}
+@media(max-width:700px){.hva-remind-modes{grid-template-columns:1fr;gap:5px}.hva-remind-mode{padding:9px 11px}.hva-remind-mode small{margin-top:1px}.hva-remind-taskhead{align-items:flex-start}.hva-remind-taskhead button{flex:none;font-size:11px;padding:8px}.hva-remind-taskfilters select{min-width:0;max-width:100%}}
 </style></head>
 <body>
 <div class="shell">
@@ -127,7 +149,20 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 <div class="layout">
 <section class="panel">
 <div class="workflow-steps" aria-label="Quy trình"><span><b>1</b> Chọn người nhận</span><span><b>2</b> Chọn mẫu</span><span><b>3</b> Chuyển phát hành</span></div>
-<div id="sendView">
+<div id="sendView"><section class="hva-remind-modes" aria-label="Chọn loại nhắc nhở">
+<button type="button" class="hva-remind-mode active" data-remind-mode="quick" aria-pressed="true"><b>1. Nhắc nhở nhanh</b><small>Mẫu công vụ thường gặp</small></button>
+<button type="button" class="hva-remind-mode" data-remind-mode="tasks" aria-pressed="false"><b>2. Nhắc việc đã triển khai</b><small>Trợ lý đọc từ Điều hành</small></button>
+<button type="button" class="hva-remind-mode" data-remind-mode="other" aria-pressed="false"><b>3. Nhắc nhở khác</b><small>Trợ lý hỗ trợ diễn đạt</small></button>
+</section>
+<section id="hvaRemindTasks" class="hva-remind-tasks" hidden aria-label="Đầu việc từ Điều hành">
+<div class="hva-remind-taskhead"><div><strong>TRỢ LÝ EDOS · ĐẦU VIỆC ĐIỀU HÀNH</strong><p>Đọc từ Giao việc – Theo dõi, không nhập lại nhiệm vụ.</p></div><button type="button" id="hvaRemindTaskRefresh" class="btn outline">Tải đầu việc</button></div>
+<div id="hvaRemindTaskStatus" class="hint" role="status">Chưa truy xuất nhiệm vụ từ Điều hành.</div>
+<div id="hvaRemindTaskStats" class="hva-remind-taskstats"></div>
+<div class="hva-remind-taskfilters"><label for="hvaRemindTaskFilter">Trạng thái</label><select id="hvaRemindTaskFilter"><option value="pending">Cần theo dõi</option><option value="all">Tất cả</option><option value="overdue">Quá hạn có căn cứ</option><option value="upcoming">Sắp đến hạn (7 ngày)</option></select></div>
+<div id="hvaRemindTaskList" class="hva-remind-tasklist"></div>
+</section>
+<div id="hvaRemindOtherNote" class="hva-remind-other-note" hidden>Nhập tình huống thực tế, chọn giáo viên và bấm <strong>Trợ lý EDOS</strong> để hỗ trợ soạn dự thảo. Nội dung cần được BGH kiểm chứng trước khi chuyển phát hành.</div>
+
 <div class="hint auth-compact" id="authInfo">Đang xác thực quyền Ban Giám hiệu…</div>
 <h2 class="step-heading"><span>01</span> Người nhận <small>Chọn một hoặc nhiều người, tổ, nhóm</small></h2>
 <div class="two hva-remind-filter-row"><div class="field"><label for="team">Tổ / bộ phận</label><select id="team"><option value="">Tất cả tổ / bộ phận</option></select></div><div class="field"><label for="search">Tìm nhanh nhân sự</label><div class="search-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search" type="search" autocomplete="off" placeholder="Nhập tên giáo viên, tổ hoặc nhóm…" aria-label="Tìm giáo viên theo tên, tên đăng nhập, tổ hoặc nhóm"><button class="search-clear" id="clearSearch" type="button" title="Xóa từ khóa" aria-label="Xóa từ khóa">×</button></div></div></div>
@@ -437,4 +472,96 @@ if(!btn)return;btn.addEventListener('click',()=>{
  else location.href='./index.html';
 });})();
 </script>
-</body></html>
+<script id="hva-remind-dieuhanh-bridge-20261123">
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),modes=[...document.querySelectorAll('[data-remind-mode]')];
+const API='https://script.google.com/macros/s/AKfycbzTRkdqyYYI8LQo9MkiTjEIXkAC7BWK1MroUXPuvKMl9Yu_o9gXFS8QCcyQmq78-ikvvg/exec';
+let all=[],loaded=false,busy=false,mode='quick';
+const norm=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().replace(/[^a-z0-9]/g,'');
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+const token=()=>localStorage.getItem('hvaSessionToken')||sessionStorage.getItem('hvaSessionToken')||'';
+function status(msg){$('hvaRemindTaskStatus').textContent=msg}
+function dateValue(raw){
+ const s=String(raw||'').trim();if(!s)return null;
+ const d=/^(\d{4})-(\d{2})-(\d{2})/.exec(s),vn=/^(\d{2})\/(\d{2})\/(\d{4})/.exec(s);
+ const v=d?new Date(Number(d[1]),Number(d[2])-1,Number(d[3])):vn?new Date(Number(vn[3]),Number(vn[2])-1,Number(vn[1])):null;
+ return v&&!isNaN(+v)?v:null;
+}
+function stateOf(t){
+ const x=norm(t.status);
+ if(/hoanthanh|dahoanthanh/.test(x))return 'done';
+ if(/choxacnhan/.test(x))return 'review';
+ const due=dateValue(t.deadline);
+ if(!due)return 'unknown';
+ const today=new Date();today.setHours(0,0,0,0);
+ const delta=Math.round((due-today)/86400000);
+ return delta<0?'overdue':delta<=7?'upcoming':'pending';
+}
+function filtered(){
+ const f=$('hvaRemindTaskFilter').value;
+ return all.filter(t=>f==='all'||(f==='pending'?stateOf(t)!=='done':stateOf(t)===f));
+}
+function render(){
+ const counts={overdue:0,upcoming:0,review:0,unknown:0};
+ all.forEach(t=>{const st=stateOf(t);if(counts[st]!==undefined)counts[st]++});
+ $('hvaRemindTaskStats').innerHTML='<span>Tổng đầu việc: '+all.length+'</span><span>Quá hạn: '+counts.overdue+'</span><span>Sắp đến hạn: '+counts.upcoming+'</span><span>Chờ xác nhận: '+counts.review+'</span><span>Chưa rõ hạn: '+counts.unknown+'</span>';
+ const list=filtered();
+ $('hvaRemindTaskList').innerHTML=list.map(t=>'<article class="hva-remind-taskitem"><strong>'+esc(t.title||'Chưa có tiêu đề')+'</strong><p>Người được giao: '+esc(t.assigneeName||'Chưa xác định')+' · Hạn: '+esc(t.deadline||'Chưa có hạn')+' · Trạng thái nguồn: '+esc(t.status||'Chưa rõ')+'</p><button type="button" data-hva-task-id="'+esc(t.recordId)+'">Chọn đầu việc để nhắc</button></article>').join('')||'<p class="hint">Không có đầu việc phù hợp bộ lọc. Chưa thể kết luận giáo viên đã hoàn thành hay vi phạm.</p>';
+}
+async function load(){
+ if(busy)return;if(!token()){status('Phiên đăng nhập không hợp lệ; vui lòng đăng nhập lại EDOS.');return}
+ busy=true;$('hvaRemindTaskRefresh').disabled=true;status('Đang đọc đầu việc từ Điều hành – Giao việc / Theo dõi…');
+ try{
+  const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'nvsTaskList',sessionToken:token()})});
+  if(!res.ok)throw Error('HTTP '+res.status);
+  const data=await res.json();if(!(data.ok||data.success))throw Error(data.message||'Backend không xác nhận kết quả');
+  if(!Array.isArray(data.tasks))throw Error('Backend không trả danh sách đầu việc');
+  const unique=new Map();data.tasks.filter(t=>t.view==='assigned').forEach(t=>{if(t.recordId)unique.set(String(t.recordId),t)});
+  all=[...unique.values()];loaded=true;status('Đã truy xuất '+all.length+' đầu việc do tài khoản được quyền quản lý. Chọn một việc để lập dự thảo nhắc nhở.');render();
+ }catch(e){loaded=false;all=[];render();status('Chưa đọc được Điều hành: '+(e.message||String(e))+'; không tự tạo dữ liệu thay thế.')}
+ finally{busy=false;$('hvaRemindTaskRefresh').disabled=false}
+}
+function ensureTemplate(code){
+ // Dùng sự kiện của kho mẫu hiện hữu; không truy cập trực tiếp trạng thái nội bộ.
+ const clear=$('templateClear');if(clear)clear.click();
+ const opener=$('templateOpen'),picker=$('templatePicker');
+ if(picker?.hidden)opener?.click();
+ $('templateSearch').value=code;
+ $('templateSearch').dispatchEvent(new Event('input',{bubbles:true}));
+ const target=[...document.querySelectorAll('#templateResults input[data-template]')].find(x=>x.dataset.template===code);
+ if(target){target.checked=true;target.dispatchEvent(new Event('change',{bubbles:true}))}
+ if(picker&&!picker.hidden){picker.hidden=true;opener?.setAttribute('aria-expanded','false')}
+ $('templateSearch').value='';
+ return !!target;
+}
+function choose(t){
+ if(!t)return;
+ if(!ensureTemplate('NN-NV01')){status('Không tìm thấy mẫu nhiệm vụ để lập dự thảo; vui lòng chọn mẫu thủ công.');return}
+ const due=t.deadline||'chưa có hạn',person=t.assigneeName||'chưa xác định';
+ $('subject').value='Nhắc thực hiện nhiệm vụ – '+String(t.title||'').trim();
+ $('facts').value='Nguồn: Điều hành – Giao việc / Theo dõi\nĐầu việc: '+(t.title||'')+'\nNgười được giao: '+person+'\nHạn thực hiện: '+due+'\nTrạng thái ghi nhận: '+(t.status||'Chưa rõ')+'\nMã hồ sơ: '+(t.recordId||'');
+ $('content').value='Kính gửi Thầy/Cô,\n\nTheo thông tin hiện có tại Điều hành EDOS, nhiệm vụ “'+(t.title||'')+'” được giao cho '+person+', hạn '+due+', trạng thái hệ thống: '+(t.status||'Chưa rõ')+'.\n\nĐề nghị Thầy/Cô kiểm tra tiến độ, thực hiện nhiệm vụ theo phân công và cập nhật hoặc phản hồi kết quả để nhà trường đối chiếu.\n\nTrân trọng.';
+ $('verified').checked=false;
+ const pName=norm(person);
+ const names=[...document.querySelectorAll('#people input[data-user]')].map(x=>({input:x,el:x.closest('label'),name:x.closest('label')?.querySelector('strong')?.textContent||''}));
+ // Không tự gán người nhận khi dữ liệu Điều hành chưa có định danh khớp chắc chắn.
+ const matches=names.filter(x=>pName&&norm(x.name)===pName);
+ if(matches.length===1){matches[0].input.checked=true;matches[0].input.dispatchEvent(new Event('change',{bubbles:true}))}
+ status('Đã lấy đầu việc “'+(t.title||'')+'” vào dự thảo. BGH đối chiếu người nhận và nhấn Xem trước trước khi chuyển phát hành.');
+ $('subject').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function selectMode(v){
+ mode=v;modes.forEach(b=>{const active=b.dataset.remindMode===v;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+ $('hvaRemindTasks').hidden=v!=='tasks';$('hvaRemindOtherNote').hidden=v!=='other';
+ if(v==='other')ensureTemplate('NN-OTHER');
+ if(v==='other')$('facts').placeholder='Mô tả tình huống riêng, thời gian, sự việc đã kiểm chứng, yêu cầu cụ thể…';
+ if(v==='tasks'&&!loaded)load();
+}
+modes.forEach(b=>b.addEventListener('click',()=>selectMode(b.dataset.remindMode)));
+$('hvaRemindTaskRefresh').addEventListener('click',load);
+$('hvaRemindTaskFilter').addEventListener('change',render);
+$('hvaRemindTaskList').addEventListener('click',e=>{const b=e.target.closest('[data-hva-task-id]');if(!b)return;const task=all.find(x=>String(x.recordId)===b.dataset.hvaTaskId);choose(task)});
+selectMode('quick');
+})();
+</script></body></html>
