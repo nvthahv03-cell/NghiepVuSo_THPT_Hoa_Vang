@@ -1007,7 +1007,73 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
   }
 }
 </style>
-</head>
+
+<style id="hva-four-gates-clarity-ecosystem-20261123">
+/* Bốn cổng lớn: tiêu đề trắng, đậm, cùng cỡ; biểu tượng sắc nét.
+   Giữ phân quyền, mọi ID và đường điều hướng hiện hữu. */
+html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;
+  padding:18px 9px!important;
+  gap:10px!important;
+  text-align:center!important;
+  border:1.5px solid rgba(219,248,255,.78)!important;
+  box-shadow:0 8px 25px rgba(0,28,82,.25)!important;
+}
+html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>.nvs-gate-icon{
+  display:grid!important;place-items:center!important;
+  width:clamp(75px,8vw,96px)!important;height:clamp(75px,8vw,96px)!important;
+  min-width:0!important;min-height:0!important;
+  margin:0 auto!important;
+  border:2px solid rgba(255,255,255,.98)!important;
+  border-radius:50%!important;
+  background:rgba(9,108,175,.28)!important;
+  color:#fff!important;
+  box-shadow:0 2px 10px rgba(0,36,90,.35)!important;
+}
+html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>.nvs-gate-icon>i{
+  font-size:clamp(38px,4.3vw,51px)!important;line-height:1!important;
+  display:block!important;color:#fff!important;
+  text-shadow:0 1px 3px rgba(0,26,64,.4)!important;
+}
+html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>strong{
+  display:block!important;
+  width:100%!important;max-width:100%!important;
+  margin:0!important;
+  color:#fff!important;
+  font:900 clamp(16px,2vw,22px)/1.18 Inter,"Segoe UI",Arial,sans-serif!important;
+  letter-spacing:.012em!important;text-align:center!important;
+  text-shadow:0 2px 4px rgba(0,22,61,.85),0 0 11px rgba(0,24,61,.35)!important;
+  -webkit-text-stroke:0!important;
+}
+html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>strong>em{
+  display:block!important;color:#fff!important;
+  font:800 .72em/1.35 Inter,"Segoe UI",Arial,sans-serif!important;
+  letter-spacing:.015em!important;text-shadow:0 2px 4px rgba(0,22,61,.9)!important;
+  margin-top:6px!important;
+}
+/* Dành chỗ cùng chiều cao trên iPhone; bốn cổng vẫn 2x2, không chuyển thành danh sách. */
+@media(max-width:720px){
+  html body .nvs-chooser .nvs-two-gates{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate{
+    height:100%!important;min-height:200px!important;
+    padding:16px 5px!important;gap:11px!important;
+  }
+  html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>.nvs-gate-icon{
+    width:clamp(68px,19vw,82px)!important;height:clamp(68px,19vw,82px)!important;
+  }
+  html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>.nvs-gate-icon>i{
+    font-size:clamp(35px,10vw,44px)!important;
+  }
+  html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>strong{
+    font-size:clamp(14px,4.1vw,19px)!important;
+    line-height:1.22!important;
+  }
+  html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>strong>em{
+    font-size:.75em!important;
+  }
+}
+</style></head>
 <body>
 
 <div id="hvaLogoutModal" class="hva-logout-overlay" role="dialog" aria-modal="true" aria-labelledby="hvaLogoutTitle">
@@ -1139,9 +1205,9 @@ body .nvs-quick>.nvs-quick-calendar>.nvs-quick-icon i{color:#1f64d1}
   <section class="nvs-chooser" aria-labelledby="nvs-choose-title">
     <div class="nvs-choose-heading"><span class="nvs-emblem"><i class="bi bi-buildings"></i></span><h2 id="nvs-choose-title">CỔNG NGHIỆP VỤ SỐ</h2><div class="hva-school-under-portal">TRƯỜNG THPT HÒA VANG</div><p>Đăng nhập chung · Chọn không gian làm việc phù hợp</p></div>
     <div class="nvs-two-gates">
-      <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-admin" id="nvsAdminGate" href="./DieuHanh.html" aria-label="Vào BGH – Điều hành"><span class="nvs-gate-icon"><i class="bi bi-bank"></i></span><strong>BAN GIÁM HIỆU<em>ĐIỀU HÀNH</em></strong><span>Thông báo – Phát hành · Lịch công tác · Cuộc họp · Theo dõi và xử lý</span><span class="nvs-gate-enter">Vào Điều hành <i class="bi bi-arrow-right"></i></span></a></div>
+      <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-admin" id="nvsAdminGate" href="./DieuHanh.html" aria-label="Vào CBQL – Điều hành theo phân quyền"><span class="nvs-gate-icon"><i class="bi bi-bank"></i></span><strong>CBQL<em>ĐIỀU HÀNH</em></strong><span>Thông báo – Phát hành · Lịch công tác · Cuộc họp · Theo dõi và xử lý</span><span class="nvs-gate-enter">Vào Điều hành <i class="bi bi-arrow-right"></i></span></a></div>
       <div class="nvs-gate-wrap"><a class="nvs-gate nvs-gate-work" id="nvsWorkGate" href="./NghiepVu.html?edrev=20261105a1a6" aria-label="Vào Giáo viên – Nhân viên – Tác nghiệp số"><span class="nvs-gate-icon"><i class="bi bi-pc-display-horizontal"></i></span><strong>GIÁO VIÊN – NHÂN VIÊN<em>TÁC NGHIỆP SỐ</em></strong><span>TTCM · TPCM · GV · NV<br>Nhận nhiệm vụ · Lập báo cáo · Nộp sản phẩm · Tra cứu công việc</span><span class="nvs-gate-enter">Vào Tác nghiệp <i class="bi bi-arrow-right"></i></span></a></div>
-      <div class="nvs-gate-wrap nvs-gate-learning-wrap"><a class="nvs-gate nvs-gate-learning" id="nvsLearningGate" href="./KhoHocLieuSo.html" aria-label="Học liệu số – chờ HVA Learning Studio"><span class="nvs-gate-icon"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i></span><strong>HỌC LIỆU SỐ<em>Chờ Kim Quy 2 hoàn thiện</em></strong><span>Giáo án · Bài giảng · Ngân hàng câu hỏi · Học liệu trực quan</span><span class="nvs-gate-enter">Xem phân hệ <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
+      <div class="nvs-gate-wrap nvs-gate-learning-wrap"><a class="nvs-gate nvs-gate-learning" id="nvsLearningGate" href="./HeSinhThaiSo.html" aria-label="Vào Hệ sinh thái số: Thư viện và học liệu"><span class="nvs-gate-icon"><i class="bi bi-diagram-3-fill" aria-hidden="true"></i></span><strong>HỆ SINH THÁI SỐ<em>THƯ VIỆN · HỌC LIỆU</em></strong><span>Thư viện số · Học liệu số · Ngân hàng câu hỏi · STEM</span><span class="nvs-gate-enter">Khám phá hệ sinh thái <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
       <div class="nvs-gate-wrap nvs-gate-documents-wrap"><a class="nvs-gate nvs-gate-documents" id="nvsDocumentGate" href="./VanBan_QuyDinh.html" aria-label="Văn bản - Biểu mẫu và hồ sơ điện tử"><span class="nvs-gate-icon"><i class="bi bi-folder2-open" aria-hidden="true"></i></span><strong>VĂN BẢN - BIỂU MẪU<em>Văn bản · Hồ sơ điện tử</em></strong><span>Hồ sơ điện tử · Văn bản số · Biểu mẫu</span><span class="nvs-gate-enter">Mở văn bản - biểu mẫu <i class="bi bi-arrow-right" aria-hidden="true"></i></span></a></div>
     </div>
     <div class="nvs-v4-actions" aria-label="Tiện ích công vụ">
