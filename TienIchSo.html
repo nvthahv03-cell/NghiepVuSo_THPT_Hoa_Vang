@@ -8,4 +8,5 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const fold=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
 function render(){const q=fold(document.getElementById('find').value.trim());let shown=0;document.getElementById('categories').innerHTML=data.map(g=>{const matched=fold(g.label).includes(q);const links=g.items.filter(x=>matched||fold(x[0]+' '+x[2]).includes(q));if(!links.length&&!matched)return '';shown++;return '<section class="cat"><h2>'+esc(g.icon)+' '+esc(g.label)+'</h2>'+(g.feature?'<a class="feature" href="./'+encodeURI(g.feature)+'" target="_blank" rel="noopener noreferrer">Mở chuyên trang '+esc(g.label)+' ↗</a>':'')+'<div class="links">'+links.map(x=>'<a class="link" href="'+esc(x[1])+'" target="_blank" rel="noopener noreferrer"><strong>'+esc(x[0])+' ↗</strong><small>'+esc(x[2])+'</small></a>').join('')+'</div></section>'}).join('');document.getElementById('empty').hidden=!!shown;}
 document.getElementById('find').addEventListener('input',render);render();
-</script></body></html>
+</script><script defer src="./HVA_VoiceSearch.js"></script>
+</body></html>
