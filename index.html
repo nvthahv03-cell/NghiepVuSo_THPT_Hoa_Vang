@@ -4331,9 +4331,29 @@ form?.addEventListener('submit',async e=>{
  function placeholder(which){tools.hidden=true;note.hidden=true;status.textContent='';list.replaceChildren();const labels={month:'Lịch tháng',department:'Lịch công tác Sở GD&ĐT',urgent:'Lịch đột xuất'};const card=html('div','hva-lt-empty');card.append(html('strong','',labels[which]));card.append(html('p','','Mục này thuộc Trung tâm Lịch - TKB. Chưa có tuyến tra cứu riêng được xác nhận trên Backend V5; không hiển thị dữ liệu giả hoặc lịch chưa công bố.'));const link=html('a','hva-lt-home-action','Mở trang quản lý Lịch - TKB');link.href='./LichCongTac.html';card.append(link);list.append(card)}
  const weekDays={2:'Thứ Hai',3:'Thứ Ba',4:'Thứ Tư',5:'Thứ Năm',6:'Thứ Sáu',7:'Thứ Bảy'};
  function table(rows){const wrap=html('div','hva-lt-tablewrap'),t=html('table','hva-lt-table'),thead=html('thead',''),tr=html('tr','');['Thứ','Tiết','Buổi','Lớp','Môn','Giáo viên','Phòng'].forEach(x=>tr.append(html('th','',x)));thead.append(tr);const body=html('tbody','');rows.slice().sort((a,b)=>Number(a.thu)-Number(b.thu)||Number(a.tiet)-Number(b.tiet)||String(a.lop).localeCompare(String(b.lop),'vi')).forEach(x=>{const r=html('tr','');[weekDays[x.thu]||x.thu,x.tiet,Number(x.tiet)<=5?'Sáng':'Chiều',x.lop,x.mon,x.giaoVien,x.phong||'—'].forEach(v=>r.append(html('td','',v)));body.append(r)});t.append(thead,body);wrap.append(t);return wrap}
- async function timetable(viewName){tools.hidden=true;note.hidden=true;list.replaceChildren();status.textContent='Đang tải thời khóa biểu chính thức…';try{if(!tkbCache){const d=await api('tkbGetCurrent',{});tkbCache=d.item||null}const item=tkbCache;if(!item){status.textContent='Chưa có thời khóa biểu chính thức được công bố trên EDOS.';return}const rows=Array.isArray(item.tietHoc)?item.tietHoc:[];const filters=html('div','hva-lt-tkb-filters'),intro=html('p','hva-lt-home-note','Phiên bản '+(item.soPhienBan||'')+' · Áp dụng từ '+dateStr(item.ngayApDung));list.append(intro);
+
+ /* TKB lần 2 được trường cung cấp dưới dạng Sheet để tra cứu; bản này vẫn đang đối chiếu,
+    không được gán nhãn "chính thức" hay ghi vào Backend khi chưa nghiệm thu. */
+ function draftTimetable(viewName,reason){
+  tools.hidden=true;note.hidden=true;list.replaceChildren();
+  const groups={morning:['TKB BUỔI SÁNG','TKB BUỔI SÁNG'],afternoon:['TKB BUỔI CHIỀU','TKB BUỔI CHIỀU'],class:['TKB THEO LỚP','TKB THEO LỚP'],teacher:['TKB GIÁO VIÊN','TKB GIÁO VIÊN']};
+  const entry=groups[viewName]||groups.morning;
+  status.textContent='Đang tra cứu bản TKB lần 2 (bản đối chiếu, chưa nghiệm thu chính thức).';
+  const box=html('div','hva-lt-draft-source');
+  box.append(html('strong','','THỜI KHÓA BIỂU LẦN 2 · '+entry[0]));
+  box.append(html('p','','Nguồn: Google Sheets do nhà trường cung cấp. Mở bảng tính, chọn trang “'+entry[1]+'” để xem hoặc tìm theo tên giáo viên/lớp. Dữ liệu đang đối chiếu, không phải bản đã công bố chính thức trên EDOS.'));
+  const a=html('a','hva-lt-home-action','Mở bảng tính TKB lần 2 ↗');
+  a.href="https://docs.google.com/spreadsheets/d/176tICCCsDPOnffCH4GAKO1p9YEcyc2ODEEaOa39Gyg4/edit?usp=sharing";a.target='_blank';a.rel='noopener noreferrer';
+  box.append(a);list.append(box);
+  const iframe=html('iframe','hva-lt-draft-frame');
+  iframe.title='Bảng tính TKB lần 2 – Google Sheets';iframe.src="https://docs.google.com/spreadsheets/d/176tICCCsDPOnffCH4GAKO1p9YEcyc2ODEEaOa39Gyg4/preview";
+  iframe.loading='lazy';iframe.referrerPolicy='strict-origin-when-cross-origin';
+  list.append(iframe);
+  list.append(html('p','hva-lt-home-note','Nếu Google Sheets không cho xem trong cửa sổ này, chọn “Mở bảng tính TKB lần 2” và đăng nhập bằng tài khoản đã được cấp quyền. Không tự ý sửa dữ liệu nguồn.'));
+ }
+ async function timetable(viewName){tools.hidden=true;note.hidden=true;list.replaceChildren();status.textContent='Đang tải thời khóa biểu chính thức…';try{if(!tkbCache){const d=await api('tkbGetCurrent',{});tkbCache=d.item||null}const item=tkbCache;if(!item){draftTimetable(viewName);return}const rows=Array.isArray(item.tietHoc)?item.tietHoc:[];const filters=html('div','hva-lt-tkb-filters'),intro=html('p','hva-lt-home-note','Phiên bản '+(item.soPhienBan||'')+' · Áp dụng từ '+dateStr(item.ngayApDung));list.append(intro);
  const select=html('select','');const field=html('label','',viewName==='class'?'Chọn lớp':'Chọn giáo viên');const options=[...new Set(rows.map(r=>String(viewName==='class'?r.lop:r.giaoVien||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));if(viewName==='class'||viewName==='teacher'){select.append(new Option('Tất cả', ''));options.forEach(v=>select.append(new Option(v,v)));field.append(select);filters.append(field);list.append(filters)}
- const target=html('div','');list.append(target);function render(){target.replaceChildren();const filtered=rows.filter(r=>viewName==='morning'?Number(r.tiet)<=5:viewName==='afternoon'?Number(r.tiet)>=6:viewName==='class'?(!select.value||r.lop===select.value):(!select.value||r.giaoVien===select.value));status.textContent='Có '+filtered.length+' tiết học phù hợp.';if(!filtered.length){target.append(html('p','hva-lt-empty','Chưa có dữ liệu TKB phù hợp với lựa chọn.'));return}target.append(table(filtered))}select.addEventListener('change',render);render();if(item.pdfUrl&&/^https:\/\/(drive|docs)\.google\.com\//.test(item.pdfUrl)){const a=html('a','hva-lt-home-action','Mở / tải PDF TKB');a.href=item.pdfUrl;a.target='_blank';a.rel='noopener noreferrer';list.append(a)}}catch(e){status.textContent='Không tải được TKB: '+(e.message||String(e))}}
+ const target=html('div','');list.append(target);function render(){target.replaceChildren();const filtered=rows.filter(r=>viewName==='morning'?Number(r.tiet)<=5:viewName==='afternoon'?Number(r.tiet)>=6:viewName==='class'?(!select.value||r.lop===select.value):(!select.value||r.giaoVien===select.value));status.textContent='Có '+filtered.length+' tiết học phù hợp.';if(!filtered.length){target.append(html('p','hva-lt-empty','Chưa có dữ liệu TKB phù hợp với lựa chọn.'));return}target.append(table(filtered))}select.addEventListener('change',render);render();if(item.pdfUrl&&/^https:\/\/(drive|docs)\.google\.com\//.test(item.pdfUrl)){const a=html('a','hva-lt-home-action','Mở / tải PDF TKB');a.href=item.pdfUrl;a.target='_blank';a.rel='noopener noreferrer';list.append(a)}}catch(e){draftTimetable(viewName,e);}}
  async function show(which){selected=which;tabs.forEach(t=>t.setAttribute('aria-selected',String(t.dataset.calendarView===which)));if(which==='week')await week();else if(['month','department','urgent'].includes(which))placeholder(which);else await timetable(which)}
  function open(e){if(e)e.preventDefault();lastFocus=document.activeElement;overlay.hidden=false;close.focus();show('week')}
  function hide(){overlay.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
@@ -4659,6 +4679,14 @@ html body .nvs-chooser .nvs-two-gates #nvsWorkGate>strong{
   font-size:clamp(10px,2.4vw,12px)!important;
  }
 }
+</style>
+
+<style id="hva-lt-draft-source-20261123">
+.hva-lt-draft-source{border:1px solid #cbdfee;background:linear-gradient(180deg,#fff,#f5faff);border-radius:12px;padding:15px;margin:10px 0;color:#14436b}
+.hva-lt-draft-source strong{font-size:15px;color:#07518e}
+.hva-lt-draft-source p{font-size:13px;line-height:1.6;margin:7px 0 12px;color:#4d657c}
+.hva-lt-draft-frame{display:block;width:100%;height:480px;min-height:320px;border:1px solid #d3e4f1;border-radius:10px;background:#fff}
+@media(max-width:600px){.hva-lt-draft-frame{height:56vh;min-height:320px}}
 </style>
 </body>
 </html>
