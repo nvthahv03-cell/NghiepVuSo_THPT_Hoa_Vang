@@ -431,7 +431,30 @@ function reminderSalutation(){
 function reminderTopics(){
  return scenarioCodes().filter(code=>code!=='NN-OTHER').map(code=>scenarios.find(x=>x[0]===code)?.[1]).filter(Boolean);
 }
+function quickMode(){return window.HVA_REMINDER_MODE==='quick'}
+function compactQuickFallback(){
+ const p=payload(),names=reminderRecipientNames(),topics=reminderTopics();
+ const who=names.length===1?'Thầy/Cô '+names[0]:'các Thầy/Cô '+names.join(', ');
+ const topic=topics.length===1?topics[0]:topics.length>1?topics.slice(0,2).join('; '):'nội dung cần trao đổi';
+ const facts=String(p.facts||'').replace(/\s+/g,' ').trim().replace(/[.!?]+$/,'');
+ const date=p.eventDate?' ngày '+p.eventDate.split('-').reverse().join('/'):'';
+ const context=facts?facts:(topics.length?'cần đối chiếu về việc '+topic:'có nội dung cần trao đổi');
+ const first='Nhà trường ghi nhận thông tin liên quan đến '+who+date+': '+context+'.';
+ const second='Đề nghị Thầy/Cô kiểm tra, phản hồi và thực hiện đúng quy định.';
+ const message=first+' '+second;
+ if(message.length>235)throw Error('Dữ kiện quá dài để viết nhắc nhở nhanh trong 2 dòng. Thầy rút gọn sự việc hoặc chuyển sang Nhắc nhở khác.');
+ $('subject').value='Nhắc nhở nhanh – '+topic;
+ $('content').value=message;
+ $('verified').checked=false;
+}
+function quickCheck(text){
+ const compact=String(text||'').replace(/\s+/g,' ').trim();
+ const cleaned=compact.replace(/^Kính gửi[^,.!?\n]*[,.:]?\s*/i,'').replace(/\bTrân trọng[.!]?\s*$/i,'').trim();
+ const sentences=(cleaned.match(/[.!?](?=\s|$)/g)||[]).length;
+ return cleaned.length<=235&&sentences<=2&&!/kính gửi|trân trọng/i.test(cleaned)?cleaned:null;
+}
 function reminderFallback(){
+ if(quickMode())return compactQuickFallback();
  const p=payload(),names=reminderRecipientNames(),topics=reminderTopics();
  const greeting=reminderSalutation();
  const descriptions=topics.length?topics.join('; '):'nội dung cần trao đổi';
@@ -463,7 +486,7 @@ async function generate(){
  try{
   const question=[
    'Bạn là Trợ lý EDOS hỗ trợ BGH Trường THPT Hòa Vang soạn NHẮC NHỞ CÔNG VỤ cá nhân. Trả lời DUY NHẤT nội dung văn bản, không giải thích. Viết đúng tên NGƯỜI NHẬN. Không tự nhận định là có vi phạm khi chưa xác minh. Không bịa dữ kiện, không đặt ngày nếu không được nhập. Không đưa tên nhãn mẫu Khác – BGH tự mô tả tình huống cụ thể vào văn bản.',
-   'Dòng mở đầu bắt buộc: '+reminderSalutation(),
+   quickMode()?'NHẮC NHỞ NHANH: chỉ 1-2 câu, tối đa 235 ký tự; không lời chào Kính gửi, không Trân trọng; ghi đích danh người nhận, nêu sự việc có căn cứ và đề nghị khắc phục/phản hồi.':'Dòng mở đầu bắt buộc: '+reminderSalutation(),
    'Người nhận: '+recipients.join('; '),
    'Tình huống đã chọn: '+(topics.join('; ')||'(tình huống khác, mô tả bằng dữ kiện bên dưới)'),
    'Dữ kiện cụ thể: '+(p.facts||'(chưa ghi nhận thêm dữ kiện)'),
@@ -483,7 +506,11 @@ async function generate(){
    if(response.draft.title)$('subject').value=String(response.draft.title);
   }else throw Error('Dịch vụ AI chưa sẵn sàng');
   if(!draft)throw Error('Trợ lý chưa trả nội dung.');
-  $('content').value=normalizeReminderGreeting(draft);
+  if(quickMode()){
+   const quick=quickCheck(draft);
+   if(quick)$('content').value=quick;
+   else compactQuickFallback();
+  }else $('content').value=normalizeReminderGreeting(draft);
   $('subject').value=$('subject').value.trim()||'Nhắc nhở công vụ – '+(topics.join('; ')||'Nội dung cần trao đổi');
   $('verified').checked=false;
   status('sendStatus','Trợ lý đã tạo dự thảo đích danh '+recipients.join(', ')+'. BGH vui lòng xem trước, rà soát dữ kiện và duyệt.','ok');
