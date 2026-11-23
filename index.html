@@ -4713,6 +4713,84 @@ html body .nvs-chooser .nvs-two-gates #nvsWorkGate>strong{
 #hvaLtHomeOverlay .hva-lt-tkb-download:hover{background:#d4ebfa}
 @media(max-width:620px){#hvaLtHomeOverlay .hva-lt-tkb-header{align-items:flex-start}#hvaLtHomeOverlay .hva-lt-tkb-download{white-space:normal}}
 </style>
+<style id="hva-footer-four-buttons-aligned-20261123">
+/* Bốn nút chân trang: cân đối trên iPhone, không đổi hành vi của các button. */
+html body nav.nvs-premium-nav,
+html body .nvs-chooser nav.nvs-premium-nav{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ grid-template-rows:72px!important;grid-auto-rows:0!important;
+ align-items:center!important;justify-items:stretch!important;align-content:center!important;
+ width:min(600px,100%)!important;max-width:600px!important;
+ height:84px!important;min-height:84px!important;max-height:84px!important;
+ margin:8px auto 0!important;padding:6px!important;gap:3px!important;
+ border:1px solid #c9ddec!important;border-radius:18px!important;
+ background:linear-gradient(180deg,#fff,#f4faff)!important;overflow:hidden!important;
+ box-sizing:border-box!important;box-shadow:0 5px 17px #15476d22!important;
+}
+html body nav.nvs-premium-nav>button,
+html body .nvs-chooser nav.nvs-premium-nav>button,
+html body nav.nvs-premium-nav>#nvsPasswordAccountButton{
+ position:relative!important;top:auto!important;bottom:auto!important;left:auto!important;
+ display:flex!important;grid-row:1!important;grid-column:auto!important;
+ flex-direction:column!important;justify-content:center!important;align-items:center!important;
+ flex:initial!important;align-self:center!important;justify-self:stretch!important;
+ width:100%!important;max-width:100%!important;
+ height:70px!important;min-height:70px!important;max-height:70px!important;
+ margin:0!important;padding:6px 2px 5px!important;gap:6px!important;
+ transform:none!important;box-shadow:none!important;border:0!important;border-radius:12px!important;
+ color:#104975!important;background:transparent!important;
+ box-sizing:border-box!important;overflow:visible!important;
+}
+html body nav.nvs-premium-nav>button>i.bi,
+html body .nvs-chooser nav.nvs-premium-nav>button>i.bi,
+html body nav.nvs-premium-nav>#nvsPasswordAccountButton>i.bi{
+ position:static!important;inset:auto!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 29px!important;align-self:center!important;
+ width:32px!important;min-width:32px!important;max-width:32px!important;
+ height:29px!important;min-height:29px!important;max-height:29px!important;
+ padding:0!important;margin:0!important;
+ font-size:27px!important;line-height:1!important;font-weight:400!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ color:#0d70b2!important;box-shadow:none!important;text-shadow:none!important;
+ filter:none!important;transform:none!important;overflow:visible!important;
+}
+html body nav.nvs-premium-nav>button>i.bi::before{
+ display:inline-block!important;font-size:inherit!important;line-height:1!important;vertical-align:middle!important;
+}
+html body nav.nvs-premium-nav>button>span,
+html body .nvs-chooser nav.nvs-premium-nav>button>span,
+html body nav.nvs-premium-nav>#nvsPasswordAccountButton>span{
+ position:static!important;display:block!important;flex:0 0 auto!important;
+ width:100%!important;max-width:100%!important;height:auto!important;
+ margin:0!important;padding:0!important;text-align:center!important;
+ white-space:nowrap!important;line-height:1.3!important;
+ font:700 12px/1.3 Inter,"Segoe UI",Arial,sans-serif!important;
+ color:#124c7c!important;transform:none!important;
+}
+html body nav.nvs-premium-nav>button:hover,
+html body nav.nvs-premium-nav>button:focus-visible{
+ background:#e5f3fc!important;transform:none!important;
+}
+@media(max-width:600px){
+ html body nav.nvs-premium-nav,
+ html body .nvs-chooser nav.nvs-premium-nav{
+  width:100%!important;max-width:100%!important;height:80px!important;
+  min-height:80px!important;max-height:80px!important;
+  grid-template-rows:68px!important;padding:5px 4px!important;gap:2px!important;
+ }
+ html body nav.nvs-premium-nav>button,
+ html body .nvs-chooser nav.nvs-premium-nav>button,
+ html body nav.nvs-premium-nav>#nvsPasswordAccountButton{
+  height:67px!important;min-height:67px!important;max-height:67px!important;
+  padding:5px 1px!important;gap:5px!important;
+ }
+ html body nav.nvs-premium-nav>button>span,
+ html body .nvs-chooser nav.nvs-premium-nav>button>span{
+  font-size:clamp(10px,2.8vw,12px)!important;
+ }
+}
+</style>
 <script defer src="./HVA_VoiceSearch.js"></script>
 </body>
 </html>
