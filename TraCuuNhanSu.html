@@ -101,6 +101,12 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
      script.src=url.toString();document.head.appendChild(script);
    });
  }
+ async function loadPersonnelFromExistingSearch(){
+   // Nguồn tìm kiếm nhân sự đang dùng trong Cuộc họp; không tự tạo Backend hoặc dữ liệu.
+   if(typeof window.HVAPersonnel?.search!=='function')return [];
+   const data=await window.HVAPersonnel.search('ALL','');
+   return Array.isArray(data)?data:[];
+ }
  function enrichWithDirectory(members,detailed){
    const lookups=new Map((detailed||[]).map(row=>[normalize(first(row,['username','tenDangNhap','userName','maGV','maNhanSu'])),row]).filter(([key])=>key));
    return members.map(p=>{
@@ -119,7 +125,7 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
        ngaySinh:['ngaySinh','ngayThangNamSinh','ngaySinhGV','birthDate','dateOfBirth','dob']
      })){
        const value=first(ext,aliases);
-       if(value)out[field]=value;
+       if(value&&!['chưa cập nhật','không có','null','undefined','n/a'].includes(normalize(value)))out[field]=value;
      }
      out.raw={...(p.raw||{}),...ext};
      return out;
@@ -151,6 +157,14 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
      if(extra)item.assignments.add(extra);
      const role=first(raw,['chucVuKiemNhiem','chucDanhDoanThe']);
      if(role)item.assignments.add(role);
+     // Thêm trường có sẵn trong từng bản ghi nhóm, kể cả tên cột cũ.
+     for(const [field,aliases] of Object.entries({
+       dienThoai:['dienThoai','soDienThoai','soDT','sdt','phone','phoneNumber','mobile','mobilePhone'],
+       ngaySinh:['ngaySinh','ngayThangNamSinh','ngaySinhGV','birthDate','dateOfBirth','dob']
+     })){
+       const value=first(raw,aliases);
+       if(!item[field]&&value)item[field]=value;
+     }
      // Thiếu trường ở một nhóm có thể được điền bởi bản ghi từ nhóm khác.
      for(const k of ['hoTen','tenTo','chucVu','dienThoai','ngaySinh','lopChuNhiem']){
        if(!item[k]&&p[k])item[k]=p[k];
@@ -252,12 +266,24 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
      const fresh=await window.HVAPersonnel.buildGroups();
      if(!Array.isArray(fresh)||!fresh.length)throw Error('Nguồn nhân sự Cuộc họp chưa trả dữ liệu.');
      groups=fresh;people=rowsByGroup(groups);
-     let detailsMissing=false;
-     try{people=enrichWithDirectory(people,await loadDetailedDirectory())}catch(error){detailsMissing=true;console.warn('TraCuuNhanSu: nguồn chi tiết không phản hồi',error?.message||error)}
+     let detailsMissing=false,detailError='';
+     try{people=enrichWithDirectory(people,await loadDetailedDirectory())}
+     catch(error){detailsMissing=true;detailError=plain(error?.message||error);console.warn('TraCuuNhanSu: nguồn chi tiết không phản hồi',detailError)}
+     // Dự phòng: đối chiếu nguồn tìm kiếm nhân sự hiện có với đúng username/mã GV.
+     // Không đối chiếu theo họ tên vì có thể trùng tên; không tự điền dữ liệu thiếu.
+     const before=people.filter(p=>!p.ngaySinh||!p.dienThoai).length;
+     if(before){
+       try{
+         const alternate=await loadPersonnelFromExistingSearch();
+         if(alternate.length)people=enrichWithDirectory(people,alternate);
+       }catch(error){console.warn('TraCuuNhanSu: nguồn dự phòng không trả dữ liệu',error?.message||error)}
+     }
      drawFilters();render();
-     if(detailsMissing){
+     const missingDob=people.filter(p=>!plain(p.ngaySinh||first(p.raw,['ngaySinh','ngayThangNamSinh','birthDate','dateOfBirth','dob']))).length;
+     const missingPhone=people.filter(p=>!plain(p.dienThoai||first(p.raw,['dienThoai','soDienThoai','sdt','phone','mobile']))).length;
+     if(missingDob||missingPhone){
        status.dataset.error='false';
-       status.textContent+=' · Nguồn chi tiết nhân sự chưa kết nối hoặc trả lỗi; ngày sinh, số điện thoại chưa thể đối chiếu. Không có dữ liệu nào bị xóa.';
+       status.textContent+=' · Chưa có ngày sinh: '+missingDob+'; chưa có số điện thoại: '+missingPhone+'.'+(detailsMissing?' Nguồn chi tiết chưa phản hồi.':'');
      }
    }catch(e){
      groups=[];people=[];filters.innerHTML='';results.innerHTML='';
