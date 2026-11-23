@@ -683,4 +683,5 @@ $('hvaRemindTaskFilter').addEventListener('change',render);
 $('hvaRemindTaskList').addEventListener('click',e=>{const b=e.target.closest('[data-hva-task-id]');if(!b)return;const task=all.find(x=>String(x.recordId)===b.dataset.hvaTaskId);choose(task)});
 selectMode('quick');
 })();
-</script></body></html>
+</script><script defer src="./HVA_VoiceSearch.js"></script>
+</body></html>
