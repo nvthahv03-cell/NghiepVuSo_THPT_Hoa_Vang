@@ -153,7 +153,17 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 .hva-remind-preview-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #dbe8f1;padding:12px 17px;font-size:12px;color:#587086}
 .assistant-btn:not(:disabled){background:#0b648e;color:#fff;opacity:1}
 @media(max-width:600px){.hva-remind-preview-modal{padding:6px}.hva-remind-preview-panel{max-height:96dvh;border-radius:11px}.hva-remind-preview-body{padding:14px}.hva-remind-preview-footer{align-items:flex-start;flex-direction:column}}
-</style><style id="hva-remind-one-draft-action">.draft-actions{display:block}.draft-actions .assistant-btn{width:100%;min-height:43px;font-weight:800}.draft-actions .assistant-btn:disabled{opacity:.72}</style><style id="hva-remind-quick-length-note">.hva-remind-quick-note{margin:5px 0 10px;font-size:12px;color:#4b6d87}</style></head>
+</style><style id="hva-remind-one-draft-action">.draft-actions{display:block}.draft-actions .assistant-btn{width:100%;min-height:43px;font-weight:800}.draft-actions .assistant-btn:disabled{opacity:.72}</style><style id="hva-remind-quick-length-note">.hva-remind-quick-note{margin:5px 0 10px;font-size:12px;color:#4b6d87}</style><style id="hva-reminder-delivery-20261123">
+.hva-remind-delivery{border:1px solid #cbdfea;border-radius:12px;padding:12px;margin:12px 0 14px;background:#f8fcff}
+.hva-remind-delivery legend{font-size:13px;font-weight:800;color:#164f77;padding:0 5px}
+.hva-remind-delivery label{display:flex;gap:10px;align-items:start;padding:9px;border:1px solid #d5e6f0;background:white;border-radius:9px;margin:6px 0;cursor:pointer}
+.hva-remind-delivery label:has(input:checked){border-color:#1a83b9;background:#eaf7ff}
+.hva-remind-delivery label:has(input:disabled){opacity:.65;cursor:not-allowed}
+.hva-remind-delivery input{width:auto;flex:none;margin-top:4px}
+.hva-remind-delivery span{display:grid;gap:3px}
+.hva-remind-delivery strong{font-size:13px;color:#164c73}
+.hva-remind-delivery small{font-size:11px;color:#5c7388}
+</style></head>
 <body>
 <div class="shell">
 <header class="head" aria-label="Điều hành nhắc nhở công vụ">
@@ -194,6 +204,11 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 <div class="field"><label for="subject">Tiêu đề <span style="color:#b42332">*</span></label><input id="subject" placeholder="Nhắc nhở về việc chấp hành lịch công tác"></div>
 <div class="field"><label for="content">Nội dung dự thảo <span style="color:#b42332">*</span></label><textarea id="content" rows="9" placeholder="BGH kiểm tra và chỉnh sửa nội dung tại đây…"></textarea></div>
 <div class="record"><strong>Ghi chú theo dõi (chỉ được ghi nhận sau khi phát hành thành công)</strong><p id="traceText" style="margin:6px 0 0">Nội dung nhắc nhở này được lưu trong lịch sử công vụ NVS để theo dõi việc tiếp nhận, phản hồi và đối chiếu khi cần thiết. Việc ghi nhận không đồng nghĩa với kết luận vi phạm khi chưa được xác minh.</p></div>
+<fieldset id="hvaRemindDeliveryMethods" class="hva-remind-delivery">
+<legend>Hình thức gửi nhắc nhở</legend>
+<label><input type="radio" name="reminderDelivery" value="direct" disabled> <span><strong>Gửi trực tiếp đến giáo viên</strong><small>Chưa kích hoạt: cần kiểm chứng tuyến gửi Backend V5 và Router.</small></span></label>
+<label><input type="radio" name="reminderDelivery" value="publish" checked> <span><strong>Qua Trung tâm Phát hành</strong><small>Chuyển dự thảo để phát hành theo quy trình hiện hành.</small></span></label>
+</fieldset>
 <div class="field"><label style="font-weight:500"><input type="checkbox" id="verified" style="width:auto;margin-right:7px">Tôi đã rà soát sự việc, người nhận và nội dung trước khi chuyển dự thảo.</label></div>
 <div class="actions"><button class="btn outline" id="previewBtn" type="button">Xem trước</button><button class="btn primary" id="sendBtn" type="button">Chuyển dự thảo đến Trung tâm Phát hành</button></div><div class="status" id="sendStatus" role="status">Chưa chuyển dự thảo. Việc gửi chính thức thực hiện tại Trung tâm Phát hành.</div>
 </div>
@@ -541,7 +556,8 @@ $('hvaRemindPreviewClose').onclick=closePreview;
 $('hvaRemindPreviewDone').onclick=closePreview;
 $('hvaRemindPreviewModal').addEventListener('click',e=>{if(e.target===$('hvaRemindPreviewModal'))closePreview()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('hvaRemindPreviewModal').hidden){e.stopImmediatePropagation();closePreview()}},true);
-$('sendBtn').onclick=async()=>{if(!isBGH())return status('sendStatus','Chỉ Ban Giám hiệu được chuyển dự thảo nhắc nhở.','error');
+$('sendBtn').onclick=async()=>{if(document.querySelector('input[name="reminderDelivery"]:checked')?.value==='direct')return status('sendStatus','Gửi trực tiếp chưa được kích hoạt: cần xác nhận Backend V5 và tuyến Router sendReminder trước khi gửi.','error');
+if(!isBGH())return status('sendStatus','Chỉ Ban Giám hiệu được chuyển dự thảo nhắc nhở.','error');
 const p=payload(),title=$('subject').value.trim(),content=$('content').value.trim();
 if(quickMode()&&!quickCheck(content))return status('sendStatus','Nhắc nhở nhanh chỉ tối đa 2 câu ngắn, không có lời chào/kết thư, không quá 235 ký tự.','error');
 if(!state.selected.size||!title||!content||!state.templates.size)return status('sendStatus','Cần chọn người nhận, ít nhất một mẫu, tiêu đề và nội dung.','error');
