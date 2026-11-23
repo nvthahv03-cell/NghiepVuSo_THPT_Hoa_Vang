@@ -44,8 +44,29 @@ function hvaPersonnelDirectoryGet_(params) {
         .replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
       const active=v=>/^(dang lam viec|dang cong tac|active)$/i.test(norm(v));
       const rows=lastRow>=7?sh.getRange(7,1,lastRow-6,lastCol).getDisplayValues():[];
+      // getDisplayValues() phụ thuộc định dạng Sheet (có thể trả MM/dd/yyyy).
+      // Lấy giá trị ngày gốc: ô kiểu Date luôn xuất yyyy-MM-dd,
+      // để giao diện hiển thị dd/MM/yyyy mà không đảo các ngày 01–12.
+      const birthValues=birthdayCol>=0&&lastRow>=7
+        ?sh.getRange(7,birthdayCol+1,lastRow-6,1).getValues():[];
+      const dateZone=sh.getParent().getSpreadsheetTimeZone()||'Asia/Ho_Chi_Minh';
+      const birthDateAt=(row,index)=>{
+        if(birthdayCol<0)return '';
+        const raw=birthValues[index]&&birthValues[index][0];
+        if(raw instanceof Date&&!isNaN(raw.getTime()))
+          return Utilities.formatDate(raw,dateZone,'yyyy-MM-dd');
+        // Trường ngày lưu dạng văn bản: không đoán những ngày/tháng mơ hồ.
+        const displayed=cell(row,birthdayCol);
+        const m=displayed.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+        if(m){
+          const a=Number(m[1]),b=Number(m[2]);
+          if(a>12&&b<=12)return m[3]+'-'+String(b).padStart(2,'0')+'-'+String(a).padStart(2,'0');
+          if(b>12&&a<=12)return m[3]+'-'+String(a).padStart(2,'0')+'-'+String(b).padStart(2,'0');
+        }
+        return displayed;
+      };
       const byUser=new Map();
-      rows.forEach(r=>{
+      rows.forEach((r,index)=>{
         if(!active(r[6]))return;
         const username=String(r[14]||'').trim();
         if(!username)return;
@@ -69,7 +90,7 @@ function hvaPersonnelDirectoryGet_(params) {
           viTriViecLam:String(r[9]||'').trim(),
           tenTo:String(r[12]||'').trim(),
           monDay:String(r[13]||'').trim(),
-          ngaySinh:cell(r,birthdayCol),
+          ngaySinh:birthDateAt(r,index),
           dienThoai:cell(r,phoneCol),
           kiemNhiem:cell(r,extraCol)
         });
