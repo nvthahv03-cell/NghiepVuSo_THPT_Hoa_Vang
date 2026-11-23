@@ -139,6 +139,20 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 .hva-remind-taskitem button{padding:7px 10px;border:1px solid #7bb8df;border-radius:8px;color:#075886;background:#eaf7ff;font-weight:700;cursor:pointer;font-size:11px}
 .hva-remind-other-note{padding:11px 12px;border:1px solid #c6deed;border-radius:9px;background:#f1f9fe;margin-bottom:12px;font-size:12px;color:#315d7b}
 @media(max-width:700px){.hva-remind-modes{grid-template-columns:1fr;gap:5px}.hva-remind-mode{padding:9px 11px}.hva-remind-mode small{margin-top:1px}.hva-remind-taskhead{align-items:flex-start}.hva-remind-taskhead button{flex:none;font-size:11px;padding:8px}.hva-remind-taskfilters select{min-width:0;max-width:100%}}
+</style><style id="hva-remind-preview-modal-20261123">
+.hva-remind-preview-modal[hidden]{display:none!important}
+.hva-remind-preview-modal{position:fixed;inset:0;z-index:60000;padding:14px;background:#071d37af;display:flex;align-items:center;justify-content:center}
+.hva-remind-preview-panel{width:min(760px,100%);max-height:92dvh;display:flex;flex-direction:column;background:#fff;border-radius:15px;box-shadow:0 14px 50px #001e3e60;overflow:hidden}
+.hva-remind-preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;background:#0f5786;color:#fff}
+.hva-remind-preview-head h2{font-size:15px;margin:0;color:white}
+.hva-remind-preview-head button{background:#ffffff22;border:1px solid #ffffff88;color:white;font-size:23px;width:34px;height:34px;border-radius:8px;cursor:pointer}
+.hva-remind-preview-body{overflow:auto;padding:20px 22px;line-height:1.55}
+.hva-remind-preview-body h3{font-size:16px;color:#0b4c78;margin:4px 0 13px}
+.hva-remind-preview-body pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 18px}
+.hva-remind-preview-meta{padding:10px;background:#f0f7fc;border-radius:8px;color:#355b76;font-size:12px;margin-bottom:14px}
+.hva-remind-preview-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #dbe8f1;padding:12px 17px;font-size:12px;color:#587086}
+.assistant-btn:not(:disabled){background:#0b648e;color:#fff;opacity:1}
+@media(max-width:600px){.hva-remind-preview-modal{padding:6px}.hva-remind-preview-panel{max-height:96dvh;border-radius:11px}.hva-remind-preview-body{padding:14px}.hva-remind-preview-footer{align-items:flex-start;flex-direction:column}}
 </style></head>
 <body>
 <div class="shell">
@@ -195,7 +209,15 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 <div class="note warning"><strong>Kiểm soát phát hành</strong><p>Trang này chỉ lập và chuyển dự thảo. Chưa phải thông báo đã gửi; Trung tâm Phát hành phải xác nhận kết quả trên máy chủ.</p></div>
 </aside>
 </div></div>
+<div id="hvaRemindPreviewModal" class="hva-remind-preview-modal" hidden role="dialog" aria-modal="true" aria-labelledby="hvaRemindPreviewTitle">
+ <section class="hva-remind-preview-panel">
+  <header class="hva-remind-preview-head"><h2 id="hvaRemindPreviewTitle">XEM TRƯỚC NHẮC NHỞ CÔNG VỤ</h2><button type="button" id="hvaRemindPreviewClose" aria-label="Đóng xem trước">×</button></header>
+  <div id="hvaRemindPreviewBody" class="hva-remind-preview-body"></div>
+  <footer class="hva-remind-preview-footer"><span>Đây là bản dự thảo, chưa phát hành.</span><button type="button" id="hvaRemindPreviewDone" class="btn primary">Tiếp tục chỉnh sửa</button></footer>
+ </section>
+</div>
 <script src="HVA_Personnel.js"></script>
+<script src="./HVA_Assistant_Shared.js"></script>
 <script id="hva-remind-local-bridge">
 (function(){
  "use strict";
@@ -377,7 +399,7 @@ $('authInfo').textContent='Đã xác thực BGH. Nội dung chỉ được gửi
 const connected=!!window.localStorage; // Chỉ chuyển bản dự thảo sang TTPH; không phát hành tại đây
 $('sendBtn').disabled=!connected;
 if(!connected)status('sendStatus','Đang ở chế độ chuẩn bị nội dung. Backend chưa có chức năng gửi và lưu nhắc nhở; nút Gửi được khóa để tránh ghi nhận sai.','error');
-$('geminiBtn').disabled=typeof BRIDGE.generateDraft!=='function';
+$('geminiBtn').disabled=!(typeof BRIDGE.generateDraft==='function'||typeof window.HVA_Assistant_Shared?.ask==='function');
 const r=await call('getPersonnel',{sessionToken:state.session.sessionToken});state.people=Array.isArray(r)?r:Array.isArray(r?.people)?r.people:[];
 state.people=state.people.map(normalizePersonnel).filter(p=>p.username&&p.hoTen).filter((p,i,a)=>a.findIndex(x=>x.username===p.username)===i).sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
 if(Array.isArray(window.NVS_REMINDER_PERSONNEL_GROUPS))installGroups(window.NVS_REMINDER_PERSONNEL_GROUPS);
@@ -429,16 +451,48 @@ async function generate(){
  try{
    const p=payload(),topics=scenarioCodes().map(code=>scenarios.find(x=>x[0]===code)?.[1]).filter(Boolean);
    const input={...p,scenarioCode:topics.length>1?'MULTI':p.scenarioCode,scenarioLabel:topics.join('; '),facts:[p.facts,topics.length>1?'Các nội dung đã chọn: '+topics.join('; '):''].filter(Boolean).join('\n'),provider:'gemini'};
-   const out=await call('generateDraft',input);
-   if(!out?.success||!out.draft)throw Error(out?.message||'Chưa nhận được bản dự thảo.');
-   $('subject').value=String(out.draft.title||'');$('content').value=String(out.draft.content||'');
+   if(typeof BRIDGE.generateDraft==='function'){
+    const out=await call('generateDraft',input);
+    if(!out?.success||!out.draft)throw Error(out?.message||'Chưa nhận được bản dự thảo.');
+    $('subject').value=String(out.draft.title||'');$('content').value=String(out.draft.content||'');
+   }else{
+    const service=window.HVA_Assistant_Shared;
+    if(typeof service?.ask!=='function')throw Error('Chưa kết nối dịch vụ Trợ lý dùng chung.');
+    const question=[
+     'Bạn hỗ trợ Ban Giám hiệu Trường THPT Hòa Vang soạn DỰ THẢO nhắc nhở công vụ gửi giáo viên. Văn phong hành chính chuẩn, ngắn gọn, tôn trọng, không kết luận vi phạm hoặc tự đặt sự việc. KHÔNG tự phát hành. Chỉ xuất phần NỘI DUNG thư, bắt đầu bằng Kính gửi Thầy/Cô.',
+     'Tên nội dung: '+($('subject').value.trim()||topics.join('; ')||'Nhắc nhở công vụ'),
+     'Dữ kiện do BGH nhập: '+(p.facts||'(chưa cung cấp dữ kiện cụ thể)'),
+     'Tình huống chọn: '+topics.join('; '),
+     'Mức độ: '+p.level+'. Hạn phản hồi: '+(p.deadline||'không nêu'),
+     'Bản thảo hiện có để biên tập: '+($('content').value.trim()||'(chưa có)')
+    ].join('\\n').slice(0,3950);
+    const answer=await service.ask({question,context:'Công việc',sessionToken:state.session.sessionToken});
+    if(!String(answer||'').trim())throw Error('Trợ lý chưa trả nội dung.');
+    $('content').value=String(answer).trim();
+   }
    status('sendStatus','Trợ lý EDOS đã tạo dự thảo. Ban Giám hiệu vui lòng rà soát dữ kiện trước khi gửi.','ok');
  }catch(e){status('sendStatus','Trợ lý EDOS chưa thể soạn: '+err(e)+'. Có thể dùng mẫu soạn sẵn.','error');}
- finally{b.disabled=typeof BRIDGE.generateDraft!=='function';}
+ finally{b.disabled=!(typeof BRIDGE.generateDraft==='function'||typeof window.HVA_Assistant_Shared?.ask==='function');}
 }
 $('geminiBtn').onclick=generate;
-function preview(){const title=$('subject').value.trim(),body=$('content').value.trim();$('previewBox').innerHTML='<strong>'+esc(title||'(Chưa có tiêu đề)')+'</strong><p><pre>'+esc(body||'(Chưa có nội dung)')+'</pre></p><div class="record">'+esc($('traceText').textContent)+'</div><small class="muted">Người nhận: '+state.selected.size+' · Mức độ: '+esc($('level').selectedOptions[0].textContent)+'</small>';}
+function closePreview(){
+ $('hvaRemindPreviewModal').hidden=true;
+ $('previewBtn').focus();
+}
+function preview(){
+ const title=$('subject').value.trim(),body=$('content').value.trim();
+ const names=[...state.selected].map(u=>state.people.find(p=>p.username===u)?.hoTen||u);
+ const meta='Người nhận: '+(names.length?names.join(', '):'Chưa chọn')+' · Mức độ: '+$('level').selectedOptions[0].textContent;
+ $('hvaRemindPreviewBody').innerHTML='<h3>'+esc(title||'(Chưa có tiêu đề)')+'</h3><div class="hva-remind-preview-meta">'+esc(meta)+'</div><pre>'+esc(body||'(Chưa có nội dung)')+'</pre><div class="record">'+esc($('traceText').textContent)+'</div>';
+ $('previewBox').innerHTML='<strong>'+esc(title||'(Chưa có tiêu đề)')+'</strong><p><pre>'+esc(body||'(Chưa có nội dung)')+'</pre></p>';
+ $('hvaRemindPreviewModal').hidden=false;
+ $('hvaRemindPreviewClose').focus();
+}
 $('previewBtn').onclick=preview;
+$('hvaRemindPreviewClose').onclick=closePreview;
+$('hvaRemindPreviewDone').onclick=closePreview;
+$('hvaRemindPreviewModal').addEventListener('click',e=>{if(e.target===$('hvaRemindPreviewModal'))closePreview()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('hvaRemindPreviewModal').hidden){e.stopImmediatePropagation();closePreview()}},true);
 $('sendBtn').onclick=async()=>{if(!isBGH())return status('sendStatus','Chỉ Ban Giám hiệu được chuyển dự thảo nhắc nhở.','error');
 const p=payload(),title=$('subject').value.trim(),content=$('content').value.trim();
 if(!state.selected.size||!title||!content||!state.templates.size)return status('sendStatus','Cần chọn người nhận, ít nhất một mẫu, tiêu đề và nội dung.','error');
