@@ -102,26 +102,16 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
    });
  }
  function enrichWithDirectory(members,detailed){
-   const lookups=new Map((detailed||[]).map(row=>[normalize(first(row,['username','tenDangNhap','userName','maGV','maNhanSu'])),row]).filter(([key])=>key));
+   const lookups=new Map((detailed||[]).map(p=>[normalize(p.username),p]));
    return members.map(p=>{
-     const ext=lookups.get(normalize(p.username))||lookups.get(normalize(p.maGV));
+     const ext=lookups.get(normalize(p.username));
      if(!ext)return p;
      const out={...p};
-     const subject=first(ext,['monDay','monGiangDay','monHoc','subject','subjects']);
-     const assignment=first(ext,['kiemNhiem','nhiemVuKiemNhiem','congTacKiemNhiem']);
-     if(subject)out.subjects.add(subject);
-     if(assignment)out.assignments.add(assignment);
-     for(const [field,aliases] of Object.entries({
-       hoTen:['hoTen','fullName','name'],
-       tenTo:['tenTo','to','toBoPhan'],
-       chucVu:['chucVu','vaiTro','viTriViecLam'],
-       dienThoai:['dienThoai','soDienThoai','soDT','sdt','phone','phoneNumber','mobile','mobilePhone'],
-       ngaySinh:['ngaySinh','ngayThangNamSinh','ngaySinhGV','birthDate','dateOfBirth','dob']
-     })){
-       const value=first(ext,aliases);
-       if(value)out[field]=value;
+     if(ext.monDay)out.subjects.add(plain(ext.monDay));
+     if(ext.kiemNhiem)out.assignments.add(plain(ext.kiemNhiem));
+     for(const key of ['hoTen','tenTo','chucVu','dienThoai','ngaySinh']){
+       if(ext[key])out[key]=plain(ext[key]);
      }
-     out.raw={...(p.raw||{}),...ext};
      return out;
    });
  }
@@ -224,8 +214,8 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
    status.textContent=subset.length+' / '+people.length+' nhân sự phù hợp';
    if(!subset.length){results.innerHTML='<div class="empty">Không tìm thấy nhân sự phù hợp. Thử từ khóa hoặc nhóm khác.</div>';return}
    results.innerHTML=subset.map(p=>{
-     const raw=p.raw||{},phone=plain(p.dienThoai||first(raw,['dienThoai','soDienThoai','soDT','sdt','phone','phoneNumber','mobile','mobilePhone'])),tel=validPhone(phone);
-     const birth=formatDob(p.ngaySinh||first(raw,['ngaySinh','birthDate','ngayThangNamSinh','ngaySinhGV','dateOfBirth','dob']));
+     const raw=p.raw||{},phone=plain(p.dienThoai||first(raw,['dienThoai','soDienThoai','phone','mobile'])),tel=validPhone(phone);
+     const birth=formatDob(p.ngaySinh||first(raw,['ngaySinh','birthDate','ngayThangNamSinh']));
      const dept=plain(p.tenTo||[...p.groups].find(Boolean));
      const role=plain(p.chucVu||[...p.positions].find(Boolean));
      const subjects=[...p.subjects].join(', ');
@@ -253,11 +243,11 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
      if(!Array.isArray(fresh)||!fresh.length)throw Error('Nguồn nhân sự Cuộc họp chưa trả dữ liệu.');
      groups=fresh;people=rowsByGroup(groups);
      let detailsMissing=false;
-     try{people=enrichWithDirectory(people,await loadDetailedDirectory())}catch(error){detailsMissing=true;console.warn('TraCuuNhanSu: nguồn chi tiết không phản hồi',error?.message||error)}
+     try{people=enrichWithDirectory(people,await loadDetailedDirectory())}catch(_){detailsMissing=true}
      drawFilters();render();
      if(detailsMissing){
        status.dataset.error='false';
-       status.textContent+=' · Nguồn chi tiết nhân sự chưa kết nối hoặc trả lỗi; ngày sinh, số điện thoại chưa thể đối chiếu. Không có dữ liệu nào bị xóa.';
+       status.textContent+=' · Chi tiết môn dạy, ngày sinh, số điện thoại có thể chưa đủ: Backend cần module 39.';
      }
    }catch(e){
      groups=[];people=[];filters.innerHTML='';results.innerHTML='';
