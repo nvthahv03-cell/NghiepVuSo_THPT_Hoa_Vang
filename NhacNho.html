@@ -522,8 +522,22 @@ async function load(){
  }catch(e){loaded=false;all=[];render();status('Chưa đọc được Điều hành: '+(e.message||String(e))+'; không tự tạo dữ liệu thay thế.')}
  finally{busy=false;$('hvaRemindTaskRefresh').disabled=false}
 }
+function ensureTemplate(code){
+ // Dùng sự kiện của kho mẫu hiện hữu; không truy cập trực tiếp trạng thái nội bộ.
+ const clear=$('templateClear');if(clear)clear.click();
+ const opener=$('templateOpen'),picker=$('templatePicker');
+ if(picker?.hidden)opener?.click();
+ $('templateSearch').value=code;
+ $('templateSearch').dispatchEvent(new Event('input',{bubbles:true}));
+ const target=[...document.querySelectorAll('#templateResults input[data-template]')].find(x=>x.dataset.template===code);
+ if(target){target.checked=true;target.dispatchEvent(new Event('change',{bubbles:true}))}
+ if(picker&&!picker.hidden){picker.hidden=true;opener?.setAttribute('aria-expanded','false')}
+ $('templateSearch').value='';
+ return !!target;
+}
 function choose(t){
  if(!t)return;
+ if(!ensureTemplate('NN-NV01')){status('Không tìm thấy mẫu nhiệm vụ để lập dự thảo; vui lòng chọn mẫu thủ công.');return}
  const due=t.deadline||'chưa có hạn',person=t.assigneeName||'chưa xác định';
  $('subject').value='Nhắc thực hiện nhiệm vụ – '+String(t.title||'').trim();
  $('facts').value='Nguồn: Điều hành – Giao việc / Theo dõi\nĐầu việc: '+(t.title||'')+'\nNgười được giao: '+person+'\nHạn thực hiện: '+due+'\nTrạng thái ghi nhận: '+(t.status||'Chưa rõ')+'\nMã hồ sơ: '+(t.recordId||'');
@@ -540,7 +554,7 @@ function choose(t){
 function selectMode(v){
  mode=v;modes.forEach(b=>{const active=b.dataset.remindMode===v;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
  $('hvaRemindTasks').hidden=v!=='tasks';$('hvaRemindOtherNote').hidden=v!=='other';
- if(v==='quick')$('templateOpen').closest('.step-heading')?.removeAttribute('hidden');
+ if(v==='other')ensureTemplate('NN-OTHER');
  if(v==='other')$('facts').placeholder='Mô tả tình huống riêng, thời gian, sự việc đã kiểm chứng, yêu cầu cụ thể…';
  if(v==='tasks'&&!loaded)load();
 }
