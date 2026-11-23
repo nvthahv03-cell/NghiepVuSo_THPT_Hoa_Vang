@@ -12,6 +12,10 @@
 header{background:linear-gradient(105deg,#073568,#0965a8);color:white;padding:16px clamp(14px,4vw,36px);display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
 header h1{font-size:clamp(17px,2.6vw,23px);margin:0}header p{font-size:12px;margin:2px 0 0;color:#d0e9ff}
 .back{display:inline-flex;gap:8px;align-items:center;text-decoration:none;background:#e1f7ff;color:#064e83;padding:9px 13px;border-radius:11px;font-weight:750}
+.header-nav{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.back-arrow{border:1px solid #b1e5ff;cursor:pointer;font-weight:750}
+.back:focus-visible{outline:3px solid #ffcc56;outline-offset:3px}
+@media(max-width:480px){.header-nav{width:100%;justify-content:space-between}.header-nav .back{padding:8px 10px;font-size:13px}}
 main{max-width:1100px;margin:20px auto;padding:0 15px 35px}.panel{background:white;border:1px solid #d8e7f4;border-radius:18px;padding:20px;box-shadow:0 7px 25px #0c45810d}
 .intro{margin:0 0 16px;color:#5a718b}.search{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}.search-field{position:relative;display:flex;align-items:center;flex:1;min-width:min(100%,220px)}.search-field>i{position:absolute;left:14px;color:#5484a9;font-size:18px;pointer-events:none}.search input{width:100%;min-width:0;border:1.5px solid #b7cfe3;border-radius:12px;padding:13px 14px 13px 43px;outline:none}.search input:focus{border-color:#1377b9;box-shadow:0 0 0 3px #1592dc21}
 .btn{border:0;border-radius:11px;background:#096da9;color:white;padding:11px 14px;font-weight:750;cursor:pointer}.btn:disabled{opacity:.5;cursor:wait}
@@ -31,7 +35,10 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
 <body>
 <header>
  <div><h1><i class="bi bi-people-fill" aria-hidden="true"></i> TRA CỨU NHÂN SỰ</h1><p>HVA–EDOS · Nguồn nhân sự dùng chung với Cuộc họp</p></div>
- <a class="back" href="./index.html" aria-label="Về EDOS"><i class="bi bi-house-door-fill" aria-hidden="true"></i> Trang chủ EDOS</a>
+ <nav class="header-nav" aria-label="Điều hướng tra cứu nhân sự">
+  <button class="back back-arrow" type="button" id="personnelBack" aria-label="Quay lại trang trước"><i class="bi bi-arrow-left" aria-hidden="true"></i> Quay lại</button>
+  <a class="back" href="./index.html" aria-label="Về Trang chủ EDOS"><i class="bi bi-house-door-fill" aria-hidden="true"></i> Trang chủ EDOS</a>
+ </nav>
 </header>
 <main>
 <section class="panel" aria-labelledby="search-heading">
@@ -48,6 +55,18 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
 </section>
 <footer>Thông tin nhân sự dùng cho công tác nội bộ, không chia sẻ ra ngoài EDOS.</footer>
 </main>
+<script>
+document.getElementById('personnelBack')?.addEventListener('click',function(){
+  // Chỉ quay về trang trước của cùng ứng dụng, tránh điều hướng ra ngoài EDOS.
+  try{
+    const previous=document.referrer?new URL(document.referrer):null;
+    if(previous&&previous.origin===location.origin&&history.length>1){
+      history.back();return;
+    }
+  }catch(_){}
+  location.assign('./index.html');
+});
+</script>
 <script src="./HVA_Personnel.js"></script>
 <script>
 (function(){
