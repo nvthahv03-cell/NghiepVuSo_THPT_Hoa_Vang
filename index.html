@@ -4264,7 +4264,7 @@ form?.addEventListener('submit',async e=>{
       <button type="button" class="hva-lt-tab" data-calendar-view="week" aria-selected="true">Tuần</button><button type="button" class="hva-lt-tab" data-calendar-view="month" aria-selected="false">Tháng</button><button type="button" class="hva-lt-tab" data-calendar-view="department" aria-selected="false">Sở</button><button type="button" class="hva-lt-tab" data-calendar-view="urgent" aria-selected="false">Đột xuất</button>
     </div></section>
     <section class="hva-lt-group"><h3 class="hva-lt-group-title"><i class="bi bi-table"></i> THỜI KHÓA BIỂU</h3><div class="hva-lt-tabgrid" role="group" aria-label="Tra cứu thời khóa biểu">
-      <button type="button" class="hva-lt-tab" data-calendar-view="morning" aria-selected="false">Sáng</button><button type="button" class="hva-lt-tab" data-calendar-view="afternoon" aria-selected="false">Chiều</button><button type="button" class="hva-lt-tab" data-calendar-view="class" aria-selected="false">Lớp</button><button type="button" class="hva-lt-tab" data-calendar-view="teacher" aria-selected="false">GV</button>
+      <button type="button" class="hva-lt-tab" data-calendar-view="personal" aria-selected="false">Cá nhân</button><button type="button" class="hva-lt-tab" data-calendar-view="morning" aria-selected="false">Sáng</button><button type="button" class="hva-lt-tab" data-calendar-view="afternoon" aria-selected="false">Chiều</button><button type="button" class="hva-lt-tab" data-calendar-view="class" aria-selected="false">Lớp</button><button type="button" class="hva-lt-tab" data-calendar-view="teacher" aria-selected="false">GV</button>
     </div></section>
    </nav>
    <section id="hvaLtCalendarSection" aria-label="Nội dung tra cứu">
@@ -4351,9 +4351,21 @@ form?.addEventListener('submit',async e=>{
   list.append(iframe);
   list.append(html('p','hva-lt-home-note','Nếu Google Sheets không cho xem trong cửa sổ này, chọn “Mở bảng tính TKB lần 2” và đăng nhập bằng tài khoản đã được cấp quyền. Không tự ý sửa dữ liệu nguồn.'));
  }
- async function timetable(viewName){tools.hidden=true;note.hidden=true;list.replaceChildren();status.textContent='Đang tải thời khóa biểu chính thức…';try{if(!tkbCache){const d=await api('tkbGetCurrent',{});tkbCache=d.item||null}const item=tkbCache;if(!item){draftTimetable(viewName);return}const rows=Array.isArray(item.tietHoc)?item.tietHoc:[];const filters=html('div','hva-lt-tkb-filters'),intro=html('p','hva-lt-home-note','Phiên bản '+(item.soPhienBan||'')+' · Áp dụng từ '+dateStr(item.ngayApDung));list.append(intro);
- const select=html('select','');const field=html('label','',viewName==='class'?'Chọn lớp':'Chọn giáo viên');const options=[...new Set(rows.map(r=>String(viewName==='class'?r.lop:r.giaoVien||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));if(viewName==='class'||viewName==='teacher'){select.append(new Option('Tất cả', ''));options.forEach(v=>select.append(new Option(v,v)));field.append(select);filters.append(field);list.append(filters)}
- const target=html('div','');list.append(target);function render(){target.replaceChildren();const filtered=rows.filter(r=>viewName==='morning'?Number(r.tiet)<=5:viewName==='afternoon'?Number(r.tiet)>=6:viewName==='class'?(!select.value||r.lop===select.value):(!select.value||r.giaoVien===select.value));status.textContent='Có '+filtered.length+' tiết học phù hợp.';if(!filtered.length){target.append(html('p','hva-lt-empty','Chưa có dữ liệu TKB phù hợp với lựa chọn.'));return}target.append(table(filtered))}select.addEventListener('change',render);render();if(item.pdfUrl&&/^https:\/\/(drive|docs)\.google\.com\//.test(item.pdfUrl)){const a=html('a','hva-lt-home-action','Mở / tải PDF TKB');a.href=item.pdfUrl;a.target='_blank';a.rel='noopener noreferrer';list.append(a)}}catch(e){draftTimetable(viewName,e);}}
+ async function timetable(viewName){
+  tools.hidden=true;note.hidden=true;list.replaceChildren();
+  status.textContent='Tra cứu TKB lần 2 · Áp dụng từ 02/11/2026';
+  const frame=html('iframe','hva-lt-tkb-native');
+  frame.title='Tra cứu TKB theo lớp và giáo viên';
+  frame.src='./TKB_TraCuu.html?view='+encodeURIComponent(viewName);
+  frame.loading='eager';
+  frame.setAttribute('referrerpolicy','same-origin');
+  frame.style.cssText='width:100%;height:min(70vh,790px);min-height:450px;border:1px solid #cbdfee;border-radius:12px;background:#f7fbff';
+  list.append(frame);
+  const link=html('a','hva-lt-home-action','Mở TKB toàn màn hình');
+  link.href=frame.src;link.target='_blank';link.rel='noopener noreferrer';
+  link.style.display='inline-block';link.style.marginTop='10px';
+  list.append(link);
+}
  async function show(which){selected=which;tabs.forEach(t=>t.setAttribute('aria-selected',String(t.dataset.calendarView===which)));if(which==='week')await week();else if(['month','department','urgent'].includes(which))placeholder(which);else await timetable(which)}
  function open(e){if(e)e.preventDefault();lastFocus=document.activeElement;overlay.hidden=false;close.focus();show('week')}
  function hide(){overlay.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
@@ -4687,6 +4699,11 @@ html body .nvs-chooser .nvs-two-gates #nvsWorkGate>strong{
 .hva-lt-draft-source p{font-size:13px;line-height:1.6;margin:7px 0 12px;color:#4d657c}
 .hva-lt-draft-frame{display:block;width:100%;height:480px;min-height:320px;border:1px solid #d3e4f1;border-radius:10px;background:#fff}
 @media(max-width:600px){.hva-lt-draft-frame{height:56vh;min-height:320px}}
+</style>
+
+<style id="hva-tkb-native-layout-20261123">
+#hvaLtHomeOverlay .hva-lt-group:nth-child(2) .hva-lt-tabgrid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+@media(max-width:550px){#hvaLtHomeOverlay .hva-lt-group:nth-child(2) .hva-lt-tab{font-size:10px!important;padding:9px 2px!important}}
 </style>
 </body>
 </html>
