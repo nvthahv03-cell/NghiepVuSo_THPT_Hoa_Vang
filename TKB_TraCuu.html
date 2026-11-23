@@ -167,4 +167,5 @@ function render(){
 function changeMode(v){mode=v;search.value='';if(v==='class')fillSelect(classes);if(v==='teacher')fillSelect(db.teachers.map(t=>t.name));render()}
 modes.forEach(b=>b.addEventListener('click',()=>changeMode(b.dataset.mode)));sel.addEventListener('change',render);search.addEventListener('input',()=>{if(mode!=='teacher')return;const matches=db.teachers.filter(t=>matchesName(t.name,search.value));const current=sel.value;fillSelect(matches.map(t=>t.name));if(matches.some(t=>t.name===current))sel.value=current;render()});function matchesName(name,q){if(!q)return true;return matches(name,q)||norm(name.split(/\s+/).map(x=>x[0]).join(''))===norm(q)}$('print').onclick=()=>print();changeMode(new URLSearchParams(location.search).get('view')||'personal');
 })();
-</script></body></html>
+</script><script defer src="./HVA_VoiceSearch.js"></script>
+</body></html>
