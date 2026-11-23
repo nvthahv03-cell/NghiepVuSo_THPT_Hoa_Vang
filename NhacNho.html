@@ -153,7 +153,7 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 .hva-remind-preview-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #dbe8f1;padding:12px 17px;font-size:12px;color:#587086}
 .assistant-btn:not(:disabled){background:#0b648e;color:#fff;opacity:1}
 @media(max-width:600px){.hva-remind-preview-modal{padding:6px}.hva-remind-preview-panel{max-height:96dvh;border-radius:11px}.hva-remind-preview-body{padding:14px}.hva-remind-preview-footer{align-items:flex-start;flex-direction:column}}
-</style></head>
+</style><style id="hva-remind-one-draft-action">.draft-actions{display:block}.draft-actions .assistant-btn{width:100%;min-height:43px;font-weight:800}.draft-actions .assistant-btn:disabled{opacity:.72}</style></head>
 <body>
 <div class="shell">
 <header class="head" aria-label="Điều hành nhắc nhở công vụ">
@@ -189,7 +189,7 @@ body{background:#f0f5fa}.shell{max-width:1220px;margin:10px auto;padding:0 12px 
 <div class="two"><div class="field"><label for="level">Mức độ</label><select id="level"><option value="NHAC_NHO">Mức 1 · Nhắc nhở</option><option value="CANH_BAO">Mức 2 · Cảnh báo</option><option value="GIAI_TRINH">Mức 3 · Yêu cầu giải trình</option></select></div><div class="field"><label for="tone">Văn phong dự thảo</label><select id="tone"><option value="LICH_SU_NGHIEM_KHAC">Lịch sự, nghiêm khắc</option><option value="CHUAN_HANH_CHINH">Chuẩn hành chính</option><option value="NGAN_GON">Ngắn gọn, dứt khoát</option></select></div></div>
 <div class="two"><div class="field"><label for="eventDate">Ngày ghi nhận sự việc</label><input type="date" id="eventDate"></div><div class="field"><label for="deadline">Hạn phản hồi (nếu có)</label><input type="datetime-local" id="deadline"></div></div>
 <div class="field"><label for="facts">Thông tin thực tế đã ghi nhận / yêu cầu cụ thể</label><textarea id="facts" placeholder="Ví dụ: Buổi chào cờ ngày…, theo lịch công tác; chưa nhận được thông tin xin phép. Chỉ nhập dữ kiện đã kiểm tra."></textarea><div class="hint">Không đưa nhận định chưa xác minh thành kết luận vi phạm.</div></div>
-<div class="draft-actions"><button class="btn outline" id="templateBtn" type="button">↻ Tạo dự thảo từ mẫu</button><button class="btn assistant-btn" id="geminiBtn" type="button">✦ Trợ lý EDOS</button></div>
+<div class="draft-actions"><button class="btn assistant-btn" id="geminiBtn" type="button">✦ Trợ lý EDOS – Soạn nhắc nhở</button></div>
 <h2 class="step-heading"><span>03</span> Kiểm tra và chuyển phát hành <small>Trung tâm Phát hành là nơi xác nhận gửi chính thức</small></h2>
 <div class="field"><label for="subject">Tiêu đề <span style="color:#b42332">*</span></label><input id="subject" placeholder="Nhắc nhở về việc chấp hành lịch công tác"></div>
 <div class="field"><label for="content">Nội dung dự thảo <span style="color:#b42332">*</span></label><textarea id="content" rows="9" placeholder="BGH kiểm tra và chỉnh sửa nội dung tại đây…"></textarea></div>
@@ -388,7 +388,7 @@ $('templateChips').addEventListener('click',e=>{
  state.templates.delete(b.dataset.templateRemove);updateTemplateView();renderTemplateResults();
 });
 $('templateClear').onclick=()=>{state.templates.clear();updateTemplateView();renderTemplateResults();};
-$('templateApply').onclick=()=>{$('templatePicker').hidden=true;$('templateOpen').setAttribute('aria-expanded','false');basicDraft();};
+$('templateApply').onclick=()=>{$('templatePicker').hidden=true;$('templateOpen').setAttribute('aria-expanded','false');status('sendStatus','Đã chọn mẫu. Bấm “Trợ lý EDOS – Soạn nhắc nhở” để tạo dự thảo đích danh.');};
 async function initialize(){
 $('scenario').innerHTML=scenarios.map(s=>'<option value="'+esc(s[0])+'">'+esc(s[1])+'</option>').join('');updateTemplateView();
 try{state.session=await call('getSession');if(!state.session?.sessionToken)throw Error('Chưa có phiên đăng nhập hợp lệ.');
@@ -399,7 +399,7 @@ $('authInfo').textContent='Đã xác thực BGH. Nội dung chỉ được gửi
 const connected=!!window.localStorage; // Chỉ chuyển bản dự thảo sang TTPH; không phát hành tại đây
 $('sendBtn').disabled=!connected;
 if(!connected)status('sendStatus','Đang ở chế độ chuẩn bị nội dung. Backend chưa có chức năng gửi và lưu nhắc nhở; nút Gửi được khóa để tránh ghi nhận sai.','error');
-$('geminiBtn').disabled=!(typeof BRIDGE.generateDraft==='function'||typeof window.HVA_Assistant_Shared?.ask==='function');
+$('geminiBtn').disabled=false; // Có mẫu dự phòng khi AI chưa kết nối.
 const r=await call('getPersonnel',{sessionToken:state.session.sessionToken});state.people=Array.isArray(r)?r:Array.isArray(r?.people)?r.people:[];
 state.people=state.people.map(normalizePersonnel).filter(p=>p.username&&p.hoTen).filter((p,i,a)=>a.findIndex(x=>x.username===p.username)===i).sort((a,b)=>a.hoTen.localeCompare(b.hoTen,'vi'));
 if(Array.isArray(window.NVS_REMINDER_PERSONNEL_GROUPS))installGroups(window.NVS_REMINDER_PERSONNEL_GROUPS);
@@ -416,63 +416,83 @@ $('selectedChips').addEventListener('click',e=>{const b=e.target.closest('[data-
 $('people').addEventListener('change',e=>{
 if(e.target.matches('input[data-group]')){const details=e.target.closest('details');details.querySelectorAll('input[data-user]').forEach(x=>{e.target.checked?state.selected.add(x.dataset.user):state.selected.delete(x.dataset.user);});renderPeople();return;}
 if(e.target.matches('input[data-user]')){const u=e.target.dataset.user;e.target.checked?state.selected.add(u):state.selected.delete(u);$('selectionCount').textContent='Đã chọn '+state.selected.size+' / '+state.people.length+' người';renderPeople();}});
-function basicDraft(){
- const p=payload(),chosen=scenarioCodes();
- if(!chosen.length){$('templatePicker').hidden=false;$('templateOpen').setAttribute('aria-expanded','true');renderTemplateResults();$('templateSearch').focus();status('sendStatus','Hãy chọn ít nhất một mẫu nhắc nhở.');return;}
- const date=p.eventDate?p.eventDate.split('-').reverse().join('/'):'[ngày/tháng/năm]';
- const items=chosen.map(code=>scenarios.find(x=>x[0]===code)).filter(Boolean);
-  const special={
-  'NN-G01':'Qua theo dõi việc thực hiện thời khóa biểu ngày '+date+', nhà trường ghi nhận nội dung cần đối chiếu về thời gian vào lớp của Thầy/Cô. Đề nghị Thầy/Cô kiểm tra, phản hồi thông tin và thực hiện đúng giờ lên lớp, bảo đảm thời lượng tiết dạy.',
-  'NN-G04':'Qua theo dõi giờ học ngày '+date+', nhà trường ghi nhận tình trạng học sinh sử dụng điện thoại chưa đúng quy định. Đề nghị Thầy/Cô kiểm tra sự việc, hướng dẫn học sinh sử dụng thiết bị đúng quy định và phối hợp với giáo viên chủ nhiệm khi cần thiết.',
-  'NN-G05':'Qua theo dõi tiết học ngày '+date+', nhà trường ghi nhận nội dung cần kiểm tra liên quan đến việc chấp hành nội quy lớp học của học sinh. Đề nghị Thầy/Cô xác minh tình hình, thực hiện biện pháp giáo dục phù hợp và phối hợp với giáo viên chủ nhiệm.',
-  'NN-G06':'Qua rà soát sổ đầu bài, nhà trường ghi nhận một số nội dung thuộc trách nhiệm cập nhật của Thầy/Cô chưa được hoàn thiện. Đề nghị Thầy/Cô kiểm tra, bổ sung chính xác các thông tin còn thiếu theo quy định.',
-  'NN-CN01':'Qua theo dõi buổi chào cờ ngày '+date+', việc tập trung và giữ nền nếp của lớp chủ nhiệm còn nội dung cần chấn chỉnh. Đề nghị Thầy/Cô kiểm tra, phối hợp với Đoàn trường hướng dẫn học sinh ổn định đội hình, thực hiện nghiêm túc quy định.',
-  'NN-CN02':'Qua rà soát việc bàn giao sổ đầu bài, nhà trường chưa ghi nhận đầy đủ việc nộp sổ của lớp chủ nhiệm. Đề nghị Thầy/Cô phối hợp ban cán sự lớp kiểm tra, nhắc nhở học sinh được phân công bảo quản và bàn giao đúng quy định.',
-  'NN-CN03':'Qua theo dõi nền nếp lớp chủ nhiệm, nhà trường ghi nhận những nội dung cần được chấn chỉnh. Đề nghị Thầy/Cô xác định nguyên nhân, phối hợp các bộ phận liên quan triển khai biện pháp giáo dục phù hợp và báo cáo kết quả.',
-  'NN-H03':'Qua theo dõi cuộc họp ngày '+date+', nhà trường ghi nhận nội dung cần đối chiếu về mức độ tập trung tham dự. Đề nghị Thầy/Cô kiểm tra, phản hồi thông tin liên quan và chú ý theo dõi đầy đủ các nội dung họp.',
-  'NN-B01':'Theo kế hoạch hoặc thông báo có liên quan, đến thời điểm rà soát, nhà trường chưa ghi nhận đầy đủ báo cáo hoặc số liệu thuộc trách nhiệm Thầy/Cô. Đề nghị Thầy/Cô kiểm tra, hoàn thành việc gửi báo cáo và phản hồi nếu đã thực hiện.',
-  'NN-K01':'Qua theo dõi công tác coi kiểm tra, nhà trường ghi nhận nội dung cần đối chiếu về việc thực hiện nhiệm vụ tại ca, phòng được phân công. Đề nghị Thầy/Cô kiểm tra, phản hồi thông tin và thực hiện đầy đủ quy trình coi kiểm tra theo quy định.',
-  'NN-K02':'Qua theo dõi hoạt động công vụ ngày '+date+', nhà trường ghi nhận việc sử dụng thẻ viên chức có nội dung cần nhắc nhở. Đề nghị Thầy/Cô thực hiện đúng quy định về đeo thẻ trong thời gian làm việc.'
- };
- const lines=items.map((item,i)=>{
-  const topic=item[1],general='Theo ghi nhận ban đầu, nhà trường có nội dung cần kiểm tra về việc: '+topic+'. Đề nghị Thầy/Cô rà soát và thực hiện biện pháp phù hợp.';
-  return (items.length>1?String(i+1)+'. '+topic+'\n':'')+(special[item[0]]||general);
- });
- const level=p.level==='GIAI_TRINH'?'Đề nghị Thầy/Cô phản hồi, làm rõ các thông tin để nhà trường xem xét khách quan.':p.level==='CANH_BAO'?'Đề nghị Thầy/Cô kiểm tra và khắc phục các nội dung được ghi nhận.':'Đề nghị Thầy/Cô rà soát và phối hợp thực hiện theo yêu cầu của nhà trường.';
- $('subject').value=items.length===1?'Nhắc nhở công vụ – '+items[0][1]:'Nhắc nhở công vụ – '+items.length+' nội dung';
- $('content').value='Kính gửi Thầy/Cô,\n\n'+(p.facts?'Thông tin thực tế cần đối chiếu: '+p.facts+'\n\n':'')+lines.join('\n\n')+'\n\n'+level+(p.deadline?'\n\nHạn phản hồi: '+p.deadline.replace('T',' lúc '):'')+'\n\nTrường hợp có thông tin cần bổ sung, đề nghị phản hồi để nhà trường đối chiếu.\n\nTrân trọng.';
- status('sendStatus','Đã ghép '+items.length+' mẫu thành một dự thảo; BGH kiểm tra kỹ và chỉnh sửa trước khi gửi.');
+
+// Chỉ một nút soạn; mẫu truyền thống được dùng làm phương án dự phòng khi AI lỗi.
+
+function reminderRecipientNames(){
+ return [...state.selected].map(username=>state.people.find(p=>p.username===username)?.hoTen||'').filter(Boolean);
 }
-$('templateBtn').onclick=basicDraft;
+function reminderSalutation(){
+ const names=reminderRecipientNames();
+ if(names.length===1)return 'Kính gửi Thầy/Cô '+names[0]+',';
+ if(names.length>1)return 'Kính gửi các Thầy/Cô: '+names.join('; ')+',';
+ return '';
+}
+function reminderTopics(){
+ return scenarioCodes().filter(code=>code!=='NN-OTHER').map(code=>scenarios.find(x=>x[0]===code)?.[1]).filter(Boolean);
+}
+function reminderFallback(){
+ const p=payload(),names=reminderRecipientNames(),topics=reminderTopics();
+ const greeting=reminderSalutation();
+ const descriptions=topics.length?topics.join('; '):'nội dung cần trao đổi';
+ const dates=p.eventDate?' ngày '+p.eventDate.split('-').reverse().join('/'):'';
+ const factual=p.facts?'Thông tin cần đối chiếu'+dates+': '+p.facts+'.\n\n':'';
+ const line=names.length===1?'Đề nghị Thầy/Cô kiểm tra, phản hồi và phối hợp thực hiện theo yêu cầu của nhà trường.':'Đề nghị các Thầy/Cô kiểm tra, phản hồi và phối hợp thực hiện theo yêu cầu của nhà trường.';
+ $('subject').value='Nhắc nhở công vụ – '+descriptions;
+ $('content').value=greeting+'\n\n'+(topics.length?'Nội dung cần trao đổi: '+topics.join('; ')+'.\n\n':'')+factual+line+(p.deadline?'\n\nHạn phản hồi: '+p.deadline.replace('T',' lúc '):'')+'\n\nTrân trọng.';
+ $('verified').checked=false;
+}
+function normalizeReminderGreeting(body){
+ const greeting=reminderSalutation();
+ if(!greeting)return body;
+ let text=String(body||'').trim();
+ const starts=/^kính gửi[^\n]*\n*/i;
+ if(starts.test(text))text=text.replace(starts,'');
+ return greeting+'\n\n'+text.trim();
+}
+
 async function generate(){
  if(!isBGH())return status('sendStatus','Chỉ Ban Giám hiệu được soạn nhắc nhở.','error');
- if(!state.templates.size)return status('sendStatus','Chọn ít nhất một mẫu trước khi dùng Trợ lý EDOS.','error');
- const b=$('geminiBtn');b.disabled=true;status('sendStatus','Trợ lý EDOS đang soạn dự thảo…');
+ const recipients=reminderRecipientNames();
+ if(!recipients.length)return status('sendStatus','Thầy chọn ít nhất một giáo viên trước khi soạn.','error');
+ const topics=reminderTopics(),p=payload();
+ if(!topics.length&&!p.facts)return status('sendStatus','Thầy chọn sự việc hoặc nhập dữ kiện cụ thể trước khi soạn.','error');
+ const btn=$('geminiBtn');btn.disabled=true;
+ status('sendStatus','Trợ lý EDOS đang soạn dự thảo gửi đích danh '+recipients.join(', ')+'…');
+ const oldTitle=$('subject').value,oldText=$('content').value;
  try{
-   const p=payload(),topics=scenarioCodes().map(code=>scenarios.find(x=>x[0]===code)?.[1]).filter(Boolean);
-   const input={...p,scenarioCode:topics.length>1?'MULTI':p.scenarioCode,scenarioLabel:topics.join('; '),facts:[p.facts,topics.length>1?'Các nội dung đã chọn: '+topics.join('; '):''].filter(Boolean).join('\n'),provider:'gemini'};
-   if(typeof BRIDGE.generateDraft==='function'){
-    const out=await call('generateDraft',input);
-    if(!out?.success||!out.draft)throw Error(out?.message||'Chưa nhận được bản dự thảo.');
-    $('subject').value=String(out.draft.title||'');$('content').value=String(out.draft.content||'');
-   }else{
-    const service=window.HVA_Assistant_Shared;
-    if(typeof service?.ask!=='function')throw Error('Chưa kết nối dịch vụ Trợ lý dùng chung.');
-    const question=[
-     'Bạn hỗ trợ Ban Giám hiệu Trường THPT Hòa Vang soạn DỰ THẢO nhắc nhở công vụ gửi giáo viên. Văn phong hành chính chuẩn, ngắn gọn, tôn trọng, không kết luận vi phạm hoặc tự đặt sự việc. KHÔNG tự phát hành. Chỉ xuất phần NỘI DUNG thư, bắt đầu bằng Kính gửi Thầy/Cô.',
-     'Tên nội dung: '+($('subject').value.trim()||topics.join('; ')||'Nhắc nhở công vụ'),
-     'Dữ kiện do BGH nhập: '+(p.facts||'(chưa cung cấp dữ kiện cụ thể)'),
-     'Tình huống chọn: '+topics.join('; '),
-     'Mức độ: '+p.level+'. Hạn phản hồi: '+(p.deadline||'không nêu'),
-     'Bản thảo hiện có để biên tập: '+($('content').value.trim()||'(chưa có)')
-    ].join('\n').slice(0,3950);
-    const answer=await service.ask({question,context:'Công việc',sessionToken:state.session.sessionToken});
-    if(!String(answer||'').trim())throw Error('Trợ lý chưa trả nội dung.');
-    $('content').value=String(answer).trim();
-   }
-   status('sendStatus','Trợ lý EDOS đã tạo dự thảo. Ban Giám hiệu vui lòng rà soát dữ kiện trước khi gửi.','ok');
- }catch(e){status('sendStatus','Trợ lý EDOS chưa thể soạn: '+err(e)+'. Có thể dùng mẫu soạn sẵn.','error');}
- finally{b.disabled=!(typeof BRIDGE.generateDraft==='function'||typeof window.HVA_Assistant_Shared?.ask==='function');}
+  const question=[
+   'Bạn là Trợ lý EDOS hỗ trợ BGH Trường THPT Hòa Vang soạn NHẮC NHỞ CÔNG VỤ cá nhân. Trả lời DUY NHẤT nội dung văn bản, không giải thích. Viết đúng tên NGƯỜI NHẬN. Không tự nhận định là có vi phạm khi chưa xác minh. Không bịa dữ kiện, không đặt ngày nếu không được nhập. Không đưa tên nhãn mẫu Khác – BGH tự mô tả tình huống cụ thể vào văn bản.',
+   'Dòng mở đầu bắt buộc: '+reminderSalutation(),
+   'Người nhận: '+recipients.join('; '),
+   'Tình huống đã chọn: '+(topics.join('; ')||'(tình huống khác, mô tả bằng dữ kiện bên dưới)'),
+   'Dữ kiện cụ thể: '+(p.facts||'(chưa ghi nhận thêm dữ kiện)'),
+   'Ngày: '+(p.eventDate||'(chưa xác định)'),
+   'Hạn phản hồi: '+(p.deadline||'(không quy định)'),
+   'Mức độ dự thảo: '+p.level,
+   'Văn phong mong muốn: '+p.tone,
+   'Bản thảo đã có, nếu cần tham khảo: '+oldText
+  ].join('\n').slice(0,3950);
+  let draft='';
+  if(typeof window.HVA_Assistant_Shared?.ask==='function'){
+   draft=String(await window.HVA_Assistant_Shared.ask({question,context:'Công việc',sessionToken:state.session.sessionToken})||'').trim();
+  }else if(typeof BRIDGE.generateDraft==='function'){
+   const response=await call('generateDraft',{...p,scenarioCodes:scenarioCodes().filter(x=>x!=='NN-OTHER'),recipientNames:recipients,recipientSalutation:reminderSalutation(),facts:p.facts});
+   if(!response?.success||!response.draft)throw Error(response?.message||'Chưa nhận được dự thảo.');
+   draft=String(response.draft.content||'').trim();
+   if(response.draft.title)$('subject').value=String(response.draft.title);
+  }else throw Error('Dịch vụ AI chưa sẵn sàng');
+  if(!draft)throw Error('Trợ lý chưa trả nội dung.');
+  $('content').value=normalizeReminderGreeting(draft);
+  $('subject').value=$('subject').value.trim()||'Nhắc nhở công vụ – '+(topics.join('; ')||'Nội dung cần trao đổi');
+  $('verified').checked=false;
+  status('sendStatus','Trợ lý đã tạo dự thảo đích danh '+recipients.join(', ')+'. BGH vui lòng xem trước, rà soát dữ kiện và duyệt.','ok');
+ }catch(error){
+  $('subject').value=oldTitle;
+  $('content').value=oldText;
+  reminderFallback();
+  status('sendStatus','AI chưa phản hồi ('+err(error)+'). Đã soạn theo mẫu dự phòng với đúng tên giáo viên; thầy rà soát trước khi chuyển phát hành.','error');
+ }finally{btn.disabled=false}
 }
 $('geminiBtn').onclick=generate;
 function closePreview(){
