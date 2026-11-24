@@ -1838,8 +1838,9 @@ detail.addEventListener('click',e=>{
   if(pollOverlay.classList.contains('is-open'))closePollModal();
   const same=!detail.hidden&&detail.dataset.current===key;
   cards.forEach(c=>c.setAttribute('aria-expanded',String(!same&&c.dataset.nvsQuick===key)));
-  if(same){detail.hidden=true;detail.dataset.current='';return}
+  if(same){detail.hidden=true;detail.dataset.current='';document.body.classList.remove('hva-tv-open');return}
   detail.dataset.current=key;detail.hidden=false;
+  document.body.classList.add('hva-tv-open');
   if(key==='notice'){renderNotice();loadNotices(true);}
   else if(key==='work'){renderWork();loadWork(true);loadNotices(true);}
   else detail.innerHTML=sections[key]||'';
@@ -4722,5 +4723,9 @@ html body nav.nvs-premium-nav>button:focus-visible{
 }
 </style>
 <script defer src="./HVA_VoiceSearch.js"></script>
+<style id="hva-tv-detail-focus-20261124">
+/* Khi xem TV01/Thông báo: thu gọn 4 cổng Trang chủ, không thay đổi điều hướng. */
+body.hva-tv-open .nvs-chooser{display:none!important}
+</style>
 </body>
 </html>
