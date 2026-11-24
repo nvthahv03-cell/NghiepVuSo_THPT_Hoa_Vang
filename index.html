@@ -2012,17 +2012,12 @@ if(auth)new MutationObserver(refresh).observe(auth,{attributes:true,attributeFil
   const semester=schoolYear===2026?(d<new Date(Date.UTC(2027,0,18))?' • HKI':' • HKII'):'';
   // Giữ nguyên phần ngày/tuần/học kỳ/năm học cũ, chỉ nối thông tin mới.
   const base='Hôm nay là '+days[d.getUTCDay()]+', ngày '+v.day+'/'+v.month+'/'+v.year+week+semester+' • Năm học '+schoolYear+'–'+(schoolYear+1);
-  const today=d.getTime(),future=[];
-  for(const y of [v.year,v.year+1])for(const [m,day,name] of holidays){
-   const ms=Date.UTC(y,m-1,day);
-   if(ms>=today)future.push({ms,m,day,name});
-  }
-  future.sort((x,y)=>x.ms-y.ms);
   const congratulations=birthdays.filter(x=>x.month===v.month&&x.day===v.day)
    .map(x=>'🎂 Chúc mừng sinh nhật '+x.name+'! Kính chúc sức khỏe, hạnh phúc và thành công!');
-  const upcoming=future.slice(0,4).map(x=>
-   (x.ms===today?'Hôm nay, ':'')+String(x.day).padStart(2,'0')+'/'+String(x.m).padStart(2,'0')+' – '+x.name);
-  el.textContent=[base,...congratulations,...upcoming].join(' ★ ');
+  // Chỉ hiện ngày lễ đúng hôm nay; tuyệt đối không đưa ngày sắp tới lên dòng chạy.
+  const todayEvents=holidays.filter(([m,day])=>m===v.month&&day===v.day)
+   .map(([m,day,name])=>'Hôm nay, '+String(day).padStart(2,'0')+'/'+String(m).padStart(2,'0')+' – '+name);
+  el.textContent=[base,...congratulations,...todayEvents].join(' ★ ');
  }
  update();setInterval(update,60000);
 })();
