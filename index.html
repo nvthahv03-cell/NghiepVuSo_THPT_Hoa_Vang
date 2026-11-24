@@ -4363,7 +4363,7 @@ form?.addEventListener('submit',async e=>{
  function open(e){if(e)e.preventDefault();lastFocus=document.activeElement;overlay.hidden=false;close.focus();show('week')}
  function hide(){overlay.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
  tabs.forEach(tab=>tab.addEventListener('click',()=>show(tab.dataset.calendarView)));document.querySelectorAll('a.nvs-quick-calendar').forEach(x=>x.addEventListener('click',open));window.hvaOpenPublishedCalendar=open;
- close.addEventListener('click',hide);if(new URLSearchParams(location.search).get('calendar')==='open')open();refreshButton.addEventListener('click',()=>{tkbCache=null;show(selected)});overlay.addEventListener('click',e=>{if(e.target===overlay)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)hide()});
+ close.addEventListener('click',hide);refreshButton.addEventListener('click',()=>{tkbCache=null;show(selected)});overlay.addEventListener('click',e=>{if(e.target===overlay)hide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.hidden)hide()});
 })();
 </script>
 
