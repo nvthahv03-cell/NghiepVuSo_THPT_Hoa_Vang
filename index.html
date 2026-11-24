@@ -1153,6 +1153,10 @@ html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>strong>em{
   <button type="button" class="edos-v35-mic" id="edosV35Mic" aria-label="Mở HVA Assistant để nhập bằng micro">🎙️</button>
 </div></section>
 <div class="nvs-v10-ticker" aria-label="Lịch ngày và tuần học"><i class="bi bi-calendar3" aria-hidden="true"></i><div class="nvs-v10-ticker-window"><span id="nvsV10TickerText">Hôm nay là thứ Năm, ngày 15/10/2026 • Tuần học thứ 6 • HKI • Năm học 2026–2027</span></div></div>
+<div class="nvs-v10-ticker hva-holiday-ticker" aria-label="Ngày lễ và ngày kỷ niệm sắp tới">
+ <i class="bi bi-calendar-heart" aria-hidden="true"></i>
+ <div class="nvs-v10-ticker-window"><span id="hvaHolidayTickerText" aria-live="off">Ngày lễ, ngày kỷ niệm sắp tới</span></div>
+</div>
 
 <aside id="nvsMenuPanel" class="nvs-menu-panel" hidden aria-label="Danh mục nghiệp vụ"><h3><i class="bi bi-list-nested"></i> Danh mục nghiệp vụ</h3><details><summary>Điều hành – Quản trị</summary><a href="./DieuHanh.html">Vào không gian điều hành</a></details><details><summary>Tác nghiệp số</summary><a href="./NghiepVu.html?edrev=20261105a1a6">Vào không gian tác nghiệp</a></details><details><summary>Kho văn bản</summary><a href="./VanBan_QuyDinh.html">Tra cứu văn bản – Quy định</a><a href="https://drive.google.com/drive/folders/1mbCDN7oKZn8ZEqDXCfRryKgFUuS4Z3PY" target="_blank" rel="noopener noreferrer">Văn bản đến</a><a href="https://drive.google.com/drive/folders/1VS3eL_Ygck5MGClvdCPz3Na3jCkmmOwg" target="_blank" rel="noopener noreferrer">Văn bản đi</a><a href="https://drive.google.com/drive/folders/1FQYvyL-cKQoXQFri-TP_JkcvEePJH0f2" target="_blank" rel="noopener noreferrer">Biểu mẫu</a><a href="https://drive.google.com/drive/folders/1FmkmfQfi9ZgdgBECk__C--PzMxC1cZWK" target="_blank" rel="noopener noreferrer">Tài liệu hướng dẫn</a></details></aside>
 <script id="nvs-v1-menu-safe">(()=>{const b=document.getElementById('nvsMenuToggle'),p=document.getElementById('nvsMenuPanel');if(!b||!p)return;b.addEventListener('click',()=>{window.HVA_refreshDieuHanhGate?.();p.hidden=!p.hidden;b.setAttribute('aria-expanded',String(!p.hidden))});document.addEventListener('keydown',e=>{if(e.key==='Escape'){p.hidden=true;b.setAttribute('aria-expanded','false')}});document.addEventListener('click',e=>{if(!p.hidden&&!p.contains(e.target)&&!b.contains(e.target)){p.hidden=true;b.setAttribute('aria-expanded','false')}})})();</script>
@@ -1976,6 +1980,44 @@ document.addEventListener('visibilitychange',refresh);
 const auth=document.getElementById('dthtAuthModal');
 if(auth)new MutationObserver(refresh).observe(auth,{attributes:true,attributeFilter:['class','hidden']});
 })();</script>
+<style id="hva-holiday-ticker-style-20261124">
+/* Dòng chạy ngày lễ riêng ngay sau dòng ngày/tuần; không đổi lịch học, quyền hay menu. */
+body .hva-holiday-ticker{margin-top:3px!important;background:linear-gradient(105deg,#063c6f,#08758e)!important;border-color:#59cddd!important}
+body .hva-holiday-ticker>i{color:#f8da8a!important}
+body #hvaHolidayTickerText{display:inline-block;white-space:nowrap;padding-left:100%;font:700 13px/1.2 Inter,Arial,sans-serif;color:#f8e6a1!important;animation:nvsV10Ticker 36s linear infinite;will-change:transform}
+body .hva-holiday-ticker:hover #hvaHolidayTickerText{animation-play-state:paused}
+@media(max-width:720px){body .hva-holiday-ticker{height:31px!important}body #hvaHolidayTickerText{font-size:12px!important}}
+@media(prefers-reduced-motion:reduce){body #hvaHolidayTickerText{animation:none!important;padding-left:0!important;white-space:normal!important}}
+</style>
+<script id="hva-holiday-ticker-script-20261124">
+(function(){
+ 'use strict';
+ const el=document.getElementById('hvaHolidayTickerText');if(!el)return;
+ // Dữ liệu chỉ gồm các ngày dương lịch cố định. Ngày nghỉ học được thông báo riêng.
+ const events=[
+  [1,1,'Tết Dương lịch'],[2,3,'Ngày thành lập Đảng Cộng sản Việt Nam'],
+  [3,8,'Ngày Quốc tế Phụ nữ'],[3,26,'Ngày thành lập Đoàn TNCS Hồ Chí Minh'],
+  [4,30,'Ngày Giải phóng miền Nam, thống nhất đất nước'],
+  [5,1,'Ngày Quốc tế Lao động'],[5,19,'Ngày sinh Chủ tịch Hồ Chí Minh'],
+  [7,27,'Ngày Thương binh – Liệt sĩ'],[9,2,'Quốc khánh Việt Nam'],
+  [10,20,'Ngày Phụ nữ Việt Nam'],[11,20,'Ngày Nhà giáo Việt Nam'],
+  [12,22,'Ngày thành lập Quân đội nhân dân Việt Nam']
+ ];
+ function update(){
+  const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+  const get=k=>Number(parts.find(x=>x.type===k)?.value||0);
+  const year=get('year'),today=Date.UTC(year,get('month')-1,get('day'));
+  const future=[];
+  for(const y of [year,year+1])for(const [m,d,name] of events){
+   const ms=Date.UTC(y,m-1,d);
+   if(ms>=today)future.push({ms,m,d,name});
+  }
+  future.sort((a,b)=>a.ms-b.ms);
+  el.textContent='NGÀY LỄ – KỶ NIỆM SẮP TỚI  •  '+future.slice(0,4).map(x=>String(x.d).padStart(2,'0')+'/'+String(x.m).padStart(2,'0')+' – '+x.name).join('     ✦     ')+'  •  Ngày nghỉ học thực hiện theo thông báo chính thức.';
+ }
+ update();setInterval(update,3600000);
+})();
+</script>
 <script id="nvs-v10-calendar-display-only">
 (function(){
   const el=document.getElementById('nvsV10TickerText');if(!el)return;
