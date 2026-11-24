@@ -1477,7 +1477,11 @@ function fetchProfileFromSheet(username){
             // Chỉ lấy lớp ở W của đúng tài khoản O; không dò ô khác.
             if(!/^(10|11|12)\/\d{1,2}$/.test(lopCN)) lopCN = '';
 
-            finish({ toBoPhan, lopCN,
+            const cols = res?.table?.cols || [];
+            const birthCol = cols.findIndex(c => /^(ngày sinh|ngay sinh|ngày tháng năm sinh|ngay thang nam sinh|date of birth)$/i.test(String(c?.label || '').trim()));
+            const birthCell = birthCol >= 0 ? rawCells[birthCol] : null;
+            const ngaySinh = birthCell ? String(birthCell.f ?? birthCell.v ?? '').trim() : '';
+            finish({ toBoPhan, lopCN, ngaySinh,
               gioiTinh: cellsText[5] || '',
               viTriViecLam: cellsText[9] || '',
               vaiTro: cellsText[16] || '' });
@@ -1536,7 +1540,9 @@ async function initPortal(){
       cnBadge.hidden = !lop;
       user.lopChuNhiem = lop;
       if(profile.toBoPhan) user.toBoPhan = profile.toBoPhan;
+      if(profile.ngaySinh) user.ngaySinh = profile.ngaySinh;
       NVS_localStore.setItem('user', JSON.stringify(user));
+      window.dispatchEvent(new Event('hva:profile-updated'));
     } else {
       // Không dùng GVCN cache khi Sheet lỗi hoặc chưa trả dữ liệu.
       cnBadge.hidden = true;
@@ -1989,16 +1995,19 @@ if(auth)new MutationObserver(refresh).observe(auth,{attributes:true,attributeFil
   [10,20,'Ngày Phụ nữ Việt Nam'],[11,20,'Ngày Nhà giáo Việt Nam'],
   [11,24,'Ngày Văn hóa Việt Nam'],[12,22,'Ngày thành lập Quân đội nhân dân Việt Nam']
  ];
- let birthdays=[];
- // Nhân sự EDOS có thể truyền mảng [{name,month,day}] khi đã xác thực.
- // Không tự truy cập dữ liệu cá nhân, không đưa năm sinh ra Trang chủ.
- window.HVA_setHomeBirthdays=function(items){
-  birthdays=Array.isArray(items)?items.filter(x=>x&&typeof x.name==='string'&&x.name.trim()&&
-    Number.isInteger(Number(x.month))&&Number.isInteger(Number(x.day))&&
-    Number(x.month)>=1&&Number(x.month)<=12&&Number(x.day)>=1&&Number(x.day)<=31)
-   .map(x=>({name:x.name.trim(),month:Number(x.month),day:Number(x.day)})):[];
-  update();
- };
+ // Đối chiếu ngày sinh đúng hồ sơ người đang đăng nhập.
+ function birthMonthDay(value){
+  if(!value)return null;
+  if(value instanceof Date&&!isNaN(value))return {day:value.getDate(),month:value.getMonth()+1};
+  const v=String(value).trim();
+  let m=v.match(/^Date\\((\\d{4}),(\\d{1,2}),(\\d{1,2})/);
+  if(m)return {day:Number(m[3]),month:Number(m[2])+1};
+  m=v.match(/^(\\d{1,2})[\\/.-](\\d{1,2})(?:[\\/.-]\\d{2,4})?$/);
+  if(m)return {day:Number(m[1]),month:Number(m[2])};
+  m=v.match(/^(\\d{4})-(\\d{1,2})-(\\d{1,2})(?:T|$)/);
+  if(m)return {day:Number(m[3]),month:Number(m[2])};
+  return null;
+ }
  function update(){
   const fmt=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'numeric',day:'numeric'});
   const v={};fmt.formatToParts(new Date()).forEach(p=>{if(p.type!=='literal')v[p.type]=+p.value});
@@ -2012,14 +2021,21 @@ if(auth)new MutationObserver(refresh).observe(auth,{attributes:true,attributeFil
   const semester=schoolYear===2026?(d<new Date(Date.UTC(2027,0,18))?' • HKI':' • HKII'):'';
   // Giữ nguyên phần ngày/tuần/học kỳ/năm học cũ, chỉ nối thông tin mới.
   const base='Hôm nay là '+days[d.getUTCDay()]+', ngày '+v.day+'/'+v.month+'/'+v.year+week+semester+' • Năm học '+schoolYear+'–'+(schoolYear+1);
-  const congratulations=birthdays.filter(x=>x.month===v.month&&x.day===v.day)
-   .map(x=>'🎂 Chúc mừng sinh nhật '+x.name+'! Kính chúc sức khỏe, hạnh phúc và thành công!');
+  const loggedIn=typeof authToken==='function'&&Boolean(authToken());
+  const person=loggedIn&&typeof currentUser==='function'?currentUser():{};
+  const dob=birthMonthDay(person.ngaySinh||person.ngaysinh||person.dateOfBirth||person.birthDate||person.dob);
+  const name=String(person.hoTen||person.fullName||person.hoVaTen||'').trim();
+  const congratulations=loggedIn&&name&&dob&&dob.month===v.month&&dob.day===v.day
+   ?['🎂 Chúc mừng sinh nhật '+name+'! Kính chúc sức khỏe, hạnh phúc và thành công!']:[];
   // Chỉ hiện ngày lễ đúng hôm nay; tuyệt đối không đưa ngày sắp tới lên dòng chạy.
   const todayEvents=holidays.filter(([m,day])=>m===v.month&&day===v.day)
    .map(([m,day,name])=>'Hôm nay, '+String(day).padStart(2,'0')+'/'+String(m).padStart(2,'0')+' – '+name);
   el.textContent=[base,...congratulations,...todayEvents].join(' ★ ');
  }
  update();setInterval(update,60000);
+ window.addEventListener('nvs:login-success',update);
+ window.addEventListener('hva:profile-updated',update);
+ window.addEventListener('storage',update);
 })();
 </script>
 <style id="nvs-v14-responsive-final">
