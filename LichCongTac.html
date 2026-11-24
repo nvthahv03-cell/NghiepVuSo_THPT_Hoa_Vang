@@ -12,7 +12,8 @@
 const data={school:document.getElementById('schoolSource').textContent,personal:document.getElementById('personalSource').textContent};
 
 
-const mounted={},manageRequest=new URLSearchParams(location.search).get('mode')==='manage';
+const mounted={},query=new URLSearchParams(location.search),manageRequest=query.get('mode')==='manage';
+const fromHomeCalendar=query.get('view')==='personal'&&query.get('from')==='homecalendar';
 function getUser(){
   for(const store of [localStorage,sessionStorage]){
     try{const user=JSON.parse(store.getItem('user')||'null');if(user&&typeof user==='object')return user;}catch(e){}
@@ -25,6 +26,19 @@ const role=String(user.chucVu||user.viTriViecLam||user.workPosition||user.positi
 const normalized=role.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
 const canManage=/(hieu truong|pho hieu truong|ban giam hieu|\bbgh\b|to truong van phong|\bttvp\b)/.test(normalized);
 const manage=manageRequest&&canManage;
+if(fromHomeCalendar){
+ const tabList=document.querySelector('.tablist');
+ if(tabList)tabList.hidden=true;
+ const hintBox=document.getElementById('hint');if(hintBox)hintBox.hidden=true;
+ const heading=document.getElementById('hvaCalendarHeading');if(heading)heading.textContent='LỊCH CỦA TÔI';
+ const subtitle=document.getElementById('hvaCalendarSubtitle');if(subtitle)subtitle.textContent='Lịch và nhắc việc cá nhân';
+ const back=document.querySelector('a.back');
+ if(back){
+  back.href='./index.html?calendar=open';
+  back.setAttribute('aria-label','Trở lại cửa sổ Lịch – Thời khóa biểu trên Trang chủ');
+  const backText=back.querySelector('.backtext');if(backText)backText.textContent='Trở lại Lịch – TKB';
+ }
+}
 if(manage){document.getElementById("personalTab").hidden=true;document.getElementById("personalPane").hidden=true;document.getElementById("hvaCalendarSubtitle").textContent="Điều hành lịch nhà trường · Quản lý TKB thực hiện tại mục TKB";}
 const hints={
 school:manage?'Chế độ Điều hành: lập và quản lý lịch công tác nhà trường.':'Lịch nhà trường: chỉ xem lịch tuần, lịch tháng và lịch Sở. Tạo lịch nhà trường thực hiện tại Điều hành.',
@@ -80,7 +94,7 @@ function select(key){
 document.getElementById('schoolTab').onclick=()=>select('school');
 document.getElementById('personalTab').onclick=()=>select('personal');
 document.getElementById('timetableTab').onclick=()=>select('timetable');
-if(!manage && new URLSearchParams(location.search).get('view')==='personal') select('personal'); else mount('school');
+if(!manage && query.get('view')==='personal') select('personal'); else mount('school');
 setInterval(()=>{for(const key of ['school','personal']){const f=document.getElementById(key+'Frame');if(mounted[key]&&!document.getElementById(key+'Pane').hidden){if(key==='school')try{updateIdentity(f.contentDocument)}catch(e){}fit(f);}}},1600);
 })();
 </script></body></html>
