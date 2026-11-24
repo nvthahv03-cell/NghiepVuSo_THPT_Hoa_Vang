@@ -1641,14 +1641,14 @@ document.addEventListener('DOMContentLoaded', initPortal);
   const overdue=count('QUÁ HẠN');
   let html='<h3><i class="bi bi-person-check-fill"></i> VIỆC CỦA TÔI</h3>';
   html+='<div class="nvs-work-find"><label for="nvs-work-search">Tìm nhanh việc của tôi</label><input id="nvs-work-search" type="search" placeholder="Tìm theo nội dung, môn, hạn, trạng thái..." autocomplete="off"><span id="nvs-work-search-count" aria-live="polite"></span></div>';
-  // TV01 chỉ hiển thị nhiệm vụ; nhắc nhở và tin cá nhân đi qua chuông thông báo.
-  html+='<h4 style="margin-top:16px">NHIỆM VỤ KIỂM TRA – ĐÁNH GIÁ</h4>';
+  // TV01 là cửa vào tất cả nhiệm vụ; KTĐG là nhóm chuyên biệt chỉ hiện khi có dữ liệu.
+  html+='<section class="nvs-work-general" style="margin:14px 0;padding:14px;border:1px solid #d2e5f6;border-radius:12px;background:#f7fbff"><h4 style="margin:0 0 7px;color:#07518d">CÔNG VIỆC ĐƯỢC GIAO</h4><p class="nvs-quick-note" style="margin:0 0 11px">Tiếp nhận, theo dõi tiến độ và báo cáo kết quả các nhiệm vụ được giao.</p><a href="./NVS_GiaoViec_TheoDoi.html?view=mine" style="display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border-radius:9px;background:#0876c9;color:#fff;font-weight:750;text-decoration:none">Mở danh sách nhiệm vụ <i class="bi bi-arrow-right" aria-hidden="true"></i></a></section>';
+  if(workLoaded&&myTasks.length)html+='<h4 style="margin-top:16px">NHIỆM VỤ KIỂM TRA – ĐÁNH GIÁ</h4>';
   if(workError)html+='<p class="nvs-quick-note" role="alert" style="color:#b42332">'+esc(workError)+'</p>';
   else if(!workLoaded)html+='<p class="nvs-quick-note">Đang tải nhiệm vụ...</p>';
   else {
-   html+='<div class="nvs-work-status"><div><b>'+count('ĐƯỢC GIAO')+'</b>Việc được giao</div><div><b>'+inProgress+'</b>Đang thực hiện</div><div><b>'+overdue+'</b>Quá hạn</div><div><b>'+complete+'</b>Hoàn thành</div></div>';
-   if(!myTasks.length)html+='<p class="nvs-quick-note">Chưa có nhiệm vụ KTĐG được giao cho tài khoản này.</p>';
-   else html+=myTasks.map(t=>'<article data-nvs-work-item style="padding:13px 2px;border-top:1px solid #e1ebf3">'+
+   if(myTasks.length)html+='<div class="nvs-work-status"><div><b>'+count('ĐƯỢC GIAO')+'</b>Việc được giao</div><div><b>'+inProgress+'</b>Đang thực hiện</div><div><b>'+overdue+'</b>Quá hạn</div><div><b>'+complete+'</b>Hoàn thành</div></div>';
+   if(myTasks.length)html+=myTasks.map(t=>'<article data-nvs-work-item style="padding:13px 2px;border-top:1px solid #e1ebf3">'+
      '<strong style="color:#074b88">'+esc(t.stage||'Công đoạn KTĐG')+'</strong>'+
      '<div class="nvs-quick-note">'+esc([t.subject,t.grade,t.exam].filter(Boolean).join(' • '))+'</div>'+
      '<div class="nvs-quick-note">Hạn: '+esc(t.deadline||'Chưa xác định')+' '+esc(t.time||'')+' • Trạng thái: '+esc(t.status||'ĐƯỢC GIAO')+'</div>'+
