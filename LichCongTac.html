@@ -80,7 +80,7 @@ function select(key){
 document.getElementById('schoolTab').onclick=()=>select('school');
 document.getElementById('personalTab').onclick=()=>select('personal');
 document.getElementById('timetableTab').onclick=()=>select('timetable');
-mount('school');
+if(!manage && new URLSearchParams(location.search).get('view')==='personal') select('personal'); else mount('school');
 setInterval(()=>{for(const key of ['school','personal']){const f=document.getElementById(key+'Frame');if(mounted[key]&&!document.getElementById(key+'Pane').hidden){if(key==='school')try{updateIdentity(f.contentDocument)}catch(e){}fit(f);}}},1600);
 })();
 </script></body></html>
