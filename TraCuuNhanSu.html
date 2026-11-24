@@ -30,7 +30,7 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
 </head>
 <body>
 <header>
- <div><h1><i class="bi bi-people-fill" aria-hidden="true"></i> TRA CỨU NHÂN SỰ</h1><p>HVA–EDOS · Nguồn nhân sự dùng chung với Cuộc họp</p></div>
+ <div><h1><i class="bi bi-people-fill" aria-hidden="true"></i> TRA CỨU NHÂN SỰ</h1><p>HVA–EDOS · Danh bạ nhân sự EDOS</p></div>
  <a class="back" href="./index.html" aria-label="Về EDOS"><i class="bi bi-house-door-fill" aria-hidden="true"></i> Trang chủ EDOS</a>
 </header>
 <main>
@@ -40,7 +40,7 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
  <form class="search" id="personnelSearch" role="search">
   <label class="search-field"><i class="bi bi-search" aria-hidden="true"></i><input id="q" type="search" autocomplete="off" placeholder="Nhập tên giáo viên, tổ, môn hoặc chức vụ..." aria-label="Tìm nhân sự"></label>
   <button class="btn" type="submit" id="searchButton"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
-  <button class="btn" type="button" id="refresh" title="Tải lại danh sách từ nguồn Cuộc họp"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Làm mới</button>
+  <button class="btn" type="button" id="refresh" title="Tải lại danh bạ nhân sự EDOS"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Làm mới</button>
  </form>
  <div class="filters" id="filters" aria-label="Bộ lọc nhóm nhân sự"></div>
  <p id="status" role="status" aria-live="polite">Đang kiểm tra phiên đăng nhập EDOS...</p>
@@ -234,13 +234,13 @@ footer{font-size:12px;color:#6c7c8a;text-align:center;margin:20px 0}
  }
  async function load(){
    if(isLoading)return;
-   isLoading=true;$('refresh').disabled=true;status.dataset.error='false';status.textContent='Đang lấy nhân sự từ Cuộc họp...';
+   isLoading=true;$('refresh').disabled=true;status.dataset.error='false';status.textContent='Đang tải danh bạ nhân sự EDOS...';
    try{
-     if(!window.HVAPersonnel?.buildGroups)throw Error('Thư viện nhân sự Cuộc họp chưa được tải.');
+     if(!window.HVAPersonnel?.buildGroups)throw Error('Thư viện nhân sự EDOS chưa được tải.');
      const state=window.HVAPersonnel.ensureAuth().getSessionState();
      if(!state.validLocal)throw Error('Phiên đăng nhập EDOS hết hạn. Hãy đăng nhập lại.');
      const fresh=await window.HVAPersonnel.buildGroups();
-     if(!Array.isArray(fresh)||!fresh.length)throw Error('Nguồn nhân sự Cuộc họp chưa trả dữ liệu.');
+     if(!Array.isArray(fresh)||!fresh.length)throw Error('Nguồn nhân sự EDOS chưa trả dữ liệu.');
      groups=fresh;people=rowsByGroup(groups);
      let detailsMissing=false;
      try{people=enrichWithDirectory(people,await loadDetailedDirectory())}catch(_){detailsMissing=true}
