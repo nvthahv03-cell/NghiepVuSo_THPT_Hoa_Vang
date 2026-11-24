@@ -2029,7 +2029,7 @@ if(auth)new MutationObserver(refresh).observe(auth,{attributes:true,attributeFil
    ?['🎂 Chúc mừng sinh nhật '+name+'! Kính chúc sức khỏe, hạnh phúc và thành công!']:[];
   // Chỉ hiện ngày lễ đúng hôm nay; tuyệt đối không đưa ngày sắp tới lên dòng chạy.
   const todayEvents=holidays.filter(([m,day])=>m===v.month&&day===v.day)
-   .map(([m,day,name])=>String(day).padStart(2,'0')+'/'+String(m).padStart(2,'0')+' – '+name);
+   .map(([m,day,name])=>m===11&&day===24 ? 'Chào mừng Ngày Văn hóa Việt Nam 24/11' : String(day).padStart(2,'0')+'/'+String(m).padStart(2,'0')+' – '+name);
   el.textContent=[base,...congratulations,...todayEvents].join(' ★ ');
  }
  update();setInterval(update,60000);
