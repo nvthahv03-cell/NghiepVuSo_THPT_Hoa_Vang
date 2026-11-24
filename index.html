@@ -4228,6 +4228,8 @@ form?.addEventListener('submit',async e=>{
 .hva-lt-group{border:1px solid #c8ddeb;background:#f8fbff;border-radius:15px;padding:13px}
 .hva-lt-group-title{font-size:14px;font-weight:900;color:#074575;display:flex;align-items:center;gap:8px;margin:0 0 10px}
 .hva-lt-tabgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.hva-lt-group:first-child .hva-lt-tabgrid{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:750px){.hva-lt-group:first-child .hva-lt-tabgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .hva-lt-tab{border:1px solid #c4dff0;background:#fff;color:#175783;padding:11px 5px;border-radius:10px;font:800 12px Inter,Arial,sans-serif;cursor:pointer;min-width:0}
 .hva-lt-tab[aria-selected="true"]{color:white;background:#075b9e;border-color:#075b9e;box-shadow:0 3px 10px #075b9e25}
 .hva-lt-home-tools{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}
@@ -4248,7 +4250,7 @@ form?.addEventListener('submit',async e=>{
   <div class="hva-lt-home-content">
    <nav class="hva-lt-groups" aria-label="Danh mục Lịch và Thời khóa biểu">
     <section class="hva-lt-group"><h3 class="hva-lt-group-title"><i class="bi bi-calendar3"></i> LỊCH</h3><div class="hva-lt-tabgrid" role="group" aria-label="Loại lịch">
-      <button type="button" class="hva-lt-tab" data-calendar-view="week" aria-selected="true">Tuần</button><button type="button" class="hva-lt-tab" data-calendar-view="month" aria-selected="false">Tháng</button><button type="button" class="hva-lt-tab" data-calendar-view="department" aria-selected="false">Sở</button><button type="button" class="hva-lt-tab" data-calendar-view="urgent" aria-selected="false">Đột xuất</button>
+      <button type="button" class="hva-lt-tab" data-calendar-view="mycalendar" aria-selected="false">Cá nhân</button><button type="button" class="hva-lt-tab" data-calendar-view="week" aria-selected="true">Tuần</button><button type="button" class="hva-lt-tab" data-calendar-view="month" aria-selected="false">Tháng</button><button type="button" class="hva-lt-tab" data-calendar-view="department" aria-selected="false">Sở</button><button type="button" class="hva-lt-tab" data-calendar-view="urgent" aria-selected="false">Đột xuất</button>
     </div></section>
     <section class="hva-lt-group"><div class="hva-lt-tkb-header"><h3 class="hva-lt-group-title"><i class="bi bi-table"></i> THỜI KHÓA BIỂU</h3><a class="hva-lt-tkb-download" href="https://docs.google.com/spreadsheets/d/176tICCCsDPOnffCH4GAKO1p9YEcyc2ODEEaOa39Gyg4/export?format=xlsx" target="_blank" rel="noopener noreferrer" download aria-label="Tải Excel TKB lần 2, ngày 02/11/2026"><i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Tải Excel TKB <small>(Lần 2 · 02/11/2026)</small></a></div><div class="hva-lt-tabgrid" role="group" aria-label="Tra cứu thời khóa biểu">
       <button type="button" class="hva-lt-tab" data-calendar-view="personal" aria-selected="false">Cá nhân</button><button type="button" class="hva-lt-tab" data-calendar-view="morning" aria-selected="false">Sáng</button><button type="button" class="hva-lt-tab" data-calendar-view="afternoon" aria-selected="false">Chiều</button><button type="button" class="hva-lt-tab" data-calendar-view="class" aria-selected="false">Lớp</button><button type="button" class="hva-lt-tab" data-calendar-view="teacher" aria-selected="false">GV</button>
@@ -4353,7 +4355,7 @@ form?.addEventListener('submit',async e=>{
   link.style.display='inline-block';link.style.marginTop='10px';
   list.append(link);
 }
- async function show(which){selected=which;tabs.forEach(t=>t.setAttribute('aria-selected',String(t.dataset.calendarView===which)));if(which==='week')await week();else if(['month','department','urgent'].includes(which))placeholder(which);else await timetable(which)}
+ async function show(which){selected=which;tabs.forEach(t=>t.setAttribute('aria-selected',String(t.dataset.calendarView===which)));if(which==='mycalendar'){window.location.assign('./LichCongTac.html?view=personal');return}if(which==='week')await week();else if(['month','department','urgent'].includes(which))placeholder(which);else await timetable(which)}
  function open(e){if(e)e.preventDefault();lastFocus=document.activeElement;overlay.hidden=false;close.focus();show('week')}
  function hide(){overlay.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus()}
  tabs.forEach(tab=>tab.addEventListener('click',()=>show(tab.dataset.calendarView)));document.querySelectorAll('a.nvs-quick-calendar').forEach(x=>x.addEventListener('click',open));window.hvaOpenPublishedCalendar=open;
