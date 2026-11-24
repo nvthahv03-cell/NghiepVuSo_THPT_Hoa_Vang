@@ -34,9 +34,9 @@ if(fromHomeCalendar){
  const subtitle=document.getElementById('hvaCalendarSubtitle');if(subtitle)subtitle.textContent='Lịch và nhắc việc cá nhân';
  const back=document.querySelector('a.back');
  if(back){
-  back.href='./index.html?calendar=open';
-  back.setAttribute('aria-label','Trở lại cửa sổ Lịch – Thời khóa biểu trên Trang chủ');
-  const backText=back.querySelector('.backtext');if(backText)backText.textContent='Trở lại Lịch – TKB';
+  back.href='./index.html';
+  back.setAttribute('aria-label','Trở về Trang chủ HVA–EDOS');
+  const backText=back.querySelector('.backtext');if(backText)backText.textContent='Trang chủ';
  }
 }
 if(manage){document.getElementById("personalTab").hidden=true;document.getElementById("personalPane").hidden=true;document.getElementById("hvaCalendarSubtitle").textContent="Điều hành lịch nhà trường · Quản lý TKB thực hiện tại mục TKB";}
