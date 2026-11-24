@@ -1982,6 +1982,7 @@ document.addEventListener('visibilitychange',refresh);
 const auth=document.getElementById('dthtAuthModal');
 if(auth)new MutationObserver(refresh).observe(auth,{attributes:true,attributeFilter:['class','hidden']});
 })();</script>
+<style id="hva-culture-day-red-20261124">#nvsV10TickerText .hva-culture-day-red{color:#ff4545!important;font-weight:900;text-shadow:0 0 2px #fff,0 1px 3px #061b39}</style>
 <script id="nvs-v10-calendar-display-only">
 (function(){
  'use strict';
@@ -2030,7 +2031,19 @@ if(auth)new MutationObserver(refresh).observe(auth,{attributes:true,attributeFil
   // Chỉ hiện ngày lễ đúng hôm nay; tuyệt đối không đưa ngày sắp tới lên dòng chạy.
   const todayEvents=holidays.filter(([m,day])=>m===v.month&&day===v.day)
    .map(([m,day,name])=>m===11&&day===24 ? 'Chào mừng Ngày Văn hóa Việt Nam 24/11' : String(day).padStart(2,'0')+'/'+String(m).padStart(2,'0')+' – '+name);
-  el.textContent=[base,...congratulations,...todayEvents].join(' ★ ');
+  // Giữ nguyên marquee, chỉ tô đỏ riêng lời chào mừng 24/11.
+  const fragments=[base,...congratulations,...todayEvents];
+  const nodes=[];
+  fragments.forEach((part,index)=>{
+   if(index)nodes.push(document.createTextNode(' ★ '));
+   if(part==='Chào mừng Ngày Văn hóa Việt Nam 24/11'){
+    const greeting=document.createElement('span');
+    greeting.className='hva-culture-day-red';
+    greeting.textContent=part;
+    nodes.push(greeting);
+   }else nodes.push(document.createTextNode(part));
+  });
+  el.replaceChildren(...nodes);
  }
  update();setInterval(update,60000);
  window.addEventListener('nvs:login-success',update);
