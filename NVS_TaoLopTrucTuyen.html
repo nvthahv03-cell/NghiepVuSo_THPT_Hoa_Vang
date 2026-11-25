@@ -30,15 +30,28 @@ small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;backg
 <div id="meetStatus" class="note" role="status" aria-live="polite">Đang kiểm tra kết nối Google Calendar…</div>
 <p>EDOS kế thừa cơ chế tạo Google Meet thật từ phân hệ Cuộc họp. Giáo viên có thể dán liên kết Meet tạo sẵn, hoặc sử dụng nút trên. Việc tạo phòng không đồng nghĩa với phê duyệt dạy bù.</p>
 </section>
-<section class="card"><h2>03 · Minh chứng sau buổi học</h2>
+<section class="card" id="distribution"><h2>03 · Chuyển liên kết và thông báo</h2>
+<p>EDOS sẽ xác định GVCN theo lớp, chuyển link Meet để GVCN thông báo học sinh; đồng thời gửi thông tin buổi dạy tới BGH và đồng gửi TTCM. Các bước chuyển tự động sẽ chỉ mở sau khi hệ thống xác thực danh tính, phân công và ghi nhận tiếp nhận thành công.</p>
+<div class="grid">
+<label>Giáo viên chủ nhiệm lớp<input id="homeroom" readonly placeholder="Chờ EDOS tra cứu GVCN theo lớp"></label>
+<label>Nơi nhận báo cáo<input readonly value="Ban Giám hiệu · Đồng gửi TTCM"></label>
+</div>
+<div class="actions">
+<button id="forwardGVCN" type="button" disabled title="Chưa kết nối tuyến gửi GVCN trên EDOS">Chuyển GVCN (chưa mở)</button>
+<button id="copyGVCN" class="secondary" type="button">Sao chép thông báo gửi GVCN</button>
+<button id="sendBGH" type="button" disabled title="Chưa kết nối tuyến báo cáo BGH và TTCM trên EDOS">Báo cáo BGH · CC TTCM (chưa mở)</button>
+</div>
+<div id="deliveryStatus" class="note" role="status" aria-live="polite">Chưa có xác nhận chuyển GVCN hoặc gửi BGH/TTCM.</div>
+</section>
+<section class="card"><h2>04 · Minh chứng sau buổi học</h2>
 <div class="grid">
 <label class="wide">Liên kết điểm danh / danh sách tham gia<input id="attendance" type="url" maxlength="1500" placeholder="https://drive.google.com/..."></label>
 <label class="wide">Liên kết ảnh, sản phẩm học tập hoặc minh chứng thực hiện<input id="evidence" type="url" maxlength="1500" placeholder="https://drive.google.com/..."></label>
 <label class="wide">Liên kết bản ghi buổi học (nếu được phép)<input id="recording" type="url" maxlength="1500" placeholder="https://drive.google.com/..."></label>
 <label class="wide">Báo cáo kết quả<textarea id="notes" maxlength="1800" placeholder="Số học sinh tham gia, nội dung đã thực hiện, ghi chú..."></textarea></label>
 </div><p class="caution">Chỉ lưu minh chứng thật. Hạn chế chia sẻ công khai dữ liệu học sinh. BGH và TTCM đối chiếu lịch phê duyệt, Sổ đầu bài và minh chứng trước khi xác nhận hoàn thành.</p></section>
-<section class="card"><h2>04 · Xem trước và lưu bản nháp</h2>
+<section class="card"><h2>05 · Xem trước và lưu bản nháp</h2>
 <div class="actions"><button type="button" id="previewBtn" class="secondary">Xem trước</button><button type="button" id="save">Lưu bản nháp</button><button type="button" id="clear" class="secondary">Xóa bản nháp</button><button type="button" disabled>Gửi minh chứng BGH (chưa mở)</button></div>
 <div id="message" role="status" aria-live="polite">Chưa gửi hồ sơ. Bản nháp chỉ lưu trên thiết bị của giáo viên.</div><pre id="preview" hidden></pre>
 <p>Chưa có tuyến tiếp nhận EDOS cho nghiệp vụ này nên BGH chưa thể tự động thu thập minh chứng từ biểu mẫu. Sau khi kết nối, hệ thống mới cấp mã tiếp nhận và chuyển hồ sơ theo quyền.</p>
-</section></main><script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script><script defer src="./NVS_TaoLopTrucTuyen.js?v=20261125-meet2"></script></body></html>
+</section></main><script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script><script defer src="./NVS_TaoLopTrucTuyen.js?v=20261125-meet3"></script></body></html>
