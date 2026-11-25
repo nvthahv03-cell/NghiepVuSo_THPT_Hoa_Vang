@@ -81,3 +81,12 @@ body:has(.hva-a-header)>main{margin-top:12px!important}
 .hva-a52-brand{font-size:23px;font-weight:900;line-height:1.15;letter-spacing:.4px}
 .hva-a52-head h1{font-size:clamp(17px,2.4vw,22px);margin:3px 0 0;color:#fff;line-height:1.3}
 @media(max-width:550px){.hva-a52-head{gap:10px;padding:12px}.hva-a52-brand{font-size:21px}.hva-a52-head h1{font-size:17px}}
+
+/* Trạng thái kết nối mạng trong Header nghiệp vụ. Đây là kết nối thiết bị,
+   KHÔNG phải xác nhận kết nối tới máy chủ EDOS hoặc trạng thái phòng Meet. */
+.hva-head-connectivity{margin-left:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:11px;font-weight:800;line-height:1}
+.hva-head-connectivity-dot{width:9px;height:9px;display:inline-block;flex:0 0 9px;border-radius:50%;background:#4cf29b;box-shadow:0 0 0 4px rgba(76,242,155,.14);animation:hvaHeaderOnlinePulse 1.7s ease-in-out infinite}
+.hva-head-connectivity[data-network="offline"] .hva-head-connectivity-dot{background:#ffc96b;box-shadow:none;animation:none}
+@keyframes hvaHeaderOnlinePulse{0%,100%{opacity:1;box-shadow:0 0 0 3px rgba(76,242,155,.14)}50%{opacity:.45;box-shadow:0 0 0 6px rgba(76,242,155,.04)}}
+@media(prefers-reduced-motion:reduce){.hva-head-connectivity-dot{animation:none}}
+@media(max-width:480px){.hva-head-connectivity{font-size:10px;padding:5px 7px;gap:5px}.hva-head-connectivity-dot{width:8px;height:8px;flex-basis:8px}}
