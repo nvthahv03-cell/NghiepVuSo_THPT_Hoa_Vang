@@ -108,7 +108,8 @@ const groups=[
 {id:'QT3',name:'Danh mục và cấu hình nghiệp vụ',description:'Điều phối A/B/C, biểu mẫu, phụ thuộc và trạng thái nghiệm thu.',items:[
 ['QT3.1','Quản lý danh mục nghiệp vụ','Mẫu rà soát nghiệp vụ, trạng thái phát triển và yêu cầu nghiệm thu.','draft','./NVS_QuanLyNghiepVu.html'],
 ['QT3.2','Biểu mẫu và quy trình xử lý','Chuỗi nộp – tiếp nhận – nhận xét – phê duyệt – lưu trữ theo quyền.','planned',''],
-['QT3.3','Phiên bản và PASS–LOCK','Đăng ký phiên bản, kiểm thử hồi quy, nghiệm thu và quay lui an toàn.','planned','']]},
+['QT3.3','Phiên bản và PASS–LOCK','Đăng ký phiên bản, kiểm thử hồi quy, nghiệm thu và quay lui an toàn.','planned',''],
+['QT3.4','Hồ sơ nghiệp vụ nhóm A','Hộp tiếp nhận và theo dõi hồ sơ nhóm A của BGH, TTCM; tiếp nhận thực tế phụ thuộc trạng thái triển khai EDOS.','view','./NVS_A22_HopTiepNhan.html']]},
 {id:'QT4',name:'Dữ liệu và lưu trữ',description:'Nguồn dữ liệu thống nhất, lưu trữ và phương án phục hồi.',items:[
 ['QT4.1','Quản trị nguồn dữ liệu','CSDL nhân sự, lớp, chuyên môn và đối soát đồng bộ.','planned',''],
 ['QT4.2','Kho văn bản – biểu mẫu số','Đối chiếu kho văn bản đang sử dụng; chưa có quyền quản trị kho tại đây.','view','./VanBan_QuyDinh.html'],
@@ -123,7 +124,7 @@ const groups=[
 ['QT6.2','Cấu hình thông báo và lịch trình','Kiểm soát các kênh thông báo, lịch tác vụ và trạng thái gửi.','planned',''],
 ['QT6.3','Hỗ trợ sự cố và yêu cầu kỹ thuật','Tiếp nhận, phân loại, giao xử lý, nghiệm thu và lưu nhật ký.','planned','']]}
 ];
-const allowed=new Set(['./NVS_NhanSuTaiKhoan.html','./NVS_PhanQuyenHeThong.html','./NVS_QuanLyNghiepVu.html','./VanBan_QuyDinh.html','./NVS_NhatKyHeThong.html','./NVS_ThongKeBaoCao.html','./NVS_QuanTri_TraCuu.html']);
+const allowed=new Set(['./NVS_NhanSuTaiKhoan.html','./NVS_PhanQuyenHeThong.html','./NVS_QuanLyNghiepVu.html','./NVS_A22_HopTiepNhan.html','./VanBan_QuyDinh.html','./NVS_NhatKyHeThong.html','./NVS_ThongKeBaoCao.html','./NVS_QuanTri_TraCuu.html']);
 const status={draft:['Mẫu dự thảo','draft'],planned:['Chưa triển khai','planned'],view:['Chỉ xem','view']};
 const by=id=>document.getElementById(id),root=by('qtGroups'),search=by('qtSearch');
 const catalog=groups.flatMap(g=>g.items.map(([code,title,description,state,href])=>({group:g.id,code,title,description,state,href})));
@@ -144,7 +145,7 @@ function render(){
   if(linked){item.href=href;item.setAttribute('aria-label',code+' '+title+' – '+(code==='QT5.4'?'Chờ kết nối Backend':status[state][0]));}
   item.append(node('span','code',code));
   const content=node('div','entry-main');content.append(node('span','entry-title',title),node('div','entry-desc',description));item.append(content);
-  item.append(node('span','mark '+status[state][1],code==='QT5.4'?'Chờ Backend':status[state][0]));
+  item.append(node('span','mark '+status[state][1],code==='QT5.4'?'Chờ Backend':code==='QT3.4'?'Hộp tiếp nhận':status[state][0]));
   list.append(item);shown++;
  }
  section.append(list);root.append(section);
