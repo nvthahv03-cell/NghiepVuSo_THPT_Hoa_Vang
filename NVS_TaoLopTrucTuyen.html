@@ -7,6 +7,7 @@ input,select,textarea{width:100%;min-width:0;border:1px solid #b8d3e5;border-rad
 small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;background:#fff4e5;color:#81511a;border:1px solid #edcea0;border-radius:10px}
 .actions{display:flex;flex-wrap:wrap;gap:9px;margin:13px 0}button,.go{display:inline-flex;justify-content:center;align-items:center;border:0;border-radius:9px;background:#0a65a3;color:white;min-height:42px;padding:11px 14px;text-decoration:none;font:750 13px Arial,sans-serif;cursor:pointer}
 .secondary{background:#e8f5fc;color:#165177;border:1px solid #c5dfe9}button:disabled{opacity:.45;cursor:not-allowed}
+#meetStatus{background:#eff7fc;color:#24516e;border-radius:10px;padding:11px;font-size:12px;line-height:1.6}#meetStatus[data-kind="error"]{background:#fff1ee;color:#a4312e}#meetStatus[data-kind="ok"]{background:#eaf8ef;color:#19613a}#meetStatus[hidden],#connectGoogle[hidden],#checkMeet[hidden]{display:none!important}
 #message{padding:12px;border-radius:10px;background:#eef6fc;font-size:13px;line-height:1.5}#message[data-kind="error"]{background:#fff0ee;color:#b33b34}#message[data-kind="ok"]{background:#eaf8ee;color:#17643a}
 #preview[hidden]{display:none}#preview{overflow-wrap:anywhere;white-space:pre-wrap;background:#f4faff;border:1px solid #cadeec;padding:13px;border-radius:10px;font-size:13px;line-height:1.75}
 @media(max-width:580px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:13px}}
@@ -25,8 +26,9 @@ small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;backg
 <label class="wide">Nội dung bài dạy *<textarea id="lesson" maxlength="1800" placeholder="Tên bài, nội dung theo kế hoạch giáo dục"></textarea></label>
 <label class="wide">Liên kết Google Meet *<input id="meet" type="url" maxlength="1500" placeholder="https://meet.google.com/abc-defg-hij"></label>
 </div>
-<div class="actions"><a class="go secondary" href="https://meet.google.com/" target="_blank" rel="noopener noreferrer">Mở Google Meet tạo phòng</a><button id="join" class="secondary" type="button">Mở phòng đã tạo</button></div>
-<p>Trong Google Meet, chọn “Cuộc họp mới” → “Tạo cuộc họp để dùng sau”, sao chép đường dẫn và dán vào biểu mẫu. EDOS chưa tự tạo phòng thay giáo viên.</p>
+<div class="actions"><button id="createMeet" type="button">Tạo Google Meet bằng EDOS</button><button id="connectGoogle" class="secondary" type="button" hidden>Kết nối Google Calendar</button><button id="checkMeet" class="secondary" type="button" hidden>Kiểm tra link Meet</button><button id="join" class="secondary" type="button">Mở phòng đã tạo</button></div>
+<div id="meetStatus" class="note" role="status" aria-live="polite">Đang kiểm tra kết nối Google Calendar…</div>
+<p>EDOS kế thừa cơ chế tạo Google Meet thật từ phân hệ Cuộc họp. Giáo viên có thể dán liên kết Meet tạo sẵn, hoặc sử dụng nút trên. Việc tạo phòng không đồng nghĩa với phê duyệt dạy bù.</p>
 </section>
 <section class="card"><h2>03 · Minh chứng sau buổi học</h2>
 <div class="grid">
@@ -39,4 +41,4 @@ small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;backg
 <div class="actions"><button type="button" id="previewBtn" class="secondary">Xem trước</button><button type="button" id="save">Lưu bản nháp</button><button type="button" id="clear" class="secondary">Xóa bản nháp</button><button type="button" disabled>Gửi minh chứng BGH (chưa mở)</button></div>
 <div id="message" role="status" aria-live="polite">Chưa gửi hồ sơ. Bản nháp chỉ lưu trên thiết bị của giáo viên.</div><pre id="preview" hidden></pre>
 <p>Chưa có tuyến tiếp nhận EDOS cho nghiệp vụ này nên BGH chưa thể tự động thu thập minh chứng từ biểu mẫu. Sau khi kết nối, hệ thống mới cấp mã tiếp nhận và chuyển hồ sơ theo quyền.</p>
-</section></main><script defer src="./NVS_TaoLopTrucTuyen.js?v=20261125-1"></script></body></html>
+</section></main><script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script><script defer src="./NVS_TaoLopTrucTuyen.js?v=20261125-meet2"></script></body></html>
