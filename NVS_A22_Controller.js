@@ -53,8 +53,8 @@ function a22RefreshPresentation(){
  if(intro&&a1)intro.textContent='Tải mẫu, hoàn thiện hồ sơ và lưu trên Google Drive. Sau đó chọn “Nộp hồ sơ”, dán liên kết và gửi đến BGH/TTCM.';
  if(intro&&a21)intro.textContent='Giáo viên được phân công nộp liên kết bộ hồ sơ đợt kiểm tra gồm ma trận, đặc tả, đề, đáp án/hướng dẫn chấm hoặc tiêu chí đánh giá phù hợp. Không tải đề mật lên liên kết công khai.';
  const note=document.querySelector('.hva-a-landing-note');
- if(note&&a1)note.textContent=plan?'Mẫu Word hiện là bản dự thảo để nhà trường duyệt. Hồ sơ chỉ được ghi nhận khi Backend cấp mã tiếp nhận.':'Nộp liên kết tài liệu đã hoàn thiện và chia sẻ đúng quyền. Hệ thống chỉ xác nhận nộp khi Backend trả mã hồ sơ.';
- if(note&&a21)note.textContent='Nguồn đề do Sở cung cấp: không yêu cầu giáo viên nộp lại. Việc tiếp nhận đề của Sở thực hiện theo quy trình bảo mật và Điều hành. Với đề của trường/tổ, hồ sơ chỉ được ghi nhận sau khi Backend trả mã tiếp nhận.';
+ if(note&&a1)note.textContent=plan?'Mẫu Word hiện là bản dự thảo để nhà trường duyệt. Hồ sơ chỉ được ghi nhận khi EDOS cấp mã tiếp nhận.':'Nộp liên kết tài liệu đã hoàn thiện và chia sẻ đúng quyền. Hệ thống chỉ xác nhận nộp khi có mã hồ sơ.';
+ if(note&&a21)note.textContent='Nguồn đề do Sở cung cấp: không yêu cầu giáo viên nộp lại. Việc tiếp nhận đề của Sở thực hiện theo quy trình bảo mật và Điều hành. Với đề của trường/tổ, hồ sơ chỉ được ghi nhận sau khi EDOS trả mã tiếp nhận.';
  const quick=by('a22QuickTools');if(quick)quick.hidden=true;
  const evidence=by('evidence'),evidenceLabel=document.querySelector('label[for="evidence"]');
  if(evidenceLabel)evidenceLabel.textContent=a1?'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *':'Liên kết hồ sơ đã hoàn thiện trên Google Drive / Docs *';
@@ -231,8 +231,8 @@ function setCode(code,keepTitle=false){
  if(by('team'))by('team').required=!a1;
  if(by('a22OwnerCell'))by('a22OwnerCell').hidden=a1;
  if(by('a22TeamCell'))by('a22TeamCell').hidden=a1;
- if(by('a22HeaderTitle'))by('a22HeaderTitle').textContent=a1?def.title:'Biểu mẫu nghiệp vụ số';
- if(by('a22HeaderCode'))by('a22HeaderCode').textContent=a1?code+' · BÁO CÁO CHUYÊN MÔN':'HỒ SƠ CHUYÊN MÔN';
+ if(by('a22HeaderTitle'))by('a22HeaderTitle').textContent=def.title;
+ if(by('a22HeaderCode'))by('a22HeaderCode').textContent=code+' · '+(code.startsWith('A.1.')?'BÁO CÁO CHUYÊN MÔN':code.startsWith('A.2.')?'KIỂM TRA – ĐÁNH GIÁ':code.startsWith('A.3.')?'HỒ SƠ DẠY HỌC':code.startsWith('A.4.')?'SẢN PHẨM CHUYÊN MÔN':code.startsWith('A.5.')?'ĐƠN – ĐỀ NGHỊ':'THIẾT BỊ – ĐỒ DÙNG DẠY HỌC');
  if(by('a22A1SelectedTitle'))by('a22A1SelectedTitle').textContent=def.title;
  if(by('a22A1SelectedPurpose'))by('a22A1SelectedPurpose').textContent=def.purpose;
  if(by('a22PreviewTitle'))by('a22PreviewTitle').textContent=a1?'Bản xem trước – '+def.title:'Bản xem trước hồ sơ';

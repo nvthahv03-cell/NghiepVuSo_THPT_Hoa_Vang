@@ -881,7 +881,52 @@ body.hva-edos-unified nav.tabs[role="tablist"] button.tab:focus-visible{
 body.hva-edos-unified>.shell{width:min(1150px,calc(100% - 30px))!important;margin:16px auto 30px!important;position:relative!important}
 body.hva-edos-unified>.shell>.workspace{border-radius:20px!important}
 @media(max-width:700px){body.hva-edos-unified>.shell{width:calc(100% - 16px)!important;margin:12px auto 24px!important}}
-</style></head><body class="hva-ui-v1 hva-edos-unified"><div class="hva-edos-unified-bar" role="navigation" aria-label="Điều hướng chung HVA-EDOS"><div class="edos-ub-left"><a class="edos-ub-link" href="./index.html" aria-label="Quay lại" title="Quay lại">‹</a><a class="edos-ub-link" href="./index.html" aria-label="Trang chủ" title="Trang chủ">⌂</a><div class="edos-ub-brand"><div class="edos-ub-wordmark">HVA-<b>EDOS</b></div><div class="edos-ub-sub">HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</div></div></div><div class="edos-ub-actions"><span class="edos-ub-online">Trực tuyến</span></div></div>
+</style><style id="hva-a-24-unified-v1">
+/* Giao diện thống nhất cho 24 nghiệp vụ A.1–A.6; không thay đổi hành vi. */
+#panel-0>.group{min-width:0}
+#panel-0>.group>summary .group-name{min-width:0;overflow-wrap:anywhere;line-height:1.38}
+#panel-0>.group .items{min-width:0}
+#panel-0>.group .items>a.item,
+#panel-0>.group .items>.nvs-a-entry>.nvs-a-toggle{
+  min-width:0;min-height:55px;display:flex;align-items:center;gap:12px;
+  padding:12px 14px!important;text-decoration:none;line-height:1.4
+}
+#panel-0>.group .items>a.item>span:first-child,
+#panel-0>.group .items>.nvs-a-entry>.nvs-a-toggle>span:first-child{
+  display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;
+  overflow-wrap:anywhere
+}
+#panel-0>.group .items .item-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:48px;flex:0 0 48px;font-size:11px;line-height:1.3;
+  color:#075687;background:#eaf5ff;border:1px solid #d1e7f9;
+  border-radius:8px;padding:5px 4px;font-weight:850;white-space:nowrap
+}
+#panel-0>.group .items .status{flex:0 0 auto;max-width:128px;text-align:right;line-height:1.3}
+#panel-0>.group .items a.item:focus-visible,
+#panel-0>.group .items a.nvs-a-tile:focus-visible,
+#panel-0>.group .items button.nvs-a-toggle:focus-visible{
+  outline:3px solid #109fda;outline-offset:-3px;border-radius:9px
+}
+#panel-0>.group .items .nvs-a-tile{min-width:0;overflow-wrap:anywhere}
+@media(max-width:680px){
+  #panel-0>.group>summary{padding:12px!important;gap:8px!important}
+  #panel-0>.group .items>a.item,
+  #panel-0>.group .items>.nvs-a-entry>.nvs-a-toggle{
+    padding:11px 10px!important;gap:7px;min-height:54px
+  }
+  #panel-0>.group .items .item-num{
+    min-width:45px;flex-basis:45px;font-size:10px
+  }
+  #panel-0>.group .items .status{max-width:88px;font-size:10px!important}
+}
+@media(max-width:370px){
+  #panel-0>.group .items>a.item,
+  #panel-0>.group .items>.nvs-a-entry>.nvs-a-toggle{flex-wrap:wrap}
+  #panel-0>.group .items .status{margin-left:55px;max-width:calc(100% - 55px)}
+}
+</style>
+</head><body class="hva-ui-v1 hva-edos-unified"><div class="hva-edos-unified-bar" role="navigation" aria-label="Điều hướng chung HVA-EDOS"><div class="edos-ub-left"><a class="edos-ub-link" href="./index.html" aria-label="Quay lại" title="Quay lại">‹</a><a class="edos-ub-link" href="./index.html" aria-label="Trang chủ" title="Trang chủ">⌂</a><div class="edos-ub-brand"><div class="edos-ub-wordmark">HVA-<b>EDOS</b></div><div class="edos-ub-sub">HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</div></div></div><div class="edos-ub-actions"><span class="edos-ub-online">Trực tuyến</span></div></div>
 
 <main class="shell"><div class="workspace"><div class="workspace-top"><div><h2>KHÔNG GIAN NGHIỆP VỤ GIÁO VIÊN</h2><p>Thực hiện hồ sơ, tra cứu thông tin và theo dõi kết quả gửi BGH. Minh chứng nộp bằng liên kết Google Drive.</p></div><span class="pill">Không tải tệp trực tiếp</span></div>
 <nav class="nvs-four-quick-grid" aria-label="Nề nếp học sinh và Nhật ký Bảo vệ">

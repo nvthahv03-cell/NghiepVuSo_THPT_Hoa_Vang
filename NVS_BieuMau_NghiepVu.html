@@ -381,6 +381,35 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 #hvaA41Workspace .hva-a41-link-input>input{height:46px}
 #hvaA41Workspace .hva-a41-clear-link{height:40px;align-self:center}
 </style>
+<style id="hva-a-24-form-consistency-v1">
+/* Áp dụng chung cho các biểu mẫu A.1–A.6; giữ nguyên A.4.1 chuyên biệt. */
+body:not(.hva-a41-three) .hva-a-header-bottom{max-width:100%;min-width:0}
+body:not(.hva-a41-three) #a22HeaderTitle{overflow-wrap:anywhere;line-height:1.3}
+body:not(.hva-a41-three) #a22HeaderCode{letter-spacing:.04em}
+body:not(.hva-a41-three) #a22TemplateLanding,
+body:not(.hva-a41-three) #a22SubmissionEditor{min-width:0}
+body:not(.hva-a41-three) #a22TemplateLanding .hva-a-landing-intro,
+body:not(.hva-a41-three) #a22TemplateLanding .hva-a-landing-note{
+  max-width:75ch;line-height:1.55;overflow-wrap:anywhere
+}
+body:not(.hva-a41-three) .hva-a-landing-actions{align-items:stretch}
+body:not(.hva-a41-three) .hva-a-landing-actions button{
+  min-width:0;min-height:52px;text-align:left
+}
+body:not(.hva-a41-three) button:focus-visible,
+body:not(.hva-a41-three) a:focus-visible{
+  outline:3px solid #12a4d8;outline-offset:3px
+}
+body:not(.hva-a41-three) input,
+body:not(.hva-a41-three) textarea,
+body:not(.hva-a41-three) select{min-width:0;max-width:100%}
+@media(max-width:640px){
+  body:not(.hva-a41-three) .hva-a-landing-actions{display:grid;grid-template-columns:1fr;gap:9px}
+  body:not(.hva-a41-three) .hva-a-landing-actions button{width:100%}
+  body:not(.hva-a41-three) #a22HeaderTitle{font-size:clamp(18px,5vw,23px)}
+  body:not(.hva-a41-three) .hva-a-flow{flex-wrap:wrap}
+}
+</style>
 </head><body>
 <header class="hva-a-header"><div class="hva-a-header-top"><a class="hva-a-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ số" title="Quay lại Nghiệp vụ số">←</a><div class="hva-a-identity"><div class="hva-a-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a-brand"><span class="hva-a-brand-hva">HVA</span><span class="hva-a-brand-dash">–</span><b class="hva-a-brand-edos">EDOS</b></div></div></div><div class="hva-a-header-bottom"><div class="hva-a-section-code" id="a22HeaderCode">HỒ SƠ CHUYÊN MÔN</div><h1 id="a22HeaderTitle">Biểu mẫu nghiệp vụ số</h1><p>Soạn hồ sơ · Kiểm tra nội dung · Nộp theo quyền được cấp</p></div></header>
 <main><div class="hva-a-flow" aria-label="Quy trình hồ sơ"><span><b>1</b> Mở mẫu Drive</span><span><b>2</b> Nộp liên kết Drive</span><span><b>3</b> Nhận mã tiếp nhận</span></div><div class="hva-a-status" id="a22Connection" role="status" aria-live="polite"><span class="hva-a-status-dot" aria-hidden="true"></span><span id="a22ConnectionText">Đang kiểm tra quyền nộp hồ sơ…</span></div><div class="note hva-a-brief" role="note"><i class="hva-brief-icon" aria-hidden="true">i</i><span>Hồ sơ chỉ được coi là <b>đã nộp</b> khi máy chủ trả <b>mã tiếp nhận</b>. Nếu chưa kết nối, thầy/cô vẫn có thể soạn và lưu bản nháp. Không đưa thông tin cá nhân nhạy cảm của học sinh vào biểu mẫu.</span></div>
@@ -421,7 +450,7 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 <section class="panel hva-a-template-landing" id="a22TemplateLanding" aria-label="Quy trình tải mẫu và nộp liên kết">
  <div class="hva-a-kicker">BIỂU MẪU NGHIỆP VỤ</div>
  <h2 id="a22LandingTitle">Chọn nghiệp vụ</h2>
- <p class="hva-a-landing-intro">Mở mẫu do nhà trường cung cấp trên Google Drive, hoàn thiện và lưu thành tệp riêng. Khi sẵn sàng, nhập liên kết hồ sơ để nộp. Khi sẵn sàng, chọn <strong>Nộp hồ sơ</strong> để nhập đường liên kết.</p>
+ <p class="hva-a-landing-intro">Hoàn thiện hồ sơ và lưu trên Google Drive. Chọn <strong>Nộp hồ sơ</strong> để nhập liên kết và gửi sau khi kiểm tra.</p>
  <div class="hva-a-landing-actions">
   <button type="button" class="hva-a-submit-entry" id="a21ScheduleOpen" hidden><i aria-hidden="true">▦</i><span><strong>Đăng ký lịch KT</strong><small>Các môn kiểm tra không tập trung</small></span></button>
   <button type="button" class="hva-a-download" id="a22TemplateDownload"><i aria-hidden="true">↓</i><span><strong>Mở mẫu trên Drive</strong><small>Chỉ mở mẫu do nhà trường cung cấp</small></span></button>
@@ -431,12 +460,12 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 </section>
 <section class="panel" id="a21SchedulePanel" hidden aria-label="Đăng ký lịch kiểm tra các môn không tập trung">
  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h2>Đăng ký lịch kiểm tra không tập trung</h2><button type="button" id="a21ScheduleClose" class="secondary">Đóng</button></div>
- <p class="note">Danh sách môn dùng chung cho các học kỳ. Riêng cuối kỳ I theo Kế hoạch 400/KH-THPTHV, Ngữ văn, Tiếng Anh, Toán và Lịch sử kiểm tra tập trung nên không đăng ký ở đây; lịch các môn còn lại từ 14/12/2026 đến 05/01/2027; không bố trí quá 02 môn/lớp/buổi, không kiểm tra 24–25/12 và các buổi khối đã kiểm tra tập trung. <b>Hệ thống chỉ xác nhận đã đăng ký sau khi Backend chung phản hồi thành công. TTCM rà soát lịch toàn tổ và gửi BGH trên KT01.</b></p>
+ <p class="note">Danh sách môn dùng chung cho các học kỳ. Riêng cuối kỳ I theo Kế hoạch 400/KH-THPTHV, Ngữ văn, Tiếng Anh, Toán và Lịch sử kiểm tra tập trung nên không đăng ký ở đây; lịch các môn còn lại từ 14/12/2026 đến 05/01/2027; không bố trí quá 02 môn/lớp/buổi, không kiểm tra 24–25/12 và các buổi khối đã kiểm tra tập trung. <b>Hệ thống chỉ xác nhận đã đăng ký khi lưu thành công. TTCM rà soát lịch toàn tổ và gửi BGH trên KT01.</b></p>
  <form id="a21ScheduleForm">
  <div class="a21-user-strip" aria-live="polite">
   <div class="a21-user-icon">GV</div>
   <div class="a21-user-info"><small>GIÁO VIÊN ĐĂNG KÝ · THEO PHIÊN EDOS</small><strong id="a21ActorName">Đang xác minh tài khoản…</strong>
-   <span id="a21ActorDetails">Đang truy xuất tổ chuyên môn và tài khoản từ Backend</span></div>
+   <span id="a21ActorDetails">Đang xác minh tổ chuyên môn và tài khoản từ EDOS</span></div>
   <span id="a21ActorFlag" class="a21-actor-flag">Chưa xác minh</span>
  </div>
  <div class="a21-form-title">01 · THÔNG TIN LỊCH KIỂM TRA</div>
