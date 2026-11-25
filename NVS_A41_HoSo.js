@@ -97,6 +97,7 @@
   row.append(label,name,links,remove);return row;
  }
  function render(){
+  entry.classList.toggle('hva-a41-single',items.length===1);
   rowsEl.replaceChildren(...items.map(makeRow));
   by('hvaA41Add').disabled=inFlight;
   by('hvaA41Back').disabled=inFlight;
