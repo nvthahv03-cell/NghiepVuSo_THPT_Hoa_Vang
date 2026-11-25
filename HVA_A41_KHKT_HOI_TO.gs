@@ -31,16 +31,31 @@ function hvaA41KhktLegacyRows_(){
 }
 function hvaA41KhktLegacyPayload_(raw){
   var data;
-  try{data=JSON.parse(String(raw||''));}catch(e){return {error:'PayloadJson không hợp lệ'};}
+  try{data=JSON.parse(String(raw||''));}
+  catch(e){return {error:'PayloadJson không hợp lệ'};}
+  // Dữ liệu A22 có thể lưu đối tượng document, form/extras,
+  // hoặc đối tượng đã chuẩn hóa. Không lấy link theo vị trí cột.
   var doc=data.document||data.doc||data;
   var form=doc.form||data.form||{};
   var extras=doc.extras||data.extras||{};
   var kind=String(extras.loaiSanPham||'').trim();
+  var word=String(extras.sanPhamUrl||'').trim();
+  var pdf=String(form.evidence||'').trim();
+  var content=String(form.content||'');
+  var resultText=String(form.result||'');
+  var research=String(extras.ketQuaNghienCuu||'');
+  // Hỗ trợ bản ghi A22 lưu liên kết dưới dạng văn bản kèm nhãn.
+  function fromText(text,label){
+    var re=new RegExp('(?:Liên kết|Link|Bản)\\s*'+label+'\\s*:\\s*(https?:\\/\\/[^\\s<>"\\x27]+)','i');
+    var m=re.exec(text);
+    return m?m[1].trim():'';
+  }
+  if(!word)word=fromText(content+'\\n'+research,'Word');
+  if(!pdf)pdf=fromText(content+'\\n'+research,'PDF');
   return {
     kind:kind,
     schoolYear:String(form.schoolYear||'').trim(),
-    word:String(extras.sanPhamUrl||'').trim(),
-    pdf:String(form.evidence||'').trim()
+    word:word,pdf:pdf
   };
 }
 /** Hàm chỉ đọc, tuyệt đối KHÔNG tạo Sheet hay cấp mã. */
@@ -51,11 +66,74 @@ function hvaA41KhktAuditLegacy_(){
     return {
       row:r.sourceRow,recordId:String(r.RecordId),requestId:String(r.RequestId),
       title:String(r.Title),owner:String(r.Owner),createdAt:String(r.CreatedAt),
-      category:data.kind||'(chưa xác định)',payloadOk:!data.error
+      category:data.kind||'(chưa xác định)',payloadOk:!data.error,
+      hasWord:/^https:\/\//i.test(data.word||''),
+      hasPdf:/^https:\/\//i.test(data.pdf||'')
     };
   });
   Logger.log(JSON.stringify(result,null,2));
   return result;
+}
+/**
+ * LẬP BẢNG KIỂM TRA KHKT (không cấp mã, không sửa Sheet A22).
+ * Người quản trị chạy hàm này để xem riêng link Word / PDF,
+ * đánh dấu các bản ghi cùng tên, nhận diện bản đã nộp nhiều lần.
+ * Chỉ tổng hợp A.4.1 có loại KHKT hoặc chưa xác định loại.
+ * Bảng kiểm tra khác Sheet mã chính thức NVS_A.4.1_KHKT.
+ */
+function hvaA41KhktCreateReviewSheet_(){
+  var ss=hvaA41KhktLegacyDb_();
+  var rows=hvaA41KhktLegacyRows_();
+  var HEAD=['STT nguồn','Mã A22','Mã yêu cầu','Giáo viên','Tổ CM',
+    'Tên sản phẩm','Loại hồ sơ','Word','PDF','Ngày nộp',
+    'Trạng thái A22','Kiểm tra','Ghi chú xác minh'];
+  var names={};
+  var filtered=rows.map(function(r){
+    var p=hvaA41KhktLegacyPayload_(r.PayloadJson);
+    return {r:r,p:p};
+  }).filter(function(x){
+    return x.p.kind==='Khoa học kỹ thuật'||!x.p.kind;
+  });
+  filtered.forEach(function(x){
+    var key=String(x.r.Owner||'').trim().toLowerCase()+'|'+
+      String(x.r.Title||'').trim().toLowerCase();
+    names[key]=(names[key]||0)+1;
+  });
+  var safe=function(v){
+    var t=String(v==null?'':v).trim();
+    return /^[=+@\\-]/.test(t)?"'"+t:t;
+  };
+  var out=filtered.map(function(x){
+    var r=x.r,p=x.p;
+    var key=String(r.Owner||'').trim().toLowerCase()+'|'+
+      String(r.Title||'').trim().toLowerCase();
+    var issue=[];
+    if(!p.kind)issue.push('Chưa rõ loại');
+    if(!/^https:\/\//i.test(p.word||''))issue.push('Thiếu Word');
+    if(!/^https:\/\//i.test(p.pdf||''))issue.push('Thiếu PDF');
+    if(names[key]>1)issue.push('Tên trùng: đối chiếu 2 lượt');
+    return [
+      r.sourceRow,safe(r.RecordId),safe(r.RequestId),safe(r.OwnerName||r.Owner),
+      safe(r.Team),safe(r.Title),safe(p.kind||'Chưa rõ'),
+      safe(p.word),safe(p.pdf),safe(r.CreatedAt),safe(r.Status),
+      issue.length?'CẦN KIỂM TRA':'Đủ liên kết',
+      issue.join('; ')
+    ];
+  });
+  var name='NVS_A.4.1_KHKT_DOI_CHIEU';
+  var sh=ss.getSheetByName(name);
+  if(sh&&sh.getLastRow()>1){
+    throw Error('Bảng đối chiếu đã có dữ liệu: không tự ghi đè. Hãy sao lưu và xóa bảng đối chiếu cũ nếu cần tạo mới.');
+  }
+  if(!sh)sh=ss.insertSheet(name);
+  sh.getRange(1,1,1,HEAD.length).setValues([HEAD]);
+  if(out.length)sh.getRange(2,1,out.length,HEAD.length).setValues(out);
+  sh.setFrozenRows(1);
+  sh.getRange(1,1,1,HEAD.length).setFontWeight('bold').setBackground('#e8f3fc');
+  sh.getRange(1,1,Math.max(2,out.length+1),HEAD.length).setWrap(false);
+  sh.autoResizeColumns(1,HEAD.length);
+  Logger.log('Đã lập bảng đối chiếu '+name+': '+out.length+' hồ sơ A.4.1 có thể là KHKT. Chưa cấp mã mới.');
+  return {sheet:name,rows:out.length,officialCodesIssued:0};
 }
 /**
  * CHỈ GHI các recordId được người quản trị xác nhận, không tự coi hai lượt
