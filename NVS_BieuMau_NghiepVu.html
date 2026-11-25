@@ -333,6 +333,23 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 .hva-a41-status[data-state="error"]{color:#aa3030}
 .hva-a41-add{background:#fff3e1;color:#924f00;border:1px solid #efc38b;font-weight:900}
 @media(max-width:720px){.hva-a41-layout h2{font-size:19px}.hva-a41-menu{grid-template-columns:1fr}.hva-a41-card{gap:7px}.hva-a41-card strong{min-height:0}.hva-a41-row-head,.hva-a41-row{grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr) 36px;gap:5px}.hva-a41-entry{padding:11px}.hva-a41-row input{font-size:12px;padding:7px}.hva-a41-row .hva-a41-remove{min-width:36px}}
+
+/* Hộp xác nhận riêng EDOS, không dùng thông báo mặc định của trình duyệt. */
+.hva-a41-modal[hidden]{display:none!important}
+.hva-a41-modal{position:fixed;inset:0;z-index:30000;background:rgba(5,25,53,.65);display:flex;align-items:center;justify-content:center;padding:16px;font-family:Inter,"Segoe UI",Arial,sans-serif}
+.hva-a41-dialog{width:min(520px,100%);max-height:90dvh;overflow:auto;background:#fff;border:1px solid #b6dcf3;border-radius:19px;box-shadow:0 22px 65px rgba(0,27,63,.27)}
+.hva-a41-dialog-head{background:linear-gradient(105deg,#064a89,#079cbd);color:white;padding:19px 20px}
+.hva-a41-dialog-head strong{display:block;font-weight:900;font-size:18px}
+.hva-a41-dialog-head small{display:block;margin-top:5px;font-size:12px;color:#e5f7ff}
+.hva-a41-dialog-body{padding:19px 20px;color:#184465;font-size:14px;line-height:1.6}
+.hva-a41-dialog-body p{margin:0 0 10px}
+.hva-a41-dialog-list{margin:10px 0;padding:12px 12px 12px 32px;background:#f3f9fe;border:1px solid #d8eaf5;border-radius:11px;overflow-wrap:anywhere}
+.hva-a41-dialog-list li{margin:4px 0}
+.hva-a41-dialog-actions{display:flex;justify-content:flex-end;gap:9px;padding:0 20px 19px}
+.hva-a41-dialog-actions button{min-width:125px}
+.hva-a41-dialog-actions .hva-a41-confirm{background:#075eaa;color:#fff}
+.hva-a41-dialog-actions .hva-a41-cancel{background:#edf5fc;color:#194e75;border:1px solid #c5dcea}
+@media(max-width:520px){.hva-a41-dialog-actions{display:grid;grid-template-columns:1fr 1fr}.hva-a41-dialog-actions button{min-width:0}.hva-a41-dialog-body{padding:14px}.hva-a41-dialog-head{padding:16px}}
 </style></head><body>
 <header class="hva-a-header"><div class="hva-a-header-top"><a class="hva-a-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ số" title="Quay lại Nghiệp vụ số">←</a><div class="hva-a-identity"><div class="hva-a-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a-brand"><span class="hva-a-brand-hva">HVA</span><span class="hva-a-brand-dash">–</span><b class="hva-a-brand-edos">EDOS</b></div></div></div><div class="hva-a-header-bottom"><div class="hva-a-section-code" id="a22HeaderCode">HỒ SƠ CHUYÊN MÔN</div><h1 id="a22HeaderTitle">Biểu mẫu nghiệp vụ số</h1><p>Soạn hồ sơ · Kiểm tra nội dung · Nộp theo quyền được cấp</p></div></header>
 <main><div class="hva-a-flow" aria-label="Quy trình hồ sơ"><span><b>1</b> Mở mẫu Drive</span><span><b>2</b> Nộp liên kết Drive</span><span><b>3</b> Nhận mã tiếp nhận</span></div><div class="hva-a-status" id="a22Connection" role="status" aria-live="polite"><span class="hva-a-status-dot" aria-hidden="true"></span><span id="a22ConnectionText">Đang kiểm tra quyền nộp hồ sơ…</span></div><div class="note hva-a-brief" role="note"><i class="hva-brief-icon" aria-hidden="true">i</i><span>Hồ sơ chỉ được coi là <b>đã nộp</b> khi máy chủ trả <b>mã tiếp nhận</b>. Nếu chưa kết nối, thầy/cô vẫn có thể soạn và lưu bản nháp. Không đưa thông tin cá nhân nhạy cảm của học sinh vào biểu mẫu.</span></div>
@@ -457,9 +474,17 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 <div id="feedback" aria-live="polite"></div></form></section>
 <section class="panel hidden" id="previewPanel"><div class="hva-a-kicker">KIỂM TRA NỘI DUNG TRƯỚC KHI GỬI</div><h2 id="a22PreviewTitle">Bản xem trước hồ sơ</h2><div class="report" id="preview"></div><div class="actions"><button type="button" id="print">In / lưu PDF bản nháp</button><button type="button" class="secondary" id="edit">← Quay lại chỉnh sửa</button><button type="button" class="secondary" id="a22PreviewBackToLanding">← Về lựa chọn biểu mẫu</button></div></section>
 <footer>HVA–EDOS · Trường THPT Hòa Vang · Hồ sơ được ghi nhận theo phản hồi của hệ thống, không tự động được coi là đã phê duyệt.</footer></main>
+
+<div class="hva-a41-modal" id="hvaA41ConfirmOverlay" role="presentation" hidden>
+ <div class="hva-a41-dialog" role="dialog" aria-modal="true" aria-labelledby="hvaA41ConfirmTitle" aria-describedby="hvaA41ConfirmDesc">
+  <div class="hva-a41-dialog-head"><strong id="hvaA41ConfirmTitle">HVA–EDOS · Xác nhận nộp hồ sơ</strong><small>TRƯỜNG THPT HÒA VANG · HỒ SƠ NGHIỆP VỤ SỐ</small></div>
+  <div class="hva-a41-dialog-body"><p id="hvaA41ConfirmDesc"></p><ol class="hva-a41-dialog-list" id="hvaA41ConfirmList"></ol><p id="hvaA41ConfirmNote">Hồ sơ chỉ được ghi nhận khi máy chủ cấp mã tiếp nhận.</p></div>
+  <div class="hva-a41-dialog-actions"><button type="button" class="hva-a41-cancel" id="hvaA41CancelConfirm">Quay lại</button><button type="button" class="hva-a41-confirm" id="hvaA41AcceptConfirm">Xác nhận nộp</button></div>
+ </div>
+</div>
 <script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script>
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A21_DangKyLichKT.js?v=20261121-v14"></script>
-<script defer src="./NVS_A41_HoSo.js?v=20261125-v2"></script>
+<script defer src="./NVS_A41_HoSo.js?v=20261125-v3"></script>
 </body></html>
