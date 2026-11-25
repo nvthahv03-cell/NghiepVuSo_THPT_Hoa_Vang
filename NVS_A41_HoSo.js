@@ -1,0 +1,196 @@
+/* HVA–EDOS A.4.1: ba nhóm hồ sơ, nhiều đường dẫn, xác thực mã tiếp nhận.
+   Không thay đổi Router/Backend V5 hoặc các nghiệp vụ A.4.2–A.4.4. */
+(function(){
+ 'use strict';
+ const query=new URLSearchParams(location.search);
+ if(query.get('code')!=='A.4.1')return;
+ const by=id=>document.getElementById(id);
+ const root=by('hvaA41Workspace'),entry=by('hvaA41Entry'),rowsEl=by('hvaA41Rows');
+ if(!root||!entry||!rowsEl)return;
+ document.body.classList.add('hva-a41-three');
+ root.hidden=false;
+ const kinds={
+  KHKT:{label:'Khoa học kỹ thuật',title:'Dự án khoa học kỹ thuật'},
+  SANG_KIEN:{label:'Sáng kiến',title:'Sáng kiến'},
+  NCKH:{label:'Nghiên cứu khoa học',title:'Đề tài nghiên cứu khoa học'}
+ };
+ const endpoint='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
+ let kind=null,items=[],nextId=1,previewSignature='',inFlight=false,capability=false;
+ const templates=Object.freeze({}); // Chỉ đưa vào đây URL mẫu được nhà trường phê duyệt.
+ function message(value,ok=false,global=false){
+  const el=by(global?'hvaA41GlobalMessage':'hvaA41Message');
+  el.textContent=value;el.dataset.state=ok?'success':'error';
+ }
+ function auth(){
+  for(const t of ['localStorage','sessionStorage']){
+   try{
+    const st=window[t],key=String(st.getItem('hvaSessionToken')||'');
+    const raw=st.getItem('hvaSessionExpiresAt'),n=Number(raw);
+    const expires=Number.isFinite(n)&&n>0?(n<1e12?n*1000:n):Date.parse(String(raw||''));
+    if(key&&Number.isFinite(expires)&&expires>Date.now()){
+     const user=JSON.parse(st.getItem('user')||'{}');
+     return {token:key,user:user&&typeof user==='object'?user:{}};
+    }
+   }catch(_){}
+  }
+  throw Error('Thầy/cô cần đăng nhập EDOS lại để nộp hồ sơ.');
+ }
+ function driveUrl(value){
+  try{
+   const u=new URL(String(value||'').trim());
+   return u.protocol==='https:' && ['drive.google.com','docs.google.com'].includes(u.hostname);
+  }catch(_){return false}
+ }
+ function newId(){
+  return 'A41-'+(window.crypto&&window.crypto.randomUUID?window.crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,16));
+ }
+ async function api(action,payload){
+  const session=auth();
+  const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+   body:JSON.stringify({action,sessionToken:session.token,...(payload||{})})});
+  if(!res.ok)throw Error('Không kết nối được máy chủ EDOS (HTTP '+res.status+').');
+  let data;
+  try{data=await res.json()}catch(_){throw Error('Máy chủ chưa phản hồi dữ liệu hợp lệ.')}
+  if(!data||(data.success!==true&&data.ok!==true))throw Error(data&&data.message||'Máy chủ chưa xác nhận tiếp nhận.');
+  return data;
+ }
+ async function probe(){
+  const r=await api('nvsA22Capabilities');
+  if(r.supported!==true||r.version!=='A22-1'||!r.bghCount||!r.ccCount)
+   throw Error('Chưa xác thực tuyến tiếp nhận BGH và TTCM.');
+  capability=true;
+ }
+ function makeRow(item,index){
+  const row=document.createElement('div');row.className='hva-a41-row';row.dataset.id=String(item.id);
+  const type=document.createElement('input');type.value=kinds[kind].label;type.readOnly=true;type.setAttribute('aria-label','Loại hồ sơ '+(index+1));
+  const link=document.createElement('input');link.type='url';link.value=item.url;link.maxLength=1500;link.required=true;link.placeholder='https://drive.google.com/...';
+  link.setAttribute('aria-label','Liên kết hồ sơ '+(index+1));link.disabled=!!item.receipt||inFlight;
+  link.addEventListener('input',()=>{
+   item.url=link.value.trim();item.requestId=null;previewSignature='';
+   by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
+   message('Hồ sơ đã thay đổi. Vui lòng xem trước trước khi gửi.');
+  });
+  const remove=document.createElement('button');remove.type='button';remove.className='hva-a41-remove';
+  remove.textContent='×';remove.title='Xóa dòng hồ sơ';remove.setAttribute('aria-label','Xóa hồ sơ '+(index+1));
+  remove.disabled=items.length<=1||!!item.receipt||inFlight;
+  remove.addEventListener('click',()=>{
+   items=items.filter(x=>x!==item);previewSignature='';render();
+   by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
+  });
+  row.append(type,link,remove);return row;
+ }
+ function render(){
+  rowsEl.replaceChildren(...items.map(makeRow));
+  by('hvaA41Add').disabled=inFlight;
+  by('hvaA41Back').disabled=inFlight;
+  by('hvaA41PreviewBtn').disabled=inFlight;
+ }
+ function open(type){
+  if(inFlight||!kinds[type])return;
+  kind=type;items=[{id:nextId++,url:'',requestId:null,receipt:null}];
+  previewSignature='';entry.hidden=false;
+  by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
+  by('hvaA41EntryTitle').textContent='Nộp hồ sơ · '+kinds[type].label;
+  message('Nhập liên kết hồ sơ, thêm dòng nếu cần, sau đó chọn Xem trước.');
+  render();entry.scrollIntoView({behavior:'smooth',block:'start'});
+ }
+ function signature(){return JSON.stringify({kind,links:items.map(x=>x.url.trim())})}
+ function valid(){
+  if(!kind||!items.length){message('Chưa chọn loại hồ sơ.');return false}
+  for(let i=0;i<items.length;i++){
+   if(!driveUrl(items[i].url)){
+    message('Hồ sơ '+(i+1)+': chỉ nhận liên kết HTTPS của Google Drive hoặc Google Docs.');
+    rowsEl.querySelectorAll('input[type="url"]')[i]?.focus();return false;
+   }
+  }
+  return true;
+ }
+ function preview(){
+  if(inFlight||!valid())return;
+  const box=by('hvaA41Preview');
+  box.replaceChildren();
+  const heading=document.createElement('strong');
+  heading.textContent='XEM TRƯỚC · '+items.length+' HỒ SƠ '+kinds[kind].label.toUpperCase();
+  box.append(heading);
+  items.forEach((x,i)=>{
+   const div=document.createElement('div');div.className='hva-a41-preview-item';
+   const label=document.createElement('strong');label.textContent=(i+1)+'. '+kinds[kind].label+(x.receipt?' · Đã tiếp nhận: '+x.receipt:'');
+   const a=document.createElement('a');a.href=x.url.trim();a.target='_blank';a.rel='noopener noreferrer';a.referrerPolicy='no-referrer';
+   a.textContent=x.url.trim();div.append(label,document.createElement('br'),a);box.append(div);
+  });
+  box.hidden=false;previewSignature=signature();
+  by('hvaA41Submit').disabled=items.every(x=>!!x.receipt);
+  message('Đã lập bản xem trước. Kiểm tra từng đường dẫn rồi chọn Gửi hồ sơ.',true);
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+ }
+ async function send(){
+  if(inFlight||!valid()||previewSignature!==signature()){message('Vui lòng Xem trước bản mới nhất trước khi gửi.');return}
+  if(!window.confirm('Xác nhận nộp '+items.length+' hồ sơ '+kinds[kind].label+' đến BGH và TTCM?'))return;
+  inFlight=true;by('hvaA41Submit').disabled=true;render();
+  try{
+   await probe();
+   const session=auth(),user=session.user;
+   const owner=String(user.hoTen||user.fullName||user.name||'').trim();
+   if(!owner)throw Error('Chưa xác định họ tên người nộp theo tài khoản EDOS.');
+   const team=String(user.toBoPhan||user.tenTo||user.to||'').trim();
+   const now=new Date(),vn=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
+   const d=vn.match(/(\d{4}).?(\d{2}).?(\d{2})/);
+   const date=d?d[1]+'-'+d[2]+'-'+d[3]:now.toISOString().slice(0,10);
+   const schoolYear=by('schoolYear')?.value||'2026–2027';
+   for(let i=0;i<items.length;i++){
+    const item=items[i];
+    if(item.receipt)continue;
+    if(!item.requestId)item.requestId=newId();
+    message('Đang gửi hồ sơ '+(i+1)+'/'+items.length+'; các hồ sơ đã có mã sẽ không gửi lại.',true);
+    const doc={
+     clientRequestId:item.requestId,
+     form:{code:'A.4.1',schoolYear,owner,team,date,subject:'',
+      title:kinds[kind].title+' · Hồ sơ '+(i+1),content:'',result:'',evidence:item.url.trim()},
+     extras:{loaiSanPham:kind==='KHKT'?'Khoa học kỹ thuật':kind==='SANG_KIEN'?'Sáng kiến':'Nghiên cứu khoa học',
+      tenDeTai:kinds[kind].title+' · Hồ sơ '+(i+1),capQuanLy:'',
+      giaiDoan:'Nộp hồ sơ',ketQuaNghienCuu:'Hồ sơ minh chứng theo liên kết Drive/Docs',sanPhamUrl:item.url.trim()}
+    };
+    const r=await api('nvsA22Submit',{document:doc});
+    if(!r.recordId||!r.bghCount||!r.ccCount)throw Error('Hồ sơ '+(i+1)+' chưa có đủ mã tiếp nhận và người nhận.');
+    item.receipt=String(r.recordId);
+   }
+   if(items.every(x=>!!x.receipt)){
+    message('HVA–EDOS: Thầy/cô đã nộp hồ sơ thành công. '+items.length+
+     ' hồ sơ đã được tiếp nhận. Mã: '+items.map(x=>x.receipt).join(' · ')+'. Trạng thái: Chờ xử lý.',true);
+    previewSignature=signature();preview();
+    message('HVA–EDOS: Thầy/cô đã nộp hồ sơ thành công. '+items.length+
+     ' hồ sơ đã được tiếp nhận. Mã: '+items.map(x=>x.receipt).join(' · ')+'. Trạng thái: Chờ xử lý.',true);
+   }
+  }catch(err){
+   const done=items.filter(x=>x.receipt).length;
+   message('CHƯA HOÀN TẤT NỘP HỒ SƠ. Đã có mã tiếp nhận: '+done+'/'+items.length+
+    '. '+String(err.message||err)+
+    ' Nếu mạng bị gián đoạn, giữ nguyên nội dung và gửi lại để sử dụng mã yêu cầu cũ; không tự coi là đã nộp.');
+  }finally{
+   inFlight=false;render();by('hvaA41Submit').disabled=items.every(x=>x.receipt)||previewSignature!==signature();
+  }
+ }
+ root.addEventListener('click',e=>{
+  const btn=e.target.closest('button');if(!btn||inFlight)return;
+  if(btn.dataset.a41Open){open(btn.dataset.a41Open);return}
+  if(btn.dataset.a41Template){
+   const approved=templates[btn.dataset.a41Template];
+   if(typeof approved==='string'&&driveUrl(approved)){
+    const a=document.createElement('a');a.href=approved;a.target='_blank';a.rel='noopener noreferrer';a.click();
+   }else message('Biểu mẫu '+kinds[btn.dataset.a41Template].label+' đang được nhà trường cập nhật; chưa có liên kết mẫu chính thức.',false,true);
+  }
+ });
+ by('hvaA41Add').addEventListener('click',()=>{
+  if(!kind||inFlight)return;
+  items.push({id:nextId++,url:'',requestId:null,receipt:null});
+  previewSignature='';by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;render();
+ });
+ by('hvaA41Back').addEventListener('click',()=>{
+  if(inFlight)return;
+  entry.hidden=true;kind=null;items=[];previewSignature='';
+  message('Chọn một trong ba loại hồ sơ.',true,true);
+ });
+ by('hvaA41PreviewBtn').addEventListener('click',preview);
+ by('hvaA41Submit').addEventListener('click',send);
+ message('Chọn Khoa học kỹ thuật, Sáng kiến hoặc Nghiên cứu khoa học.',true,true);
+})();
