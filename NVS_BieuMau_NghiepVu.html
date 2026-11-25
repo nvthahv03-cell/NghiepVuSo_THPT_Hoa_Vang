@@ -305,9 +305,9 @@ body.hva-a1-mode .hva-a-header>.hva-a-header-top,body.hva-a1-mode .hva-a-header>
 @media print{.hva-a-user-bar,.hva-a-a1-top{display:none!important}}
 </style><link rel="stylesheet" href="./HVA_EDOS_Header_Compact_V1.css?v=20261121-1">
 <style id="hva-a41-three-branches-style">
-body.hva-a41-three #a22TemplateLanding,body.hva-a41-three #a22SubmissionEditor,body.hva-a41-three #previewPanel,body.hva-a41-three .hva-a-flow,body.hva-a41-three .hva-a-brief,body.hva-a41-three #a22Connection,body.hva-a41-three #a21SchedulePanel{display:none!important}
+body.hva-a41-three{padding-bottom:calc(94px + env(safe-area-inset-bottom))}body.hva-a41-three #hvaA41Workspace{scroll-margin-top:14px}body.hva-a41-three #a22TemplateLanding,body.hva-a41-three #a22SubmissionEditor,body.hva-a41-three #previewPanel,body.hva-a41-three .hva-a-flow,body.hva-a41-three .hva-a-brief,body.hva-a41-three #a22Connection,body.hva-a41-three #a21SchedulePanel{display:none!important}
 body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidden],body.hva-a41-three #hvaA41Preview[hidden]{display:none!important}
-.hva-a41-layout{margin:10px auto 24px;max-width:920px}
+.hva-a41-layout{margin:10px auto 40px;max-width:920px;padding-bottom:28px}
 .hva-a41-layout h2{margin:0 0 13px;font-size:21px;color:#0c456f}
 .hva-a41-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .hva-a41-card{padding:16px;background:#f6fbff;border:1px solid #c4dfef;border-radius:15px;display:flex;flex-direction:column;gap:12px}
@@ -319,7 +319,7 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 .hva-a41-row-head{display:grid;grid-template-columns: minmax(0,1fr) minmax(0,1.45fr) 40px;gap:9px;margin-bottom:6px;font-size:12px;font-weight:800;color:#205070}
 .hva-a41-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.45fr) 40px;gap:9px;align-items:center;margin:8px 0}
 .hva-a41-row input{min-width:0;margin:0;height:46px}
-.hva-a41-row input[readonly]{background:#edf4fc;font-weight:800;color:#0b507e}
+.hva-a41-row input[type="text"]{background:#fff;color:#173b5e;font-weight:650}
 .hva-a41-row .hva-a41-remove{min-width:40px;padding:5px;background:#fff2f0;color:#a42b27;border:1px solid #e4bdba}
 .hva-a41-row .hva-a41-remove:disabled{opacity:.4;cursor:not-allowed}
 .hva-a41-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
@@ -332,14 +332,14 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 .hva-a41-status[data-state="success"]{color:#147346}
 .hva-a41-status[data-state="error"]{color:#aa3030}
 .hva-a41-add{background:#fff3e1;color:#924f00;border:1px solid #efc38b;font-weight:900}
-@media(max-width:720px){.hva-a41-menu{grid-template-columns:1fr}.hva-a41-card{gap:7px}.hva-a41-card strong{min-height:0}.hva-a41-row-head,.hva-a41-row{grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr) 36px;gap:5px}.hva-a41-entry{padding:11px}.hva-a41-row input{font-size:12px;padding:7px}.hva-a41-row .hva-a41-remove{min-width:36px}}
+@media(max-width:720px){.hva-a41-layout h2{font-size:19px}.hva-a41-menu{grid-template-columns:1fr}.hva-a41-card{gap:7px}.hva-a41-card strong{min-height:0}.hva-a41-row-head,.hva-a41-row{grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr) 36px;gap:5px}.hva-a41-entry{padding:11px}.hva-a41-row input{font-size:12px;padding:7px}.hva-a41-row .hva-a41-remove{min-width:36px}}
 </style></head><body>
 <header class="hva-a-header"><div class="hva-a-header-top"><a class="hva-a-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ số" title="Quay lại Nghiệp vụ số">←</a><div class="hva-a-identity"><div class="hva-a-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a-brand"><span class="hva-a-brand-hva">HVA</span><span class="hva-a-brand-dash">–</span><b class="hva-a-brand-edos">EDOS</b></div></div></div><div class="hva-a-header-bottom"><div class="hva-a-section-code" id="a22HeaderCode">HỒ SƠ CHUYÊN MÔN</div><h1 id="a22HeaderTitle">Biểu mẫu nghiệp vụ số</h1><p>Soạn hồ sơ · Kiểm tra nội dung · Nộp theo quyền được cấp</p></div></header>
 <main><div class="hva-a-flow" aria-label="Quy trình hồ sơ"><span><b>1</b> Mở mẫu Drive</span><span><b>2</b> Nộp liên kết Drive</span><span><b>3</b> Nhận mã tiếp nhận</span></div><div class="hva-a-status" id="a22Connection" role="status" aria-live="polite"><span class="hva-a-status-dot" aria-hidden="true"></span><span id="a22ConnectionText">Đang kiểm tra quyền nộp hồ sơ…</span></div><div class="note hva-a-brief" role="note"><i class="hva-brief-icon" aria-hidden="true">i</i><span>Hồ sơ chỉ được coi là <b>đã nộp</b> khi máy chủ trả <b>mã tiếp nhận</b>. Nếu chưa kết nối, thầy/cô vẫn có thể soạn và lưu bản nháp. Không đưa thông tin cá nhân nhạy cảm của học sinh vào biểu mẫu.</span></div>
 
 <section class="panel hva-a41-layout" id="hvaA41Workspace" hidden aria-label="A.4.1 Nghiên cứu khoa học và sáng kiến">
  <div class="hva-a-kicker">A.4.1 · HỒ SƠ NGHIÊN CỨU</div>
- <h2>Khoa học kỹ thuật – Sáng kiến – Nghiên cứu khoa học</h2>
+ <h2>Chọn loại hồ sơ</h2>
  <div class="hva-a41-menu" id="hvaA41Menu">
   <div class="hva-a41-card" data-a41-type="KHKT"><strong>1. Khoa học kỹ thuật</strong><div class="hva-a41-card-actions"><button type="button" class="secondary" data-a41-template="KHKT">Biểu mẫu</button><button type="button" data-a41-open="KHKT">Nộp hồ sơ</button></div></div>
   <div class="hva-a41-card" data-a41-type="SANG_KIEN"><strong>2. Sáng kiến</strong><div class="hva-a41-card-actions"><button type="button" class="secondary" data-a41-template="SANG_KIEN">Biểu mẫu</button><button type="button" data-a41-open="SANG_KIEN">Nộp hồ sơ</button></div></div>
@@ -347,8 +347,9 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
  </div>
  <section class="hva-a41-entry" id="hvaA41Entry" hidden aria-label="Nộp hồ sơ theo loại">
   <h2 id="hvaA41EntryTitle">Nộp hồ sơ</h2>
-  <p class="hva-a41-muted">Mỗi dòng là một hồ sơ. Loại hồ sơ được điền tự động; dán đường dẫn Google Drive/Docs vào cột bên phải.</p>
-  <div class="hva-a41-row-head"><span>Loại hồ sơ</span><span>Liên kết Drive/Docs</span><span></span></div>
+  <p class="hva-a41-muted">Mỗi dòng: nhập tên sản phẩm (Kế hoạch, Tiến độ, Đề cương, Dự án…) bên trái, dán liên kết Drive/Docs bên phải. Loại hồ sơ tự nhận theo nút đã chọn.</p>
+  <p class="hva-a41-muted"><strong>Loại đã chọn:</strong> <span id="hvaA41SelectedType">—</span></p>
+  <div class="hva-a41-row-head"><span>Tên sản phẩm / hồ sơ</span><span>Liên kết Drive/Docs</span><span></span></div>
   <div id="hvaA41Rows"></div>
   <div class="hva-a41-actions">
    <button type="button" class="hva-a41-add" id="hvaA41Add" aria-label="Thêm hồ sơ">＋ Thêm hồ sơ</button>
@@ -460,5 +461,5 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A21_DangKyLichKT.js?v=20261121-v14"></script>
-<script defer src="./NVS_A41_HoSo.js?v=20261125-v1"></script>
+<script defer src="./NVS_A41_HoSo.js?v=20261125-v2"></script>
 </body></html>
