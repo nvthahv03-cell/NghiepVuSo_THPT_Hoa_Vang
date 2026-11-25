@@ -1,5 +1,5 @@
 <!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HVA–EDOS · Tạo lớp học trực tuyến</title>
-<link rel="stylesheet" href="./HVA_EDOS_Header_Compact_V1.css?v=20261125-brand2"><style>
+<link rel="stylesheet" href="./HVA_EDOS_Header_Compact_V1.css?v=20261125-connectivity"><style>
 :root{font-family:Arial,sans-serif;color:#143d5c;background:#f3f8fd}*{box-sizing:border-box}body{margin:0;padding:12px}main{max-width:870px;margin:auto}
 .card{background:white;border:1px solid #c7deec;border-radius:14px;padding:16px;margin:14px 0}h2{font-size:18px;color:#095483;margin:0 0 14px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}label{display:grid;gap:6px;min-width:0;font-size:13px;font-weight:750}.wide{grid-column:1/-1}
@@ -13,7 +13,7 @@ small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;backg
 #preview[hidden]{display:none}#preview{overflow-wrap:anywhere;white-space:pre-wrap;background:#f4faff;border:1px solid #cadeec;padding:13px;border-radius:10px;font-size:13px;line-height:1.75}
 @media(max-width:580px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:13px}}
 </style></head><body><main>
-<header class="hva-a52-head"><a class="hva-a52-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ">←</a><div class="hva-a52-ident"><div class="hva-a52-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a52-brand"><span class="hva-a52-brand-hva">HVA–</span><span class="hva-a52-brand-edos">EDOS</span></div><h1>Tạo lớp học trực tuyến</h1></div></header>
+<header class="hva-a52-head"><a class="hva-a52-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ">←</a><div class="hva-a52-ident"><div class="hva-a52-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a52-brand"><span class="hva-a52-brand-hva">HVA–</span><span class="hva-a52-brand-edos">EDOS</span></div><h1>Tạo lớp học trực tuyến</h1></div><span class="hva-head-connectivity" id="hvaHeaderConnectivity" data-network="online" role="status" aria-live="polite" title="Trạng thái kết nối mạng trên thiết bị"><span class="hva-head-connectivity-label">Trực tuyến</span><span class="hva-head-connectivity-dot" aria-hidden="true"></span></span></header>
 <section class="card"><h2>01 · Giáo viên phụ trách</h2><div class="grid"><label>Họ và tên<input id="teacher" readonly></label><label>Tổ chuyên môn<input id="team" readonly></label></div></section>
 <section class="card"><h2>02 · Thông tin buổi dạy bù</h2>
 <p class="caution">Chỉ tổ chức và ghi nhận buổi dạy bù khi đề nghị A.5.2 được phê duyệt. Tạo phòng Google Meet không có nghĩa là tiết dạy đã được duyệt.</p>
@@ -57,4 +57,4 @@ small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;backg
 <div class="actions"><button type="button" id="previewBtn" class="secondary">Xem trước</button><button type="button" id="save">Lưu bản nháp</button><button type="button" id="clear" class="secondary">Xóa bản nháp</button><button type="button" disabled>Gửi minh chứng BGH (chưa mở)</button></div>
 <div id="message" role="status" aria-live="polite">Chưa gửi hồ sơ. Bản nháp chỉ lưu trên thiết bị của giáo viên.</div><pre id="preview" hidden></pre>
 <p>Chưa có tuyến tiếp nhận EDOS cho nghiệp vụ này nên BGH chưa thể tự động thu thập minh chứng từ biểu mẫu. Sau khi kết nối, hệ thống mới cấp mã tiếp nhận và chuyển hồ sơ theo quyền.</p>
-</section></main><script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script><script defer src="./NVS_TaoLopTrucTuyen.js?v=20261125-two-meets"></script></body></html>
+</section></main><script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script><script defer src="./NVS_TaoLopTrucTuyen.js?v=20261125-two-meets"></script><script defer src="./HVA_EDOS_Header_Connectivity.js?v=20261125-1"></script></body></html>
