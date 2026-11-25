@@ -309,6 +309,16 @@ body.hva-a41-three{padding-bottom:calc(94px + env(safe-area-inset-bottom))}body.
 body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidden],body.hva-a41-three #hvaA41Preview[hidden]{display:none!important}
 .hva-a41-layout{margin:10px auto 40px;max-width:920px;padding-bottom:28px}
 .hva-a41-layout h2{margin:0 0 13px;font-size:21px;color:#0c456f}
+.hva-a41-identity{margin:0 0 14px;padding:12px 15px;background:#edf7ff;border:1px solid #b3d7ef;border-radius:13px}
+.hva-a41-identity-title{display:flex;align-items:center;justify-content:space-between;gap:6px 16px;flex-wrap:wrap;margin-bottom:10px}
+.hva-a41-identity-title strong{font-size:12px;color:#0b4f87;letter-spacing:.3px}
+.hva-a41-identity-title span{font-size:11px;color:#53758a}
+.hva-a41-identity-fields{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:9px}
+.hva-a41-identity-fields>div{min-width:0;display:grid;gap:4px}
+.hva-a41-identity-fields small{font-size:11px;color:#57748a}
+.hva-a41-identity-fields strong{font-size:14px;color:#123f63;overflow-wrap:anywhere}
+.hva-a41-identity[data-session="missing"]{background:#fff7ef;border-color:#efd1ae}
+@media(max-width:600px){.hva-a41-identity-fields{grid-template-columns:1fr 1fr}.hva-a41-identity-fields>div:first-child{grid-column:1/-1}.hva-a41-identity-fields strong{font-size:13px}}
 .hva-a41-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .hva-a41-card{padding:16px;background:#f6fbff;border:1px solid #c4dfef;border-radius:15px;display:flex;flex-direction:column;gap:12px}
 .hva-a41-card strong{font-size:16px;color:#0d466f;line-height:1.35;min-height:44px}
@@ -365,6 +375,14 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 <section class="panel hva-a41-layout" id="hvaA41Workspace" hidden aria-label="A.4.1 Nghiên cứu khoa học và sáng kiến">
  <div class="hva-a-kicker">A.4.1 · HỒ SƠ NGHIÊN CỨU</div>
  <h2>Chọn loại hồ sơ</h2>
+ <section class="hva-a41-identity" id="hvaA41Identity" aria-label="Thông tin giáo viên đăng nhập">
+  <div class="hva-a41-identity-title"><strong>THÔNG TIN NGƯỜI NỘP HỒ SƠ</strong><span id="hvaA41IdentityNote">Đang truy xuất phiên HVA–EDOS…</span></div>
+  <div class="hva-a41-identity-fields">
+   <div><small>Họ và tên</small><strong id="hvaA41IdentityName">—</strong></div>
+   <div><small>Chức vụ</small><strong id="hvaA41IdentityRole">—</strong></div>
+   <div><small>Tổ / Bộ phận</small><strong id="hvaA41IdentityTeam">—</strong></div>
+  </div>
+ </section>
  <div class="hva-a41-menu" id="hvaA41Menu">
   <div class="hva-a41-card" data-a41-type="KHKT"><strong>1. Khoa học kỹ thuật</strong><div class="hva-a41-card-actions"><button type="button" class="secondary" data-a41-template="KHKT">Biểu mẫu</button><button type="button" data-a41-open="KHKT">Nộp hồ sơ</button></div></div>
   <div class="hva-a41-card" data-a41-type="SANG_KIEN"><strong>2. Sáng kiến</strong><div class="hva-a41-card-actions"><button type="button" class="secondary" data-a41-template="SANG_KIEN">Biểu mẫu</button><button type="button" data-a41-open="SANG_KIEN">Nộp hồ sơ</button></div></div>
@@ -494,5 +512,5 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A21_DangKyLichKT.js?v=20261121-v14"></script>
-<script defer src="./NVS_A41_HoSo.js?v=20261125-v6"></script>
+<script defer src="./NVS_A41_HoSo.js?v=20261125-v7"></script>
 </body></html>

@@ -35,6 +35,36 @@
   }
   throw Error('Thầy/cô cần đăng nhập EDOS lại để nộp hồ sơ.');
  }
+ function identity(){
+  // Chỉ đọc danh tính đã lưu cùng phiên EDOS còn hạn; không cho tự nhập.
+  try{
+   const session=auth();
+   let user=session.user;
+   const hasName=u=>String(u?.hoTen||u?.fullName||u?.hoVaTen||u?.name||u?.tenHienThi||'').trim();
+   if(!hasName(user)){
+    for(const st of ['localStorage','sessionStorage']){
+     try{
+      const candidate=JSON.parse(window[st].getItem('user')||'null');
+      if(candidate&&typeof candidate==='object'&&!Array.isArray(candidate)&&hasName(candidate)){
+       user=candidate;break;
+      }
+     }catch(_){}
+    }
+   }
+   return {name:hasName(user),team:String(user.toBoPhan||user.tenTo||user.toChuyenMon||user.to||'').trim(),
+    role:String(user.viTriViecLam||user.chucVu||user.chucDanh||user.vaiTro||user.role||'').trim()};
+  }catch(_){return null}
+ }
+ function refreshIdentity(){
+  const user=identity();
+  by('hvaA41IdentityName').textContent=user?.name||'Chưa xác định người dùng';
+  by('hvaA41IdentityTeam').textContent=user?.team||'—';
+  by('hvaA41IdentityRole').textContent=user?.role||'—';
+  by('hvaA41Identity').dataset.session=user?.name?'valid':'missing';
+  by('hvaA41IdentityNote').textContent=user?.name
+   ?'Thông tin được truy xuất từ phiên đăng nhập HVA–EDOS'
+   :'Chưa có phiên đăng nhập hợp lệ hoặc thiếu họ tên. Vui lòng đăng nhập EDOS lại.';
+ }
  function driveUrl(value){
   try{
    const u=new URL(String(value||'').trim());
@@ -117,6 +147,7 @@
  }
  function open(type){
   if(inFlight||!kinds[type])return;
+  refreshIdentity();
   kind=type;items=[{id:nextId++,name:'',wordUrl:'',pdfUrl:'',requestId:null,receipt:null}];
   previewSignature='';entry.hidden=false;
   by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
@@ -207,10 +238,10 @@
   inFlight=true;by('hvaA41Submit').disabled=true;render();
   try{
    await probe();
-   const session=auth(),user=session.user;
-   const owner=String(user.hoTen||user.fullName||user.name||'').trim();
-   if(!owner)throw Error('Chưa xác định họ tên người nộp theo tài khoản EDOS.');
-   const team=String(user.toBoPhan||user.tenTo||user.to||'').trim();
+   const session=auth(),user=identity();
+   const owner=String(user?.name||'').trim();
+   if(!owner)throw Error('Chưa xác định họ tên người nộp theo phiên EDOS. Vui lòng đăng nhập lại.');
+   const team=String(user?.team||'').trim();
    const now=new Date(),vn=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Ho_Chi_Minh',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
    const d=vn.match(/(\d{4}).?(\d{2}).?(\d{2})/);
    const date=d?d[1]+'-'+d[2]+'-'+d[3]:now.toISOString().slice(0,10);
@@ -270,5 +301,9 @@
  });
  by('hvaA41PreviewBtn').addEventListener('click',preview);
  by('hvaA41Submit').addEventListener('click',send);
+ refreshIdentity();
+ window.addEventListener('storage',refreshIdentity);
+ window.addEventListener('pageshow',refreshIdentity);
+ window.addEventListener('focus',refreshIdentity);
  message('Chọn Khoa học kỹ thuật, Sáng kiến hoặc Nghiên cứu khoa học.',true,true);
 })();
