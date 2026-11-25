@@ -126,7 +126,7 @@
     message('Đã xóa riêng liên kết '+label+' của hồ sơ '+(index+1)+'. Vui lòng nhập lại trước khi gửi.');
     link.focus();
    });
-   inputRow.append(link,clear);wrap.append(heading,inputRow);links.append(wrap);
+   inputRow.append(link,clear);wrap.append(inputRow,heading);links.append(wrap);
   }
   const remove=document.createElement('button');remove.type='button';remove.className='hva-a41-remove';
   remove.textContent='Xóa hồ sơ';remove.title='Xóa toàn bộ dòng hồ sơ';remove.setAttribute('aria-label','Xóa toàn bộ hồ sơ '+(index+1));
