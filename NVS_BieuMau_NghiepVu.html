@@ -316,8 +316,8 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 .hva-a41-card-actions button{flex:1 1 100px;min-height:42px}
 .hva-a41-muted{color:#56718a;font-size:12px;line-height:1.55}
 .hva-a41-entry{margin-top:17px;background:#fff;border:1px solid #b7d8ef;border-radius:15px;padding:16px}
-.hva-a41-row-head{display:grid;grid-template-columns: minmax(0,1fr) minmax(0,1.45fr) 40px;gap:9px;margin-bottom:6px;font-size:12px;font-weight:800;color:#205070}
-.hva-a41-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.45fr) 40px;gap:9px;align-items:center;margin:8px 0}
+.hva-a41-row-head{display:grid;grid-template-columns:34px minmax(0,1fr) minmax(0,1.7fr) 40px;gap:9px;margin-bottom:6px;font-size:12px;font-weight:800;color:#205070}
+.hva-a41-row{display:grid;grid-template-columns:34px minmax(0,1fr) minmax(0,1.7fr) 40px;gap:9px;align-items:center;margin:8px 0}.hva-a41-stt{font-weight:900;color:#0b5688}.hva-a41-two-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;min-width:0}.hva-a41-link-wrap{display:flex;flex-direction:column;gap:4px;margin:0;min-width:0}.hva-a41-link-wrap span{font-size:11px;font-weight:800;color:#24577b}.hva-a41-preview-link{margin-top:5px}.hva-a41-preview-link strong{font-size:12px;color:#1e4f71}
 .hva-a41-row input{min-width:0;margin:0;height:46px}
 .hva-a41-row input[type="text"]{background:#fff;color:#173b5e;font-weight:650}
 .hva-a41-row .hva-a41-remove{min-width:40px;padding:5px;background:#fff2f0;color:#a42b27;border:1px solid #e4bdba}
@@ -332,7 +332,7 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 .hva-a41-status[data-state="success"]{color:#147346}
 .hva-a41-status[data-state="error"]{color:#aa3030}
 .hva-a41-add{background:#fff3e1;color:#924f00;border:1px solid #efc38b;font-weight:900}
-@media(max-width:720px){.hva-a41-layout h2{font-size:19px}.hva-a41-menu{grid-template-columns:1fr}.hva-a41-card{gap:7px}.hva-a41-card strong{min-height:0}.hva-a41-row-head,.hva-a41-row{grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr) 36px;gap:5px}.hva-a41-entry{padding:11px}.hva-a41-row input{font-size:12px;padding:7px}.hva-a41-row .hva-a41-remove{min-width:36px}}
+@media(max-width:720px){.hva-a41-layout h2{font-size:19px}.hva-a41-menu{grid-template-columns:1fr}.hva-a41-card{gap:7px}.hva-a41-card strong{min-height:0}.hva-a41-row-head,.hva-a41-row{grid-template-columns:24px minmax(0,0.95fr) minmax(0,1.1fr) 32px;gap:5px}.hva-a41-two-links{grid-template-columns:1fr;gap:5px}.hva-a41-stt{font-size:12px}.hva-a41-entry{padding:11px}.hva-a41-row input{font-size:12px;padding:7px}.hva-a41-row .hva-a41-remove{min-width:36px}}
 
 /* Hộp xác nhận riêng EDOS, không dùng thông báo mặc định của trình duyệt. */
 .hva-a41-modal[hidden]{display:none!important}
@@ -364,9 +364,9 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
  </div>
  <section class="hva-a41-entry" id="hvaA41Entry" hidden aria-label="Nộp hồ sơ theo loại">
   <h2 id="hvaA41EntryTitle">Nộp hồ sơ</h2>
-  <p class="hva-a41-muted">Mỗi dòng: nhập tên sản phẩm (Kế hoạch, Tiến độ, Đề cương, Dự án…) bên trái, dán liên kết Drive/Docs bên phải. Loại hồ sơ tự nhận theo nút đã chọn.</p>
+  <p class="hva-a41-muted">Mỗi dòng: nhập tên sản phẩm và dán đủ hai liên kết Word, PDF. Loại hồ sơ tự nhận theo nút đã chọn; hai liên kết thuộc cùng một hồ sơ.</p>
   <p class="hva-a41-muted"><strong>Loại đã chọn:</strong> <span id="hvaA41SelectedType">—</span></p>
-  <div class="hva-a41-row-head"><span>Tên sản phẩm / hồ sơ</span><span>Liên kết Drive/Docs</span><span></span></div>
+  <div class="hva-a41-row-head"><span>STT</span><span>Tên sản phẩm</span><span>Hai liên kết Word / PDF</span><span></span></div>
   <div id="hvaA41Rows"></div>
   <div class="hva-a41-actions">
    <button type="button" class="hva-a41-add" id="hvaA41Add" aria-label="Thêm hồ sơ">＋ Thêm hồ sơ</button>
@@ -486,5 +486,5 @@ body.hva-a41-three #hvaA41Workspace[hidden],body.hva-a41-three #hvaA41Entry[hidd
 <script defer src="./NVS_A22_Definitions.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A22_Controller.js?v=20261117_A21v2"></script>
 <script defer src="./NVS_A21_DangKyLichKT.js?v=20261121-v14"></script>
-<script defer src="./NVS_A41_HoSo.js?v=20261125-v3"></script>
+<script defer src="./NVS_A41_HoSo.js?v=20261125-v4"></script>
 </body></html>

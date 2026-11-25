@@ -70,13 +70,22 @@
    by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
    message('Tên hồ sơ đã thay đổi. Vui lòng xem trước lại.');
   });
-  const link=document.createElement('input');link.type='url';link.value=item.url;link.maxLength=1500;link.required=true;link.placeholder='https://drive.google.com/...';
-  link.setAttribute('aria-label','Liên kết hồ sơ '+(index+1));link.disabled=!!item.receipt||inFlight;
-  link.addEventListener('input',()=>{
-   item.url=link.value.trim();item.requestId=null;previewSignature='';
-   by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
-   message('Hồ sơ đã thay đổi. Vui lòng xem trước trước khi gửi.');
-  });
+  const links=document.createElement('div');links.className='hva-a41-two-links';
+  for(const [field,label] of [['wordUrl','Word'],['pdfUrl','PDF']]){
+   const wrap=document.createElement('label');wrap.className='hva-a41-link-wrap';
+   const heading=document.createElement('span');heading.textContent='Link '+label;
+   const link=document.createElement('input');link.type='url';link.value=item[field]||'';
+   link.maxLength=1500;link.required=true;link.placeholder='Dán link '+label+' trên Drive…';
+   link.dataset.a41Field=field;
+   link.setAttribute('aria-label','Liên kết '+label+' hồ sơ '+(index+1));
+   link.disabled=!!item.receipt||inFlight;
+   link.addEventListener('input',()=>{
+    item[field]=link.value.trim();item.requestId=null;previewSignature='';
+    by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
+    message('Hồ sơ đã thay đổi. Vui lòng xem trước trước khi gửi.');
+   });
+   wrap.append(heading,link);links.append(wrap);
+  }
   const remove=document.createElement('button');remove.type='button';remove.className='hva-a41-remove';
   remove.textContent='×';remove.title='Xóa dòng hồ sơ';remove.setAttribute('aria-label','Xóa hồ sơ '+(index+1));
   remove.disabled=items.length<=1||!!item.receipt||inFlight;
@@ -84,7 +93,8 @@
    items=items.filter(x=>x!==item);previewSignature='';render();
    by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
   });
-  row.append(name,link,remove);return row;
+  const label=document.createElement('span');label.className='hva-a41-stt';label.textContent=String(index+1)+'.';
+  row.append(label,name,links,remove);return row;
  }
  function render(){
   rowsEl.replaceChildren(...items.map(makeRow));
@@ -94,7 +104,7 @@
  }
  function open(type){
   if(inFlight||!kinds[type])return;
-  kind=type;items=[{id:nextId++,name:'',url:'',requestId:null,receipt:null}];
+  kind=type;items=[{id:nextId++,name:'',wordUrl:'',pdfUrl:'',requestId:null,receipt:null}];
   previewSignature='';entry.hidden=false;
   by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
   by('hvaA41EntryTitle').textContent='Nộp hồ sơ · '+kinds[type].label;
@@ -102,7 +112,7 @@
   message('Nhập liên kết hồ sơ, thêm dòng nếu cần, sau đó chọn Xem trước.');
   render();entry.scrollIntoView({behavior:'smooth',block:'start'});
  }
- function signature(){return JSON.stringify({kind,files:items.map(x=>({name:String(x.name||'').trim(),url:x.url.trim()}))})}
+ function signature(){return JSON.stringify({kind,files:items.map(x=>({name:String(x.name||'').trim(),wordUrl:String(x.wordUrl||'').trim(),pdfUrl:String(x.pdfUrl||'').trim()}))})}
  function valid(){
   if(!kind||!items.length){message('Chưa chọn loại hồ sơ.');return false}
   for(let i=0;i<items.length;i++){
@@ -110,9 +120,12 @@
     message('Hồ sơ '+(i+1)+': vui lòng nhập tên sản phẩm (kế hoạch, tiến độ, đề cương, dự án…).');
     rowsEl.querySelectorAll('input[type="text"]')[i]?.focus();return false;
    }
-   if(!driveUrl(items[i].url)){
-    message('Hồ sơ '+(i+1)+': chỉ nhận liên kết HTTPS của Google Drive hoặc Google Docs.');
-    rowsEl.querySelectorAll('input[type="url"]')[i]?.focus();return false;
+   for(const [field,label] of [['wordUrl','Word'],['pdfUrl','PDF']]){
+    if(!driveUrl(items[i][field])){
+     message('Hồ sơ '+(i+1)+': vui lòng nhập link '+label+' HTTPS hợp lệ trên Google Drive/Docs.');
+     rowsEl.querySelectorAll('.hva-a41-row')[i]?.querySelector('[data-a41-field="'+field+'"]')?.focus();
+     return false;
+    }
    }
   }
   return true;
@@ -127,8 +140,15 @@
   items.forEach((x,i)=>{
    const div=document.createElement('div');div.className='hva-a41-preview-item';
    const label=document.createElement('strong');label.textContent=(i+1)+'. '+String(x.name||'').trim()+' ('+kinds[kind].label+')'+(x.receipt?' · Đã tiếp nhận: '+x.receipt:'');
-   const a=document.createElement('a');a.href=x.url.trim();a.target='_blank';a.rel='noopener noreferrer';a.referrerPolicy='no-referrer';
-   a.textContent=x.url.trim();div.append(label,document.createElement('br'),a);box.append(div);
+   div.append(label);
+   for(const [field,text] of [['wordUrl','Word'],['pdfUrl','PDF']]){
+    const row=document.createElement('div');row.className='hva-a41-preview-link';
+    const title=document.createElement('strong');title.textContent=text+': ';
+    const a=document.createElement('a');a.href=x[field].trim();a.target='_blank';
+    a.rel='noopener noreferrer';a.referrerPolicy='no-referrer';a.textContent=x[field].trim();
+    row.append(title,a);div.append(row);
+   }
+   box.append(div);
   });
   box.hidden=false;previewSignature=signature();
   by('hvaA41Submit').disabled=items.every(x=>!!x.receipt);
@@ -190,10 +210,10 @@
     const doc={
      clientRequestId:item.requestId,
      form:{code:'A.4.1',schoolYear,owner,team,date,subject:'',
-      title:String(item.name||'').trim(),content:'',result:'',evidence:item.url.trim()},
+      title:String(item.name||'').trim(),content:'Liên kết Word: '+item.wordUrl.trim()+'\nLiên kết PDF: '+item.pdfUrl.trim(),result:'',evidence:item.pdfUrl.trim()},
      extras:{loaiSanPham:kind==='KHKT'?'Khoa học kỹ thuật':kind==='SANG_KIEN'?'Sáng kiến':'Nghiên cứu khoa học',
       tenDeTai:String(item.name||'').trim(),capQuanLy:'',
-      giaiDoan:'Nộp hồ sơ',ketQuaNghienCuu:'Hồ sơ minh chứng theo liên kết Drive/Docs',sanPhamUrl:item.url.trim()}
+      giaiDoan:'Nộp hồ sơ',ketQuaNghienCuu:'Bản Word: '+item.wordUrl.trim()+'\nBản PDF: '+item.pdfUrl.trim(),sanPhamUrl:item.wordUrl.trim()}
     };
     const r=await api('nvsA22Submit',{document:doc});
     if(!r.recordId||!r.bghCount||!r.ccCount)throw Error('Hồ sơ '+(i+1)+' chưa có đủ mã tiếp nhận và người nhận.');
@@ -227,7 +247,7 @@
  });
  by('hvaA41Add').addEventListener('click',()=>{
   if(!kind||inFlight)return;
-  items.push({id:nextId++,name:'',url:'',requestId:null,receipt:null});
+  items.push({id:nextId++,name:'',wordUrl:'',pdfUrl:'',requestId:null,receipt:null});
   previewSignature='';by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;render();
  });
  by('hvaA41Back').addEventListener('click',()=>{
