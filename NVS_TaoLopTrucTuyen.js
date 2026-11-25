@@ -148,3 +148,39 @@ if(key)try{const raw=localStorage.getItem(key);if(raw){const v=JSON.parse(raw);i
  else if(restored?.requestKey){$('checkMeet').hidden=false;status('Có yêu cầu tạo Meet đang chờ. Bấm “Kiểm tra link Meet” để xác nhận.')}
  else statusGoogle();
 })();
+
+/* GVCN / BGH: chỉ chuẩn bị thông báo thủ công; chuyển tự động cần action EDOS riêng.
+ * Không gọi tuyến cuộc họp để giả lập thông báo dạy bù.
+ */
+(()=>{'use strict';
+ const $=id=>document.getElementById(id);
+ const status=(s,k='')=>{$('deliveryStatus').textContent=s;$('deliveryStatus').dataset.kind=k};
+ function urlMeet(v){return /^https:\/\/meet\.google\.com\/[a-z]{3}-[a-z]{4}-[a-z]{3}(?:[/?#].*)?$/i.test(String(v||''))}
+ function notice(){
+  const values={className:$('className').value,subject:$('subject').value.trim(),date:$('date').value,start:$('start').value,end:$('end').value,lesson:$('lesson').value.trim(),meet:$('meet').value.trim(),approval:$('approval').value.trim()};
+  if(!values.className||!values.subject||!values.date||!values.start||!values.end||!values.lesson||!urlMeet(values.meet)){
+   status('Vui lòng nhập đủ lớp, môn, ngày giờ, nội dung và link Meet hợp lệ trước khi sao chép thông báo.','error');
+   return '';
+  }
+  if(!values.approval){
+   status('Cần nhập mã hồ sơ A.5.2 đã được duyệt trước khi chuẩn bị thông báo cho học sinh.','error');return '';
+  }
+  return 'Kính gửi giáo viên chủ nhiệm lớp '+values.className+
+    ',\nThông tin buổi dạy bù trực tuyến đã được phê duyệt theo hồ sơ '+values.approval+
+    ':\nMôn: '+values.subject+'\nThời gian: '+values.date+', '+values.start+'–'+values.end+
+    '\nNội dung: '+values.lesson+'\nLiên kết Google Meet: '+values.meet+
+    '\nKính nhờ GVCN thông báo đến học sinh của lớp để tham gia đúng giờ.';
+ }
+ $('copyGVCN').addEventListener('click',()=>{
+  const text=notice();if(!text)return;
+  if(navigator.clipboard?.writeText){
+   navigator.clipboard.writeText(text).then(()=>status('Đã sao chép thông báo. Giáo viên cần tự chuyển đến GVCN; EDOS chưa ghi nhận đã gửi.','ok'))
+   .catch(()=>fallback(text));
+  }else fallback(text);
+ });
+ function fallback(text){
+  const area=document.createElement('textarea');area.value=text;area.setAttribute('aria-label','Nội dung thông báo cho GVCN');
+  area.style.width='100%';area.style.minHeight='170px';
+  $('deliveryStatus').replaceChildren(document.createTextNode('Hãy sao chép thông báo bên dưới và gửi thủ công đến GVCN. EDOS chưa ghi nhận đã gửi.'),area);area.select();
+ }
+})();
