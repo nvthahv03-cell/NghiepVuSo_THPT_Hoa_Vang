@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HVA–EDOS | A.5.2 – Đề nghị điều chỉnh tiết dạy</title>
+<style>
+:root{font-family:Arial,"Segoe UI",sans-serif;color:#193e59;background:#f3f8fd}*{box-sizing:border-box}
+body{margin:0;padding:16px 12px 48px}main{max-width:850px;margin:auto}
+header{border-radius:15px;background:linear-gradient(100deg,#064f91,#087bb2);padding:21px;color:#fff}
+header h1{margin:3px 0 8px;font-size:23px}header p{margin:0;line-height:1.5;font-size:13px}
+small{font-size:12px}.card{background:#fff;border:1px solid #c5d9e8;border-radius:15px;padding:18px;margin-top:15px}
+h2{margin:0 0 15px;font-size:18px;color:#0e517b}label{display:grid;gap:6px;font-weight:700;font-size:13px;margin:0}
+input,select,textarea{width:100%;min-width:0;padding:11px;font:inherit;font-size:14px;border:1px solid #bfd3e2;border-radius:10px;color:#173d56;background:#fff}
+input[readonly]{background:#f2f7fa}select:disabled{color:#70899b;background:#f5f8fa}textarea{resize:vertical;min-height:85px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.grid .full{grid-column:1/-1}
+.pill{display:inline-block;padding:5px 10px;background:#fff2dc;border:1px solid #efcc8f;border-radius:20px;color:#935514;font-size:12px;font-weight:800}
+.info{background:#eef6fc;padding:12px;border-radius:10px;font-size:13px;line-height:1.5}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}button{border:0;border-radius:10px;background:#0c65a1;color:#fff;padding:12px 15px;font:inherit;font-weight:700;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:#e9f3fc;color:#124c75}
+#note{padding:10px;margin-top:12px;border-radius:8px;background:#fff5ea;color:#7b4818;line-height:1.5}
+ol{padding-left:22px;line-height:1.8}footer{font-size:12px;color:#5b778e;margin:20px 5px;text-align:center}
+@media(max-width:550px){.grid{grid-template-columns:1fr}.grid .full{grid-column:auto}header h1{font-size:20px}}
+</style></head><body><main>
+<header><small>TRƯỜNG THPT HÒA VANG · HVA–EDOS · A.5.2</small><h1>Đề nghị dạy bù – dạy thay – xin tiết – đổi tiết</h1><p>Đăng ký dạy bù, dạy thay, xin tiết, đổi tiết · Phiên bản thiết kế, chưa kết nối máy chủ</p></header>
+<section class="card"><span class="pill">CHƯA KẾT NỐI TIẾP NHẬN – CHỈ LẬP BẢN NHÁP</span>
+<h2 style="margin-top:14px">Thông tin người đăng ký</h2>
+<div class="grid"><label>Giáo viên đăng ký<input id="teacher" readonly placeholder="Truy xuất tài khoản EDOS"></label>
+<label>Tổ chuyên môn<input id="team" readonly placeholder="Truy xuất tài khoản EDOS"></label>
+<label>Chức vụ<input id="role" readonly placeholder="Truy xuất tài khoản EDOS"></label>
+<label>Loại nghiệp vụ<select id="type"><option value="DAYBU">Dạy bù</option><option value="DAYTHAY">Dạy thay</option><option value="XINTIET">Xin tiết</option><option value="DOITIET">Đổi tiết</option></select></label></div></section>
+<section class="card"><h2>Thông tin tiết học gốc</h2>
+<div class="grid"><label>Lớp học *<select disabled><option>Chờ kết nối danh sách 30 lớp</option></select></label>
+<label>Môn học *<select disabled><option>Chờ kết nối PCCM</option></select></label>
+<label>Ngày nghỉ / tiết chưa thực hiện *<input id="originalDate" type="date"></label>
+<label>Tiết học gốc *<select disabled><option>Chờ kết nối thời khóa biểu</option></select></label>
+<label class="full">Lý do điều chỉnh *<textarea id="reason" placeholder="Nêu rõ nguyên nhân và căn cứ (nếu có)"></textarea></label>
+</div></section>
+<section class="card"><h2>Lịch thực hiện đề xuất</h2>
+<div class="grid"><label>Ngày dự kiến *<input id="proposedDate" type="date" value="2026-12-01"></label>
+<label>Hình thức<select id="mode"><option value="TRUC_TIEP">Trực tiếp</option><option value="TRUC_TUYEN">Trực tuyến (khi được phép)</option></select></label>
+<label>Tiết dự kiến *<select disabled><option>Chờ kết nối TKB và lịch phòng</option></select></label>
+<label>Phòng học *<select disabled><option>Chờ kết nối lịch phòng</option></select></label>
+<label class="full">Nội dung bài dạy *<textarea id="content" placeholder="Tên bài, nội dung và số tiết theo KHGD"></textarea></label>
+</div><p class="info">Chưa tải được PCCM, TKB, phòng học và danh mục ngày nghỉ từ hệ thống. Chức năng gửi sẽ chỉ được mở khi Backend kiểm tra đầy đủ điều kiện và xác nhận quyền phê duyệt.</p>
+<div class="actions"><button class="secondary" type="button" id="preview">Xem bản nháp</button><button type="button" disabled aria-label="Chưa thể gửi do chưa kết nối Backend">Gửi đề nghị</button></div>
+<div id="note" role="status">Chưa tạo hồ sơ. Không có dữ liệu nào được gửi về EDOS.</div>
+</section>
+<section class="card"><h2>Luồng phê duyệt bắt buộc</h2>
+<ol><li>Giáo viên đăng ký, hệ thống cấp mã khi Backend tiếp nhận thành công</li><li>TTCM rà soát và xác nhận hoặc trả chỉnh sửa</li><li>PHT phụ trách chuyên môn phê duyệt theo phân công</li><li>Giáo viên thực hiện sau khi được phê duyệt</li><li>Giáo viên xác nhận kết quả; TTCM đối chiếu Sổ đầu bài trước khi hoàn thành</li></ol>
+<p class="info">Với nghiệp vụ xin tiết hoặc đổi tiết, phải có xác nhận của giáo viên có tiết bị ảnh hưởng và TTCM liên quan. Ngày nghỉ bão, lễ, Tết không được dùng để hợp thức hóa việc ghi tiết học đã dạy. Lịch thực hiện mới phải kiểm tra trùng giáo viên, lớp, phòng, PCCM, thời khóa biểu và điều kiện được duyệt ở Backend. Dữ liệu không đủ thì chặn nộp.</p>
+</section><footer>HVA–EDOS V5 · A.5.2 · Chưa ghi Sheet, chưa phát sinh yêu cầu phê duyệt</footer>
+</main><script defer src="./NVS_A52_DieuChinhTietDay.js?v=20261125-1"></script></body></html>
