@@ -28,14 +28,14 @@ ol{padding-left:22px;line-height:1.8}footer{font-size:12px;color:#5b778e;margin:
   <h1>Dạy bù – Dạy thay – Xin tiết – Đổi tiết</h1>
  </div>
 </header>
-<section class="card"><p class="info">Giáo viên nhập và lưu bản nháp trên thiết bị; chỉ gửi phê duyệt sau khi Backend được nghiệm thu.</p><span class="pill">CÓ THỂ NHẬP VÀ LƯU BẢN NHÁP · CHƯA GỬI EDOS</span>
+<section class="card"><p class="info">Giáo viên nhập và lưu bản nháp trên thiết bị; chỉ gửi phê duyệt sau khi hệ thống EDOS được nghiệm thu.</p><span class="pill">CÓ THỂ NHẬP VÀ LƯU BẢN NHÁP · CHƯA GỬI EDOS</span>
 <h2 style="margin-top:14px">Thông tin người đăng ký</h2>
 <div class="grid"><label>Giáo viên đăng ký<input id="teacher" readonly placeholder="Truy xuất tài khoản EDOS"></label>
 <label>Tổ chuyên môn<input id="team" readonly placeholder="Truy xuất tài khoản EDOS"></label>
 <label>Chức vụ<input id="role" readonly placeholder="Truy xuất tài khoản EDOS"></label>
 <label>Loại nghiệp vụ<select id="type"><option value="DAYBU">Dạy bù</option><option value="DAYTHAY">Dạy thay</option><option value="XINTIET">Xin tiết</option><option value="DOITIET">Đổi tiết</option></select></label></div></section>
 <section class="card"><h2>Thông tin tiết học gốc</h2>
-<div class="grid"><label>Lớp học *<select id="className" required><option value="">Chọn lớp</option></select><span class="hint">Danh sách lớp 2026–2027; Backend sẽ đối chiếu phân công.</span></label>
+<div class="grid"><label>Lớp học *<select id="className" required><option value="">Chọn lớp</option></select><span class="hint">Danh sách lớp 2026–2027; hệ thống EDOS sẽ đối chiếu phân công.</span></label>
 <label>Môn học *<input id="subject" required maxlength="120" placeholder="VD: Toán"><span class="hint">Tạm nhập theo PCCM; không mặc định là đã xác minh.</span></label>
 <label>Ngày, tiết chưa thực hiện *<input id="originalDate" type="date" required></label>
 <label>Tiết học gốc *<select id="originalPeriod" required><option value="">Chọn tiết gốc</option></select></label>
@@ -47,19 +47,19 @@ ol{padding-left:22px;line-height:1.8}footer{font-size:12px;color:#5b778e;margin:
 <label>Tiết dự kiến *<select id="proposedPeriod" required><option value="">Chọn tiết</option></select></label>
 <label>Địa điểm / Phòng học *<input id="room" required maxlength="140" placeholder="VD: Phòng học lớp 12/9"><span class="hint">Tạm nhập để lập bản nháp; chưa được đặt phòng.</span></label>
 <label class="full">Nội dung bài dạy *<textarea id="content" required maxlength="2000" placeholder="Tên bài, nội dung và số tiết theo KHGD"></textarea></label>
-<label id="relatedTeacherLabel" class="full" hidden>Giáo viên có tiết bị ảnh hưởng *<input id="relatedTeacher" maxlength="150" placeholder="Họ và tên giáo viên phối hợp"><span class="hint">Bản nháp chỉ ghi thông tin; xác nhận của người liên quan phải thực hiện trên Backend.</span></label>
-</div><p class="info">Giáo viên có thể nhập đủ thông tin, xem trước và lưu bản nháp trên thiết bị. Danh sách lớp, môn, tiết, phòng hiện chưa được xác minh với PCCM/TKB. Việc duyệt và kiểm tra trùng lịch bắt buộc thực hiện ở Backend.</p>
+<label id="relatedTeacherLabel" class="full" hidden>Giáo viên có tiết bị ảnh hưởng *<input id="relatedTeacher" maxlength="150" placeholder="Họ và tên giáo viên phối hợp"><span class="hint">Bản nháp chỉ ghi thông tin; xác nhận của người liên quan phải thực hiện trên hệ thống EDOS.</span></label>
+</div><p class="info">Giáo viên có thể nhập đủ thông tin, xem trước và lưu bản nháp trên thiết bị. Danh sách lớp, môn, tiết, phòng hiện chưa được xác minh với PCCM/TKB. Việc duyệt và kiểm tra trùng lịch bắt buộc thực hiện ở hệ thống EDOS.</p>
 <div class="actions">
  <button class="secondary" type="button" id="preview">Kiểm tra bản nháp</button>
  <button type="button" id="save">Lưu bản nháp</button>
  <button type="button" class="secondary" id="reset">Xóa bản nháp</button>
- <button type="button" disabled aria-label="Chưa có tuyến tiếp nhận và phê duyệt Backend">Gửi đề nghị (chưa mở)</button>
+ <button type="button" disabled aria-label="Chưa có tuyến tiếp nhận và phê duyệt hệ thống EDOS">Gửi đề nghị (chưa mở)</button>
 </div>
 <div id="draftPreview" class="draft-preview" hidden aria-label="Xem trước thông tin đăng ký"></div>
 <div id="note" role="status" aria-live="polite">Chưa tạo hồ sơ. Không có dữ liệu nào được gửi về EDOS.</div>
 </section>
 <section class="card"><h2>Luồng phê duyệt bắt buộc</h2>
-<ol><li>Giáo viên đăng ký, hệ thống cấp mã khi Backend tiếp nhận thành công</li><li>TTCM rà soát và xác nhận hoặc trả chỉnh sửa</li><li>PHT phụ trách chuyên môn phê duyệt theo phân công</li><li>Giáo viên thực hiện sau khi được phê duyệt</li><li>Giáo viên xác nhận kết quả; TTCM đối chiếu Sổ đầu bài trước khi hoàn thành</li></ol>
-<p class="info">Với nghiệp vụ xin tiết hoặc đổi tiết, phải có xác nhận của giáo viên có tiết bị ảnh hưởng và TTCM liên quan. Ngày nghỉ bão, lễ, Tết không được dùng để hợp thức hóa việc ghi tiết học đã dạy. Lịch thực hiện mới phải kiểm tra trùng giáo viên, lớp, phòng, PCCM, thời khóa biểu và điều kiện được duyệt ở Backend. Dữ liệu không đủ thì chặn nộp.</p>
+<ol><li>Giáo viên gửi đăng ký; hệ thống EDOS cấp mã hồ sơ khi tiếp nhận thành công</li><li>TTCM rà soát và xác nhận hoặc trả chỉnh sửa</li><li>PHT phụ trách chuyên môn phê duyệt theo phân công</li><li>Giáo viên thực hiện sau khi được phê duyệt</li><li>Giáo viên xác nhận kết quả; TTCM đối chiếu Sổ đầu bài trước khi hoàn thành</li></ol>
+<p class="info">Với nghiệp vụ xin tiết hoặc đổi tiết, phải có xác nhận của giáo viên có tiết bị ảnh hưởng và TTCM liên quan. Ngày nghỉ bão, lễ, Tết không được dùng để hợp thức hóa việc ghi tiết học đã dạy. Lịch thực hiện mới phải kiểm tra trùng giáo viên, lớp, phòng, PCCM, thời khóa biểu và điều kiện được duyệt ở hệ thống EDOS. Dữ liệu không đủ thì chặn nộp.</p>
 </section><footer>HVA–EDOS V5 · A.5.2 · Chưa ghi Sheet, chưa phát sinh yêu cầu phê duyệt</footer>
 </main><script defer src="./NVS_A52_DieuChinhTietDay.js?v=20261125-2"></script></body></html>
