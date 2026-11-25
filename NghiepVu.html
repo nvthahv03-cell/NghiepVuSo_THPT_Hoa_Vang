@@ -645,7 +645,159 @@ header.hva-nvs-head .hva-nvs-wordmark .hva-nvs-brand-edos{color:#ffca4b!importan
 }
 </style>
 <style id="nvs-online-class-style">.nvs-four-quick-grid>.nvs-online-class-tile{background:linear-gradient(135deg,#f5fcff,#e5f9f5)!important;border-color:#9ecfd5!important}.nvs-online-class-tile .hva-menu-icon{background:linear-gradient(135deg,#086cae,#05a6a0)!important}</style>
-<style id="nvs-sdb-future-20261122">.nvs-sdb-future-tile{cursor:default!important;opacity:.85!important;border-style:dashed!important}.nvs-sdb-future-tile .hva-menu-wait{display:inline-block!important;color:#9a5700!important;font-weight:800!important}.nvs-sdb-future-tile:hover{transform:none!important;box-shadow:none!important}</style><link rel="stylesheet" href="./HVA_EDOS_UI_Unified_20261122.css"><link rel="stylesheet" href="./HVA_EDOS_Header_Compact_V1.css?v=20261125-brand2"></head><body class="hva-ui-v1 hva-edos-unified"><div class="hva-edos-unified-bar" role="navigation" aria-label="Điều hướng chung HVA-EDOS"><div class="edos-ub-left"><a class="edos-ub-link" href="./index.html" aria-label="Quay lại" title="Quay lại">‹</a><a class="edos-ub-link" href="./index.html" aria-label="Trang chủ" title="Trang chủ">⌂</a><div class="edos-ub-brand"><div class="edos-ub-wordmark">HVA-<b>EDOS</b></div><div class="edos-ub-sub">HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</div></div></div><div class="edos-ub-actions"><span class="edos-ub-online">Trực tuyến</span></div></div>
+<style id="nvs-sdb-future-20261122">.nvs-sdb-future-tile{cursor:default!important;opacity:.85!important;border-style:dashed!important}.nvs-sdb-future-tile .hva-menu-wait{display:inline-block!important;color:#9a5700!important;font-weight:800!important}.nvs-sdb-future-tile:hover{transform:none!important;box-shadow:none!important}</style><link rel="stylesheet" href="./HVA_EDOS_UI_Unified_20261122.css"><link rel="stylesheet" href="./HVA_EDOS_Header_Compact_V1.css?v=20261125-brand2">
+<style id="hva-nvs-seven-actions-design-20261125">
+/* HVA–EDOS: 4 tiện ích nhanh / 3 không gian chính. Chỉ trình bày, không đổi chức năng. */
+body .nvs-four-quick-grid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px!important;margin:17px 0 22px!important;
+}
+body .nvs-four-quick-grid>.hva-digital-menu{
+  --tile-accent:#0871aa;--tile-pale:#eef7ff;
+  position:relative!important;overflow:hidden!important;
+  min-width:0!important;min-height:125px!important;
+  align-items:flex-start!important;gap:12px!important;
+  padding:16px 13px!important;border-radius:17px!important;
+  border:1px solid #d7e5ef!important;
+  background:linear-gradient(145deg,#fff 11%,var(--tile-pale) 100%)!important;
+  box-shadow:0 5px 14px rgba(16,65,103,.075)!important;
+  transform:none!important;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease!important;
+}
+body .nvs-four-quick-grid>.hva-digital-menu::before{
+  content:"";position:absolute;inset:0 auto 0 0;width:4px;
+  background:var(--tile-accent);opacity:.82;
+}
+body .nvs-four-quick-grid>.nvs-nenep-tile{--tile-accent:#0877b7;--tile-pale:#eaf6ff}
+body .nvs-four-quick-grid>.nvs-guard-tile{--tile-accent:#0d8b94;--tile-pale:#edfafa}
+body .nvs-four-quick-grid>.nvs-sdb-future-tile{--tile-accent:#7c8aa1;--tile-pale:#f4f7fa}
+body .nvs-four-quick-grid>.nvs-online-class-tile{
+  --tile-accent:#078b84;--tile-pale:#e9faf5;
+  border-color:#a7dbcd!important;
+  background:linear-gradient(145deg,#fff 11%,var(--tile-pale) 100%)!important;
+}
+body .nvs-four-quick-grid .hva-menu-icon,
+body .nvs-four-quick-grid .nvs-online-class-tile .hva-menu-icon{
+  flex:0 0 43px!important;width:43px!important;height:43px!important;
+  border-radius:13px!important;background:var(--tile-accent)!important;
+  color:#fff!important;font-size:21px!important;
+  box-shadow:0 5px 11px rgba(11,72,119,.14)!important;
+}
+body .nvs-four-quick-grid .hva-menu-content{gap:5px!important;align-self:stretch;min-width:0!important}
+body .nvs-four-quick-grid .hva-menu-content strong{
+  font-size:13px!important;font-weight:850!important;line-height:1.35!important;
+  color:#123e62!important;letter-spacing:.01em!important;
+  overflow-wrap:break-word!important;
+}
+body .nvs-four-quick-grid .hva-menu-content small{
+  font-size:11px!important;line-height:1.45!important;color:#55738a!important;
+  overflow-wrap:anywhere!important;
+}
+body .nvs-four-quick-grid .hva-menu-wait{
+  display:inline-flex!important;align-self:flex-start!important;
+  width:auto!important;max-width:100%!important;
+  padding:4px 8px!important;margin-top:auto!important;
+  border:1px solid #e4dfd5!important;border-radius:999px!important;
+  color:#80613b!important;background:#fbf6ee!important;
+  font-size:10px!important;font-weight:750!important;line-height:1.25!important;
+  overflow-wrap:anywhere!important;
+}
+body .nvs-four-quick-grid>.nvs-sdb-future-tile{
+  opacity:.82!important;border-style:dashed!important;cursor:default!important;
+}
+body .nvs-four-quick-grid>.nvs-sdb-future-tile::before{opacity:.4}
+body .nvs-four-quick-grid>.nvs-sdb-future-tile .hva-menu-icon{box-shadow:none!important}
+body .nvs-four-quick-grid>.hva-digital-menu:is(a):hover{
+  border-color:var(--tile-accent)!important;box-shadow:0 8px 21px rgba(12,77,119,.13)!important;
+  transform:translateY(-2px)!important;
+}
+body .nvs-four-quick-grid>.hva-digital-menu:is(a):focus-visible{
+  outline:3px solid #4faedb!important;outline-offset:3px!important;
+}
+/* A/B/C là thao tác chính: mỗi tab có màu nhận diện và trạng thái rõ. */
+body .tabs[role="tablist"]{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:11px!important;margin:18px 0 22px!important;
+}
+body .tabs[role="tablist"]>.tab{
+  --abc:#1676b3;--abc-soft:#edf6fc;
+  position:relative!important;overflow:hidden!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;text-align:center!important;
+  gap:8px!important;min-width:0!important;min-height:124px!important;
+  padding:14px 9px!important;border-radius:17px!important;
+  border:1px solid #d7e3ec!important;background:#fff!important;
+  box-shadow:0 4px 13px rgba(18,65,98,.07)!important;
+  transform:none!important;filter:none!important;
+  transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease!important;
+}
+body .tabs[role="tablist"]>.tab:nth-child(2){--abc:#16838e;--abc-soft:#eef9f9}
+body .tabs[role="tablist"]>.tab:nth-child(3){--abc:#6376a9;--abc-soft:#f1f4fc}
+body .tabs[role="tablist"]>.tab::before{
+  display:block!important;content:""!important;position:absolute;
+  left:0;right:0;top:0;height:4px;opacity:.95;background:var(--abc)!important;
+}
+body .tabs[role="tablist"]>.tab::after{display:none!important}
+body .tabs[role="tablist"] .tab-letter{
+  flex:0 0 45px!important;width:45px!important;height:45px!important;
+  display:grid!important;place-items:center!important;
+  border-radius:14px!important;background:var(--abc-soft)!important;
+  box-shadow:inset 0 0 0 1px rgba(42,84,120,.08)!important;
+  color:var(--abc)!important;font-size:25px!important;font-weight:900!important;
+}
+body .tabs[role="tablist"] .tab-content{gap:5px!important;min-width:0!important}
+body .tabs[role="tablist"] .tab-content strong{
+  color:#163e5b!important;font-size:12px!important;font-weight:850!important;
+  line-height:1.25!important;letter-spacing:0!important;
+}
+body .tabs[role="tablist"] .tab-content small{
+  color:#6a8396!important;font-size:10px!important;font-weight:550!important;line-height:1.35!important;
+}
+body .tabs[role="tablist"]>.tab[aria-selected="true"]{
+  border:1.5px solid var(--abc)!important;
+  background:linear-gradient(160deg,var(--abc-soft),#fff)!important;
+  box-shadow:0 0 0 1px rgba(24,118,179,.10),0 9px 20px rgba(18,94,150,.14)!important;
+}
+body .tabs[role="tablist"]>.tab[aria-selected="true"] .tab-letter{
+  background:var(--abc)!important;color:#fff!important;
+  box-shadow:0 6px 14px rgba(18,75,122,.18)!important;
+}
+body .tabs[role="tablist"]>.tab[aria-selected="true"] .tab-content strong{color:#103c5b!important}
+body .tabs[role="tablist"]>.tab:hover{
+  border-color:var(--abc)!important;box-shadow:0 7px 17px rgba(14,83,135,.12)!important;
+  transform:translateY(-2px)!important;
+}
+body .tabs[role="tablist"]>.tab:focus-visible{outline:3px solid #4faedb!important;outline-offset:3px!important}
+body .tabs[role="tablist"] .tab-symbol{display:none!important}
+@media(max-width:600px){
+ body .nvs-four-quick-grid{gap:10px!important}
+ body .nvs-four-quick-grid>.hva-digital-menu{
+  min-height:142px!important;padding:13px 10px!important;gap:9px!important;
+ }
+ body .nvs-four-quick-grid .hva-menu-icon,
+ body .nvs-four-quick-grid .nvs-online-class-tile .hva-menu-icon{
+  flex-basis:38px!important;width:38px!important;height:38px!important;font-size:18px!important;
+ }
+ body .nvs-four-quick-grid .hva-menu-content strong{font-size:11.5px!important}
+ body .nvs-four-quick-grid .hva-menu-content small{font-size:10.5px!important}
+ body .nvs-four-quick-grid .hva-menu-wait{font-size:9.5px!important;padding:4px 7px!important}
+ body .tabs[role="tablist"]{gap:8px!important;margin:16px 0 20px!important}
+ body .tabs[role="tablist"]>.tab{min-height:118px!important;padding:12px 5px!important;gap:8px!important}
+ body .tabs[role="tablist"] .tab-letter{flex-basis:42px!important;width:42px!important;height:42px!important}
+ body .tabs[role="tablist"] .tab-content strong{font-size:10.5px!important}
+ body .tabs[role="tablist"] .tab-content small{font-size:9.5px!important}
+}
+@media(max-width:360px){
+ body .nvs-four-quick-grid>.hva-digital-menu{padding:11px 8px!important;gap:7px!important}
+ body .nvs-four-quick-grid .hva-menu-icon{flex-basis:32px!important;width:32px!important;height:32px!important}
+ body .nvs-four-quick-grid .hva-menu-content strong{font-size:10.5px!important}
+ body .tabs[role="tablist"]>.tab{padding:10px 4px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ body .nvs-four-quick-grid>.hva-digital-menu,body .tabs[role="tablist"]>.tab{transition:none!important}
+ body .nvs-four-quick-grid>.hva-digital-menu:hover,body .tabs[role="tablist"]>.tab:hover{transform:none!important}
+}
+</style>
+</head><body class="hva-ui-v1 hva-edos-unified"><div class="hva-edos-unified-bar" role="navigation" aria-label="Điều hướng chung HVA-EDOS"><div class="edos-ub-left"><a class="edos-ub-link" href="./index.html" aria-label="Quay lại" title="Quay lại">‹</a><a class="edos-ub-link" href="./index.html" aria-label="Trang chủ" title="Trang chủ">⌂</a><div class="edos-ub-brand"><div class="edos-ub-wordmark">HVA-<b>EDOS</b></div><div class="edos-ub-sub">HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</div></div></div><div class="edos-ub-actions"><span class="edos-ub-online">Trực tuyến</span></div></div>
 <header class="hero hva-nvs-head" aria-label="Trường THPT Hòa Vang – HVA–EDOS"><div class="hva-nvs-head-top"><a class="hva-nvs-back" href="./index.html" aria-label="Quay về trang chủ" title="Về trang chủ"><i class="bi bi-arrow-left" aria-hidden="true"></i></a><div class="hva-nvs-ident"><div class="hva-nvs-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-nvs-wordmark"><span class="hva-nvs-brand-hva">HVA–</span><span class="hva-nvs-brand-edos">EDOS</span></div></div></div></header>
 <main class="shell"><div class="workspace"><div class="workspace-top"><div><h2>KHÔNG GIAN NGHIỆP VỤ GIÁO VIÊN</h2><p>Thực hiện hồ sơ, tra cứu thông tin và theo dõi kết quả gửi BGH. Minh chứng nộp bằng liên kết Google Drive.</p></div><span class="pill">Không tải tệp trực tiếp</span></div>
 <nav class="nvs-four-quick-grid" aria-label="Nề nếp học sinh và Nhật ký Bảo vệ">
