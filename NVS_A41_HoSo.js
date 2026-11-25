@@ -135,9 +135,42 @@
   message('Đã lập bản xem trước. Kiểm tra từng đường dẫn rồi chọn Gửi hồ sơ.',true);
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
  }
+ function confirmSubmission(){
+  return new Promise(resolve=>{
+   const overlay=by('hvaA41ConfirmOverlay'),description=by('hvaA41ConfirmDesc'),list=by('hvaA41ConfirmList');
+   const accept=by('hvaA41AcceptConfirm'),cancel=by('hvaA41CancelConfirm');
+   if(!overlay||!description||!list||!accept||!cancel){message('Không mở được hộp xác nhận EDOS, hồ sơ chưa được gửi.');resolve(false);return}
+   const pending=items.filter(x=>!x.receipt);
+   description.textContent='Thầy/cô xác nhận nộp '+pending.length+' hồ sơ '+kinds[kind].label+' đến BGH và TTCM:';
+   list.replaceChildren(...pending.map(x=>{const li=document.createElement('li');li.textContent=String(x.name||'').trim();return li}));
+   const prior=document.activeElement;
+   overlay.hidden=false;accept.focus();
+   function settle(value){
+    overlay.hidden=true;
+    accept.removeEventListener('click',approve);
+    cancel.removeEventListener('click',decline);
+    document.removeEventListener('keydown',keydown,true);
+    if(prior&&prior.focus)prior.focus();
+    resolve(value);
+   }
+   function approve(){settle(true)}
+   function decline(){settle(false)}
+   function keydown(event){
+    if(event.key==='Escape'){event.preventDefault();settle(false)}
+    if(event.key==='Tab'){
+     const next=event.shiftKey?cancel:accept;
+     if(document.activeElement===(event.shiftKey?accept:cancel)){event.preventDefault();next.focus()}
+    }
+   }
+   accept.addEventListener('click',approve,{once:true});
+   cancel.addEventListener('click',decline,{once:true});
+   document.addEventListener('keydown',keydown,true);
+  });
+ }
  async function send(){
   if(inFlight||!valid()||previewSignature!==signature()){message('Vui lòng Xem trước bản mới nhất trước khi gửi.');return}
-  if(!window.confirm('Xác nhận nộp '+items.length+' hồ sơ '+kinds[kind].label+' đến BGH và TTCM?'))return;
+  if(!await confirmSubmission())return;
+  if(inFlight||!valid()||previewSignature!==signature())return;
   inFlight=true;by('hvaA41Submit').disabled=true;render();
   try{
    await probe();
