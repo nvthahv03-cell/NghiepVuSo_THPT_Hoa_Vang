@@ -84,10 +84,22 @@
     by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
     message('Hồ sơ đã thay đổi. Vui lòng xem trước trước khi gửi.');
    });
-   wrap.append(heading,link);links.append(wrap);
+   const inputRow=document.createElement('div');inputRow.className='hva-a41-link-input';
+   const clear=document.createElement('button');clear.type='button';clear.className='hva-a41-clear-link';
+   clear.textContent='×';clear.title='Xóa liên kết '+label;clear.setAttribute('aria-label','Xóa liên kết '+label+' hồ sơ '+(index+1));
+   clear.disabled=!!item.receipt||inFlight||!item[field];
+   link.addEventListener('input',()=>{clear.disabled=!link.value.trim()||!!item.receipt||inFlight});
+   clear.addEventListener('click',()=>{
+    if(item.receipt||inFlight)return;
+    item[field]='';link.value='';item.requestId=null;previewSignature='';
+    clear.disabled=true;by('hvaA41Preview').hidden=true;by('hvaA41Submit').disabled=true;
+    message('Đã xóa riêng liên kết '+label+' của hồ sơ '+(index+1)+'. Vui lòng nhập lại trước khi gửi.');
+    link.focus();
+   });
+   inputRow.append(link,clear);wrap.append(heading,inputRow);links.append(wrap);
   }
   const remove=document.createElement('button');remove.type='button';remove.className='hva-a41-remove';
-  remove.textContent='×';remove.title='Xóa dòng hồ sơ';remove.setAttribute('aria-label','Xóa hồ sơ '+(index+1));
+  remove.textContent='Xóa hồ sơ';remove.title='Xóa toàn bộ dòng hồ sơ';remove.setAttribute('aria-label','Xóa toàn bộ hồ sơ '+(index+1));
   remove.disabled=items.length<=1||!!item.receipt||inFlight;
   remove.addEventListener('click',()=>{
    items=items.filter(x=>x!==item);previewSignature='';render();
