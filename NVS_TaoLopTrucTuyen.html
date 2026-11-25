@@ -8,6 +8,7 @@ small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;backg
 .actions{display:flex;flex-wrap:wrap;gap:9px;margin:13px 0}button,.go{display:inline-flex;justify-content:center;align-items:center;border:0;border-radius:9px;background:#0a65a3;color:white;min-height:42px;padding:11px 14px;text-decoration:none;font:750 13px Arial,sans-serif;cursor:pointer}
 .secondary{background:#e8f5fc;color:#165177;border:1px solid #c5dfe9}button:disabled{opacity:.45;cursor:not-allowed}
 #meetStatus{background:#eff7fc;color:#24516e;border-radius:10px;padding:11px;font-size:12px;line-height:1.6}#meetStatus[data-kind="error"]{background:#fff1ee;color:#a4312e}#meetStatus[data-kind="ok"]{background:#eaf8ef;color:#19613a}#meetStatus[hidden],#connectGoogle[hidden],#checkMeet[hidden]{display:none!important}
+#periodSchedule{white-space:pre-line;padding:11px;border-radius:10px;background:#edf7ff;color:#165477;font-size:13px;line-height:1.6}#meet2Label[hidden],#join2[hidden]{display:none!important}
 #message{padding:12px;border-radius:10px;background:#eef6fc;font-size:13px;line-height:1.5}#message[data-kind="error"]{background:#fff0ee;color:#b33b34}#message[data-kind="ok"]{background:#eaf8ee;color:#17643a}
 #preview[hidden]{display:none}#preview{overflow-wrap:anywhere;white-space:pre-wrap;background:#f4faff;border:1px solid #cadeec;padding:13px;border-radius:10px;font-size:13px;line-height:1.75}
 @media(max-width:580px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:13px}}
@@ -21,14 +22,16 @@ small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;backg
 <label>Lớp học *<select id="className"><option value="">Chọn lớp</option></select></label>
 <label>Môn học *<input id="subject" maxlength="100" placeholder="VD: Toán"></label>
 <label>Ngày dạy *<input id="date" type="date"></label>
-<label>Giờ bắt đầu *<input id="start" type="time"></label>
-<label>Giờ kết thúc *<input id="end" type="time"></label>
+<label>Số tiết dạy bù *<select id="periodCount"><option value="1">1 tiết (45 phút)</option><option value="2" selected>2 tiết (nghỉ 5 phút)</option></select></label>
+<label>Giờ bắt đầu tiết 1 *<input id="start" type="time"></label>
+<label>Giờ kết thúc (EDOS tự tính)<input id="end" type="time" readonly></label>
+<div id="periodSchedule" class="wide" role="status" aria-live="polite">Chọn giờ bắt đầu để chia lịch 2 tiết.</div>
 <label class="wide">Nội dung bài dạy *<textarea id="lesson" maxlength="1800" placeholder="Tên bài, nội dung theo kế hoạch giáo dục"></textarea></label>
-<label class="wide">Liên kết Google Meet *<input id="meet" type="url" maxlength="1500" placeholder="https://meet.google.com/abc-defg-hij"></label>
+<label class="wide">Google Meet tiết 1 *<input id="meet" type="url" maxlength="1500" placeholder="Liên kết Meet tiết 1"></label><label class="wide" id="meet2Label">Google Meet tiết 2 *<input id="meet2" type="url" maxlength="1500" placeholder="Liên kết Meet tiết 2"></label>
 </div>
-<div class="actions"><button id="createMeet" type="button">Tạo Google Meet bằng EDOS</button><button id="connectGoogle" class="secondary" type="button" hidden>Kết nối Google Calendar</button><button id="checkMeet" class="secondary" type="button" hidden>Kiểm tra link Meet</button><button id="join" class="secondary" type="button">Mở phòng đã tạo</button></div>
+<div class="actions"><button id="createMeet" type="button">Tạo Google Meet bằng EDOS</button><button id="connectGoogle" class="secondary" type="button" hidden>Kết nối Google Calendar</button><button id="checkMeet" class="secondary" type="button" hidden>Kiểm tra link Meet</button><button id="join" class="secondary" type="button">Vào Meet tiết 1</button><button id="join2" class="secondary" type="button">Vào Meet tiết 2</button></div>
 <div id="meetStatus" class="note" role="status" aria-live="polite">Đang kiểm tra kết nối Google Calendar…</div>
-<p>EDOS kế thừa cơ chế tạo Google Meet thật từ phân hệ Cuộc họp. Giáo viên có thể dán liên kết Meet tạo sẵn, hoặc sử dụng nút trên. Việc tạo phòng không đồng nghĩa với phê duyệt dạy bù.</p>
+<p>EDOS kế thừa cơ chế Google Meet từ Cuộc họp. Với hai tiết, hệ thống tạo hai phòng riêng, mỗi tiết 45 phút, nghỉ 5 phút. Nếu một phòng chưa được cấp liên kết, dùng “Kiểm tra link Meet”, không tạo trùng. Việc tạo phòng không đồng nghĩa phê duyệt dạy bù.</p>
 </section>
 <section class="card" id="distribution"><h2>03 · Chuyển liên kết và thông báo</h2>
 <p>EDOS sẽ xác định GVCN theo lớp, chuyển link Meet để GVCN thông báo học sinh; đồng thời gửi thông tin buổi dạy tới BGH và đồng gửi TTCM. Các bước chuyển tự động sẽ chỉ mở sau khi hệ thống xác thực danh tính, phân công và ghi nhận tiếp nhận thành công.</p>
@@ -54,4 +57,4 @@ small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;backg
 <div class="actions"><button type="button" id="previewBtn" class="secondary">Xem trước</button><button type="button" id="save">Lưu bản nháp</button><button type="button" id="clear" class="secondary">Xóa bản nháp</button><button type="button" disabled>Gửi minh chứng BGH (chưa mở)</button></div>
 <div id="message" role="status" aria-live="polite">Chưa gửi hồ sơ. Bản nháp chỉ lưu trên thiết bị của giáo viên.</div><pre id="preview" hidden></pre>
 <p>Chưa có tuyến tiếp nhận EDOS cho nghiệp vụ này nên BGH chưa thể tự động thu thập minh chứng từ biểu mẫu. Sau khi kết nối, hệ thống mới cấp mã tiếp nhận và chuyển hồ sơ theo quyền.</p>
-</section></main><script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script><script defer src="./NVS_TaoLopTrucTuyen.js?v=20261125-meet3"></script></body></html>
+</section></main><script defer src="./HVA_Personnel.js?v=20261120-backend-v5"></script><script defer src="./NVS_TaoLopTrucTuyen.js?v=20261125-two-meets"></script></body></html>
