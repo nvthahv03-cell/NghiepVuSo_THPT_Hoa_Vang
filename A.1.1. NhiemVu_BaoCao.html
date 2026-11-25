@@ -555,7 +555,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     return '';
   };
   const A11_BACKEND_URL='https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec';
-  let a11Enabled=false,a11RequestId='',a11SubmittedId='',a11ConnectionError='';
+  let a11Enabled=false,a11RequestId='',a11SubmittedId='',a11ConnectionError='',a11Submitting=false;
   // A1.1 – dùng chung hai hình thức ký như DTHT/Chủ nhiệm.
   let a11SignMethod='PAPER',a11SignerVerified=false,a11SignatureData='',a11Signed=false,a11VerificationToken='';
   let a11SigningSupported={paper:false,electronic:false};
@@ -681,7 +681,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     if(!btn)return;
     btn.hidden=!!(current&&defs[current]&&defs[current].draft);
     const ready=a11SignMethod==='PAPER'?a11SigningSupported.paper:(a11SigningSupported.electronic&&a11SignerVerified&&a11Signed&&!!a11SignatureData);
-    btn.disabled=!(a11Enabled&&ready&&!a11SubmittedId&&!$('previewSection').hidden&&!btn.hidden);
+    btn.disabled=!(a11Enabled&&!a11Submitting&&ready&&!a11SubmittedId&&!$('previewSection').hidden&&!btn.hidden);
     btn.textContent=a11SubmittedId?'Đã tiếp nhận: '+a11SubmittedId
       :a11SignMethod==='PAPER'?'Gửi hồ sơ chờ bản ký tay':'Gửi báo cáo đã ký điện tử';
     const hint=$('a11SignHint');
@@ -700,7 +700,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     }
   }
   async function a11Submit(){
-    if(!a11Enabled||a11SubmittedId||$('previewSection').hidden||!current||defs[current].draft)return;
+    if(a11Submitting||!a11Enabled||a11SubmittedId||$('previewSection').hidden||!current||defs[current].draft)return;
     if(!a11SigningSupported[a11SignMethod==='PAPER'?'paper':'electronic']){announce('Backend chưa kích hoạt hình thức ký đã chọn.',true);return;}
     if(a11SignMethod==='ELECTRONIC'&&!(a11SignerVerified&&a11Signed&&a11SignatureData)){announce('Chưa hoàn thành xác thực và ký điện tử.',true);return;}
     const actor=verifySession();if(!actor||!$('reportForm').reportValidity())return;
@@ -713,6 +713,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
     if(text.length>7000){announce('Nội dung vượt giới hạn 7.000 ký tự. Hãy dùng liên kết Drive cho phụ lục.',true);return;}
     if(!a11RequestId)a11RequestId=a11NewRequestId();
     if(!await a11BeautifulConfirm('Gửi báo cáo “'+def.name+'” đến Ban Giám hiệu và Tổ trưởng chuyên môn.\nHình thức: '+(a11SignMethod==='PAPER'?'Ký tay – chờ nộp bản giấy':'Ký điện tử')+'.\nThầy/cô xác nhận nội dung báo cáo đã kiểm tra là chính xác?'))return;
+    a11Submitting=true;
     const btn=$('a11Send');btn.disabled=true;btn.textContent='Đang gửi...';
     try{
       const form={code:'A.1.1',title:def.name+' – '+(data.task||data.subject||data.activity||data.deployment||'Báo cáo'),schoolYear:data.year.replace('–','-'),content:text,result:data.results||dynamic.find(x=>x.title==='Kết quả, số liệu')?.value||'',evidence:$('driveLink').value.trim()};
@@ -747,7 +748,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
       const stamp=$('previewPaper').querySelector('.preview-stamp');
       if(stamp)stamp.textContent='ĐÃ TIẾP NHẬN · '+res.recordId+' · '+(a11SignMethod==='PAPER'?'CHỜ BẢN KÝ TAY':'ĐÃ KÝ ĐIỆN TỬ')+' · CHỜ XỬ LÝ';
     }catch(e){announce('CHƯA XÁC NHẬN NỘP: '+e.message+'. Nếu có mã tiếp nhận, KHÔNG gửi lại khi chưa đối chiếu.',true);}
-    finally{a11UpdateSend();}
+    finally{a11Submitting=false;a11UpdateSend();}
   }
   function account(){
     let u={};try{u=JSON.parse(safeRead('user')||'{}')||{}}catch(_){}
