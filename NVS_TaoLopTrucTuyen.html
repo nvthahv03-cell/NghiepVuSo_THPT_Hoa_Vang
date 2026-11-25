@@ -1,0 +1,42 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HVA–EDOS · Tạo lớp học trực tuyến</title>
+<link rel="stylesheet" href="./HVA_EDOS_Header_Compact_V1.css?v=20261125-brand2"><style>
+:root{font-family:Arial,sans-serif;color:#143d5c;background:#f3f8fd}*{box-sizing:border-box}body{margin:0;padding:12px}main{max-width:870px;margin:auto}
+.card{background:white;border:1px solid #c7deec;border-radius:14px;padding:16px;margin:14px 0}h2{font-size:18px;color:#095483;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}label{display:grid;gap:6px;min-width:0;font-size:13px;font-weight:750}.wide{grid-column:1/-1}
+input,select,textarea{width:100%;min-width:0;border:1px solid #b8d3e5;border-radius:10px;padding:11px;font:14px Arial,sans-serif;color:#184464}input[readonly]{background:#f1f7fc}textarea{resize:vertical;min-height:80px}
+small,p{font-size:12px;line-height:1.6;color:#567991}.caution{padding:11px;background:#fff4e5;color:#81511a;border:1px solid #edcea0;border-radius:10px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin:13px 0}button,.go{display:inline-flex;justify-content:center;align-items:center;border:0;border-radius:9px;background:#0a65a3;color:white;min-height:42px;padding:11px 14px;text-decoration:none;font:750 13px Arial,sans-serif;cursor:pointer}
+.secondary{background:#e8f5fc;color:#165177;border:1px solid #c5dfe9}button:disabled{opacity:.45;cursor:not-allowed}
+#message{padding:12px;border-radius:10px;background:#eef6fc;font-size:13px;line-height:1.5}#message[data-kind="error"]{background:#fff0ee;color:#b33b34}#message[data-kind="ok"]{background:#eaf8ee;color:#17643a}
+#preview[hidden]{display:none}#preview{overflow-wrap:anywhere;white-space:pre-wrap;background:#f4faff;border:1px solid #cadeec;padding:13px;border-radius:10px;font-size:13px;line-height:1.75}
+@media(max-width:580px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:13px}}
+</style></head><body><main>
+<header class="hva-a52-head"><a class="hva-a52-back" href="./NghiepVu.html" aria-label="Quay lại Nghiệp vụ">←</a><div class="hva-a52-ident"><div class="hva-a52-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-a52-brand"><span class="hva-a52-brand-hva">HVA–</span><span class="hva-a52-brand-edos">EDOS</span></div><h1>Tạo lớp học trực tuyến</h1></div></header>
+<section class="card"><h2>01 · Giáo viên phụ trách</h2><div class="grid"><label>Họ và tên<input id="teacher" readonly></label><label>Tổ chuyên môn<input id="team" readonly></label></div></section>
+<section class="card"><h2>02 · Thông tin buổi dạy bù</h2>
+<p class="caution">Chỉ tổ chức và ghi nhận buổi dạy bù khi đề nghị A.5.2 được phê duyệt. Tạo phòng Google Meet không có nghĩa là tiết dạy đã được duyệt.</p>
+<div class="grid">
+<label>Mã hồ sơ A.5.2 đã duyệt<input id="approval" maxlength="110" placeholder="Nhập mã hồ sơ khi đã được EDOS duyệt"></label>
+<label>Lớp học *<select id="className"><option value="">Chọn lớp</option></select></label>
+<label>Môn học *<input id="subject" maxlength="100" placeholder="VD: Toán"></label>
+<label>Ngày dạy *<input id="date" type="date"></label>
+<label>Giờ bắt đầu *<input id="start" type="time"></label>
+<label>Giờ kết thúc *<input id="end" type="time"></label>
+<label class="wide">Nội dung bài dạy *<textarea id="lesson" maxlength="1800" placeholder="Tên bài, nội dung theo kế hoạch giáo dục"></textarea></label>
+<label class="wide">Liên kết Google Meet *<input id="meet" type="url" maxlength="1500" placeholder="https://meet.google.com/abc-defg-hij"></label>
+</div>
+<div class="actions"><a class="go secondary" href="https://meet.google.com/" target="_blank" rel="noopener noreferrer">Mở Google Meet tạo phòng</a><button id="join" class="secondary" type="button">Mở phòng đã tạo</button></div>
+<p>Trong Google Meet, chọn “Cuộc họp mới” → “Tạo cuộc họp để dùng sau”, sao chép đường dẫn và dán vào biểu mẫu. EDOS chưa tự tạo phòng thay giáo viên.</p>
+</section>
+<section class="card"><h2>03 · Minh chứng sau buổi học</h2>
+<div class="grid">
+<label class="wide">Liên kết điểm danh / danh sách tham gia<input id="attendance" type="url" maxlength="1500" placeholder="https://drive.google.com/..."></label>
+<label class="wide">Liên kết ảnh, sản phẩm học tập hoặc minh chứng thực hiện<input id="evidence" type="url" maxlength="1500" placeholder="https://drive.google.com/..."></label>
+<label class="wide">Liên kết bản ghi buổi học (nếu được phép)<input id="recording" type="url" maxlength="1500" placeholder="https://drive.google.com/..."></label>
+<label class="wide">Báo cáo kết quả<textarea id="notes" maxlength="1800" placeholder="Số học sinh tham gia, nội dung đã thực hiện, ghi chú..."></textarea></label>
+</div><p class="caution">Chỉ lưu minh chứng thật. Hạn chế chia sẻ công khai dữ liệu học sinh. BGH và TTCM đối chiếu lịch phê duyệt, Sổ đầu bài và minh chứng trước khi xác nhận hoàn thành.</p></section>
+<section class="card"><h2>04 · Xem trước và lưu bản nháp</h2>
+<div class="actions"><button type="button" id="previewBtn" class="secondary">Xem trước</button><button type="button" id="save">Lưu bản nháp</button><button type="button" id="clear" class="secondary">Xóa bản nháp</button><button type="button" disabled>Gửi minh chứng BGH (chưa mở)</button></div>
+<div id="message" role="status" aria-live="polite">Chưa gửi hồ sơ. Bản nháp chỉ lưu trên thiết bị của giáo viên.</div><pre id="preview" hidden></pre>
+<p>Chưa có tuyến tiếp nhận EDOS cho nghiệp vụ này nên BGH chưa thể tự động thu thập minh chứng từ biểu mẫu. Sau khi kết nối, hệ thống mới cấp mã tiếp nhận và chuyển hồ sơ theo quyền.</p>
+</section></main><script defer src="./NVS_TaoLopTrucTuyen.js?v=20261125-1"></script></body></html>
