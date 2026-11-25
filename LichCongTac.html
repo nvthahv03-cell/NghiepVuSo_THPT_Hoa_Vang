@@ -82,6 +82,15 @@ function fit(f){try{const doc=f.contentDocument;if(!doc)return;const height=Math
 function mount(key){
  if(mounted[key])return;const f=document.getElementById(key+'Frame');
  let html=decode(data[key]);if(key==='school')html=prepareSchool(html);
+ // Chế độ Lịch của tôi mở từ Trang chủ: không nhân đôi đầu trang hoặc menu chân.
+ if(key==='personal'&&fromHomeCalendar){
+  const tidyStyle='<style id="hva-personal-only-clean">'+
+   'body>nav{display:none!important}body{padding-bottom:0!important}'+
+   'body>header{display:none!important}'+
+   '.tab[data-v="day"].active{background:#ed8d19!important;color:#fff!important;box-shadow:0 4px 12px rgba(168,86,8,.2)!important}'+
+   '</style>';
+  html=html.replace('</head>',tidyStyle+'</head>');
+ }
  f.addEventListener('load',()=>{if(key==='school'){try{updateIdentity(f.contentDocument)}catch(e){}}fit(f)});
  f.srcdoc=html;mounted[key]=true;
 }
