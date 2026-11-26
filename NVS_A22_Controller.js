@@ -5,6 +5,9 @@ const names=Object.keys(D);
 const ids=['code','schoolYear','owner','team','date','subject','title','content','result','evidence'];
 const by=id=>document.getElementById(id);
 let canSubmit=false,clientRequestId=null,submittedId="";
+let a21VerifiedActor=null;
+function a21ApplyActor(){if(by('code')?.value!=='A.2.1')return;const a=a21VerifiedActor;const name=a?clean(a.name||a.hoTen):'',team=a?clean(a.team||a.toBoPhan):'',role=a?clean(a.role||a.chucVu):'';by('owner').value=name;by('team').value=team;by('owner').readOnly=true;by('team').readOnly=true;by('a22OwnerCell').hidden=true;by('a22TeamCell').hidden=true;by('a22UserName').textContent=name||'Chưa xác thực tài khoản';by('a22UserTeam').textContent=team?'| '+team:'';by('a22UserRole').textContent=role?'| '+role:'';}
+window.addEventListener('hva:a21-verified-actor',e=>{a21VerifiedActor=e.detail?.username?e.detail:null;if(by('code')?.value==='A.2.1'){a21ApplyActor();a22RefreshPresentation();}});
 if(!names.length||!by('form')||!by('specialFields')){console.error('Thiếu cấu hình biểu mẫu A22');return;}
 const storeRead=key=>{for(const kind of ['localStorage','sessionStorage'])try{const v=window[kind].getItem(key);if(v)return v;}catch(_){}return ''};
 const sessionExpiryValid=raw=>{
@@ -71,7 +74,7 @@ function a22RefreshPresentation(){
   const source=by('a22_nguonDe'),state=by('a22A21Policy');
   const isDepartment=source?.value==='Sở GD&ĐT';
   if(state){state.hidden=false;state.textContent=isDepartment?'Đề do Sở GD&ĐT cung cấp: giáo viên không nộp lại đề tại A2.1. Nhà trường tổ chức tiếp nhận và bảo quản đề theo chỉ đạo của Sở.':'Chỉ nộp hồ sơ được giao qua liên kết Google Drive/Docs đã giới hạn quyền xem. Không bật chế độ “Bất kỳ ai có liên kết”.';}
-  const btn=by('send');if(btn){btn.disabled=!canSubmit||!!submittedId||isDepartment;btn.title=isDepartment?'Đề của Sở được quản lý tại Điều hành, không nộp tại A2.1':'Chỉ gửi khi Backend A22 xác nhận tuyến tiếp nhận';}
+  const btn=by('send');if(btn){btn.disabled=!canSubmit||!!submittedId||isDepartment||!a21VerifiedActor||!by('owner').value||!by('team').value;btn.title=isDepartment?'Đề của Sở được quản lý tại Điều hành, không nộp tại A2.1':'Chỉ gửi khi Backend A22 xác nhận tuyến tiếp nhận';}
  }else if(by('a22A21Policy'))by('a22A21Policy').hidden=true;
 }
 function a22OpenSubmission(){
@@ -238,15 +241,16 @@ function setCode(code,keepTitle=false){
  if(by('a22A1SelectedTitle'))by('a22A1SelectedTitle').textContent=def.title;
  if(by('a22A1SelectedPurpose'))by('a22A1SelectedPurpose').textContent=def.purpose;
  if(by('a22PreviewTitle'))by('a22PreviewTitle').textContent=a1?'Bản xem trước – '+def.title:'Bản xem trước hồ sơ';
- if(a1||a21){
+ by('owner').readOnly=a21;by('team').readOnly=a21;
+ if(a1){
   const user=currentUser();
   if(by('owner'))by('owner').value=clean(user.hoTen||user.fullName||user.name);
   if(by('team'))by('team').value=clean(user.toBoPhan||user.tenTo||user.to);
   if(by('a22UserName'))by('a22UserName').textContent=clean(user.hoTen||user.fullName||user.name)||'Chưa xác định';
   if(by('a22UserTeam'))by('a22UserTeam').textContent=clean(user.toBoPhan||user.tenTo||user.to)||'Chưa xác định';
   if(by('a22UserRole'))by('a22UserRole').textContent=clean(user.chucVu||user.viTriViecLam||user.role)||'Chưa xác định';
-  if(a21){by('a22OwnerCell').hidden=!!by('owner').value;by('a22TeamCell').hidden=!!by('team').value;}
  }
+ if(a21)a21ApplyActor();
  by('heading').textContent=code+' – '+def.title;
  by('specialTitle').textContent='Thông tin nghiệp vụ '+code;
  by('specialHint').textContent=def.purpose;
@@ -267,12 +271,14 @@ by('owner').value=clean(u.hoTen||u.fullName||u.name||'');
 by('team').value=clean(u.toBoPhan||u.tenTo||u.to||'');
 setCode(defaultCode);
 function collect(){
+ if(baseIsA21())a21ApplyActor();
  const base=Object.fromEntries(ids.map(id=>[id,a1Read(by(id))]));
  const extras=Object.fromEntries(D[base.code].fields.map(spec=>[spec.key,a1Read(by('a22_'+spec.key))]));
  return {base,extras};
 }
 function baseIsA21(){return by('code').value==='A.2.1'}
 function validate(){
+ if(baseIsA21()){a21ApplyActor();if(!a21VerifiedActor||!by('owner').value||!by('team').value){notice('Chưa truy xuất được thông tin người lập từ phiên EDOS. Vui lòng kiểm tra kết nối lịch kiểm tra hoặc đăng nhập lại.');return false;}}
  // Khi chỉ nộp liên kết: trường chi tiết trong phần thu gọn là thông tin bổ sung,
  // không ép giáo viên nhập lại toàn bộ nội dung đã có trong tài liệu.
  const more=by('a22MoreFields');
@@ -336,6 +342,7 @@ function applyDraft(raw){
    if(spec.type==='select'&&!spec.options.includes(value))el.value='';
    else el.value=(el.classList.contains('hva-a-date-display')?a1ToVN(value):value).slice(0,8000);
  }
+ if(baseIsA21())a21ApplyActor();
  by('previewPanel').classList.add('hidden');
  return raw.schema==='HVA-DRAFT-1';
 }
