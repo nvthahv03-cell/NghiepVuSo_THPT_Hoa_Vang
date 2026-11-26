@@ -6,15 +6,16 @@ const ids=['code','schoolYear','owner','team','date','subject','title','content'
 const by=id=>document.getElementById(id);
 let canSubmit=false,clientRequestId=null,submittedId="";
 let a21VerifiedActor=null;
+const usesSignStandard=code=>['A.2.1','A.2.2'].includes(code);
 // A21 signing is staged until the server advertises support specifically for A.2.1.
 let a21Image='',a21ImageGeneration=0;
 const a21Method=()=>document.querySelector('input[name="a21SigningMethod"]:checked')?.value||'PAPER';
-function a21SyncSign(){const active=by('code')?.value==='A.2.1';by('a21SignMethod').hidden=!active;by('a21ElectronicFields').hidden=!active||a21Method()!=='ELECTRONIC';by('a21PreviewSend').hidden=!active;by('a21PreviewSend').disabled=true;by('a21PaperSignature').hidden=true;if(active){by('a21SignerStatus').textContent='Chưa kết nối xác thực chữ ký.';by('a21VerifyCccd').disabled=true;by('a21ConfirmSign').disabled=true;by('a21Cccd').disabled=true;by('send').disabled=true;}}
+function a21SyncSign(){const active=usesSignStandard(by('code')?.value);by('a21SignMethod').hidden=!active;by('a21ElectronicFields').hidden=!active||a21Method()!=='ELECTRONIC';by('a21PreviewSend').hidden=!active;by('a21PreviewSend').disabled=true;by('a21PaperSignature').hidden=true;if(active){by('a21SignerStatus').textContent='Chưa kết nối xác thực chữ ký.';by('a21VerifyCccd').disabled=true;by('a21ConfirmSign').disabled=true;by('a21Cccd').disabled=true;by('send').disabled=true;}}
 function a21ClearImage(){a21ImageGeneration++;a21Image='';by('a21SignatureFile').value='';by('a21SignaturePreview').textContent='Chưa chọn ảnh chữ ký';by('a21PaperImage').hidden=true;by('a21PaperImage').removeAttribute('src');}
-function a21PreviewSignature(){const mode=a21Method();by('a21PaperSignature').hidden=false;by('a21PaperName').textContent=by('owner').value;const p=new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',day:'2-digit',month:'2-digit',year:'numeric'}).formatToParts(new Date());const v=k=>p.find(x=>x.type===k).value;by('a21PaperDate').textContent='Cẩm Lệ, ngày '+v('day')+' tháng '+v('month')+' năm '+v('year');by('a21PaperGuide').textContent=mode==='PAPER'?'(Ký và ghi rõ họ tên)':'(Chưa xác thực và ký điện tử)';by('a21PaperImage').hidden=true;by('a21PaperImage').removeAttribute('src');by('a21PreviewSend').disabled=true;by('a21PreviewSend').title='Chưa kết nối tuyến ký A.2.1';by('a21PreviewSend').textContent='Xác nhận & gửi · Chưa kết nối';}
+function a21PreviewSignature(){const mode=a21Method();by('a21PaperSignature').hidden=false;by('a21PaperName').textContent=by('owner').value;const p=new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',day:'2-digit',month:'2-digit',year:'numeric'}).formatToParts(new Date());const v=k=>p.find(x=>x.type===k).value;by('a21PaperDate').textContent='Cẩm Lệ, ngày '+v('day')+' tháng '+v('month')+' năm '+v('year');by('a21PaperGuide').textContent=mode==='PAPER'?'(Ký và ghi rõ họ tên)':'(Chưa xác thực và ký điện tử)';by('a21PaperImage').hidden=true;by('a21PaperImage').removeAttribute('src');by('a21PreviewSend').disabled=true;by('a21PreviewSend').title='Chưa kết nối tuyến ký '+by('code').value;by('a21PreviewSend').textContent='Xác nhận & gửi · Chưa kết nối';}
 
-function a21ApplyActor(){if(by('code')?.value!=='A.2.1')return;const a=a21VerifiedActor;const name=a?clean(a.name||a.hoTen):'',team=a?clean(a.team||a.toBoPhan):'',role=a?clean(a.role||a.chucVu):'';by('owner').value=name;by('team').value=team;by('owner').readOnly=true;by('team').readOnly=true;by('a22OwnerCell').hidden=true;by('a22TeamCell').hidden=true;by('a22UserName').textContent=name||'Chưa xác thực tài khoản';by('a22UserTeam').textContent=team?'| '+team:'';by('a22UserRole').textContent=role?'| '+role:'';}
-window.addEventListener('hva:a21-verified-actor',e=>{a21VerifiedActor=e.detail?.username?e.detail:null;if(by('code')?.value==='A.2.1'){a21ApplyActor();a22RefreshPresentation();}});
+function a21ApplyActor(){if(!usesSignStandard(by('code')?.value))return;const a=a21VerifiedActor;const name=a?clean(a.name||a.hoTen):'',team=a?clean(a.team||a.toBoPhan):'',role=a?clean(a.role||a.chucVu):'';by('owner').value=name;by('team').value=team;by('owner').readOnly=true;by('team').readOnly=true;by('a22OwnerCell').hidden=true;by('a22TeamCell').hidden=true;by('a22UserName').textContent=name||'Chưa xác thực tài khoản';by('a22UserTeam').textContent=team?'| '+team:'';by('a22UserRole').textContent=role?'| '+role:'';}
+window.addEventListener('hva:a21-verified-actor',e=>{a21VerifiedActor=e.detail?.username?e.detail:null;if(usesSignStandard(by('code')?.value)){a21ApplyActor();a22RefreshPresentation();}});
 if(!names.length||!by('form')||!by('specialFields')){console.error('Thiếu cấu hình biểu mẫu A22');return;}
 const storeRead=key=>{for(const kind of ['localStorage','sessionStorage'])try{const v=window[kind].getItem(key);if(v)return v;}catch(_){}return ''};
 const sessionExpiryValid=raw=>{
@@ -83,7 +84,8 @@ function a22RefreshPresentation(){
   if(state){state.hidden=false;state.textContent=isDepartment?'Đề do Sở GD&ĐT cung cấp: giáo viên không nộp lại đề tại A2.1. Nhà trường tổ chức tiếp nhận và bảo quản đề theo chỉ đạo của Sở.':'Chỉ nộp hồ sơ được giao qua liên kết Google Drive/Docs đã giới hạn quyền xem. Không bật chế độ “Bất kỳ ai có liên kết”.';}
   const btn=by('send');if(btn){btn.disabled=true; // A21 signed submission must not fall through to the unsigned A22 route.
   by('a21PreviewSend').disabled=true;btn.title=isDepartment?'Đề của Sở được quản lý tại Điều hành, không nộp tại A2.1':'Chỉ gửi khi Backend A22 xác nhận tuyến tiếp nhận';}
- }else if(by('a22A21Policy'))by('a22A21Policy').hidden=true;
+ }else if(by('a22A21Policy')){by('a22A21Policy').hidden=code!=='A.2.2';if(code==='A.2.2')by('a22A21Policy').textContent='Hồ sơ đề kiểm tra và tài liệu kèm theo: chỉ chia sẻ cho người có thẩm quyền.';}
+ if(usesSignStandard(code)){by('send').disabled=true;by('a21PreviewSend').disabled=true;}
 }
 function a22OpenSubmission(){
  const editor=by('a22SubmissionEditor');if(!editor)return;
@@ -223,7 +225,7 @@ function makeField(spec){
  }
  input.id=elId;input.name='a22_'+spec.key;input.required=!!spec.required;
  if(spec.required)input.setAttribute('aria-required','true');
- if(document.body.classList.contains('hva-a1-mode')||by('code').value==='A.2.1'){
+ if(document.body.classList.contains('hva-a1-mode')||usesSignStandard(by('code').value)){
   const hints={monBD:'Ví dụ: Toán, Ngữ văn, Tiếng Anh…',thoiGianBD:'Ví dụ: từ tháng 9/2026 đến tháng 3/2027…',mucTieuBD:'Nêu mục tiêu và yêu cầu cần đạt của đội tuyển…',noiDungBD:'Liệt kê chuyên đề, số buổi và tiến độ thực hiện…',phanCongBD:'Nêu giáo viên phụ trách và cách phối hợp…',tenDoiTuyen:'Ví dụ: Đội tuyển HSG Toán 12 cấp thành phố…',monThi:'Ghi môn thi và cấp thi…',ketQuaBD:'Nêu kết quả thực hiện, sản phẩm và số liệu minh chứng…',khoKhanBD:'Ghi khó khăn, kiến nghị hoặc hỗ trợ cần thiết…'};
   if(spec.type==='textarea'||spec.type==='text')input.placeholder=hints[spec.key]||('Nhập '+spec.label.toLowerCase()+'…');
   if(spec.type==='date'){wrap.append(label,a1CalendarControl(input));return wrap;}
@@ -234,13 +236,14 @@ function setCode(code,keepTitle=false){
  if(!Object.prototype.hasOwnProperty.call(D,code))return false;
  by('code').value=code;const def=D[code];
  const a1=/^A[.]1[.](?:3|4)(?:-|$)/.test(code);
- const a21=code==='A.2.1';
- document.body.classList.toggle('hva-a21-standard',a21);
+ const a21=code==='A.2.1',standard=usesSignStandard(code);
+ document.body.classList.toggle('hva-a21-standard',standard);
+ document.body.classList.toggle('hva-a22-direct',code==='A.2.2');
  a21SyncSign();
  document.body.classList.toggle('hva-a1-mode',a1);
- for(const id of ['a22A1Top','a22UserBar'])if(by(id))by(id).hidden=!(a1||(a21&&id==='a22UserBar'));
- a1BaseDate(a1||a21);
- if(by('a22CodeCell'))by('a22CodeCell').hidden=a1||a21;
+ for(const id of ['a22A1Top','a22UserBar'])if(by(id))by(id).hidden=!(a1||(standard&&id==='a22UserBar'));
+ a1BaseDate(a1||standard);
+ if(by('a22CodeCell'))by('a22CodeCell').hidden=a1||standard;
  if(by('owner'))by('owner').required=!a1;
  if(by('team'))by('team').required=!a1;
  if(by('a22OwnerCell'))by('a22OwnerCell').hidden=a1;
@@ -250,7 +253,7 @@ function setCode(code,keepTitle=false){
  if(by('a22A1SelectedTitle'))by('a22A1SelectedTitle').textContent=def.title;
  if(by('a22A1SelectedPurpose'))by('a22A1SelectedPurpose').textContent=def.purpose;
  if(by('a22PreviewTitle'))by('a22PreviewTitle').textContent=a1?'Bản xem trước – '+def.title:'Bản xem trước hồ sơ';
- by('owner').readOnly=a21;by('team').readOnly=a21;
+ by('owner').readOnly=standard;by('team').readOnly=standard;
  if(a1){
   const user=currentUser();
   if(by('owner'))by('owner').value=clean(user.hoTen||user.fullName||user.name);
@@ -259,16 +262,17 @@ function setCode(code,keepTitle=false){
   if(by('a22UserTeam'))by('a22UserTeam').textContent=clean(user.toBoPhan||user.tenTo||user.to)||'Chưa xác định';
   if(by('a22UserRole'))by('a22UserRole').textContent=clean(user.chucVu||user.viTriViecLam||user.role)||'Chưa xác định';
  }
- if(a21)a21ApplyActor();
+ if(standard){a21ClearImage();a21ApplyActor();}
  by('heading').textContent=code+' – '+def.title;
  by('specialTitle').textContent='Thông tin nghiệp vụ '+code;
  by('specialHint').textContent=def.purpose;
  const holder=by('specialFields');holder.replaceChildren(...def.fields.map(makeField));
  if(!keepTitle||!by('title').value.trim())by('title').value=def.title;
  by('previewPanel').classList.add('hidden');
- const more=by('a22MoreFields');if(more)more.open=code==='A.2.1';
- if(more){const label=more.querySelector('summary');if(label)label.firstChild.textContent=code==='A.2.1'?'02 · Thông tin hồ sơ đợt kiểm tra ':'Thông tin nghiệp vụ chi tiết ';}
- for(const spec of def.fields){const field=by('a22_'+spec.key);if(field)field.required=!!spec.required&&code==='A.2.1';}
+ const more=by('a22MoreFields');if(more)more.open=standard;
+ if(more){const label=more.querySelector('summary');if(label)label.firstChild.textContent=standard?'02 · Thông tin hồ sơ kiểm tra ':'Thông tin nghiệp vụ chi tiết ';}
+ for(const spec of def.fields){const field=by('a22_'+spec.key);if(field)field.required=!!spec.required&&standard;}
+ if(code==='A.2.2'){by('a22SubmissionEditor').classList.remove('hidden');}
  a22RefreshPresentation();
  const url=new URL(location.href);url.searchParams.set('code',code);history.replaceState(null,'',url.pathname+url.search+url.hash);
  return true;
@@ -285,7 +289,7 @@ function collect(){
  const extras=Object.fromEntries(D[base.code].fields.map(spec=>[spec.key,a1Read(by('a22_'+spec.key))]));
  return {base,extras};
 }
-function baseIsA21(){return by('code').value==='A.2.1'}
+function baseIsA21(){return usesSignStandard(by('code').value)}
 function validate(){
  if(baseIsA21()){a21ApplyActor();if(!a21VerifiedActor||!by('owner').value||!by('team').value){notice('Chưa truy xuất được thông tin người lập từ phiên EDOS. Vui lòng kiểm tra kết nối lịch kiểm tra hoặc đăng nhập lại.');return false;}}
  // Khi chỉ nộp liên kết: trường chi tiết trong phần thu gọn là thông tin bổ sung,
@@ -325,7 +329,7 @@ function renderA21Paper(data){
  const root=by('preview'),{base,extras}=data;root.replaceChildren();
  const template=document.createElement('template');template.innerHTML="<div class=\"official-head\">\n        <div class=\"agency\">\n          <div class=\"agency-parent\">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div>\n          <div class=\"agency-unit\">TRƯỜNG THPT HÒA VANG</div>\n          <div class=\"agency-line\"></div>\n        </div>\n\n        <div class=\"nation\">\n          <div class=\"nation-title\">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>\n          <div class=\"nation-motto\">Độc lập - Tự do - Hạnh phúc</div>\n          <div class=\"nation-line\"></div>\n        </div>\n      </div>";root.append(template.content.cloneNode(true));
  const add=(tag,cls,content)=>{const x=document.createElement(tag);if(cls)x.className=cls;x.textContent=content;root.append(x);return x;};
- add('div','a21-paper-title','PHIẾU NỘP HỒ SƠ');add('div','a21-paper-subtitle','Đợt kiểm tra, đánh giá');add('div','a21-paper-draft','Bản xem trước – chưa gửi');
+ add('div','a21-paper-title','PHIẾU NỘP HỒ SƠ');add('div','a21-paper-subtitle',base.code==='A.2.2'?'Kiểm tra, đánh giá bù hoặc kiểm tra, đánh giá lại':'Đợt kiểm tra, đánh giá');add('div','a21-paper-draft','Bản xem trước – chưa gửi');
  add('p','','Kính gửi: Ban Giám hiệu và Tổ trưởng chuyên môn');
  const lines=[['Họ và tên',base.owner],['Tổ / bộ phận',base.team],['Năm học',base.schoolYear],['Ngày lập',a1ToVN(base.date)],['Môn / lớp / đối tượng / địa điểm',base.subject],...D[base.code].fields.map(spec=>[spec.label,spec.type==='date'?a1ToVN(extras[spec.key]):extras[spec.key]]),['Tiêu đề',base.title],['Thông tin bổ sung',base.content],['Kết quả / kiến nghị',base.result],['Liên kết hồ sơ',base.evidence]];
  for(const [label,value] of lines){if(!value)continue;const p=add('p','','');const b=document.createElement('b');b.textContent=label+': ';p.append(b,document.createTextNode(value));}
@@ -455,7 +459,7 @@ select.addEventListener('change',()=>{clientRequestId=null;submittedId='';by('se
 by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
 by('restoreSession').addEventListener('click',()=>{clientRequestId=null;submittedId=''});
 by('send').addEventListener('click',async()=>{
- if(baseIsA21()){notice('Chưa kết nối tuyến ký A.2.1. Hồ sơ chưa gửi.');return;}
+ if(baseIsA21()){notice('Chưa kết nối tuyến ký '+by('code').value+'. Hồ sơ chưa gửi.');return;}
  if(!canSubmit){notice('Chưa có Backend A22 đã xác thực; hồ sơ chưa được gửi.');return}
  if(submittedId){notice('Hồ sơ đã có mã tiếp nhận: '+submittedId+'. Hãy chỉnh sửa nội dung trước khi tạo lần nộp mới.',true);return}
  if(!validate())return;
