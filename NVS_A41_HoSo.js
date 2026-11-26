@@ -297,7 +297,7 @@
  by('hvaA41Back').addEventListener('click',()=>{
   if(inFlight)return;
   entry.hidden=true;kind=null;items=[];previewSignature='';
-  message('Chọn một trong ba loại hồ sơ.',true,true);
+  message('',true,true);
  });
  by('hvaA41PreviewBtn').addEventListener('click',preview);
  by('hvaA41Submit').addEventListener('click',send);
@@ -305,5 +305,5 @@
  window.addEventListener('storage',refreshIdentity);
  window.addEventListener('pageshow',refreshIdentity);
  window.addEventListener('focus',refreshIdentity);
- message('Chọn Khoa học kỹ thuật, Sáng kiến hoặc Nghiên cứu khoa học.',true,true);
+ message('',true,true);
 })();
