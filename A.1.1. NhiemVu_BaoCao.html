@@ -422,7 +422,13 @@ main>.hero h1{margin:0!important;font-size:clamp(19px,3.5vw,25px)!important;line
 #choiceGrid .choice small{display:none!important}
 #choiceGrid .choice .hva-a11-choice-number{width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;font-size:17px!important}
 #notice{margin:10px 0!important;padding:10px 12px!important;font-size:12px!important}
-</style><style id="a11-empty-notice">#notice:empty{display:none!important}</style><style id="a11-menu-notice-clean">body:has(#choices:not([hidden])) #notice:not([data-error="true"]){display:none!important}</style></head>
+</style><style id="a11-empty-notice">#notice:empty{display:none!important}</style><style id="a11-menu-notice-clean">body:has(#choices:not([hidden])) #notice:not([data-error="true"]){display:none!important}</style><style id="a11-task-clean">
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #developmentNote,body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #a11ActiveDescription,body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #hvaUserIdentityStatus{display:none!important}
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor>.panel-top{background:#fff!important;border:0!important;box-shadow:none!important;padding:0 0 10px!important;gap:8px!important}
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #backToChoices{width:auto!important;min-height:34px!important;padding:6px 10px!important;box-shadow:none!important}
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #editorHeading{font-size:clamp(18px,3.4vw,24px)!important;margin:0!important}
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor .a11-sign-choice:not(:has(input:checked)) .a11-sign-check{visibility:hidden!important}
+</style></head>
 <body>
 <div class="hva-report-head" role="banner"><nav class="hva-report-nav" aria-label="Điều hướng"><a href="./NghiepVu.html" aria-label="Quay lại"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a><a href="./index.html" aria-label="Trang chủ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav><div class="hva-report-brand">HVA–<b>EDOS</b><small>HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</small></div><span class="hva-report-online">TRỰC TUYẾN</span></div><header class="hva-report-legacy-header hva-pro-header"><div class="hva-pro-header-inner">
   <nav class="hva-edos-nav-pair" aria-label="Điều hướng"><a class="hva-pro-back hva-nav-tap hva-nav-back" href="./NghiepVu.html" title="Quay lại" aria-label="Quay lại danh mục nghiệp vụ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h13"/></svg></a><a class="hva-pro-back hva-nav-tap hva-nav-home" href="./index.html" title="Trang chủ" aria-label="Trang chủ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav>
@@ -929,7 +935,7 @@ main>.hero h1{margin:0!important;font-size:clamp(19px,3.5vw,25px)!important;line
     $('editor').hidden=false;$('previewSection').hidden=true;
     $('developmentNote').textContent=def.draft?'Khung Báo cáo khác chỉ để chuẩn bị và xem trước; chưa có mẫu theo yêu cầu được phê duyệt. Không được coi là báo cáo chính thức.':'Xem trước và kiểm tra nội dung; khi hệ thống xác nhận tuyến tiếp nhận, có thể gửi sau khi xem trước.';
     try{history.replaceState(null,'',location.pathname+'?item='+encodeURIComponent(id));}catch(_){}
-    const a=verifySession();if(a)announce('Đang soạn: '+def.name+'. Xem trước rồi gửi khi tuyến tiếp nhận sẵn sàng.');
+    const a=verifySession();if(a)announce('');
     if(focus)$('editor').scrollIntoView({block:'start',behavior:'smooth'});
   }
   function appendLine(paper,label,value,asLink=false){if(!String(value||'').trim())return;const p=el('p',undefined,'report-line');p.append(el('strong',label+': '));
