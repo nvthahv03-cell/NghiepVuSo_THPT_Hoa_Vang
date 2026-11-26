@@ -422,7 +422,7 @@ main>.hero h1{margin:0!important;font-size:clamp(19px,3.5vw,25px)!important;line
 #choiceGrid .choice small{display:none!important}
 #choiceGrid .choice .hva-a11-choice-number{width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;font-size:17px!important}
 #notice{margin:10px 0!important;padding:10px 12px!important;font-size:12px!important}
-</style></head>
+</style><style id="a11-empty-notice">#notice:empty{display:none!important}</style></head>
 <body>
 <div class="hva-report-head" role="banner"><nav class="hva-report-nav" aria-label="Điều hướng"><a href="./NghiepVu.html" aria-label="Quay lại"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a><a href="./index.html" aria-label="Trang chủ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav><div class="hva-report-brand">HVA–<b>EDOS</b><small>HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</small></div><span class="hva-report-online">TRỰC TUYẾN</span></div><header class="hva-report-legacy-header hva-pro-header"><div class="hva-pro-header-inner">
   <nav class="hva-edos-nav-pair" aria-label="Điều hướng"><a class="hva-pro-back hva-nav-tap hva-nav-back" href="./NghiepVu.html" title="Quay lại" aria-label="Quay lại danh mục nghiệp vụ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h13"/></svg></a><a class="hva-pro-back hva-nav-tap hva-nav-home" href="./index.html" title="Trang chủ" aria-label="Trang chủ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav>
@@ -688,7 +688,7 @@ main>.hero h1{margin:0!important;font-size:clamp(19px,3.5vw,25px)!important;line
         throw Error('Web App trả tuyến A22-1 nhưng THIẾU thông tin ký A1.1 (paperSigning/electronicSigning). Cần triển khai phiên bản Backend V5 mới trên đúng Web App đang kết nối; không thay link sang DTHT.');
       }
       a11Enabled=true;
-      announce('Đã xác nhận tuyến tiếp nhận A1.1. Có thể gửi hồ sơ theo hình thức ký được Backend hỗ trợ.',false);
+      announce('',false);
     }catch(err){
       a11Enabled=false;a11SigningSupported={paper:false,electronic:false};
       a11ConnectionError=String(err.message||err);
