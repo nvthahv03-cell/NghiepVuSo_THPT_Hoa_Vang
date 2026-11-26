@@ -61,7 +61,7 @@ function a22RefreshPresentation(){
  if(evidence){evidence.required=true;evidence.placeholder='https://drive.google.com/...';}
  const openLabel=by('a22OpenSubmission');
  if(openLabel){const strong=openLabel.querySelector('strong'),small=openLabel.querySelector('small');
-  if(strong)strong.textContent='Nộp hồ sơ';
+  if(strong)strong.textContent=a21?'II. Nộp hồ sơ':'Nộp hồ sơ';
   if(small)small.textContent='Dán liên kết · Xem trước · Gửi';
  }
  const btn=by('send'),planBtn=by('a22PlanSend');
@@ -185,7 +185,7 @@ function a1Read(el){
  return el?.classList.contains('hva-a-date-display')?a1ToISO(raw):raw;
 }
 function a1ValidateDates(){
- if(!document.body.classList.contains('hva-a1-mode'))return true;
+ if(!document.body.classList.contains('hva-a1-mode')&&!baseIsA21())return true;
  let good=true;
  for(const input of document.querySelectorAll('#form .hva-a-date-display')){
   const raw=input.value.trim();input.setCustomValidity(raw&&!a1ToISO(raw)?'Ngày không hợp lệ. Nhập theo dạng dd/mm/yyyy.':'');
@@ -212,7 +212,7 @@ function makeField(spec){
  }
  input.id=elId;input.name='a22_'+spec.key;input.required=!!spec.required;
  if(spec.required)input.setAttribute('aria-required','true');
- if(document.body.classList.contains('hva-a1-mode')){
+ if(document.body.classList.contains('hva-a1-mode')||by('code').value==='A.2.1'){
   const hints={monBD:'Ví dụ: Toán, Ngữ văn, Tiếng Anh…',thoiGianBD:'Ví dụ: từ tháng 9/2026 đến tháng 3/2027…',mucTieuBD:'Nêu mục tiêu và yêu cầu cần đạt của đội tuyển…',noiDungBD:'Liệt kê chuyên đề, số buổi và tiến độ thực hiện…',phanCongBD:'Nêu giáo viên phụ trách và cách phối hợp…',tenDoiTuyen:'Ví dụ: Đội tuyển HSG Toán 12 cấp thành phố…',monThi:'Ghi môn thi và cấp thi…',ketQuaBD:'Nêu kết quả thực hiện, sản phẩm và số liệu minh chứng…',khoKhanBD:'Ghi khó khăn, kiến nghị hoặc hỗ trợ cần thiết…'};
   if(spec.type==='textarea'||spec.type==='text')input.placeholder=hints[spec.key]||('Nhập '+spec.label.toLowerCase()+'…');
   if(spec.type==='date'){wrap.append(label,a1CalendarControl(input));return wrap;}
@@ -223,10 +223,12 @@ function setCode(code,keepTitle=false){
  if(!Object.prototype.hasOwnProperty.call(D,code))return false;
  by('code').value=code;const def=D[code];
  const a1=/^A[.]1[.](?:3|4)(?:-|$)/.test(code);
+ const a21=code==='A.2.1';
+ document.body.classList.toggle('hva-a21-standard',a21);
  document.body.classList.toggle('hva-a1-mode',a1);
- for(const id of ['a22A1Top','a22UserBar'])if(by(id))by(id).hidden=!a1;
- a1BaseDate(a1);
- if(by('a22CodeCell'))by('a22CodeCell').hidden=a1;
+ for(const id of ['a22A1Top','a22UserBar'])if(by(id))by(id).hidden=!(a1||(a21&&id==='a22UserBar'));
+ a1BaseDate(a1||a21);
+ if(by('a22CodeCell'))by('a22CodeCell').hidden=a1||a21;
  if(by('owner'))by('owner').required=!a1;
  if(by('team'))by('team').required=!a1;
  if(by('a22OwnerCell'))by('a22OwnerCell').hidden=a1;
@@ -236,13 +238,14 @@ function setCode(code,keepTitle=false){
  if(by('a22A1SelectedTitle'))by('a22A1SelectedTitle').textContent=def.title;
  if(by('a22A1SelectedPurpose'))by('a22A1SelectedPurpose').textContent=def.purpose;
  if(by('a22PreviewTitle'))by('a22PreviewTitle').textContent=a1?'Bản xem trước – '+def.title:'Bản xem trước hồ sơ';
- if(a1){
+ if(a1||a21){
   const user=currentUser();
   if(by('owner'))by('owner').value=clean(user.hoTen||user.fullName||user.name);
   if(by('team'))by('team').value=clean(user.toBoPhan||user.tenTo||user.to);
   if(by('a22UserName'))by('a22UserName').textContent=clean(user.hoTen||user.fullName||user.name)||'Chưa xác định';
   if(by('a22UserTeam'))by('a22UserTeam').textContent=clean(user.toBoPhan||user.tenTo||user.to)||'Chưa xác định';
   if(by('a22UserRole'))by('a22UserRole').textContent=clean(user.chucVu||user.viTriViecLam||user.role)||'Chưa xác định';
+  if(a21){by('a22OwnerCell').hidden=!!by('owner').value;by('a22TeamCell').hidden=!!by('team').value;}
  }
  by('heading').textContent=code+' – '+def.title;
  by('specialTitle').textContent='Thông tin nghiệp vụ '+code;
@@ -427,7 +430,10 @@ by('send').addEventListener('click',async()=>{
  if(!canSubmit){notice('Chưa có Backend A22 đã xác thực; hồ sơ chưa được gửi.');return}
  if(submittedId){notice('Hồ sơ đã có mã tiếp nhận: '+submittedId+'. Hãy chỉnh sửa nội dung trước khi tạo lần nộp mới.',true);return}
  if(!validate())return;
- if(!window.confirm('Xác nhận nộp hồ sơ '+by('code').value+' vào hộp tiếp nhận BGH và đồng nhận TTCM?'))return;
+ const confirmedCode=by('code').value,confirmedData=JSON.stringify(collect());
+ if(confirmedCode==='A.2.1'){if(!await window.hvaA21Dialog('Xác nhận nộp hồ sơ','Thầy/Cô xác nhận nộp hồ sơ đợt kiểm tra đến BGH và đồng nhận TTCM?','Xác nhận gửi'))return;}
+ else if(!window.confirm('Xác nhận nộp hồ sơ '+confirmedCode+' vào hộp tiếp nhận BGH và đồng nhận TTCM?'))return;
+ if(by('send').disabled||confirmedCode!==by('code').value||confirmedData!==JSON.stringify(collect()))return;
  const btn=by('send');btn.disabled=true;btn.textContent='Đang kiểm tra tiếp nhận...';
  if(by('a22PlanSend'))by('a22PlanSend').disabled=true;
  try{
@@ -439,6 +445,7 @@ by('send').addEventListener('click',async()=>{
   by('preview').textContent=linesFor(data).map(x=>x==='BẢN DỰ THẢO — CHƯA KÝ — CHƯA GỬI'?'ĐÃ TIẾP NHẬN — CHỜ PHÊ DUYỆT — CHƯA KÝ SỐ':x).join('\n')+'\n\nMÃ TIẾP NHẬN: '+r.recordId+'\nTRẠNG THÁI: '+r.status;
   by('previewPanel').classList.remove('hidden');by('previewPanel').scrollIntoView({behavior:'smooth'});
   submittedId=r.recordId;
+  if(confirmedCode==='A.2.1')await window.hvaA21Dialog('Gửi hồ sơ thành công','Mã tiếp nhận: '+r.recordId+'\nTrạng thái: '+r.status,'Đóng',true);
  }catch(err){notice('CHƯA XÁC NHẬN NỘP HỒ SƠ: '+err.message+' Nếu mạng gián đoạn, hãy thử lại mà không sửa nội dung để tránh gửi trùng.')}
  finally{btn.disabled=!canSubmit||!!submittedId;btn.textContent=submittedId?'Đã tiếp nhận hồ sơ · '+submittedId:canSubmit?(by('code').value==='A.1.3-KH'?'Gửi liên kết kế hoạch đến BGH / TTCM':'Nộp hồ sơ đến BGH / TTCM'):'Gửi hồ sơ · Chờ kết nối';a22RefreshPresentation()}
 });
