@@ -52,6 +52,7 @@ function updateActorCard(d){
  const name=$('a21ActorName'),details=$('a21ActorDetails'),flag=$('a21ActorFlag');
  if(!name||!details||!flag)return;
  const x=d&&d.username?d:null;
+ window.dispatchEvent(new CustomEvent('hva:a21-verified-actor',{detail:x?{username:String(x.username),name:String(x.name||x.hoTen||''),team:String(x.team||x.toBoPhan||''),role:String(x.role||x.chucVu||'')}:null}));
  if(x){
   name.textContent=String(x.name||x.username);
   details.textContent=[x.team,x.role||x.chucVu].filter(Boolean).join(' | ');if(details.textContent)details.textContent=' | '+details.textContent;
@@ -268,7 +269,7 @@ async function refresh(){
   auth();
   const d=await get('ktScheduleList');
   if(turn!==requestId)return;
-  remote=d.items||[];actor=d.actor||{};ready=true;updateActorCard(actor);
+  remote=d.items||[];actor=d.actor||{};if(!actor.username||!(actor.name||actor.hoTen)||!(actor.team||actor.toBoPhan))throw Error('Backend chưa trả đủ thông tin tài khoản giáo viên.');ready=true;updateActorCard(actor);
   render();
   status('');$('a21ConnectionActions').hidden=true;
  }catch(e){
@@ -366,5 +367,5 @@ form.addEventListener('submit',async e=>{
  }catch(err){status('CHƯA xác nhận cập nhật phòng: '+String(err.message||err),true);}
  finally{busy=false;form.querySelector('button[type="submit"]').disabled=false;}
 });
-$('code')?.addEventListener('change',sync);sync();render();updateActorCard(null);setRoomMode();updatePreview();if(byCode())refresh();
+$('code')?.addEventListener('change',()=>{sync();if(byCode())refresh();else updateActorCard(null);});sync();render();updateActorCard(null);setRoomMode();updatePreview();if(byCode())refresh();
 })();
