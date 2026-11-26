@@ -437,7 +437,7 @@ body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor .a11-sign-ch
 #editor .a11-sign-choice:not(:has(input:checked)) .a11-sign-check{opacity:.35!important}
 #editor .a11-sign-choice:has(input:checked) .a11-sign-check{opacity:1!important}
 #editor #a11SignHint{display:none!important}
-</style></head>
+</style><style id="a11-single-back">#editor #backToChoices{display:none!important}</style></head>
 <body>
 <div class="hva-report-head" role="banner"><nav class="hva-report-nav" aria-label="Điều hướng"><a href="./NghiepVu.html" aria-label="Quay lại"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a><a href="./index.html" aria-label="Trang chủ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav><div class="hva-report-brand">HVA–<b>EDOS</b><small>HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</small></div><span class="hva-report-online">TRỰC TUYẾN</span></div><header class="hva-report-legacy-header hva-pro-header"><div class="hva-pro-header-inner">
   <nav class="hva-edos-nav-pair" aria-label="Điều hướng"><a class="hva-pro-back hva-nav-tap hva-nav-back" href="./NghiepVu.html" title="Quay lại" aria-label="Quay lại danh mục nghiệp vụ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h13"/></svg></a><a class="hva-pro-back hva-nav-tap hva-nav-home" href="./index.html" title="Trang chủ" aria-label="Trang chủ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav>
@@ -1004,6 +1004,7 @@ body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor .a11-sign-ch
   $('reportForm').addEventListener('submit',renderPreview);
   $('reportForm').addEventListener('input',a11MarkChanged);
   $('backToChoices').addEventListener('click',()=>a11ReturnToChoices());
+  document.querySelector('.hva-report-nav a:first-child')?.addEventListener('click',event=>{if($('choices').hidden){event.preventDefault();a11ReturnToChoices();}});
   $('editButton').addEventListener('click',()=>{$('editor').scrollIntoView({block:'start',behavior:'smooth'});});
   $('clearButton').addEventListener('click',()=>{if(dirty&&!confirm('Xóa nội dung chưa lưu của báo cáo này?'))return;const id=current;dirty=false;setChoice(id,false);announce('Đã làm mới biểu mẫu. Không thay đổi dữ liệu thật.');});
   $('a11Send').addEventListener('click',a11Submit);
