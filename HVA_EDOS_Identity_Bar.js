@@ -28,7 +28,7 @@
       if(typeof v!=='string'||v.length>1400)return false;
       try{const x=new URL(v);return x.protocol==='https:'&&!x.username&&!x.password}catch(_){return false}
     })||'';
-    return {name,position,team,photo,gender:String(u.gioiTinh||u.gender||'').trim().toLowerCase()};
+    return {name,position,team,photo,category:[u.viTriViecLam,u.chucVu,u.chucDanh,u.vaiTro,u.role,u.loaiNhanSu,u.nhomNhanSu].filter(Boolean).join(' '),gender:String(u.gioiTinh||u.gender||'').trim().toLowerCase()};
    }catch(_){}
   }
   return null;
@@ -85,7 +85,10 @@
  else{document.body.insertBefore(bar,document.body.firstChild)}
  function refresh(){
   const u=read();
-  const honor=u&&/^(nam|male)$/.test(u.gender)?'thầy ':u&&/^(nữ|nu|female)$/.test(u.gender)?'cô ':'';
+  const category=String(u?.category||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const employee=/nhan vien|bao ve|van thu|ke toan|thu vien|y te|tap vu|employee/.test(category);
+  const teacher=/giao vien|hieu truong|cbql|teacher|quan ly|\bgv\b/.test(category);
+  const honor=u&&(employee||teacher)?(/^(nam|male)$/.test(u.gender)?(teacher?'thầy ':'anh '):/^(nữ|nu|female)$/.test(u.gender)?(teacher?'cô ':'chị '):''):'';
   name.textContent=u?(welcome?'Chào mừng '+honor+u.name+'!':u.name):'Chưa đăng nhập HVA–EDOS';
   subtitle.textContent=welcome&&u?'Đến với không gian '+(portal==='DieuHanh.html'?'điều hành':'nghiệp vụ')+' HVA–EDOS':'';
   setAvatar(u);
