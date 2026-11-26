@@ -321,10 +321,19 @@ function linesFor(data){
  '','NGƯỜI LẬP HỒ SƠ','(Chưa ký)');
  return lines;
 }
+function renderA21Paper(data){
+ const root=by('preview'),{base,extras}=data;root.replaceChildren();
+ const template=document.createElement('template');template.innerHTML="<div class=\"official-head\">\n        <div class=\"agency\">\n          <div class=\"agency-parent\">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div>\n          <div class=\"agency-unit\">TRƯỜNG THPT HÒA VANG</div>\n          <div class=\"agency-line\"></div>\n        </div>\n\n        <div class=\"nation\">\n          <div class=\"nation-title\">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>\n          <div class=\"nation-motto\">Độc lập - Tự do - Hạnh phúc</div>\n          <div class=\"nation-line\"></div>\n        </div>\n      </div>";root.append(template.content.cloneNode(true));
+ const add=(tag,cls,content)=>{const x=document.createElement(tag);if(cls)x.className=cls;x.textContent=content;root.append(x);return x;};
+ add('div','a21-paper-title','PHIẾU NỘP HỒ SƠ');add('div','a21-paper-subtitle','Đợt kiểm tra, đánh giá');add('div','a21-paper-draft','Bản xem trước – chưa gửi');
+ add('p','','Kính gửi: Ban Giám hiệu và Tổ trưởng chuyên môn');
+ const lines=[['Họ và tên',base.owner],['Tổ / bộ phận',base.team],['Năm học',base.schoolYear],['Ngày lập',a1ToVN(base.date)],['Môn / lớp / đối tượng / địa điểm',base.subject],...D[base.code].fields.map(spec=>[spec.label,spec.type==='date'?a1ToVN(extras[spec.key]):extras[spec.key]]),['Tiêu đề',base.title],['Thông tin bổ sung',base.content],['Kết quả / kiến nghị',base.result],['Liên kết hồ sơ',base.evidence]];
+ for(const [label,value] of lines){if(!value)continue;const p=add('p','','');const b=document.createElement('b');b.textContent=label+': ';p.append(b,document.createTextNode(value));}
+}
 function preview(){
  if(!validate())return false;
- by('preview').textContent=linesFor(collect()).join('\n');
- if(baseIsA21())a21PreviewSignature();
+ const data=collect();
+ if(baseIsA21()){renderA21Paper(data);a21PreviewSignature();}else by('preview').textContent=linesFor(data).join('\n');
  by('previewPanel').classList.remove('hidden');
  by('previewPanel').scrollIntoView({behavior:'smooth'});
  notice('Đã kiểm tra nội dung và dựng bản xem trước. Hồ sơ chưa được gửi hoặc lưu trên Backend.',true);
