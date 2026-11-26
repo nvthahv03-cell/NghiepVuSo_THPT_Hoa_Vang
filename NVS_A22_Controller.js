@@ -6,6 +6,13 @@ const ids=['code','schoolYear','owner','team','date','subject','title','content'
 const by=id=>document.getElementById(id);
 let canSubmit=false,clientRequestId=null,submittedId="";
 let a21VerifiedActor=null;
+// A21 signing is staged until the server advertises support specifically for A.2.1.
+let a21Image='',a21ImageGeneration=0;
+const a21Method=()=>document.querySelector('input[name="a21SigningMethod"]:checked')?.value||'PAPER';
+function a21SyncSign(){const active=by('code')?.value==='A.2.1';by('a21SignMethod').hidden=!active;by('a21ElectronicFields').hidden=!active||a21Method()!=='ELECTRONIC';by('a21PreviewSend').hidden=!active;by('a21PreviewSend').disabled=true;by('a21PaperSignature').hidden=true;if(active){by('a21SignerStatus').textContent='Chưa kết nối xác thực chữ ký.';by('a21VerifyCccd').disabled=true;by('a21ConfirmSign').disabled=true;by('a21Cccd').disabled=true;by('send').disabled=true;}}
+function a21ClearImage(){a21ImageGeneration++;a21Image='';by('a21SignatureFile').value='';by('a21SignaturePreview').textContent='Chưa chọn ảnh chữ ký';by('a21PaperImage').hidden=true;by('a21PaperImage').removeAttribute('src');}
+function a21PreviewSignature(){const mode=a21Method();by('a21PaperSignature').hidden=false;by('a21PaperName').textContent=by('owner').value;const p=new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',day:'2-digit',month:'2-digit',year:'numeric'}).formatToParts(new Date());const v=k=>p.find(x=>x.type===k).value;by('a21PaperDate').textContent='Cẩm Lệ, ngày '+v('day')+' tháng '+v('month')+' năm '+v('year');by('a21PaperGuide').textContent=mode==='PAPER'?'(Ký và ghi rõ họ tên)':'(Chưa xác thực và ký điện tử)';by('a21PaperImage').hidden=true;by('a21PaperImage').removeAttribute('src');by('a21PreviewSend').disabled=true;by('a21PreviewSend').title='Chưa kết nối tuyến ký A.2.1';by('a21PreviewSend').textContent='Xác nhận & gửi · Chưa kết nối';}
+
 function a21ApplyActor(){if(by('code')?.value!=='A.2.1')return;const a=a21VerifiedActor;const name=a?clean(a.name||a.hoTen):'',team=a?clean(a.team||a.toBoPhan):'',role=a?clean(a.role||a.chucVu):'';by('owner').value=name;by('team').value=team;by('owner').readOnly=true;by('team').readOnly=true;by('a22OwnerCell').hidden=true;by('a22TeamCell').hidden=true;by('a22UserName').textContent=name||'Chưa xác thực tài khoản';by('a22UserTeam').textContent=team?'| '+team:'';by('a22UserRole').textContent=role?'| '+role:'';}
 window.addEventListener('hva:a21-verified-actor',e=>{a21VerifiedActor=e.detail?.username?e.detail:null;if(by('code')?.value==='A.2.1'){a21ApplyActor();a22RefreshPresentation();}});
 if(!names.length||!by('form')||!by('specialFields')){console.error('Thiếu cấu hình biểu mẫu A22');return;}
@@ -74,7 +81,8 @@ function a22RefreshPresentation(){
   const source=by('a22_nguonDe'),state=by('a22A21Policy');
   const isDepartment=source?.value==='Sở GD&ĐT';
   if(state){state.hidden=false;state.textContent=isDepartment?'Đề do Sở GD&ĐT cung cấp: giáo viên không nộp lại đề tại A2.1. Nhà trường tổ chức tiếp nhận và bảo quản đề theo chỉ đạo của Sở.':'Chỉ nộp hồ sơ được giao qua liên kết Google Drive/Docs đã giới hạn quyền xem. Không bật chế độ “Bất kỳ ai có liên kết”.';}
-  const btn=by('send');if(btn){btn.disabled=!canSubmit||!!submittedId||isDepartment||!a21VerifiedActor||!by('owner').value||!by('team').value;btn.title=isDepartment?'Đề của Sở được quản lý tại Điều hành, không nộp tại A2.1':'Chỉ gửi khi Backend A22 xác nhận tuyến tiếp nhận';}
+  const btn=by('send');if(btn){btn.disabled=true; // A21 signed submission must not fall through to the unsigned A22 route.
+  by('a21PreviewSend').disabled=true;btn.title=isDepartment?'Đề của Sở được quản lý tại Điều hành, không nộp tại A2.1':'Chỉ gửi khi Backend A22 xác nhận tuyến tiếp nhận';}
  }else if(by('a22A21Policy'))by('a22A21Policy').hidden=true;
 }
 function a22OpenSubmission(){
@@ -228,6 +236,7 @@ function setCode(code,keepTitle=false){
  const a1=/^A[.]1[.](?:3|4)(?:-|$)/.test(code);
  const a21=code==='A.2.1';
  document.body.classList.toggle('hva-a21-standard',a21);
+ a21SyncSign();
  document.body.classList.toggle('hva-a1-mode',a1);
  for(const id of ['a22A1Top','a22UserBar'])if(by(id))by(id).hidden=!(a1||(a21&&id==='a22UserBar'));
  a1BaseDate(a1||a21);
@@ -315,6 +324,7 @@ function linesFor(data){
 function preview(){
  if(!validate())return false;
  by('preview').textContent=linesFor(collect()).join('\n');
+ if(baseIsA21())a21PreviewSignature();
  by('previewPanel').classList.remove('hidden');
  by('previewPanel').scrollIntoView({behavior:'smooth'});
  notice('Đã kiểm tra nội dung và dựng bản xem trước. Hồ sơ chưa được gửi hoặc lưu trên Backend.',true);
@@ -355,6 +365,8 @@ by('a22PlanSend')?.addEventListener('click',()=>{
  by('send').click();
 });
 by('form').addEventListener('submit',e=>{e.preventDefault();preview()});
+for(const el of document.querySelectorAll('input[name="a21SigningMethod"]'))el.addEventListener('change',()=>{a21ClearImage();a21SyncSign();by('previewPanel').classList.add('hidden');});
+by('a21SignatureFile').addEventListener('change',e=>{const f=e.target.files?.[0],g=++a21ImageGeneration;a21Image='';by('a21SignaturePreview').textContent='Chưa chọn ảnh chữ ký';if(!f)return;if(!['image/png','image/jpeg','image/webp'].includes(f.type)||f.size>1048576){e.target.value='';by('a21SignerStatus').textContent='Chọn ảnh PNG, JPEG hoặc WebP tối đa 1 MB.';return;}const reader=new FileReader();reader.onload=()=>{if(g!==a21ImageGeneration||a21Method()!=='ELECTRONIC'||!baseIsA21())return;a21Image=String(reader.result||'');const img=document.createElement('img');img.alt='Ảnh chữ ký chưa xác thực';img.src=a21Image;by('a21SignaturePreview').replaceChildren(img);by('a21SignerStatus').textContent='Chưa kết nối xác thực chữ ký.';};reader.onerror=()=>{if(g===a21ImageGeneration)by('a21SignerStatus').textContent='Không đọc được ảnh chữ ký.';};reader.readAsDataURL(f);});
 by('export').addEventListener('click',()=>{if(!validate())return;const data=draft();makeDownload('HVA_'+data.form.code.replaceAll('.','_')+'_DU_THAO.json',JSON.stringify(data,null,2));notice('Tệp JSON là bản sao dữ liệu để lưu và chỉnh sửa; không phải giấy biên nhận nộp hồ sơ.',true)});
 by('import').addEventListener('click',()=>by('file').click());
 by('file').addEventListener('change',async e=>{
@@ -434,6 +446,7 @@ select.addEventListener('change',()=>{clientRequestId=null;submittedId='';by('se
 by('file').addEventListener('change',()=>{clientRequestId=null;submittedId=''});
 by('restoreSession').addEventListener('click',()=>{clientRequestId=null;submittedId=''});
 by('send').addEventListener('click',async()=>{
+ if(baseIsA21()){notice('Chưa kết nối tuyến ký A.2.1. Hồ sơ chưa gửi.');return;}
  if(!canSubmit){notice('Chưa có Backend A22 đã xác thực; hồ sơ chưa được gửi.');return}
  if(submittedId){notice('Hồ sơ đã có mã tiếp nhận: '+submittedId+'. Hãy chỉnh sửa nội dung trước khi tạo lần nộp mới.',true);return}
  if(!validate())return;
