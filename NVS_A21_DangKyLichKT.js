@@ -11,6 +11,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&
 let remote=[],actor=null,ready=false,busy=false,editingId='';
 const labels={DRAFT:'Bản nháp – chưa gửi TTCM',WAIT_TTCM:'Đã gửi TTCM – chờ xác nhận',WAIT_BGH:'Đã gửi BGH',APPROVED:'Đã được BGH duyệt'};
 const byCode=()=>$('code')?.value==='A.2.1';
+const needsActor=()=>['A.2.1','A.2.2'].includes($('code')?.value);
 const roomTypes={CLASSROOM:'Phòng học của lớp',COMPUTER:'Phòng máy',LAB:'Phòng thí nghiệm / thực hành',FUNCTION:'Phòng chức năng',OUTDOOR:'Sân tập / ngoài trời'};
 function chosenRoom(){
  const selected=$('a21Room').value;
@@ -367,5 +368,7 @@ form.addEventListener('submit',async e=>{
  }catch(err){status('CHƯA xác nhận cập nhật phòng: '+String(err.message||err),true);}
  finally{busy=false;form.querySelector('button[type="submit"]').disabled=false;}
 });
-$('code')?.addEventListener('change',()=>{sync();if(byCode())refresh();else updateActorCard(null);});sync();render();updateActorCard(null);setRoomMode();updatePreview();if(byCode())refresh();
+async function refreshSubmissionActor(){const turn=++requestId;updateActorCard(null);try{auth();const d=await get('ktScheduleList');if(turn!==requestId||!needsActor())return;const a=d.actor||{};if(!a.username||!(a.name||a.hoTen)||!(a.team||a.toBoPhan))throw Error('Thiếu thông tin nhân sự từ máy chủ.');updateActorCard(a);}catch(e){if(turn===requestId&&needsActor())updateActorCard(null);}}
+function refreshForCode(){if(byCode())refresh();else if(needsActor())refreshSubmissionActor();else{requestId++;updateActorCard(null);}}
+$('code')?.addEventListener('change',()=>{sync();refreshForCode();});sync();render();updateActorCard(null);setRoomMode();updatePreview();refreshForCode();
 })();
