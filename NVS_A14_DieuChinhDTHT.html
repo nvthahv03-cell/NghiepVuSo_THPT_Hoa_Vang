@@ -1,18 +1,460 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>A.1.4 – Điều chỉnh dạy thêm</title><link rel="stylesheet" href="./HVA_EDOS_Form_Standard.css"><style>*{box-sizing:border-box}body{margin:0;font:15px Arial,sans-serif;color:#123b56;background:#f7fcff}main{max-width:900px;margin:20px auto;padding:12px}section{border:1px solid #b8ddf2;border-radius:10px;background:white;padding:16px;margin-bottom:12px}h1{font-size:22px}label{display:block;font-weight:bold;margin:12px 0 5px}input,select,textarea{width:100%;padding:10px;border:1px solid #b8ddf2;font:inherit}button{background:#0b57d0;color:white;border:0;border-radius:8px;padding:12px;font:inherit;font-weight:bold}button:disabled{opacity:.5}#account{background:#0b57d0;color:white;padding:12px;border-radius:8px}.notice{background:#fff3e0;color:#a65308;padding:12px;border-radius:8px}.dates{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.dates{grid-template-columns:1fr}}</style><style id="hva-a1-visual-final-v1">.hva-report-head{background:linear-gradient(115deg,#074b91,#087fc2)!important}.hva-report-brand small{font-size:12px!important}.hva-report-online{font-weight:800!important}.hva-report-nav a{background:#0879bd!important}.hva-report-nav a svg{stroke-width:2.8}.hva-report-head:before{background:radial-gradient(circle at 15% 30%,#ffffff80 0 2px,transparent 3px),radial-gradient(circle at 82% 65%,#ffffff80 0 2px,transparent 3px),repeating-linear-gradient(15deg,transparent 0 95px,#ffffff25 96px 97px,transparent 98px 180px),repeating-linear-gradient(155deg,transparent 0 120px,#ffffff25 121px 122px,transparent 123px 210px)!important}@media(max-width:600px){.hva-report-head:after{font-size:11px!important}.hva-report-brand{font-size:23px!important}}.hva-report-account-sign .identity-name{font-size:16px!important;font-weight:800!important}.hva-report-account-sign .identity-avatar{color:white!important;background:transparent!important}.hva-report-account-sign .identity-meta{font-size:13px!important}.hva-report-account-sign .identity-label-row{display:none!important}.hva-report-account-sign .identity-person>div>div[style]{display:none!important}.hva-report-account-sign .hva-sign-method-heading{margin:0 0 6px!important}.hva-report-account-sign .hva-sign-choice-icon{display:none!important}</style><style>main{margin:0 auto;padding:14px;max-width:900px}h1{font-size:clamp(19px,3.4vw,25px);background:white;border:1px solid #d5e5f4;border-radius:20px;padding:16px;margin:0 0 12px}section{border-radius:20px;padding:16px}#account{font-weight:700;padding:14px;border-radius:12px;margin-bottom:12px}input,select,textarea{border-radius:10px;min-height:46px}button{min-height:46px}#report button{width:100%;margin-top:12px}#report button:disabled{background:#eaf5ff;color:#456785;opacity:1}.hva-report-online{white-space:nowrap;font-size:10px!important}.dates:has(#until[hidden]){grid-template-columns:1fr}.notice{display:none}</style><style id="a14-sign-standard">.hva-report-account-sign{border:1px solid #b8ddf2;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#edf6fc}#account{margin:0!important;border-radius:0!important}#hvaSignMethodPanel{padding:12px!important;margin:0!important;border:0!important}#hvaSignMethodPanel .hva-sign-method-eyebrow,#hvaSignMethodPanel .hva-sign-choice-icon{display:none!important}#hvaSignMethodPanel .hva-sign-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#hvaSignMethodPanel label{position:relative;margin:8px 0 0;padding:12px;min-height:48px;border:1px solid #a8cce9;border-radius:9px;background:white;display:flex;align-items:center;gap:8px}#hvaSignMethodPanel input{width:auto;min-height:0}#hvaSignMethodPanel label:has(input:checked){background:#e5f2ff;border-color:#0879bd}#hvaSignMethodPanel label:has(input:disabled){opacity:.55}#hvaSignMethodPanel .hva-sign-choice-check{display:none}</style><style id="a14-approved-account-sign">.hva-report-account-sign{border-radius:10px!important;background:#edf6fc!important}#account{display:flex;align-items:center;gap:7px;flex-wrap:wrap;background:#0b57d0!important;color:white!important;font-size:14px!important;font-weight:400!important;padding:14px!important;line-height:1.6}#account strong{font-weight:800}#account svg{flex:none}#hvaSignMethodPanel{background:#edf6fc!important;padding:8px 10px!important}#hvaSignMethodTitle{font-size:15px!important}#hvaSignMethodPanel label.hva-sign-choice{min-height:40px!important;padding:6px 8px!important;margin:0!important;border:1px solid #9bc9f5!important;border-radius:9px!important;box-shadow:none!important;justify-content:space-between!important;background:white!important;color:#084b80!important}#hvaSignMethodPanel label.hva-sign-choice:has(input:checked){background:#0b57d0!important;color:white!important}#hvaSignMethodPanel label.hva-sign-choice:has(input:checked) b{color:white!important}#hvaSignMethodPanel label.hva-sign-choice input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}#hvaSignMethodPanel label.hva-sign-choice:has(input:checked)::after{content:'✓';display:grid;place-items:center;background:white;color:#0b57d0;border-radius:50%;width:21px;height:21px;flex:none;font-weight:900}#hvaSignMethodPanel label.hva-sign-choice:has(input:disabled){opacity:.65}#hvaSignMethodPanel .hva-sign-choice-copy>b{font-size:15px!important;font-weight:800!important}.hva-report-online:before{background:#aab9c7!important;animation:none!important}</style><style id="a14-editor-standard">#editor{padding:16px!important;border:1px solid #d5e5f4;border-radius:20px;background:#fff}#editor .hva-report-account-sign{margin:0 0 12px!important}#editor label:not(.hva-sign-choice){font-size:14px;font-weight:800;color:#123f67;margin:16px 0 6px}#editor input:not([type=radio]),#editor select,#editor textarea{font-size:15px;border:1.5px solid #b6d0e6;padding:12px;min-height:46px}#editor .actions,#preview .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}#editor .actions button,#preview .actions button{width:100%;margin:0;min-height:46px;background:#0966ad;font-size:14px}#editor .actions .secondary,#preview .actions .secondary{background:#edf6fc;color:#084b80;border:1px solid #b8ddf2}#preview button:disabled{opacity:.55}#editor[hidden],#preview[hidden]{display:none!important}.connection-error{font-size:13px;color:#a65308;margin-bottom:0}</style><style>#hvaSignMethodPanel label.hva-sign-choice:has(input:disabled){opacity:1!important;cursor:not-allowed}#hvaSignMethodPanel label.hva-sign-choice:has(input:disabled) b{color:#084b80!important}</style></head><body><div class="hva-report-head" role="banner"><nav class="hva-report-nav" aria-label="Điều hướng"><a href="./NghiepVu.html" aria-label="Quay lại"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a><a href="./index.html" aria-label="Trang chủ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav><div class="hva-report-brand">HVA–<b>EDOS</b><small>HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</small></div><span class="hva-report-online">CHƯA KẾT NỐI</span></div><main><h1>A.1.4 · Báo cáo điều chỉnh, bổ sung thông tin</h1><section id="editor"><div class="hva-report-account-sign"><div id="account">Chưa xác định tài khoản</div><div class="hva-sign-method" id="hvaSignMethodPanel" role="group" aria-labelledby="hvaSignMethodTitle">
-      <div class="hva-sign-method-heading"><span class="hva-sign-method-eyebrow"><i class="bi bi-pen" aria-hidden="true"></i> PHƯƠNG THỨC XÁC NHẬN</span><strong id="hvaSignMethodTitle">Hình thức ký</strong></div>
-      <div class="hva-sign-options">
-        <label class="hva-sign-choice">
-          <input type="radio" name="hvaSignMethod" value="ELECTRONIC" disabled title="Chưa hỗ trợ ký điện tử">
-          <span class="hva-sign-choice-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
-          <span class="hva-sign-choice-copy"><b>Ký điện tử</b></span>
-          <span class="hva-sign-choice-check" aria-hidden="true"><i class="bi bi-check"></i></span>
-        </label>
-        <label class="hva-sign-choice">
-          <input type="radio" name="hvaSignMethod" value="PAPER" checked>
-          <span class="hva-sign-choice-icon"><i class="bi bi-printer" aria-hidden="true"></i></span>
-          <span class="hva-sign-choice-copy"><b>Ký tay</b></span>
-          <span class="hva-sign-choice-check" aria-hidden="true"><i class="bi bi-check"></i></span>
-        </label>
-      </div>
-      
-    </div></div><form id="report"><label for="kind">Loại báo cáo</label><select id="kind"><option>Thay đổi thông tin dạy thêm</option><option>Tạm nghỉ dạy thêm</option><option>Tiếp tục dạy thêm</option><option>Chấm dứt tham gia dạy thêm</option><option>Bổ sung hồ sơ, minh chứng</option></select><label for="facility">Tên cơ sở tổ chức dạy thêm</label><input id="facility" required><div class="dates"><div><label for="from">Ngày có hiệu lực</label><input id="from" type="date" required></div><div id="until" hidden><label for="to">Dự kiến nghỉ đến ngày</label><input id="to" type="date"></div></div><label for="reason">Nội dung điều chỉnh / lý do</label><textarea id="reason" rows="5" required></textarea><label for="link">Liên kết hồ sơ, minh chứng (Google Drive)</label><input id="link" type="url" placeholder="https://drive.google.com/..." ><div class="actions"><button type="submit">Xem trước báo cáo</button><button type="reset" class="secondary">Làm mới</button></div></form></section><section id="preview" hidden><h2>Bản xem trước – chưa gửi</h2><pre id="output" style="white-space:pre-wrap;font:inherit"></pre><div class="actions"><button type="button" id="editPreview" class="secondary">Quay lại chỉnh sửa</button><button type="button" disabled>Xác nhận &amp; gửi</button></div><p class="connection-error">Chưa kết nối tuyến tiếp nhận hồ sơ.</p></section></main><script>const $=id=>document.getElementById(id);let u={};try{u=JSON.parse(sessionStorage.getItem('user')||localStorage.getItem('user')||'{}')}catch(e){}const name=u.hoTen||u.fullName||u.name||u.tenDangNhap||'';$('account').innerHTML='<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="8" cy="4" r="3"/><path d="M1 15v-2a7 7 0 0 1 14 0v2z"/></svg>';const nm=document.createElement('strong');nm.textContent=name||'Chưa xác định tài khoản';$('account').append(nm);for(const v of [u.toChuyenMon||u.toBoPhan||u.team||u.to||'',u.chucVu||''].filter(Boolean)){const el=document.createElement('span');el.textContent='| '+v;$('account').append(el);}$('kind').onchange=()=>{$('until').hidden=$('kind').selectedIndex!==1};$('from').onchange=()=>{$('to').min=$('from').value};$('report').onsubmit=e=>{e.preventDefault();if(!$('until').hidden&&$('to').value&&$('to').value<$('from').value){alert('Ngày kết thúc không hợp lệ');return}if($('link').value&&!/^https:\/\/(drive|docs)\.google\.com\//i.test($('link').value)){alert('Vui lòng dùng liên kết Google Drive hoặc Docs');return}$('output').textContent=['Người lập: '+(name||'Chưa xác định'),'Hình thức ký: Ký tay',$('kind').value,'Cơ sở: '+$('facility').value,'Hiệu lực: '+$('from').value,...(!$('until').hidden?['Dự kiến đến: '+$('to').value]:[]),$('reason').value,'Minh chứng: '+$('link').value].join('\n');$('preview').hidden=false;$('editor').hidden=true;$('preview').scrollIntoView({block:'start'})};;$('editPreview').onclick=()=>{$('preview').hidden=true;$('editor').hidden=false};$('report').addEventListener('reset',()=>{$('until').hidden=true;$('to').min='';$('preview').hidden=true});</script></body></html>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>A.1.4 – Điều chỉnh dạy thêm</title><link rel="stylesheet" href="./HVA_EDOS_Form_Standard.css"><style>*{box-sizing:border-box}body{margin:0;font:15px Arial,sans-serif;color:#123b56;background:#f7fcff}main{max-width:900px;margin:20px auto;padding:12px}section{border:1px solid #b8ddf2;border-radius:10px;background:white;padding:16px;margin-bottom:12px}h1{font-size:22px}label{display:block;font-weight:bold;margin:12px 0 5px}input,select,textarea{width:100%;padding:10px;border:1px solid #b8ddf2;font:inherit}button{background:#0b57d0;color:white;border:0;border-radius:8px;padding:12px;font:inherit;font-weight:bold}button:disabled{opacity:.5}#account{background:#0b57d0;color:white;padding:12px;border-radius:8px}.notice{background:#fff3e0;color:#a65308;padding:12px;border-radius:8px}.dates{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.dates{grid-template-columns:1fr}}</style><style id="hva-a1-visual-final-v1">.hva-report-head{background:linear-gradient(115deg,#074b91,#087fc2)!important}.hva-report-brand small{font-size:12px!important}.hva-report-online{font-weight:800!important}.hva-report-nav a{background:#0879bd!important}.hva-report-nav a svg{stroke-width:2.8}.hva-report-head:before{background:radial-gradient(circle at 15% 30%,#ffffff80 0 2px,transparent 3px),radial-gradient(circle at 82% 65%,#ffffff80 0 2px,transparent 3px),repeating-linear-gradient(15deg,transparent 0 95px,#ffffff25 96px 97px,transparent 98px 180px),repeating-linear-gradient(155deg,transparent 0 120px,#ffffff25 121px 122px,transparent 123px 210px)!important}@media(max-width:600px){.hva-report-head:after{font-size:11px!important}.hva-report-brand{font-size:23px!important}}.hva-report-account-sign .identity-name{font-size:16px!important;font-weight:800!important}.hva-report-account-sign .identity-avatar{color:white!important;background:transparent!important}.hva-report-account-sign .identity-meta{font-size:13px!important}.hva-report-account-sign .identity-label-row{display:none!important}.hva-report-account-sign .identity-person>div>div[style]{display:none!important}.hva-report-account-sign .hva-sign-method-heading{margin:0 0 6px!important}.hva-report-account-sign .hva-sign-choice-icon{display:none!important}</style><style>main{margin:0 auto;padding:14px;max-width:900px}h1{font-size:clamp(19px,3.4vw,25px);background:white;border:1px solid #d5e5f4;border-radius:20px;padding:16px;margin:0 0 12px}section{border-radius:20px;padding:16px}#account{font-weight:700;padding:14px;border-radius:12px;margin-bottom:12px}input,select,textarea{border-radius:10px;min-height:46px}button{min-height:46px}#report button{width:100%;margin-top:12px}#report button:disabled{background:#eaf5ff;color:#456785;opacity:1}.hva-report-online{white-space:nowrap;font-size:10px!important}.dates:has(#until[hidden]){grid-template-columns:1fr}.notice{display:none}</style><style id="a14-sign-standard">.hva-report-account-sign{border:1px solid #b8ddf2;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#edf6fc}#account{margin:0!important;border-radius:0!important}#hvaSignMethodPanel{padding:12px!important;margin:0!important;border:0!important}#hvaSignMethodPanel .hva-sign-method-eyebrow,#hvaSignMethodPanel .hva-sign-choice-icon{display:none!important}#hvaSignMethodPanel .hva-sign-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#hvaSignMethodPanel label{position:relative;margin:8px 0 0;padding:12px;min-height:48px;border:1px solid #a8cce9;border-radius:9px;background:white;display:flex;align-items:center;gap:8px}#hvaSignMethodPanel input{width:auto;min-height:0}#hvaSignMethodPanel label:has(input:checked){background:#e5f2ff;border-color:#0879bd}#hvaSignMethodPanel label:has(input:disabled){opacity:.55}#hvaSignMethodPanel .hva-sign-choice-check{display:none}</style><style id="a14-approved-account-sign">.hva-report-account-sign{border-radius:10px!important;background:#edf6fc!important}#account{display:flex;align-items:center;gap:7px;flex-wrap:wrap;background:#0b57d0!important;color:white!important;font-size:14px!important;font-weight:400!important;padding:14px!important;line-height:1.6}#account strong{font-weight:800}#account svg{flex:none}#hvaSignMethodPanel{background:#edf6fc!important;padding:8px 10px!important}#hvaSignMethodTitle{font-size:15px!important}#hvaSignMethodPanel label.hva-sign-choice{min-height:40px!important;padding:6px 8px!important;margin:0!important;border:1px solid #9bc9f5!important;border-radius:9px!important;box-shadow:none!important;justify-content:space-between!important;background:white!important;color:#084b80!important}#hvaSignMethodPanel label.hva-sign-choice:has(input:checked){background:#0b57d0!important;color:white!important}#hvaSignMethodPanel label.hva-sign-choice:has(input:checked) b{color:white!important}#hvaSignMethodPanel label.hva-sign-choice input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}#hvaSignMethodPanel label.hva-sign-choice:has(input:checked)::after{content:'✓';display:grid;place-items:center;background:white;color:#0b57d0;border-radius:50%;width:21px;height:21px;flex:none;font-weight:900}#hvaSignMethodPanel label.hva-sign-choice:has(input:disabled){opacity:.65}#hvaSignMethodPanel .hva-sign-choice-copy>b{font-size:15px!important;font-weight:800!important}.hva-report-online:before{background:#aab9c7!important;animation:none!important}</style><style id="a14-editor-standard">#editor{padding:16px!important;border:1px solid #d5e5f4;border-radius:20px;background:#fff}#editor .hva-report-account-sign{margin:0 0 12px!important}#editor label:not(.hva-sign-choice){font-size:14px;font-weight:800;color:#123f67;margin:16px 0 6px}#editor input:not([type=radio]),#editor select,#editor textarea{font-size:15px;border:1.5px solid #b6d0e6;padding:12px;min-height:46px}#editor .actions,#preview .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}#editor .actions button,#preview .actions button{width:100%;margin:0;min-height:46px;background:#0966ad;font-size:14px}#editor .actions .secondary,#preview .actions .secondary{background:#edf6fc;color:#084b80;border:1px solid #b8ddf2}#preview button:disabled{opacity:.55}#editor[hidden],#preview[hidden]{display:none!important}.connection-error{font-size:13px;color:#a65308;margin-bottom:0}</style><style>#hvaSignMethodPanel label.hva-sign-choice:has(input:disabled){opacity:1!important;cursor:not-allowed}#hvaSignMethodPanel label.hva-sign-choice:has(input:disabled) b{color:#084b80!important}</style><style>
+    :root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#173950;background:#f4f8fc;color-scheme:light}
+    *{box-sizing:border-box}body{margin:0;min-width:280px}button,input,textarea{font:inherit}button,a{touch-action:manipulation}
+    a{color:#0860a9}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.55}
+    :focus-visible{outline:3px solid #f2b530;outline-offset:3px}
+    .hva-pro-header{color:#fff;background:linear-gradient(110deg,#073d7e,#0867b6 63%,#079ac9);border-radius:0 0 18px 18px;box-shadow:0 8px 22px #124e8125}
+    .hva-pro-header-inner{max-width:1220px;margin:auto;display:grid;grid-template-columns:58px minmax(0,1fr) auto;align-items:center;gap:20px;padding:18px 22px;min-height:100px}
+    .hva-pro-back{display:grid;place-items:center;width:54px;height:54px;border:1px solid #84c4ed;border-radius:14px;background:#ffffff14;color:white;text-decoration:none;font-size:27px}
+    .hva-pro-brand{text-align:center;min-width:0}.hva-pro-kicker{font-size:12px;font-weight:750;letter-spacing:.14em;color:#d4ebfe}
+    .hva-pro-school{font-size:clamp(22px,2.9vw,29px);font-weight:850;line-height:1.25}.hva-pro-slogan{font-size:13px;color:#e1f4fd;margin-top:3px}
+    .hva-pro-online{border:1px solid #8fe1f1;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:800;white-space:nowrap}
+    main{max-width:1160px;margin:22px auto 75px;padding:0 18px}.hero,.panel{border:1px solid #d8e6f1;border-radius:18px;background:white;box-shadow:0 5px 18px #184b7610}
+    .hero{padding:23px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px}.eyebrow{font-size:11px;font-weight:850;letter-spacing:.09em;color:#076ab9;text-transform:uppercase}
+    h1{font-size:clamp(21px,2.5vw,27px);color:#084a83;margin:6px 0}h2{font-size:19px;color:#084a83;margin:0 0 11px}h3{font-size:16px;color:#0c528e;margin:0 0 8px}
+    .hero p,.muted{font-size:13px;color:#59738a;line-height:1.6;margin:5px 0}.header-links{display:flex;flex-wrap:wrap;gap:9px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #086bb6;border-radius:10px;background:#0a67b3;color:white;padding:10px 15px;text-decoration:none;font-weight:750;font-size:13px;line-height:1.3;min-height:40px}
+    .btn.secondary{background:#eff7fd;border-color:#c0ddf0;color:#155486}.btn.ghost{background:#fff;border-color:#cddfea;color:#22577c}.btn:hover:not(:disabled){filter:brightness(.97)}
+    .panel{margin-top:17px;padding:22px 24px}.panel-top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}.choice{text-align:left;border:1px solid #d4e3f0;border-radius:15px;padding:19px;background:#fff;display:flex;gap:15px;align-items:flex-start;color:#16446d;min-height:112px;transition:background .13s,border-color .13s;box-shadow:0 3px 10px #1d5a8310}
+    .choice:hover{border-color:#68afe1;background:#f8fcff}.choice[aria-pressed="true"]{border:2px solid #096ebf;background:#eaf6ff;padding:18px}
+    .choice-icon{width:39px;height:39px;flex:none;display:grid;place-items:center;background:#eaf4fd;border-radius:11px;color:#086cb7;font-size:22px}
+    .choice strong{display:block;font-size:15px;margin:0 0 6px;line-height:1.4}.choice small{font-size:12px;line-height:1.45;color:#5c7890}.choice .tag{font-size:11px;font-weight:750;display:block;margin-top:7px;color:#0e678b}
+    .status{padding:13px 16px;border-radius:11px;background:#e9f5ff;border:1px solid #c9e4f6;color:#174c77;font-size:13px;line-height:1.65;margin:16px 0 0}
+    .status[data-error="true"]{color:#8f2222;background:#fff2f0;border-color:#ecc0b6}.warning{background:#fff8e8;border:1px solid #ead69d;color:#79551b;border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.6}
+    .identity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:17px 0}.identity-cell{background:#f5fafe;border:1px solid #dbe9f2;border-radius:11px;padding:13px;min-width:0}
+    .identity-cell small{display:block;color:#5a7890;font-size:11px;font-weight:750;margin-bottom:7px}.identity-cell strong{font-size:13px;overflow-wrap:anywhere}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 20px}.field.full{grid-column:1/-1}label{font-size:13px;color:#2d536d;font-weight:750;display:block;margin-bottom:7px}
+    label em{color:#c34141;font-style:normal}.field input,.field textarea{width:100%;border:1.5px solid #bcd4e6;border-radius:10px;padding:12px 14px;color:#173c5a;background:#fff;min-height:45px;font-size:14px}
+    .field textarea{min-height:105px;resize:vertical;line-height:1.6}.field input:focus,.field textarea:focus{outline:none;border-color:#0772c5;box-shadow:0 0 0 3px #0871c420}
+    fieldset{border:0;padding:0;margin:0;min-width:0}.actions{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}.actions .btn{min-width:132px}
+    .preview{max-width:850px;margin:18px auto;background:white;padding:32px 38px;border:1px solid #c9d7e3;box-shadow:0 10px 30px #1d345023;color:#151515;font-family:"Times New Roman",serif;font-size:16px;line-height:1.42}
+    .official-head{display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:center;font-size:13px;margin-bottom:29px;align-items:start}
+    .official-head strong{display:block}.official-head .under{border-bottom:1px solid #111;display:inline-block;padding-bottom:4px}.report-title{text-align:center;text-transform:uppercase;font-size:20px;font-weight:800;margin:0 0 6px}
+    .report-subtitle{text-align:center;font-size:16px;font-weight:700;margin:0 0 21px}.preview p{margin:9px 0}.preview a{overflow-wrap:anywhere}.preview .report-line{white-space:pre-wrap;overflow-wrap:anywhere}
+    .sign{text-align:center;margin:30px 0 12px auto;width:42%;min-width:200px}.sign b{display:block}.sign p{margin:6px 0 45px}
+    .preview-stamp{margin-top:24px;padding:9px;border:1px dashed #b75f37;color:#a0462d;font:700 12px Inter,Arial,sans-serif;text-align:center}
+    .bottom-nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:15px;background:white;border-top:1px solid #e2eaf3;margin-top:45px}.bottom-nav a,.bottom-nav button{background:transparent;border:0;color:#205781;font-size:13px;font-weight:750;text-decoration:none}
+    [hidden]{display:none!important}
+    @media(max-width:720px){.hva-pro-header-inner{grid-template-columns:44px minmax(0,1fr);gap:8px;padding:12px}.hva-pro-back{width:42px;height:42px;font-size:20px}.hva-pro-online{display:none}.hva-pro-kicker{font-size:9px}.hva-pro-school{font-size:20px}.hva-pro-slogan{font-size:10px}
+      main{padding:0 12px}.hero{padding:18px;align-items:flex-start;flex-direction:column}.panel{padding:17px 15px}.grid,.choice-grid,.identity-grid{grid-template-columns:1fr}
+      .choice{min-height:85px}.actions .btn{flex:1;min-width:0}.preview{padding:17px 15px;font-size:14px}.official-head{gap:7px;font-size:10px}.sign{width:65%;font-size:12px}.report-subtitle{font-size:14px}}
+    @media print{@page{size:A4;margin:18mm 18mm 18mm 20mm}body{background:#fff;color:#000}.hva-pro-header,.hero,#choices,#editor,.bottom-nav,#printActions,#notice{display:none!important}main{max-width:none;padding:0;margin:0}.panel{box-shadow:none;border:0;padding:0;margin:0}#previewSection{display:block!important}#previewSection>h2{display:none}.preview{max-width:none;margin:0;padding:0;border:0;box-shadow:none;font-size:13pt;color:#000}.preview-stamp{font-size:9pt;break-inside:avoid}.official-head{font-size:10pt}.report-subtitle{font-size:12pt}.report-title{font-size:14pt}a{color:#000}}
+  .hva-a11-assistant-placeholder{opacity:.55;cursor:not-allowed!important;box-shadow:none!important}
+
+.a11-dialog{border:0;border-radius:20px;width:min(460px,calc(100vw - 30px));max-height:90vh;padding:0;box-shadow:0 24px 70px #032e5699;background:#fff;color:#173950}
+.a11-dialog::backdrop{background:rgba(9,35,64,.56);backdrop-filter:blur(3px)}
+.a11-dialog-head{padding:22px 24px 12px;display:flex;align-items:center;gap:12px}
+.a11-dialog-mark{width:46px;height:46px;border-radius:14px;background:#e7f5ff;color:#0868ae;display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.a11-dialog-head h3{font-size:19px;margin:0;color:#084a83}
+.a11-dialog-body{padding:0 24px 18px;font-size:14px;line-height:1.7;color:#43647e;white-space:pre-line}
+.a11-dialog-actions{display:flex;gap:10px;justify-content:flex-end;padding:15px 24px 22px;border-top:1px solid #e7eef5}
+.a11-dialog-actions .btn{min-width:106px}
+@media(max-width:450px){.a11-dialog-actions .btn{flex:1}.a11-dialog-head,.a11-dialog-body{padding-left:18px;padding-right:18px}}
+
+
+/* Tinh gọn A.1.1; không thay đổi hàm gửi Backend */
+.hva-pro-header{background:linear-gradient(110deg,#06396f,#075aa2 70%,#087dad)!important}
+.hva-pro-school{font-size:clamp(19px,2.8vw,26px)!important}
+.hero{border-radius:16px!important;background:linear-gradient(105deg,#eff8ff,#f9fcff)!important;border:1px solid #d8e9f5!important}
+.hero h1{font-size:clamp(21px,3vw,28px)!important;line-height:1.3!important;color:#124c7a!important}
+.hero p{color:#607b91!important;font-size:12px!important;line-height:1.6!important}
+.choice-grid{gap:11px!important}
+.choice{border:1.5px solid #d8e6f0!important;border-radius:13px!important;background:#fff!important;box-shadow:0 3px 11px #204f7908!important;transition:transform .18s,box-shadow .18s,border-color .18s!important}
+.choice:hover{transform:translateY(-2px)!important;border-color:#8cc1e4!important;box-shadow:0 8px 20px #075da119!important}
+.choice[aria-pressed="true"]{border-color:#0777bf!important;background:#f0f8ff!important;box-shadow:0 0 0 2px #1476ba12!important}
+.choice strong{font-size:14px!important;line-height:1.45!important;color:#174d7b!important}
+.choice small{color:#607b91!important;line-height:1.5!important}
+.choice .tag{font-size:10px!important;color:#0b6799!important;background:#e9f5ff!important;border-radius:7px!important;padding:5px 8px!important}
+#notice.status{border:1px solid #dce8f1!important;background:#f8fbff!important;color:#4e6f89!important;border-radius:11px!important;padding:12px 14px!important;font-size:12px!important;line-height:1.6!important}
+#notice.status[data-error="true"]{background:#fff8f1!important;color:#8c6024!important;border-color:#f4dfc1!important}
+#editor .warning{background:#f5f9fe!important;color:#56748a!important;border-color:#d6e7f4!important;font-size:12px!important;line-height:1.6!important}
+#editor .identity-cell{background:#f8fbfe!important}
+#previewSection #printActions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+#previewSection #a11Send{background:linear-gradient(110deg,#075ba6,#0781c0);font-weight:850;min-height:44px}
+#previewSection #a11Send:disabled{background:#e2e9ee;color:#6c8291;cursor:not-allowed}
+.hva-a11-assistant-placeholder{display:none!important}
+@media(max-width:720px){.choice-grid{grid-template-columns:1fr!important}.choice{min-height:90px!important;padding:13px!important}#previewSection #printActions>.btn{width:100%!important}#notice.status{margin-left:12px!important;margin-right:12px!important}}
+@media print{#notice.status{display:none!important}}
+
+
+/* A.1.1 – giao diện chuyên nghiệp; vùng chạm tối thiểu 44px; không đổi hợp đồng API. */
+body{background:#f3f7fb!important;color:#183c5a!important}
+.hva-pro-header{border-radius:0!important;background:linear-gradient(105deg,#073563,#075a9d 70%,#087baa)!important;box-shadow:0 4px 18px rgba(0,48,102,.13)!important}
+.hva-pro-header-inner{max-width:1120px!important;min-height:84px!important;padding:15px 24px!important;grid-template-columns:46px minmax(0,1fr) auto!important;gap:16px!important}
+.hva-pro-back{width:45px!important;height:45px!important;border-radius:12px!important;font-size:21px!important;background:rgba(255,255,255,.1)!important;border-color:rgba(255,255,255,.34)!important}
+.hva-pro-back i{display:inline-block!important;font-style:normal!important}
+.hva-pro-brand{text-align:left!important}
+.hva-pro-kicker{font-size:10px!important;letter-spacing:.1em!important;font-weight:800!important}
+.hva-pro-school{font-size:clamp(18px,2.5vw,24px)!important;line-height:1.3!important}
+.hva-pro-slogan{font-size:11px!important;opacity:.93!important}
+.hva-pro-online{font-size:10px!important;letter-spacing:.04em!important;padding:9px 12px!important;border-color:rgba(255,255,255,.4)!important}
+main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!important}
+.hero{padding:25px 27px!important;min-height:135px!important;border-radius:17px!important;background:linear-gradient(115deg,#eaf5fd,#fafcff)!important;box-shadow:none!important;align-items:center!important;gap:16px!important}
+.hero .eyebrow{font-size:10px!important;font-weight:850!important;color:#17669d!important}
+.hero h1{margin:7px 0 9px!important;font-size:clamp(22px,2.6vw,29px)!important;line-height:1.25!important;font-weight:850!important;letter-spacing:-.025em!important;color:#103e69!important}
+.hero p{margin:0!important;color:#4e6f88!important;font-size:13px!important;max-width:650px!important}
+.hero-mark{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;flex:0 0 78px;height:78px;background:#d8ecfc;color:#0b629e;border-radius:17px;font-weight:850;font-size:12px}
+.hero-mark i{font-size:29px}
+.panel{border-radius:17px!important;border-color:#dbe7f1!important;box-shadow:0 7px 24px rgba(22,65,104,.045)!important;padding:23px 26px!important}
+.panel-top{align-items:center!important}
+#choices .panel-top h2{font-size:20px!important;margin:5px 0 3px!important;color:#113f69!important}
+#choices .panel-top p{font-size:12px!important;color:#668097!important;margin:0!important}
+.hva-step-label{letter-spacing:.09em}
+.choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin-top:19px!important}
+.choice{position:relative!important;display:grid!important;grid-template-columns:48px minmax(0,1fr)!important;gap:14px!important;align-items:start!important;width:100%!important;min-width:0!important;min-height:135px!important;padding:19px!important;background:#fff!important;border:1.5px solid #d9e6f0!important;border-radius:14px!important;color:#1b486c!important;box-shadow:0 3px 10px rgba(14,69,105,.035)!important;text-align:left!important;transition:border-color .17s,background .17s,box-shadow .17s,transform .17s!important}
+.choice:hover{border-color:#72b1dd!important;box-shadow:0 9px 21px rgba(10,90,155,.095)!important;transform:translateY(-2px)!important}
+.choice[aria-pressed="true"]{border:2px solid #0b77c8!important;background:#f0f8ff!important;padding:18.5px!important;box-shadow:0 0 0 2px rgba(12,120,202,.08)!important}
+.choice:focus-visible{outline:3px solid #48a7de!important;outline-offset:2px!important}
+.choice-icon{width:48px!important;height:48px!important;border-radius:13px!important;background:#e7f3fe!important;color:#086aaf!important;font-size:22px!important}
+.choice>span:last-child{min-width:0!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important}
+.choice strong{font-size:15px!important;font-weight:800!important;line-height:1.4!important;color:#16466d!important;margin-bottom:6px!important}
+.choice small{font-size:12px!important;line-height:1.5!important;color:#607c91!important}
+.choice .tag{display:inline-block!important;margin-top:11px!important;font-size:10px!important;font-weight:800!important;background:#eef6fc!important;color:#23648d!important;padding:5px 9px!important;border-radius:99px!important}
+.choice[data-id="other"] .tag{background:#fff6e7!important;color:#886126!important}
+#notice.status{font-size:12px!important;line-height:1.65!important;background:#f5faff!important;border:1px solid #daebf7!important;color:#4e6f87!important}
+#editor .panel-top h2{font-size:20px!important;line-height:1.35!important}
+#editor #backToChoices{background:#f3f8fc!important;border:1px solid #d7e5ef!important;color:#225779!important;font-size:12px!important;min-height:44px!important;white-space:normal!important}
+#editor .identity-grid{gap:10px!important}
+#editor .identity-cell{padding:14px!important;background:#f7fafc!important}
+#editor label{font-size:12px!important}
+#editor .field input,#editor .field textarea{font-size:14px!important}
+#editor .actions .btn{min-height:45px!important}
+#previewSection #printActions .btn{min-height:45px!important}
+.hva-a11-footer{margin:38px auto 20px;padding:17px 15px;border-top:1px solid #dbe6ee;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;color:#607b8f;font-size:11px}
+.hva-footer-logo{font-weight:950;font-size:16px;letter-spacing:-.04em;color:#0a5c9b}.hva-footer-logo em{font-style:normal;color:#ed9b1e}
+@media(max-width:720px){
+ .hva-pro-header-inner{grid-template-columns:42px minmax(0,1fr)!important;gap:12px!important;min-height:73px!important;padding:12px 14px!important}
+ .hva-pro-back{width:42px!important;height:42px!important}
+ .hva-pro-kicker{font-size:9px!important;letter-spacing:.035em!important}
+ .hva-pro-school{font-size:clamp(17px,4.5vw,21px)!important}
+ .hva-pro-online{display:none!important}
+ main{margin:13px auto 35px!important;padding:0 12px!important}
+ .hero{padding:19px!important;min-height:0!important;display:block!important}
+ .hero-mark{display:none!important}
+ .hero h1{font-size:22px!important}
+ .hero p{font-size:12px!important}
+ .panel{padding:17px 15px!important}
+ .choice-grid{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+ .choice{grid-template-columns:43px minmax(0,1fr)!important;min-height:107px!important;padding:15px!important;gap:12px!important}
+ .choice[aria-pressed="true"]{padding:14.5px!important}
+ .choice-icon{width:43px!important;height:43px!important;font-size:20px!important}
+ .choice strong{font-size:14px!important}
+ .choice small{font-size:11.5px!important}
+ .choice .tag{margin-top:8px!important}
+ #editor .panel-top{flex-direction:column!important;align-items:stretch!important}
+ #editor #backToChoices{align-self:flex-start!important}
+ #editor .identity-grid,#editor .grid{grid-template-columns:minmax(0,1fr)!important}
+ #editor .actions .btn{min-width:0!important}
+}
+@media print{.hva-a11-footer,.hero-mark{display:none!important}}
+@media(prefers-reduced-motion:reduce){.choice{transition:none!important;transform:none!important}}
+
+
+.hva-pro-header .hva-pro-brand{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:4px!important;text-align:left!important}
+.hva-pro-header .hva-pro-kicker{font-size:10px!important;color:#d5ecfa!important;letter-spacing:.08em!important}
+.hva-pro-header .hva-pro-school{font-size:clamp(17px,2.4vw,23px)!important;font-weight:900!important;line-height:1.25!important;color:#fff!important}
+.hva-pro-header .hva-pro-slogan.hva-pro-edos{margin-top:0!important;font-size:clamp(23px,3vw,30px)!important;font-weight:950!important;letter-spacing:-.035em!important;line-height:1.1!important;color:#ffbf45!important}
+.hva-pro-header .hva-pro-back{display:grid!important;place-items:center!important;flex:none!important}
+.hva-pro-header .hva-pro-back i{font-size:22px!important}
+@media(max-width:720px){.hva-pro-header .hva-pro-kicker{font-size:9px!important}.hva-pro-header .hva-pro-school{font-size:16px!important}.hva-pro-header .hva-pro-slogan.hva-pro-edos{font-size:24px!important}}
+
+
+/* A1.1 – Chỉ thẻ được chọn dùng màu xanh Digital AI; thẻ khác nền trắng. */
+#choiceGrid{align-items:stretch;gap:16px}
+#choiceGrid .choice{position:relative;isolation:isolate;min-height:138px;display:flex;align-items:flex-start;gap:16px;
+ border:1.5px solid #cddff0!important;border-radius:17px!important;background:#fff!important;
+ padding:20px 22px!important;color:#153e66!important;box-shadow:0 3px 12px rgba(20,84,140,.055)!important;
+ text-align:left;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s}
+#choiceGrid .choice:hover{border-color:#2b99e5!important;transform:translateY(-2px);box-shadow:0 9px 23px rgba(12,91,162,.12)!important}
+#choiceGrid .choice strong{color:#104675!important;font-size:15px;font-weight:850;line-height:1.43}
+#choiceGrid .choice small{display:block;color:#587b98!important;font-size:12.5px;line-height:1.6}
+#choiceGrid .choice .choice-icon{flex:0 0 52px;width:52px;height:52px;border-radius:14px;background:#e7f4ff!important;color:#0869b3!important;display:grid;place-items:center;font-size:24px}
+#choiceGrid .choice .tag{display:inline-block;width:max-content;max-width:100%;padding:6px 11px;margin-top:13px;
+ border-radius:99px;background:#edf7ff!important;color:#16649d!important;font-size:11px;font-weight:800}
+#choiceGrid .choice[aria-pressed="true"]{background:linear-gradient(112deg,#0752a5 0%,#067cce 65%,#05a6db 100%)!important;
+ border:2px solid #0573d6!important;padding:19.5px 21.5px!important;color:#fff!important;
+ box-shadow:0 9px 24px rgba(2,102,190,.24),inset 0 1px rgba(255,255,255,.18)!important;transform:none}
+#choiceGrid .choice[aria-pressed="true"] strong{color:#fff!important}
+#choiceGrid .choice[aria-pressed="true"] small{color:#e5f4ff!important}
+#choiceGrid .choice[aria-pressed="true"] .choice-icon{color:#fff!important;background:rgba(255,255,255,.2)!important;border:1px solid rgba(255,255,255,.24)}
+#choiceGrid .choice[aria-pressed="true"] .tag{background:rgba(255,255,255,.18)!important;color:#fff!important}
+#choiceGrid .choice[aria-pressed="true"]::after{content:"✓ ĐANG CHỌN";position:absolute;right:14px;top:12px;
+ color:#fff;font-size:10px;font-weight:850;letter-spacing:.03em;background:rgba(0,47,110,.3);
+ border:1px solid rgba(255,255,255,.3);padding:5px 9px;border-radius:99px}
+#choiceGrid .choice[aria-pressed="true"]>span:nth-child(2){padding-right:25px}
+#choiceGrid .choice:focus-visible{outline:3px solid #f8b92e!important;outline-offset:3px}
+@media(max-width:720px){#choiceGrid .choice{padding:16px!important;min-height:118px;gap:12px}
+ #choiceGrid .choice[aria-pressed="true"]{padding:15.5px!important}
+ #choiceGrid .choice[aria-pressed="true"]::after{position:static;order:3;align-self:flex-start;white-space:nowrap}
+ #choiceGrid .choice[aria-pressed="true"]>span:nth-child(2){padding-right:0}
+ #choiceGrid .choice .choice-icon{width:42px;height:42px;flex-basis:42px;font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){#choiceGrid .choice{transition:none}}
+
+
+#a11SignMethod{margin:16px 0 20px;padding:17px;border:1px solid #d7e6f4;background:#f7fbff;border-radius:16px;color:#173e61}
+#a11SignMethod .a11-sign-eyebrow{font-size:11px;font-weight:850;letter-spacing:.07em;color:#1265a3;margin-bottom:5px}
+#a11SignMethod h3{margin:0 0 13px;font-size:16px}
+#a11SignMethod .a11-sign-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#a11SignMethod .a11-sign-choice{margin:0;cursor:pointer;display:flex;align-items:center;gap:12px;padding:16px 15px;border-radius:14px;border:1.5px solid #d2e3f1;background:#fff;min-height:84px;position:relative}
+#a11SignMethod .a11-sign-choice:has(input:checked){background:#e9f5ff;border-color:#0879d8;box-shadow:0 0 0 1px #0879d8}
+#a11SignMethod .a11-sign-choice input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+#a11SignMethod .a11-sign-choice:has(input:focus-visible){outline:3px solid #f6ba3c;outline-offset:3px}
+#a11SignMethod .a11-sign-icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:12px;background:#eaf4fd;color:#0870b9;font-size:21px}
+#a11SignMethod .a11-sign-copy{display:grid;gap:5px;min-width:0;flex:1}
+#a11SignMethod .a11-sign-copy strong{font-size:14px;color:#0e4b82}
+#a11SignMethod .a11-sign-copy small{font-size:12px;color:#618099;font-weight:450;line-height:1.45}
+#a11SignMethod .a11-sign-check{color:#0874c4;opacity:0;font-size:20px}
+#a11SignMethod .a11-sign-choice:has(input:checked) .a11-sign-check{opacity:1}
+#a11SignMethod #a11SignHint{margin:10px 0 0}
+#a11SignMethod .a11-electronic-fields{margin-top:16px;border-top:1px solid #d9e8f5;padding-top:16px}
+#a11SignMethod .a11-electronic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#a11SignMethod .a11-electronic-grid>div{min-width:0}
+#a11SignMethod input[type=password],#a11SignMethod input[type=file]{display:block;box-sizing:border-box;width:100%;margin:5px 0 10px;padding:10px;border:1px solid #b9d4e8;border-radius:9px;background:white;color:#173950}
+#a11SignMethod .a11-signature-preview{min-height:45px;border:1px dashed #96bfdd;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#fff;font-size:12px;color:#526e85;padding:8px}
+#a11SignMethod .a11-signature-preview img{max-height:85px;max-width:100%;object-fit:contain}
+#a11SignMethod #a11SignerStatus{margin-bottom:10px}
+@media(max-width:720px){#a11SignMethod .a11-sign-options,#a11SignMethod .a11-electronic-grid{grid-template-columns:1fr}}
+@media print{#a11SignMethod{display:none!important}}
+
+
+/* A1.1 – Nút bản xem trước trên điện thoại: không ép chữ đứng dọc. */
+#printActions{display:flex;align-items:stretch;justify-content:flex-start;flex-wrap:wrap;gap:12px;min-width:0}
+#printActions>.btn{box-sizing:border-box;flex:0 1 auto;min-width:174px;max-width:100%;width:auto;white-space:normal;word-break:normal;overflow-wrap:normal;text-align:center;padding:12px 17px;line-height:1.4}
+#printActions>.muted{flex:1 0 100%;margin:0;line-height:1.5}
+@media(max-width:720px){
+  #printActions{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;align-items:stretch!important;width:100%!important}
+  #printActions>.btn{display:flex!important;flex:none!important;min-width:0!important;max-width:none!important;width:100%!important;min-height:49px!important;padding:11px 14px!important;white-space:normal!important;word-break:normal!important;overflow-wrap:break-word!important;font-size:14px!important;line-height:1.4!important}
+  #printActions>.muted{width:100%!important;min-width:0!important;text-align:center!important;overflow-wrap:break-word!important;padding:1px 4px}
+  #previewSection{min-width:0!important;overflow:hidden}
+  #previewSection .preview{box-sizing:border-box;width:100%!important;max-width:100%!important;min-width:0!important}
+}
+@media print{#printActions{display:none!important}}
+
+
+/* A1.1 – Trình bày Bước 03 kế thừa bố cục xem trước DTHT, không thay mẫu A1.1. */
+#previewSection{max-width:100%;min-width:0}
+#previewSection .a11-preview-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;margin:16px 0 0;background:#f1f8fe;border:1px solid #d4e6f5;border-radius:12px;color:#164f81}
+#previewSection .a11-preview-toolbar b{display:block;font-weight:850;font-size:14px}
+#previewSection .a11-preview-toolbar span{display:block;font-size:12px;color:#60809a;margin-top:3px}
+#previewSection .preview{width:min(100%,850px);margin:17px auto 0;box-sizing:border-box;padding:30px 38px;box-shadow:0 4px 18px #123f6117;border:1px solid #cfdce7;line-height:1.53;overflow-wrap:break-word}
+#previewSection .preview .official-head{margin-bottom:26px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+#previewSection .preview .official-head>div{min-width:0;font-size:12px;line-height:1.4}
+#previewSection .preview .official-head>div:first-child strong{margin-top:6px}
+#previewSection .preview .official-head .under{margin-top:4px}
+#previewSection .preview .report-title{font-size:21px;font-weight:800;letter-spacing:.02em}
+#previewSection .preview .report-subtitle{font-size:16px;line-height:1.4;margin-bottom:23px}
+#previewSection .preview .report-line{margin:10px 0;white-space:pre-wrap;line-height:1.5}
+#previewSection .preview .sign{margin:28px 0 12px auto}
+#printActions{margin-top:17px!important}
+#printActions #a11Send{background:#0869b4;color:#fff;border:1px solid #0861a4}
+#printActions #a11Send:disabled{background:#e4edf5;color:#6c8498;border:1px solid #c0d2e1;opacity:1}
+#a11SubmitAck{display:flex;align-items:flex-start;gap:11px;margin-top:16px;padding:14px;border:1px solid #b8dfce;background:#eefbf5;color:#145a43;border-radius:12px;font-size:13px;line-height:1.5}
+#a11SubmitAck i{font-size:20px;flex:none}
+@media(max-width:720px){
+ #previewSection .a11-preview-toolbar{display:block;padding:12px 13px}
+ #previewSection .preview{width:100%!important;padding:18px 14px!important;font-size:14px!important;line-height:1.4}
+ #previewSection .preview .official-head{gap:7px!important;font-size:9px!important;margin-bottom:24px}
+ #previewSection .preview .official-head>div{font-size:9.5px!important;line-height:1.4}
+ #previewSection .preview .official-head>div strong{font-size:9.5px}
+ #previewSection .preview .report-title{font-size:20px}
+ #previewSection .preview .report-subtitle{font-size:15px}
+ #previewSection .preview .sign{width:58%;min-width:0}
+}
+@media print{
+ #previewSection .a11-preview-toolbar,#a11SubmitAck{display:none!important}
+ #previewSection .preview{padding:0!important;box-shadow:none!important;border:0!important;max-width:none!important}
+ #previewSection .preview .official-head>div{font-size:11pt!important}
+}
+
+
+#choices[hidden],#editor[hidden],#previewSection[hidden],#a11Dynamic[hidden]{display:none!important}
+#a11Dynamic{border:1.5px solid #b9d9ed;border-radius:15px;background:#f5fbff;overflow:hidden;margin:18px 0 22px}
+#a11Dynamic .a11-dynamic-head{background:linear-gradient(110deg,#e5f3ff,#effaff);padding:16px 18px;border-bottom:1px solid #d1e3f2}
+#a11Dynamic .a11-dynamic-head b{font-size:11px;letter-spacing:.06em;color:#0b699f}
+#a11Dynamic h3{margin:4px 0 7px;color:#124e7c;font-size:17px}
+#a11Dynamic p{font-size:12px;color:#57788e;line-height:1.5;margin:0}
+#a11Dynamic .a11-dynamic-items{padding:15px;display:grid;gap:11px}
+#a11Dynamic details{border:1px solid #c8dbea;border-radius:12px;background:white;overflow:hidden}
+#a11Dynamic summary{padding:14px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:800;color:#124e7c;cursor:pointer;list-style:none}
+#a11Dynamic summary::-webkit-details-marker{display:none}
+#a11Dynamic .a11-count{display:inline-grid;place-items:center;border-radius:8px;background:#e6f3fe;color:#0a6ea9;width:27px;height:27px;flex:none}
+#a11Dynamic .a11-dynamic-body{padding:0 14px 14px}
+#a11Dynamic textarea{min-height:110px;width:100%;box-sizing:border-box;background:white;border:1.5px solid #b2d0e4;color:#1a405e;border-radius:10px;padding:12px;resize:vertical;font:500 14px/1.55 Arial,sans-serif}
+#a11Dynamic .a11-dynamic-body button{display:block;margin:9px 0 0 auto;background:#fff1f1;color:#a4373b;border:0;border-radius:7px;padding:7px 10px;cursor:pointer}
+#a11Dynamic .a11-dynamic-add{padding:14px 16px;background:#ebf6ff;border-top:1px solid #d2e5f4}
+#a11Dynamic .a11-dynamic-add label{display:block;font-size:12px;font-weight:800;color:#245b7d;margin-bottom:8px}
+#a11Dynamic .a11-dynamic-addrow{display:flex;gap:9px;flex-wrap:wrap}
+#a11Dynamic .a11-dynamic-addrow select{flex:1 1 180px;min-width:0}
+#a11Dynamic .a11-dynamic-addrow input{flex:1 1 160px;min-width:0}
+#a11Dynamic .a11-dynamic-note{padding:0 16px 14px}
+#editor .field label{font-weight:800!important;color:#205071!important}
+#editor .field input,#editor .field textarea,#editor .field select{border:1.5px solid #b9d2e5!important;background:#fff!important;color:#183f5e!important}
+@media(max-width:600px){#a11Dynamic .a11-dynamic-addrow button{width:100%}}
+
+
+/* HVA-EDOS A1.1 | chuẩn trực quan 17/11: Header, nhận diện, biểu mẫu, ngày, điều hướng */
+.hva-pro-header{position:relative!important;isolation:isolate;overflow:hidden!important;
+ background:linear-gradient(112deg,#07559a 0%,#087cbe 58%,#0db7dd 100%)!important;
+ border-bottom:1px solid #63dafa!important;border-radius:0 0 16px 16px!important}
+.hva-pro-header::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.38;
+ background-image:radial-gradient(circle,#fff 1.6px,transparent 2.6px),
+ radial-gradient(circle,#fff 1px,transparent 2px),
+ repeating-linear-gradient(29deg,transparent 0 62px,rgba(255,255,255,.15) 63px,transparent 64px 130px),
+ repeating-linear-gradient(151deg,transparent 0 87px,rgba(255,255,255,.11) 88px,transparent 89px 174px);
+ background-size:96px 84px,141px 110px,100% 100%,100% 100%;background-position:15px 18px,76px 55px,0 0,0 0}
+.hva-pro-header::after{content:"";position:absolute;right:-50px;top:-180px;width:380px;height:380px;border-radius:50%;
+ border:1px solid rgba(255,255,255,.23);box-shadow:0 0 0 45px rgba(255,255,255,.035),0 0 0 100px rgba(255,255,255,.025);pointer-events:none}
+.hva-pro-header-inner{position:relative!important;z-index:1}
+.hva-pro-header .hva-pro-online{color:#fff!important;background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.55)!important}
+.hero .eyebrow{font-weight:850!important;color:#0876b6!important}
+.hero h1{font-size:clamp(21px,2.5vw,26px)!important;line-height:1.25!important}
+#editor .panel-top{background:linear-gradient(110deg,#edf8ff,#f8fcff)!important;border:1px solid #c9e4f4!important;
+ border-radius:14px!important;padding:15px 17px!important;margin-bottom:17px!important;align-items:center!important}
+#editor #editorHeading{font-size:clamp(18px,2.2vw,22px)!important;line-height:1.3!important;font-weight:900!important;
+ color:#074c84!important;margin:6px 0!important}
+#editor .hva-a11-active-description{font-size:12px!important;color:#436e8d!important;margin:0!important;line-height:1.5!important}
+#editor .hva-a11-back-menu{color:#fff!important;background:linear-gradient(110deg,#086bb9,#0c8dd0)!important;
+ border:1px solid #0874c1!important;box-shadow:0 3px 11px rgba(7,95,166,.17)!important;font-weight:850!important;
+ white-space:normal!important;text-align:center!important;min-height:45px}
+#editor .hva-a11-back-menu:hover{filter:brightness(.94)}
+/* Thanh người đăng nhập: một hàng duy nhất kể cả trên điện thoại; không nhầm với ô kê khai. */
+#editor .hva-a11-identity-inline{margin:15px 0 23px!important;display:block!important;background:linear-gradient(106deg,#08549c,#086fb6 62%,#0b92bd)!important;
+ color:white!important;border:1px solid #147cb8!important;border-left:5px solid #45d5f6!important;box-shadow:0 7px 18px rgba(8,85,155,.15)!important}
+#editor .hva-a11-identity-inline .hva-user-ident__top{background:rgba(255,255,255,.09)!important;
+ border-bottom:1px solid rgba(255,255,255,.22)!important;padding:9px 15px!important}
+#editor .hva-a11-identity-inline .hva-user-ident__title{color:#fff!important;font-size:11px!important;font-weight:850!important}
+#editor .hva-a11-identity-inline .hva-user-ident__chip{color:#fff!important;border-color:rgba(255,255,255,.6)!important;background:rgba(255,255,255,.14)!important}
+#editor .hva-a11-identity-inline .hva-user-ident__values{display:grid!important;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,.85fr)!important;gap:0!important}
+#editor .hva-a11-identity-inline .hva-user-ident__value{min-width:0!important;padding:10px 14px 12px!important;border:0!important;
+ background:transparent!important;box-shadow:none!important}
+#editor .hva-a11-identity-inline .hva-user-ident__value+.hva-user-ident__value{border-left:1px solid rgba(255,255,255,.22)!important}
+#editor .hva-a11-identity-inline .hva-user-ident__value small{color:#d9effe!important;font-size:10px!important;margin-bottom:5px!important;line-height:1.3!important}
+#editor .hva-a11-identity-inline .hva-user-ident__value strong{color:#fff!important;font-size:clamp(11px,1.45vw,15px)!important;
+ font-weight:850!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;line-height:1.35!important}
+#editor .hva-a11-identity-inline .hva-user-ident__note{color:#e4f4ff!important;background:rgba(0,45,90,.11)!important;
+ border-top:1px solid rgba(255,255,255,.2)!important;padding:7px 14px!important;font-size:10px!important}
+/* Ngày luôn cùng một dòng. */
+#editor #fields .hva-a11-date-pair{grid-column:1/-1!important;display:grid!important;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:12px!important;min-width:0}
+#editor #fields .hva-a11-date-pair .field{min-width:0!important;grid-column:auto!important}
+#editor #fields .hva-a11-date-pair input[type=date]{display:block;width:100%!important;min-width:0!important;
+ max-width:100%!important;box-sizing:border-box!important;padding:10px 6px!important;font-size:clamp(11px,1.4vw,14px)!important}
+#editor #fields .hva-a11-date-pair .field label{white-space:nowrap!important;font-size:clamp(11px,1.4vw,13px)!important}
+#editor #fields .field label{display:block!important;font-weight:850!important;transition:color .15s}
+#editor #fields .field:focus-within label{color:#046ab5!important}
+#editor #fields .field input:focus,#editor #fields .field textarea:focus,#editor #fields .field select:focus{outline:none!important;
+ border:2px solid #047ecb!important;box-shadow:0 0 0 3px rgba(6,129,209,.15)!important;background:#fff!important}
+#editor #fields input::placeholder,#editor #fields textarea::placeholder,#editor #driveLink::placeholder{color:#8298aa!important;opacity:1!important;font-weight:450!important;font-size:12px!important}
+@media(max-width:720px){
+ .hva-pro-header .hva-pro-online{display:none!important}
+ #editor .panel-top{gap:12px!important;padding:13px!important}
+ #editor .hva-a11-back-menu{width:100%!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__top{padding:8px 9px!important;gap:6px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__title{font-size:9px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__chip{font-size:9px!important;padding:4px 7px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__values{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,.8fr)!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__value{padding:9px 6px 10px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__value small{font-size:8px!important;letter-spacing:0!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__value strong{font-size:10px!important}
+ #editor #fields .hva-a11-date-pair{gap:8px!important}
+ #editor #fields .hva-a11-date-pair input[type=date]{font-size:11px!important;padding:8px 3px!important}
+ #editor .hva-a11-identity-inline .hva-user-ident__note{font-size:9px!important;padding:7px 9px!important}
+}
+@media print{.hva-pro-header::before,.hva-pro-header::after{display:none!important}}
+
+
+#a11SendHint{flex-basis:100%;display:block!important;padding:11px 14px;border:1px solid #c8dfef;background:#edf8ff;
+ border-radius:10px;color:#23557a!important;font-size:12px!important;text-align:left!important;line-height:1.55!important}
+#a11SendHint[data-error="true"]{background:#fff7ea!important;color:#85500c!important;border-color:#eed6a6!important}
+#a11RetryConnection{min-height:42px}
+@media(max-width:600px){#a11RetryConnection{width:100%}}
+
+
+/* Hiển thị ngày không phụ thuộc locale máy: luôn dd/mm/yyyy, kể cả iOS en-US. */
+#editor .hva-a11-date-control{position:relative;min-width:0;width:100%}
+#editor .hva-a11-date-control>input[id^="field-"]{display:block;width:100%!important;min-width:0!important;
+ height:45px!important;padding:10px 44px 10px 12px!important;font-size:14px!important;color:#173f5c!important}
+#editor .hva-a11-date-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#176ca5;pointer-events:none;font-size:17px}
+#editor .hva-a11-date-control .hva-a11-native-date{position:absolute!important;right:0!important;top:0!important;
+ width:42px!important;min-width:42px!important;max-width:42px!important;height:100%!important;
+ opacity:0!important;cursor:pointer!important;padding:0!important;margin:0!important;z-index:3;border:0!important}
+#editor .hva-a11-date-control:focus-within>input[id^="field-"]{border-color:#067aca!important;
+ box-shadow:0 0 0 3px rgba(6,129,209,.15)!important}
+@media(max-width:600px){#editor .hva-a11-date-control>input[id^="field-"]{font-size:12px!important;padding:9px 35px 9px 7px!important}
+#editor .hva-a11-date-icon{right:10px!important;font-size:15px!important}
+#editor .hva-a11-date-control .hva-a11-native-date{width:36px!important;min-width:36px!important;max-width:36px!important}}
+
+
+.hva-pro-header .hva-pro-header-inner{grid-template-columns:auto minmax(0,1fr) auto!important}
+.hva-edos-nav-pair{display:flex;align-items:center;gap:8px}
+.hva-pro-header .hva-edos-nav-pair .hva-nav-tap{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;border-radius:11px!important;color:#fff!important}
+.hva-edos-nav-pair svg{width:24px!important;height:24px!important}
+.hero-mark{display:grid!important;place-items:center!important}
+.hero-mark i{margin:0!important}
+#choices,#choices button,.hero{font-family:"Segoe UI",Arial,sans-serif!important}
+#choiceGrid .choice strong{font-weight:700!important;color:#103b61!important;font-size:15px!important}
+#choiceGrid .choice small{font-weight:500!important;color:#365c78!important;font-size:13px!important}
+#choices .muted,.hero p{color:#365c78!important;font-weight:500!important}
+#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]){background:linear-gradient(112deg,#0752a5,#067cce 65%,#05a6db)!important;border-color:#0573d6!important;color:white!important;box-shadow:0 9px 24px #0266be3d!important}
+#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) strong,#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) small,#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) .tag,#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) .choice-icon{color:#fff!important}
+#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) .tag,#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) .choice-icon{background:#ffffff30!important}
+@media(max-width:720px){.hva-pro-header .hva-pro-header-inner{grid-template-columns:auto minmax(0,1fr)!important;gap:8px!important}.hva-edos-nav-pair{gap:5px}.hva-pro-header .hva-edos-nav-pair .hva-nav-tap{width:44px!important;height:44px!important}}
+
+.hva-report-head{background:linear-gradient(115deg,#074b91,#087fc2)!important}.hva-report-brand small{font-size:12px!important}.hva-report-online{font-weight:800!important}.hva-report-nav a{background:#0879bd!important}.hva-report-nav a svg{stroke-width:2.8}.hva-report-head:before{background:radial-gradient(circle at 15% 30%,#ffffff80 0 2px,transparent 3px),radial-gradient(circle at 82% 65%,#ffffff80 0 2px,transparent 3px),repeating-linear-gradient(15deg,transparent 0 95px,#ffffff25 96px 97px,transparent 98px 180px),repeating-linear-gradient(155deg,transparent 0 120px,#ffffff25 121px 122px,transparent 123px 210px)!important}@media(max-width:600px){.hva-report-head:after{font-size:11px!important}.hva-report-brand{font-size:23px!important}}.hva-a1-account-sign{border:1px solid #b8ddf2;border-radius:10px;overflow:hidden;background:#edf6fc}.hva-a1-account-sign .hva-a11-identity-inline,.hva-a1-account-sign .a11-sign-method{margin:0!important;border:0!important;border-radius:0!important}.hva-a11-identity-inline .hva-user-ident__values{display:flex!important;flex-wrap:wrap;align-items:center;gap:10px!important}.hva-a11-identity-inline .identity-cell{padding:0!important;min-width:0!important}.hva-a11-identity-inline .identity-cell small,.hva-a11-identity-inline .hva-user-ident__note{display:none!important}.hva-a11-identity-inline .hva-user-ident__top{color:white!important}.choice-icon,.hero-mark{display:none!important}.choice{grid-template-columns:1fr!important;text-align:left!important}.hva-a11-compact-account{display:flex;align-items:center;flex-wrap:wrap;gap:9px;background:#0b57d0;color:white;padding:10px 12px;font-size:14px;line-height:1.4}.hva-a11-compact-account strong,.hva-a11-compact-account span{color:white}.hva-a11-account-status{margin-left:auto;font-size:11px}.hva-a11-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}#editor .hva-a1-account-sign{margin:8px 0!important;border:1px solid #b8ddf2!important;border-radius:9px!important;overflow:hidden!important}#editor #a11SignMethod{margin:0!important;padding:8px 10px!important;border:0!important;border-radius:0!important;background:#edf6fc!important}#editor #a11SignTitle{font-size:14px!important;margin:0 0 6px!important}#editor .a11-sign-choice{min-height:36px!important;padding:6px!important;justify-content:center!important}#editor .a11-sign-icon{display:none!important}#editor .a11-sign-copy small{display:none!important}#editor .a11-sign-check{display:inline-block!important}#editor .a11-sign-choice:not(:has(input:checked)) .a11-sign-check{opacity:.35!important}body:has(#editor:not([hidden])) main>.hero{display:none!important}#editor .panel-top{padding:10px 12px!important;margin-bottom:8px!important}#editor .panel-top .eyebrow{display:none!important}#editor #developmentNote{margin:6px 0!important;padding:7px 10px!important}#editor .a11-sign-eyebrow{display:none!important}@media(max-width:600px){.hva-a11-compact-account{font-size:12px;gap:5px}.hva-a11-account-status{margin-left:0}}@media print{.hva-a11-compact-account,.hva-report-head{display:none!important}}
+#choices .choice-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}#choices .choice-grid .choice{display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;align-items:center!important;min-height:76px!important;padding:12px!important;gap:10px!important;border:1px solid #b8ddf2!important;border-radius:9px!important;box-shadow:none!important;background:white!important;text-align:left!important}#choices .choice-grid .choice:nth-child(odd){background:#eaf7ff!important}#choices .choice-grid .choice .hva-a11-choice-number{display:grid;place-items:center;width:32px;height:32px;border:1px solid #0879bd;border-radius:6px;color:#0879bd;background:white;font-weight:800}#choices .choice-grid .choice strong{font-size:15px!important;color:#12466f!important}#choices .choice-grid .choice small{font-size:12px!important}#choices .choice-grid .choice .tag{display:none!important}#choices .choice-grid .choice:hover,#choices .choice-grid .choice:focus-visible{border-color:#f59e0b!important}#choices .panel-top .eyebrow{display:none!important}#choices .panel-top{margin-bottom:10px!important}#choices{padding:16px!important}@media(max-width:600px){#choices .choice-grid{grid-template-columns:1fr!important}#choices .choice-grid .choice{min-height:64px!important}}
+
+main>.hero{background:#fff!important;border:1px solid #d5e5f4!important;border-radius:22px!important;padding:16px 19px!important;margin-bottom:12px!important;min-height:0!important}
+main>.hero .eyebrow,main>.hero p,main>.hero .hero-mark{display:none!important}
+main>.hero h1{margin:0!important;font-size:clamp(19px,3.5vw,25px)!important;line-height:1.35!important}
+#choices{padding:14px!important;border-radius:20px!important}
+#choices .panel-top{margin-bottom:10px!important}
+#choices .panel-top p{display:none!important}
+#choicesHeading{font-size:19px!important;margin:0!important}
+#choiceGrid{gap:8px!important}
+#choiceGrid .choice{min-height:58px!important;padding:10px 12px!important;gap:10px!important;align-items:center!important}
+#choiceGrid .choice strong{font-size:clamp(14px,2.7vw,17px)!important;line-height:1.4!important}
+#choiceGrid .choice small{display:none!important}
+#choiceGrid .choice .hva-a11-choice-number{width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;font-size:17px!important}
+#notice{margin:10px 0!important;padding:10px 12px!important;font-size:12px!important}
+
+#notice:empty{display:none!important}
+body:has(#choices:not([hidden])) #notice:not([data-error="true"]){display:none!important}
+
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #developmentNote,body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #a11ActiveDescription,body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #hvaUserIdentityStatus{display:none!important}
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor>.panel-top{background:#fff!important;border:0!important;box-shadow:none!important;padding:0 0 10px!important;gap:8px!important}
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #backToChoices{width:auto!important;min-height:34px!important;padding:6px 10px!important;box-shadow:none!important}
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor #editorHeading{font-size:clamp(18px,3.4vw,24px)!important;margin:0!important}
+body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor .a11-sign-choice:not(:has(input:checked)) .a11-sign-check{visibility:hidden!important}
+
+
+#editor #developmentNote,#editor #a11ActiveDescription,#editor #hvaUserIdentityStatus{display:none!important}
+#editor>.panel-top{background:#fff!important;border:0!important;box-shadow:none!important;padding:0 0 12px!important;gap:8px!important}
+#editor>.panel-top h2{font-size:clamp(18px,3.4vw,24px)!important;margin:0!important}
+#editor #backToChoices{width:auto!important;min-height:36px!important;padding:7px 12px!important;box-shadow:none!important}
+#editor .hva-a11-compact-account{padding:14px!important;line-height:1.6!important}
+#editor .a11-sign-choice:not(:has(input:checked)) .a11-sign-check{opacity:.35!important}
+#editor .a11-sign-choice:has(input:checked) .a11-sign-check{opacity:1!important}
+#editor #a11SignHint{display:none!important}
+
+#editor #backToChoices{display:none!important}</style><style>#editor .hva-a11-compact-account{display:flex!important;margin:0!important;border:0!important;border-radius:0!important;background:#0b57d0!important;color:white!important}#editor .a11-sign-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}#editor .a11-sign-choice:has(input:checked){background:#0b57d0!important;color:white!important}#editor .a11-sign-choice:has(input:checked) strong{color:white!important}#editor .a11-sign-choice:not(:has(input:checked)) .a11-sign-check{visibility:hidden!important}#editor .a11-sign-choice:has(input:disabled){cursor:not-allowed}#editor[hidden],#preview[hidden]{display:none!important}.hva-report-online:before{background:#aab9c7!important;animation:none!important}</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></head><body><div class="hva-report-head" role="banner"><nav class="hva-report-nav" aria-label="Điều hướng"><a href="./NghiepVu.html" aria-label="Quay lại"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a><a href="./index.html" aria-label="Trang chủ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav><div class="hva-report-brand">HVA–<b>EDOS</b><small>HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</small></div><span class="hva-report-online">CHƯA KẾT NỐI</span></div><main><h1>A.1.4 · Báo cáo điều chỉnh, bổ sung thông tin</h1><section id="editor"><div class="hva-a1-account-sign"><section class="hva-a11-compact-account" aria-labelledby="hvaUserIdentityTitle"><span id="hvaUserIdentityTitle" class="hva-a11-sr">Thông tin người báo cáo</span><i class="bi bi-person-fill" aria-hidden="true"></i><strong id="identityName">Chưa đăng nhập</strong><span class="hva-a11-sep">|</span><span id="identityTeam">Chưa xác định</span><span class="hva-a11-sep">|</span><span id="identityRole">Chưa xác định</span></section>
+    
+    <section class="a11-sign-method" id="a11SignMethod" aria-labelledby="a11SignTitle">
+ <div class="a11-sign-eyebrow"><i class="bi bi-pen"></i> PHƯƠNG THỨC XÁC NHẬN</div>
+ <h3 id="a11SignTitle">Hình thức ký</h3>
+ <div class="a11-sign-options" role="radiogroup" aria-label="Hình thức ký báo cáo">
+   <label class="a11-sign-choice"><input type="radio" name="a11SigningMethod" value="ELECTRONIC" disabled title="Chưa kết nối ký điện tử">
+     <span class="a11-sign-icon"><i class="bi bi-shield-check"></i></span>
+     <span class="a11-sign-copy"><strong>Ký điện tử</strong><small>Xác thực CCCD, tải chữ ký và ký xác nhận</small></span>
+     <i class="bi bi-check-circle-fill a11-sign-check" aria-hidden="true"></i>
+   </label>
+   <label class="a11-sign-choice"><input type="radio" name="a11SigningMethod" value="PAPER" checked>
+     <span class="a11-sign-icon"><i class="bi bi-printer"></i></span>
+     <span class="a11-sign-copy"><strong>Ký tay</strong><small>Gửi hồ sơ, in báo cáo và nộp bản giấy đã ký</small></span>
+     <i class="bi bi-check-circle-fill a11-sign-check" aria-hidden="true"></i>
+   </label>
+ </div>
+ 
+ </section></div>
+    <form id="report"><label for="kind">Loại báo cáo</label><select id="kind"><option>Thay đổi thông tin dạy thêm</option><option>Tạm nghỉ dạy thêm</option><option>Tiếp tục dạy thêm</option><option>Chấm dứt tham gia dạy thêm</option><option>Bổ sung hồ sơ, minh chứng</option></select><label for="facility">Tên cơ sở tổ chức dạy thêm</label><input id="facility" required><div class="dates"><div><label for="from">Ngày có hiệu lực</label><input id="from" type="date" required></div><div id="until" hidden><label for="to">Dự kiến nghỉ đến ngày</label><input id="to" type="date"></div></div><label for="reason">Nội dung điều chỉnh / lý do</label><textarea id="reason" rows="5" required></textarea><label for="link">Liên kết hồ sơ, minh chứng (Google Drive)</label><input id="link" type="url" placeholder="https://drive.google.com/..." ><div class="actions"><button type="submit">Xem trước báo cáo</button><button type="reset" class="secondary">Làm mới</button></div></form></section><section id="preview" hidden><h2>Bản xem trước – chưa gửi</h2><pre id="output" style="white-space:pre-wrap;font:inherit"></pre><div class="actions"><button type="button" id="editPreview" class="secondary">Quay lại chỉnh sửa</button><button type="button" disabled>Xác nhận &amp; gửi</button></div><p class="connection-error">Chưa kết nối tuyến tiếp nhận hồ sơ.</p></section></main><script>const $=id=>document.getElementById(id);let u={};try{u=JSON.parse(sessionStorage.getItem('user')||localStorage.getItem('user')||'{}')}catch(e){}const name=u.hoTen||u.fullName||u.name||u.tenDangNhap||'';$('identityName').textContent=name||'Chưa xác định tài khoản';$('identityTeam').textContent=u.toChuyenMon||u.toBoPhan||u.team||u.to||'Chưa xác định';$('identityRole').textContent=u.chucVu||'Chưa xác định';$('kind').onchange=()=>{$('until').hidden=$('kind').selectedIndex!==1};$('from').onchange=()=>{$('to').min=$('from').value};$('report').onsubmit=e=>{e.preventDefault();if(!$('until').hidden&&$('to').value&&$('to').value<$('from').value){alert('Ngày kết thúc không hợp lệ');return}if($('link').value&&!/^https:\/\/(drive|docs)\.google\.com\//i.test($('link').value)){alert('Vui lòng dùng liên kết Google Drive hoặc Docs');return}$('output').textContent=['Người lập: '+(name||'Chưa xác định'),'Hình thức ký: Ký tay',$('kind').value,'Cơ sở: '+$('facility').value,'Hiệu lực: '+$('from').value,...(!$('until').hidden?['Dự kiến đến: '+$('to').value]:[]),$('reason').value,'Minh chứng: '+$('link').value].join('\n');$('preview').hidden=false;$('editor').hidden=true;$('preview').scrollIntoView({block:'start'})};;$('editPreview').onclick=()=>{$('preview').hidden=true;$('editor').hidden=false};$('report').addEventListener('reset',()=>{$('until').hidden=true;$('to').min='';$('preview').hidden=true});</script></body></html>
