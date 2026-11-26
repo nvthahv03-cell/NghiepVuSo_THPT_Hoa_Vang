@@ -54,12 +54,12 @@ function updateActorCard(d){
  const x=d&&d.username?d:null;
  if(x){
   name.textContent=String(x.name||x.username);
-  details.textContent='Tổ: '+String(x.team||'Chưa xác định')+' · Tài khoản: '+x.username;
-  flag.textContent='Backend xác thực';flag.classList.add('verified');
+  details.textContent=[x.team,x.role||x.chucVu].filter(Boolean).join(' | ');if(details.textContent)details.textContent=' | '+details.textContent;
+  flag.textContent='Đã xác thực';flag.classList.add('verified');flag.hidden=true;
  }else{
   name.textContent='Chưa xác minh tài khoản';
-  details.textContent='Đăng nhập lại EDOS hoặc kiểm tra kết nối Backend để truy xuất thông tin giáo viên.';
-  flag.textContent='Chưa xác minh';flag.classList.remove('verified');
+  details.textContent='';
+  flag.textContent='Chưa xác minh';flag.classList.remove('verified');flag.hidden=true;
  }
 }
 gradeSelect?.addEventListener('change',()=>{buildClassSelect(gradeSelect.value);updatePreview();});
@@ -150,9 +150,9 @@ function sync(){
   btn.classList.remove('a21-action-active');
   submitAction?.classList.remove('a21-action-active');
  }else{
-  // A.2.1 defaults to schedule registration. Other A.2 menus retain old behavior.
-  markAction('schedule');
-  panel.hidden=false;
+  // A.2.1: mở danh mục trước, kế thừa A.1.1.
+  markAction('');
+  panel.hidden=true;
   submissionPanel?.classList.add('hidden');
  }
 }
@@ -215,7 +215,7 @@ function updatePreview(){
  const empty=!p.className&&!p.subject&&!p.date&&!p.session&&!p.start&&!p.end&&!p.assessment;
  if(empty){
   row.innerHTML='<tr><td colspan="7">Chọn môn, lớp, ngày và tiết để xem trước.</td></tr>';
-  flag.textContent='Chưa đủ thông tin';warning.textContent='Bảng này thể hiện nội dung đang nhập; chưa gửi đến TTCM.';return;
+  flag.textContent='Chưa đủ thông tin';warning.textContent='';return;
  }
  const rawDay=dateInput.value.trim();
  const dateInvalid=!!rawDay&&!viToIso(rawDay);
@@ -232,8 +232,7 @@ function updatePreview(){
  flag.textContent=issues.length?'Có lỗi cần sửa':incomplete?'Chưa đủ thông tin':'Sẵn sàng kiểm tra trên Backend';
  flag.style.color=issues.length?'#ab3032':incomplete?'#70511d':'#096947';
  warning.textContent=issues.length?issues.join(' • '):
-  incomplete?'Điền đầy đủ các trường có dấu * trước khi lưu.':
-  'Xem trước hợp lệ theo các điều kiện tại giao diện. Chưa lưu; Backend sẽ kiểm tra toàn bộ lịch của trường trước khi xác nhận.';
+  incomplete?'Điền đầy đủ các trường có dấu * trước khi lưu.':'';
  warning.style.color=issues.length?'#a72a33':'#6b5b31';
 }
 ['input','change'].forEach(evt=>form.addEventListener(evt,updatePreview));
@@ -271,10 +270,10 @@ async function refresh(){
   if(turn!==requestId)return;
   remote=d.items||[];actor=d.actor||{};ready=true;updateActorCard(actor);
   render();
-  status('Kết nối Backend thành công. Đã tải '+remote.filter(x=>x.username===actor.username).length+' lịch đăng ký của thầy/cô.');
+  status('');$('a21ConnectionActions').hidden=true;
  }catch(e){
   if(turn!==requestId)return;
-  ready=false;render();updateActorCard(null);
+  ready=false;render();updateActorCard(null);$('a21ConnectionActions').hidden=false;
   const msg=String(e.message||e);
   const expired=/phiên|đăng nhập|hết hạn|AUTH_REQUIRED|SESSION_INVALID/i.test(msg);
   if(relogin)relogin.hidden=!expired;
@@ -304,12 +303,12 @@ table.addEventListener('click',async e=>{
   const draft=remote.find(x=>x.id===sendId&&x.username===actor?.username&&x.status==='DRAFT');
   if(!draft)return;
   // Ensure a deliberate user action; don't silently forward when saving.
-  if(!window.confirm('Gửi lịch '+draft.className+' – '+draft.subject+' cho TTCM '+(actor?.team||'')+'? Sau khi gửi, không thể sửa trực tiếp.'))return;
+  if(!await window.hvaA21Dialog('Xác nhận gửi lịch kiểm tra','Gửi lịch '+draft.className+' – '+draft.subject+' cho TTCM '+(actor?.team||'')+'? Sau khi gửi, không thể sửa trực tiếp.','Xác nhận gửi'))return;if(busy||!ready||!remote.some(x=>x.id===sendId&&x.username===actor?.username&&x.status==='DRAFT'))return;
   busy=true;const btn=e.target.closest('button');if(btn)btn.disabled=true;
   try{
    const sent=await post('ktScheduleSave',{sendId});
    await refresh();
-   status(sent.message||'Đã gửi đăng ký cho TTCM.');
+   status(sent.message||'Đã gửi đăng ký cho TTCM.');if(ready&&remote.some(x=>x.id===sendId&&x.username===actor?.username&&['WAIT_TTCM','WAIT_BGH','APPROVED'].includes(x.status)))await window.hvaA21Dialog('Gửi lịch thành công','Đăng ký '+draft.className+' – '+draft.subject+' đã chuyển đến TTCM.','Đóng',true);
   }catch(err){status('CHƯA gửi TTCM: '+String(err.message||err),true);}
   finally{busy=false;if(btn?.isConnected)btn.disabled=false;}
   return;
