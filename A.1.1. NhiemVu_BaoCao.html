@@ -391,16 +391,33 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
 @media(max-width:600px){#editor .hva-a11-date-control>input[id^="field-"]{font-size:12px!important;padding:9px 35px 9px 7px!important}
 #editor .hva-a11-date-icon{right:10px!important;font-size:15px!important}
 #editor .hva-a11-date-control .hva-a11-native-date{width:36px!important;min-width:36px!important;max-width:36px!important}}
-</style></head>
+</style><link rel="stylesheet" href="./HVA_Navigation.css?v=20261126">
+<style id="hva-a11-visual-20261126">
+.hva-pro-header .hva-pro-header-inner{grid-template-columns:auto minmax(0,1fr) auto!important}
+.hva-edos-nav-pair{display:flex;align-items:center;gap:8px}
+.hva-pro-header .hva-edos-nav-pair .hva-nav-tap{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;border-radius:11px!important;color:#fff!important}
+.hva-edos-nav-pair svg{width:24px!important;height:24px!important}
+.hero-mark{display:grid!important;place-items:center!important}
+.hero-mark i{margin:0!important}
+#choices,#choices button,.hero{font-family:"Segoe UI",Arial,sans-serif!important}
+#choiceGrid .choice strong{font-weight:700!important;color:#103b61!important;font-size:15px!important}
+#choiceGrid .choice small{font-weight:500!important;color:#365c78!important;font-size:13px!important}
+#choices .muted,.hero p{color:#365c78!important;font-weight:500!important}
+#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]){background:linear-gradient(112deg,#0752a5,#067cce 65%,#05a6db)!important;border-color:#0573d6!important;color:white!important;box-shadow:0 9px 24px #0266be3d!important}
+#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) strong,#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) small,#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) .tag,#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) .choice-icon{color:#fff!important}
+#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) .tag,#choiceGrid .choice:is(:hover,:focus-visible,[aria-pressed="true"]) .choice-icon{background:#ffffff30!important}
+@media(max-width:720px){.hva-pro-header .hva-pro-header-inner{grid-template-columns:auto minmax(0,1fr)!important;gap:8px!important}.hva-edos-nav-pair{gap:5px}.hva-pro-header .hva-edos-nav-pair .hva-nav-tap{width:44px!important;height:44px!important}}
+</style>
+</head>
 <body>
 <header class="hva-pro-header"><div class="hva-pro-header-inner">
-  <a class="hva-pro-back" href="./NghiepVu.html" title="Về Nghiệp vụ số" aria-label="Về danh mục Nghiệp vụ số"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
+  <nav class="hva-edos-nav-pair" aria-label="Điều hướng"><a class="hva-pro-back hva-nav-tap hva-nav-back" href="./NghiepVu.html" title="Quay lại" aria-label="Quay lại danh mục nghiệp vụ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h13"/></svg></a><a class="hva-pro-back hva-nav-tap hva-nav-home" href="./index.html" title="Trang chủ" aria-label="Trang chủ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav>
   <div class="hva-pro-brand"><div class="hva-pro-kicker">SỞ GIÁO DỤC VÀ ĐÀO TẠO ĐÀ NẴNG</div><div class="hva-pro-school">TRƯỜNG THPT HÒA VANG</div><div class="hva-pro-slogan hva-pro-edos">HVA–EDOS</div></div>
   <div class="hva-pro-online">A.1 · BÁO CÁO CHUYÊN MÔN</div>
 </div></header>
 <main>
   <section class="hero"><div><div class="eyebrow">HỒ SƠ BÁO CÁO · HVA–EDOS</div><h1 id="heading">Báo cáo thực hiện nhiệm vụ – Báo cáo khác</h1><p>Chọn đúng loại báo cáo, điền nội dung, xem trước rồi gửi khi hệ thống xác nhận tuyến tiếp nhận.</p></div>
-  <div class="hero-mark" aria-hidden="true"><i class="bi bi-file-earmark-text"></i><span>4 HÌNH THỨC</span></div></section>
+  <div class="hero-mark" aria-hidden="true"><i class="bi bi-file-earmark-text"></i></div></section>
   <section class="panel" id="choices" aria-labelledby="choicesHeading"><div class="panel-top"><div><div class="eyebrow hva-step-label">BƯỚC 01 · CHỌN BIỂU MẪU</div><h2 id="choicesHeading">Chọn loại báo cáo</h2><p class="muted">Bốn loại báo cáo dùng chung quy trình xem trước, chọn hình thức ký và gửi đến BGH/TTCM.</p></div></div>
   <div class="choice-grid" id="choiceGrid">
     <button type="button" class="choice" data-id="task" aria-pressed="false"><span class="choice-icon" aria-hidden="true"><i class="bi bi-clipboard2-check"></i></span><span><strong>Báo cáo thực hiện nhiệm vụ được giao</strong><small>Kết quả thực hiện nhiệm vụ theo phân công.</small><span class="tag">Soạn và xem trước</span></span></button>
@@ -410,7 +427,7 @@ main{max-width:1100px!important;margin:23px auto 55px!important;padding:0 18px!i
   </div></section>
   <p id="notice" class="status" data-error="false" role="status" aria-live="polite">Chọn một loại báo cáo để bắt đầu. Trạng thái nộp hồ sơ sẽ được xác minh từ Backend.</p>
   <section class="panel" id="editor" hidden aria-labelledby="editorHeading">
-    <div class="panel-top"><div><div class="eyebrow">ĐANG THỰC HIỆN · BƯỚC 02</div><h2 id="editorHeading"></h2><p class="hva-a11-active-description" id="a11ActiveDescription">Kê khai theo đúng loại báo cáo đã chọn.</p></div><button type="button" class="btn ghost hva-a11-back-menu" id="backToChoices"><i class="bi bi-arrow-left" aria-hidden="true"></i> Quay lại 4 hình thức báo cáo</button></div>
+    <div class="panel-top"><div><div class="eyebrow">ĐANG THỰC HIỆN · BƯỚC 02</div><h2 id="editorHeading"></h2><p class="hva-a11-active-description" id="a11ActiveDescription">Kê khai theo đúng loại báo cáo đã chọn.</p></div><button type="button" class="btn ghost hva-a11-back-menu" id="backToChoices"><i class="bi bi-arrow-left" aria-hidden="true"></i> Quay lại danh mục</button></div>
     <p class="warning" id="developmentNote">Bản xem trước giúp kiểm tra nội dung trước khi nộp. Chỉ hồ sơ có mã tiếp nhận của máy chủ mới được coi là đã gửi. Không nhập thông tin cá nhân nhạy cảm.</p>
     <section class="identity-grid hva-user-ident hva-a11-identity-inline" aria-labelledby="hvaUserIdentityTitle">
       <div class="hva-user-ident__top">
