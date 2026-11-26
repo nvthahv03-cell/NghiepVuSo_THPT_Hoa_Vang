@@ -4,6 +4,8 @@
  */
 (()=>{'use strict';
  const ID='hva-edos-identity-bar';
+ const portal=decodeURIComponent(location.pathname).split('/').pop();
+ const welcome=portal==='NghiepVu.html'||portal==='DieuHanh.html';
  if(document.getElementById(ID))return;
  const get=(storage,key)=>{try{return window[storage].getItem(key)||''}catch(_){return''}};
  const validExpiry=raw=>{const n=Number(raw);if(Number.isFinite(n)&&n>0)return (n<1e12?n*1000:n)>Date.now();const t=Date.parse(raw);return Number.isFinite(t)&&t>Date.now()};
@@ -26,7 +28,7 @@
       if(typeof v!=='string'||v.length>1400)return false;
       try{const x=new URL(v);return x.protocol==='https:'&&!x.username&&!x.password}catch(_){return false}
     })||'';
-    return {name,position,team,photo};
+    return {name,position,team,photo,gender:String(u.gioiTinh||u.gender||'').trim().toLowerCase()};
    }catch(_){}
   }
   return null;
@@ -47,6 +49,7 @@
  '#'+ID+'.hva-id-in-workspace .hva-id-name{font-size:16px;color:#092f54;font-weight:900}'+
  '#'+ID+'.hva-id-in-workspace .hva-id-role{font-size:12.5px;line-height:1.5;color:#315a79;font-weight:700}'+
  '@media(max-width:600px){#'+ID+'{margin:9px 12px;padding:10px 12px;font-size:12px}#'+ID+' .hva-id-tag{font-size:10px}#'+ID+'.hva-id-in-workspace{margin:0 0 17px;padding:12px;display:flex;align-items:center;flex-direction:row;gap:12px}#'+ID+'.hva-id-in-workspace .hva-id-person{width:100%}#'+ID+'.hva-id-in-workspace .hva-id-avatar{width:54px;height:54px;flex-basis:54px}#'+ID+'.hva-id-in-workspace .hva-id-name{font-size:15px}#'+ID+'.hva-id-in-workspace .hva-id-role{font-size:11px}#'+ID+'.hva-id-in-workspace .hva-id-tag{display:none}}';
+ if(welcome)css.textContent+=`#hva-edos-identity-bar.hva-welcome{width:100%;max-width:none;margin:0 0 16px;padding:18px 20px;background:linear-gradient(105deg,#0B57D0,#087FC2)!important;color:#fff!important;border:1px solid #0B57D0!important;border-radius:12px;box-shadow:none;flex-wrap:nowrap}#hva-edos-identity-bar.hva-welcome .hva-id-avatar{width:56px;height:56px;flex-basis:56px;background:#ffffff24!important;border:1.5px solid #ffffffcc!important;color:white!important}#hva-edos-identity-bar.hva-welcome .hva-id-name{font:700 18px/1.4 "Segoe UI",Arial,sans-serif!important;color:white!important}#hva-edos-identity-bar.hva-welcome .hva-id-welcome-sub{font:600 14px/1.4 "Segoe UI",Arial,sans-serif;color:white}#hva-edos-identity-bar.hva-welcome .hva-id-role{font:500 12px/1.5 "Segoe UI",Arial,sans-serif!important;color:#e0f2ff!important}#hva-edos-identity-bar.hva-welcome .hva-id-tag{color:#a4ffd9!important;display:block!important}#hva-edos-identity-bar.hva-welcome .hva-id-back{color:white}#hva-edos-identity-bar.hva-welcome .hva-id-person{flex:1}#hva-edos-identity-bar.hva-welcome .hva-id-avatar svg{width:28px;height:28px}#hva-edos-identity-bar.hva-welcome .hva-id-tag svg{width:22px;height:22px}@media(max-width:600px){#hva-edos-identity-bar.hva-welcome{padding:12px;gap:8px}#hva-edos-identity-bar.hva-welcome .hva-id-name{font-size:15px!important}#hva-edos-identity-bar.hva-welcome .hva-id-welcome-sub{font-size:12px}#hva-edos-identity-bar.hva-welcome .hva-id-avatar{width:46px;height:46px;flex-basis:46px}}`;
  document.head.append(css);
  const bar=document.createElement('aside');bar.id=ID;bar.setAttribute('aria-label','Danh tính người truy cập theo phiên HVA–EDOS');
  const person=document.createElement('div');person.className='hva-id-person';
@@ -57,7 +60,7 @@
  let avatarRequest=0;
  function setAvatar(user){
   const parts=String(user?.name||'').trim().split(/\s+/).filter(Boolean);
-  avatarInitials.textContent=parts.length>1?(parts[0][0]+parts[parts.length-1][0]).toUpperCase():parts.length?parts[0].slice(0,2).toUpperCase():'HV';
+  if(welcome){avatarInitials.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>';}else avatarInitials.textContent=parts.length>1?(parts[0][0]+parts[parts.length-1][0]).toUpperCase():parts.length?parts[0].slice(0,2).toUpperCase():'HV';
   avatarImage.hidden=true;avatarInitials.hidden=false;
   const request=++avatarRequest;
   avatarImage.onload=()=>{if(request!==avatarRequest)return;avatarImage.hidden=false;avatarInitials.hidden=true};
@@ -67,10 +70,11 @@
  const fields=document.createElement('div');fields.className='hva-id-fields';
  const name=document.createElement('span');name.className='hva-id-name';
  const role=document.createElement('span');role.className='hva-id-role';
- fields.append(name,role);person.append(avatar,fields);
+ const subtitle=document.createElement('span');subtitle.className='hva-id-welcome-sub';
+ if(welcome){bar.classList.add('hva-welcome');fields.append(name,subtitle,role)}else fields.append(name,role);person.append(avatar,fields);
  const aside=document.createElement('div');aside.className='hva-id-tag';
  bar.append(person,aside);
- const workspace=document.querySelector('body > main.shell > .workspace');
+ const workspace=document.querySelector('body > main.shell > .workspace')||(portal==='DieuHanh.html'?document.querySelector('body > main.wrap'):null);
  const header=document.querySelector('body > header');
  // Trang danh muc NVS co main.shell overlap header: dat danh tinh TRONG workspace
  // de khong bi che phu va cho du cho ho ten, vai tro, to chuyen mon tren mobile.
@@ -81,11 +85,13 @@
  else{document.body.insertBefore(bar,document.body.firstChild)}
  function refresh(){
   const u=read();
-  name.textContent=u?u.name:'Chưa đăng nhập HVA–EDOS';
+  const honor=u&&/^(nam|male)$/.test(u.gender)?'thầy ':u&&/^(nữ|nu|female)$/.test(u.gender)?'cô ':'';
+  name.textContent=u?(welcome?'Chào mừng '+honor+u.name+'!':u.name):'Chưa đăng nhập HVA–EDOS';
+  subtitle.textContent=welcome&&u?'Đến với không gian '+(portal==='DieuHanh.html'?'điều hành':'nghiệp vụ')+' HVA–EDOS':'';
   setAvatar(u);
   role.textContent=u?[u.position,u.team].filter(Boolean).join(' · ')||'Hồ sơ người dùng':'Chưa có phiên đăng nhập hợp lệ trên thiết bị';
   aside.replaceChildren();
-  if(u){aside.textContent='Phiên đăng nhập HVA–EDOS';}
+  if(u){if(welcome){aside.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 8 3v7c0 5-8 9-8 9s-8-4-8-9V6z M8 12l3 3 5-6"/></svg>';aside.title='Phiên đăng nhập HVA–EDOS';}else aside.textContent='Phiên đăng nhập HVA–EDOS';}
   else{const a=document.createElement('a');a.href='./index.html';a.className='hva-id-back';a.textContent='Đăng nhập tại Trang chủ EDOS';aside.append(a);}
  }
  refresh();
