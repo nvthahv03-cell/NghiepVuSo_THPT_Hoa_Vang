@@ -437,7 +437,28 @@ body:has(#choiceGrid [data-id="task"][aria-pressed="true"]) #editor .a11-sign-ch
 #editor .a11-sign-choice:not(:has(input:checked)) .a11-sign-check{opacity:.35!important}
 #editor .a11-sign-choice:has(input:checked) .a11-sign-check{opacity:1!important}
 #editor #a11SignHint{display:none!important}
-</style><style id="a11-single-back">#editor #backToChoices{display:none!important}</style></head>
+</style><style id="a11-single-back">#editor #backToChoices{display:none!important}</style><style id="a11-a52-palette">
+@media screen{
+html body{background:#f7f8fa!important;color:#252a33!important}
+html body>.hva-report-head{background:linear-gradient(110deg,#164fc3,#1d65ed)!important}
+html body>.hva-report-head:before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 150' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='white' stroke-width='1.4' opacity='.19'%3E%3Cpath d='M0 18L135 18 230 85 405 85 510 0M0 135L110 135 205 65 375 65 480 150M520 0L645 76 785 76 900 15M530 150L650 100 800 100 900 150'/%3E%3C/g%3E%3Cg fill='white' opacity='.32'%3E%3Ccircle cx='135' cy='18' r='3'/%3E%3Ccircle cx='230' cy='85' r='3'/%3E%3Ccircle cx='205' cy='65' r='3'/%3E%3Ccircle cx='645' cy='76' r='3'/%3E%3Ccircle cx='785' cy='76' r='3'/%3E%3Ccircle cx='650' cy='100' r='3'/%3E%3C/g%3E%3C/svg%3E")!important;background-size:100% 100%;background-repeat:no-repeat}
+html body>.hva-report-head .hva-report-nav a{background:#ffffff12!important;border-color:#ffffff66!important}
+html body>.hva-report-head .hva-report-online:not([data-offline=true]){background:#164aab!important}
+html body main>.hero,html body main>.panel{background:#fff!important;border-color:#dce2e9!important;box-shadow:0 2px 5px #172c4518!important}
+html body main>.hero h1,html body #choicesHeading,html body #editorHeading{color:#1556cb!important}
+html body #choices #choiceGrid .choice{background:#fff!important;border-color:#1d65ed!important;color:#1d65ed!important}
+html body #choices #choiceGrid .choice strong{color:#1d65ed!important}
+html body #choices #choiceGrid .choice .hva-a11-choice-number{background:#fff!important;color:#1d65ed!important;border-color:#1d65ed!important}
+html body #choices #choiceGrid .choice[aria-pressed="true"]{background:#1556cb!important;border-color:#ffa326!important;color:#fff!important}
+html body #choices #choiceGrid .choice[aria-pressed="true"] strong{color:#fff!important}
+html body #choices #choiceGrid .choice:hover:not([aria-pressed="true"]){background:#f5f8ff!important;border-color:#1d65ed!important}
+html body #editor .hva-a11-compact-account{background:#1d65ed!important}
+html body #editor .a11-sign-choice:not(:has(input:checked)){background:#fff!important;color:#1d65ed!important;border-color:#1d65ed!important}
+html body #editor .a11-sign-choice:has(input:checked){background:#1556cb!important;color:white!important;border-color:#ffa326!important}
+html body #editor .btn:not(.secondary):not(.ghost):not(:disabled),html body #previewSection #printActions #a11Send:not(:disabled){background:#1d65ed!important;color:white!important;border-color:#1d65ed!important}
+html body #editor .btn.secondary,html body #editor .btn.ghost,html body #previewSection #printActions .btn.secondary,html body #previewSection #printActions .btn.ghost{background:#fff!important;color:#1556cb!important;border-color:#1d65ed!important}
+}
+</style></head>
 <body>
 <div class="hva-report-head" role="banner"><nav class="hva-report-nav" aria-label="Điều hướng"><a href="./NghiepVu.html" aria-label="Quay lại"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a><a href="./index.html" aria-label="Trang chủ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav><div class="hva-report-brand">HVA–<b>EDOS</b><small>HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</small></div><span class="hva-report-online">TRỰC TUYẾN</span></div><header class="hva-report-legacy-header hva-pro-header"><div class="hva-pro-header-inner">
   <nav class="hva-edos-nav-pair" aria-label="Điều hướng"><a class="hva-pro-back hva-nav-tap hva-nav-back" href="./NghiepVu.html" title="Quay lại" aria-label="Quay lại danh mục nghiệp vụ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6M8 12h13"/></svg></a><a class="hva-pro-back hva-nav-tap hva-nav-home" href="./index.html" title="Trang chủ" aria-label="Trang chủ"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav>
