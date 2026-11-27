@@ -2308,6 +2308,38 @@ if(!attached){
   }
  }
 }
+// AI40 R3 multi-domain: send natural-language requests to the server-side planner.
+if(!attached){
+ const q3=prompt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+ const domains=[/to chuyen mon|co cau to|co cau nhan su/,/lich cong tac|lich tuan/,/nhiem vu|viec cua toi|cong viec|qua han/,/thong bao|nhac nho/,/binh chon|bieu quyet|khao sat/,/cuoc hop|lich hop|hoi hop/,/van ban|cong van|quyet dinh/,/thoi khoa bieu|\btkb\b|lich day|day lop|day tiet/,/lich kiem tra|lich thi|dot kiem tra/];
+ const hits=domains.filter(r=>r.test(q3)).length;
+ const explicit=/^(?:tra cuu edos|tong hop edos|gateway tra cuu|gateway tong hop)\b/.test(q3);
+ const readRequest=/\b(tong hop|tra cuu|liet ke|cho biet|kiem tra|xem|bao nhieu|ke ten|thong ke)\b/.test(q3);
+ if(hits>0&&(explicit||(hits>=2&&readRequest))){
+  ask.disabled=true;status.textContent='AI40 R3 đang điều phối nguồn nghiệp vụ...';
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),45000);
+  const labels={school_teams:'Cơ cấu tổ chuyên môn',published_calendar:'Lịch công tác đã công bố',my_tasks:'Nhiệm vụ cá nhân',my_notices:'Thông báo cá nhân',my_polls:'Bình chọn cá nhân',my_meetings:'Cuộc họp cá nhân',documents:'Danh mục văn bản',timetable:'TKB đã công bố',exam_schedule:'Lịch kiểm tra'};
+  try{
+   const res=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'edosAiRead',sessionToken:token,question:prompt}),signal:ctrl.signal});
+   if(!res.ok)throw Error('HTTP '+res.status);
+   const d=await res.json();if(d?.success!==true||d.planner!=='RULE_ROUTER'||!Array.isArray(d.results)||!d.results.length)throw Error(d?.message||'Backend chưa trả kết quả điều phối R3.');
+   if(String(NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||'').trim()!==token)return;
+   const lines=['**Kết quả tra cứu liên nghiệp vụ EDOS**','', 'Bộ điều phối nhận diện '+d.results.length+' nguồn. Kết quả dưới đây là dữ liệu nguồn, chưa lọc theo mọi điều kiện thời gian hoặc trạng thái trong câu hỏi.'];
+   for(const item of d.results){
+    lines.push('','**'+(labels[item.id]||'Nguồn nghiệp vụ')+'**');
+    if(!item.ok){lines.push('Chưa truy xuất được: '+String(item.message||'Nguồn không khả dụng.'));continue;}
+    const v=item.data||{};
+    if(item.id==='school_teams'&&Array.isArray(v.teams)){lines.push('Số tổ: '+String(v.count),...v.teams.map(x=>'- '+String(x)));}
+    else if(Array.isArray(v.items)){lines.push('Số bản ghi nguồn trả về: '+String(v.count));for(const row of v.items){const entries=Object.entries(row||{}).filter(([k,x])=>typeof x==='string'||typeof x==='number'||typeof x==='boolean');if(entries.length)lines.push('- '+entries.map(([k,x])=>k+': '+String(x)).join(' · '));}if(v.truncated)lines.push('Chỉ hiển thị tối đa 50 bản ghi.');}
+    else lines.push('Cấu trúc dữ liệu chưa được hỗ trợ hiển thị.');
+    lines.push('Nguồn: '+String(item.source||'AI40'));
+   }
+   lines.push('','Không sử dụng mô hình AI để suy đoán dữ liệu thiếu. Nguồn bị khóa không được coi là không có dữ liệu.');
+   showAnswer(lines.join('\n'));copyBtn.textContent='⧉ Sao chép';copyBtn.classList.remove('copied');status.textContent='AI40 R3 — '+d.results.filter(x=>x.ok).length+'/'+d.results.length+' nguồn đọc thành công; điều phối theo quy tắc.';
+  }catch(e){showAnswer('Chưa nhận được kết quả điều phối hợp lệ từ Gateway. Không suy đoán dữ liệu.');status.textContent='AI40 R3: '+String(e.message||'Lỗi kết nối')}
+  finally{clearTimeout(timer);ask.disabled=false}return;
+ }
+}
 // AI40 R1: authenticated gateway capability check and aggregate-only personnel query.
 if(!attached){
  const q40=prompt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[?!.,]+$/g,'').replace(/\s+/g,' ').trim();
