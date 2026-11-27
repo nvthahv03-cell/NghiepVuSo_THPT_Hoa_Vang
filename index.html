@@ -4806,5 +4806,42 @@ html body nav.nvs-premium-nav>button:focus-visible{
 /* Khi xem TV01/Thông báo: thu gọn 4 cổng Trang chủ, không thay đổi điều hướng. */
 body.hva-tv-open .nvs-chooser{display:none!important}
 </style>
+<style id="hva-home-a52-standard-20261127">
+/* Screen-only home palette; existing Dragon Bridge background and auth are untouched. */
+@media screen{
+html body{background:#f7f8fa!important}
+html body .hva-pro-header{background:linear-gradient(110deg,#164fc3,#1d65ed)!important;border-color:#1d65ed!important;box-shadow:0 2px 5px #172c4518!important}
+html body .hva-pro-header::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 150' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='white' stroke-width='1.4' opacity='.19'%3E%3Cpath d='M0 18L135 18 230 85 405 85 510 0M0 135L110 135 205 65 375 65 480 150M520 0L645 76 785 76 900 15M530 150L650 100 800 100 900 150'/%3E%3C/g%3E%3Cg fill='white' opacity='.32'%3E%3Ccircle cx='135' cy='18' r='3'/%3E%3Ccircle cx='230' cy='85' r='3'/%3E%3Ccircle cx='205' cy='65' r='3'/%3E%3Ccircle cx='645' cy='76' r='3'/%3E%3Ccircle cx='785' cy='76' r='3'/%3E%3Ccircle cx='650' cy='100' r='3'/%3E%3C/g%3E%3C/svg%3E")!important;background-size:100% 100%;background-repeat:no-repeat}
+html body .hva-pro-header::before{opacity:1!important}
+html body .hva-pro-header::after{display:none!important}
+html body .edos-assistant{background:#1556cb!important;border-color:#1d65ed!important;box-shadow:0 2px 5px #172c4518!important;overflow:visible!important}
+html body .edos-ai-greeting{background:#ffffff19!important}
+html body .edos-v35-newsbar{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto!important;gap:7px!important;padding:5px!important;background:#fff!important;border-radius:10px!important;min-height:0!important}
+html body .hva-assistant-news-dropdown>summary{background:#fff!important;color:#1556cb!important;border:1px solid #1d65ed!important;min-height:38px!important;font-weight:800!important}
+html body .hva-assistant-news-dropdown>summary .bi-chevron-down{color:#1d65ed!important}
+html body .hva-assistant-news-dropdown .edos-v35-news-window{width:100%!important;min-width:0!important;max-width:100%!important}
+html body #edosAssistantAsk,html body #edosV35Mic{background:#1d65ed!important;color:#fff!important;border:1px solid #1d65ed!important;min-width:38px!important;min-height:38px!important;padding:5px 8px!important}
+html body .nvs-v10-ticker{background:#1556cb!important;border-color:#1d65ed!important}
+html body .nvs-quick .nvs-quick-icon i,html body .nvs-quick .nvs-quick-card strong,html body .nvs-quick #nvsOpenRemind strong{color:#1556cb!important}
+html body nav.nvs-premium-nav,html body .nvs-chooser nav.nvs-premium-nav{background:#fff!important;border-color:#dce2e9!important}
+html body .nvs-chooser nav.nvs-premium-nav>button>i,html body .nvs-chooser nav.nvs-premium-nav>button>span{color:#1556cb!important}
+html body>.shell,html body .hva-pro-header,html body .edos-assistant,html body .nvs-v10-ticker{box-sizing:border-box!important;width:calc(100% - 16px)!important;max-width:none!important;min-width:0!important;margin-left:auto!important;margin-right:auto!important}
+html body>.shell{padding-left:0!important;padding-right:0!important}
+html body .nvs-chooser{box-sizing:border-box!important;width:100%!important;max-width:none!important;min-width:0!important}
+html body .nvs-chooser .nvs-two-gates>.nvs-gate-wrap>.nvs-gate{height:auto!important;max-height:none!important;min-height:165px!important;justify-content:center!important}
+@media(max-width:760px){
+html body>.shell,html body .hva-pro-header,html body .edos-assistant,html body .nvs-v10-ticker{width:calc(100% - 12px)!important}
+html body .hva-pro-header{margin-top:max(4px,env(safe-area-inset-top,0px))!important}
+html body .hva-pro-header-inner{grid-template-columns:28px 28px minmax(0,1fr) 82px!important;gap:4px!important;padding:6px!important}
+html body .hva-pro-school{font-size:clamp(16px,5.2vw,27px)!important;white-space:nowrap!important;overflow-wrap:normal!important}
+html body .nvs-chooser .nvs-two-gates>.nvs-gate-wrap>.nvs-gate{min-height:145px!important}
+html body .nvs-chooser nav.nvs-premium-nav{max-width:100%!important}
+}
+@media(min-width:761px){
+html body .nvs-chooser .nvs-two-gates{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+html body .nvs-chooser nav.nvs-premium-nav{width:100%!important;max-width:100%!important}
+}
+}
+</style>
 </body>
 </html>
