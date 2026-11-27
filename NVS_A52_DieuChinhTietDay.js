@@ -57,7 +57,7 @@
  }
  function preview(){
   if(!validate())return;
-  const labels={DAYBU:'Dạy bù',DAYTHAY:'Dạy thay',XINTIET:'Xin tiết',DOITIET:'Đổi tiết'};
+  const labels={DAYBU:'Dạy bù',DAYTHAY:'Dạy thay',XINTIET:'Mượn tiết',DOITIET:'Đổi tiết'};
   const a=snapshot(),pairs=[
    ['Người đăng ký',actor.name],['Tổ chuyên môn',actor.team||'—'],
    ['Nghiệp vụ',labels[a.type]],['Lớp / môn',a.className+' / '+a.subject],
