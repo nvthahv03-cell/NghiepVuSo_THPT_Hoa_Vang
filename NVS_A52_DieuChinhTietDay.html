@@ -36,7 +36,7 @@ ol{padding-left:22px;line-height:1.8}footer{font-size:12px;color:#5b778e;margin:
 <label>Môn học *<input id="subject" required maxlength="120" placeholder="VD: Toán"><span class="hint">Tạm nhập theo PCCM; không mặc định là đã xác minh.</span></label>
 <label><span id="originalDateLabel">Ngày, tiết chưa thực hiện *</span><input id="originalDate" type="date" required></label>
 <label>Tiết học gốc *<select id="originalPeriod" required><option value="">Chọn tiết gốc</option></select></label>
-<label class="full">Lý do điều chỉnh *<textarea id="reason" placeholder="Nêu rõ nguyên nhân và căn cứ (nếu có)"></textarea></label>
+<label id="reasonCategoryLabel" class="full" hidden>Nhóm lý do *<select id="reasonCategory"><option value="">Chọn lý do</option><option value="CONGTAC">Đi công tác</option><option value="TAPHUAN">Tập huấn, bồi dưỡng</option><option value="NHIEMVU">Nhiệm vụ nhà trường phân công</option><option value="OM">Nghỉ ốm</option><option value="CANHAN">Việc cá nhân</option><option value="KHAC">Lý do khác</option></select></label><label id="dutyRefLabel" class="full" hidden>Văn bản hoặc nội dung phân công (nếu có)<input id="dutyRef" maxlength="300"></label><label class="full">Lý do điều chỉnh *<textarea id="reason" placeholder="Nêu rõ nguyên nhân và căn cứ (nếu có)"></textarea></label>
 </div></section>
 <section class="card"><h2 id="a52DetailTitle">Nội dung báo cáo</h2>
 <div class="grid" id="detailFields"><label data-schedule>Ngày dự kiến *<input id="proposedDate" type="date" required></label>
@@ -50,13 +50,13 @@ ol{padding-left:22px;line-height:1.8}footer{font-size:12px;color:#5b778e;margin:
  <button class="secondary" type="button" id="preview">Kiểm tra bản nháp</button>
  <button type="button" id="save">Lưu bản nháp</button>
  <button type="button" class="secondary" id="reset">Xóa bản nháp</button>
- <button type="button" disabled aria-label="Chưa có tuyến tiếp nhận và phê duyệt hệ thống EDOS">Gửi đề nghị (chưa mở)</button>
+ <button id="submitDraft" type="button" disabled aria-label="Chưa có tuyến tiếp nhận và phê duyệt hệ thống EDOS">Gửi đề nghị (chưa mở)</button>
 </div>
 <div id="draftPreview" class="draft-preview" hidden aria-label="Xem trước thông tin đăng ký"></div>
 <div id="note" role="status" aria-live="polite">Chưa tạo hồ sơ. Không có dữ liệu nào được gửi về EDOS.</div>
 </section>
 </div><details class="card a52-policy"><summary>Luồng phê duyệt bắt buộc</summary>
-<ol><li>Giáo viên gửi đăng ký; hệ thống EDOS cấp mã hồ sơ khi tiếp nhận thành công</li><li>TTCM rà soát và xác nhận hoặc trả chỉnh sửa</li><li>PHT phụ trách chuyên môn phê duyệt theo phân công</li><li>Giáo viên thực hiện sau khi được phê duyệt</li><li>Giáo viên xác nhận kết quả; TTCM đối chiếu Sổ đầu bài trước khi hoàn thành</li></ol>
-<p class="info">Với nghiệp vụ mượn tiết hoặc đổi tiết, phải có xác nhận của giáo viên có tiết bị ảnh hưởng và TTCM liên quan. Ngày nghỉ bão, lễ, Tết không được dùng để hợp thức hóa việc ghi tiết học đã dạy. Lịch thực hiện mới phải kiểm tra trùng giáo viên, lớp, phòng, PCCM, thời khóa biểu và điều kiện được duyệt ở hệ thống EDOS. Dữ liệu không đủ thì chặn nộp.</p>
+<ol id="generalFlow"><li>Giáo viên gửi đăng ký; hệ thống EDOS cấp mã hồ sơ khi tiếp nhận thành công</li><li>TTCM rà soát và xác nhận hoặc trả chỉnh sửa</li><li>PHT phụ trách chuyên môn phê duyệt theo phân công</li><li>Giáo viên thực hiện sau khi được phê duyệt</li><li>Giáo viên xác nhận kết quả; TTCM đối chiếu Sổ đầu bài trước khi hoàn thành</li></ol>
+<ol id="substituteFlow" hidden><li>GV khai báo tiết cần dạy thay, kể cả đi công tác.</li><li>TTCM rà soát, duyệt và phân công GV phù hợp.</li><li>Báo cáo BGH, đồng gửi hai GV.</li><li>GV dạy thay thực hiện; TTCM xác nhận kết quả.</li></ol><p id="generalPolicy" class="info">Với nghiệp vụ mượn tiết hoặc đổi tiết, phải có xác nhận của giáo viên có tiết bị ảnh hưởng và TTCM liên quan. Ngày nghỉ bão, lễ, Tết không được dùng để hợp thức hóa việc ghi tiết học đã dạy. Lịch thực hiện mới phải kiểm tra trùng giáo viên, lớp, phòng, PCCM, thời khóa biểu và điều kiện được duyệt ở hệ thống EDOS. Dữ liệu không đủ thì chặn nộp.</p>
 </details>
-</main><script defer src="./NVS_A52_DieuChinhTietDay.js?v=20261127-5"></script><script defer src="./HVA_EDOS_Header_Connectivity.js?v=20261125-1"></script></body></html>
+</main><script defer src="./NVS_A52_DieuChinhTietDay.js?v=20261127-6"></script><script defer src="./HVA_EDOS_Header_Connectivity.js?v=20261125-1"></script></body></html>
