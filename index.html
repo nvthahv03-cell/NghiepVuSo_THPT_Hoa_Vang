@@ -1116,7 +1116,13 @@ html body .nvs-chooser .nvs-two-gates .nvs-gate-wrap>.nvs-gate>strong>em{
     </div>
     
 
-    <div class="edos-login-recovery">Quên mật khẩu? Liên hệ ADMIN: <a href="tel:0913977722" aria-label="Gọi quản trị viên 0913 977 722">0913 977 722</a></div>
+    <div class="edos-login-recovery edos-recovery-pro"><button type="button" id="edosForgotPassword" class="edos-forgot-link"><i class="bi bi-key" aria-hidden="true"></i> Quên mật khẩu?</button></div>
+    <dialog id="edosRecoveryDialog" aria-labelledby="edosRecoveryTitle">
+      <div class="edos-recovery-head"><h2 id="edosRecoveryTitle">KHÔI PHỤC MẬT KHẨU</h2><button type="button" id="edosRecoveryClose" aria-label="Đóng">×</button></div>
+      <p>Để bảo đảm an toàn tài khoản, việc cấp lại mật khẩu cần được quản trị hệ thống xác minh.</p>
+      <p>Chức năng gửi yêu cầu trực tuyến chưa được kích hoạt. Thầy/Cô vui lòng liên hệ bộ phận quản trị EDOS của nhà trường qua kênh nội bộ.</p>
+      <button type="button" id="edosRecoveryBack" class="edos-recovery-back">Quay lại đăng nhập</button>
+    </dialog>
 
     <button id="dthtLoginBtn" type="button" class="dtht-auth-btn" onclick="dthtStandaloneLogin()">
       <i class="bi bi-box-arrow-in-right"></i> <span id="dthtLoginBtnText">ĐĂNG NHẬP</span>
@@ -4887,5 +4893,26 @@ html body main.shell .nvs-chooser .nvs-two-gates>.nvs-gate-wrap>.nvs-gate>strong
  -webkit-text-stroke:.18px #fff;
 }
 </style>
+<style id="edos-login-pro-20261127">
+#dthtAuth .dtht-auth-box{width:min(480px,calc(100vw - 28px))!important;padding:clamp(20px,4vw,32px)!important;border-radius:24px!important;background:rgba(250,252,255,.97)!important;box-shadow:0 16px 42px #00255340!important}
+#dthtAuth .hva-login-logo img{width:88px!important;height:auto!important;max-width:100%!important}
+#dthtAuth .dtht-auth-title{color:#1556cb!important;text-shadow:none!important;font-weight:900!important}
+#dthtAuth .dtht-auth-title span{color:#ff992e!important;text-shadow:none!important}
+#dthtAuth .dtht-auth-field{margin-bottom:16px!important}
+#dthtAuth .dtht-input-wrap{border-radius:12px!important}
+#dthtAuth .dtht-auth-btn{background:linear-gradient(110deg,#164fc3,#1d65ed)!important;border-radius:12px!important;box-shadow:0 5px 14px #164fc32b!important}
+#dthtAuth .edos-recovery-pro{display:flex!important;justify-content:flex-end!important;margin:4px 0 18px!important}
+#dthtAuth .edos-forgot-link{border:0;background:none;color:#1556cb;font:700 14px/1.4 inherit;font-size:14px;font-weight:700;cursor:pointer;padding:8px 0;text-decoration:underline;text-underline-offset:3px}
+#edosRecoveryDialog{box-sizing:border-box;width:min(420px,calc(100vw - 28px));border:1px solid #dce5f5;border-radius:18px;padding:22px;background:#fff;color:#26364e;box-shadow:0 16px 48px #001c5266;font:inherit}
+#edosRecoveryDialog::backdrop{background:#061a4580}
+#edosRecoveryDialog .edos-recovery-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#edosRecoveryTitle{font-size:17px;color:#1556cb;margin:0}
+#edosRecoveryClose{border:0;background:none;color:#405674;font-size:26px;cursor:pointer}
+#edosRecoveryDialog p{font-size:14px;line-height:1.55;margin:14px 0}
+#edosRecoveryBack{width:100%;background:#1d65ed;color:white;border:0;border-radius:10px;padding:12px;font-weight:700;cursor:pointer}
+</style>
+<script id="edos-recovery-pro-bind">
+(()=>{const d=document.getElementById('edosRecoveryDialog'),b=document.getElementById('edosForgotPassword');if(!d||!b)return;b.addEventListener('click',()=>{if(!d.open)d.showModal()});for(const id of ['edosRecoveryClose','edosRecoveryBack'])document.getElementById(id).addEventListener('click',()=>d.close());d.addEventListener('close',()=>b.focus());})();
+</script>
 </body>
 </html>
