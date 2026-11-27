@@ -138,9 +138,32 @@
   fields.forEach(id=>{$(id).value=id==='type'?'DAYBU':id==='mode'?'TRUC_TIEP':id==='sourceType'?'CHINHKHOA':''});
   rows=[];$('reportStatus').value='';renderRows();updateType();dirty=false;$('draftPreview').hidden=true;note('Đã xóa bản nháp trên thiết bị. Không có hồ sơ nào được gửi EDOS.');
  });
- document.querySelectorAll('[data-task]').forEach(btn=>btn.addEventListener('click',()=>{if(dirty&&$('type').value!==btn.dataset.task&&!confirm('Chuyển nghiệp vụ? Nội dung chưa lưu sẽ không được giữ.'))return;if($('type').value!==btn.dataset.task){fields.filter(id=>id!=='type').forEach(id=>$(id).value=id==='mode'?'TRUC_TIEP':'');rows=[];$('reportStatus').value='';renderRows();dirty=false}$('type').value=btn.dataset.task;$('workspace').hidden=false;document.querySelectorAll('[data-task]').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));updateType();$('draftPreview').hidden=true}));
+ document.querySelectorAll('[data-task]').forEach(btn=>btn.addEventListener('click',()=>{if(dirty&&$('type').value!==btn.dataset.task&&!confirm('Chuyển nghiệp vụ? Nội dung chưa lưu sẽ không được giữ.'))return;if($('type').value!==btn.dataset.task){fields.filter(id=>id!=='type').forEach(id=>$(id).value=id==='mode'?'TRUC_TIEP':id==='sourceType'?'CHINHKHOA':'');rows=[];$('reportStatus').value='';renderRows();dirty=false}$('type').value=btn.dataset.task;$('workspace').hidden=false;document.querySelectorAll('[data-task]').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));updateType();$('draftPreview').hidden=true}));
  $('reportStatus').addEventListener('change',()=>{if($('reportStatus').value==='NONE'&&rows.length&&!confirm('Xóa danh sách tiết thiếu đã nhập?')){$('reportStatus').value='MISSING';return}if($('reportStatus').value==='NONE'){rows=[];['className','subject','originalDate','originalPeriod','reason','content'].forEach(id=>$(id).value='');renderRows()}updateType();onChange()});
- $('addMissing').onclick=()=>{if(!validate(true))return;const r=snapshot();delete r.rows;if(rows.some(x=>x.className===r.className&&x.originalDate===r.originalDate&&x.originalPeriod===r.originalPeriod)){note('Tiết này đã có trong danh sách.','error');return}rows.push(r);['className','subject','originalDate','originalPeriod','reason','content'].forEach(id=>$(id).value='');renderRows();onChange()};$('track').onclick=()=>{$('trackInfo').hidden=!$('trackInfo').hidden};
+ $('addMissing').onclick=()=>{if(!validate(true))return;const r=snapshot();delete r.rows;if(rows.some(x=>x.className===r.className&&x.originalDate===r.originalDate&&x.originalPeriod===r.originalPeriod)){note('Tiết này đã có trong danh sách.','error');return}rows.push(r);['className','subject','originalDate','originalPeriod','reason','content'].forEach(id=>$(id).value='');renderRows();onChange()};$('track').onclick=async()=>{
+ const el=$('trackInfo');el.hidden=!el.hidden;if(el.hidden)return;
+ el.textContent='Đang kiểm tra kết nối hồ sơ EDOS…';
+ try{
+  const data=await a52Api('nvA52List');
+  if(!Array.isArray(data.items))throw Error('Backend trả dữ liệu không đúng cấu trúc.');
+  const mine=data.items.filter(x=>String(x.owner||'').toLowerCase()===String(actor?.account||'').toLowerCase());
+  el.replaceChildren();
+  if(!mine.length){el.textContent='Chưa có hồ sơ của tôi trên EDOS.';return}
+  for(const item of mine){const line=document.createElement('div');line.textContent=[item.id,({DAYBU:'Báo cáo tiết thiếu',DAYTHAY:'Dạy thay',XINTIET:'Mượn tiết',DOITIET:'Đổi tiết'})[item.type]||item.type,item.status].join(' · ');el.append(line)}
+ }catch(e){el.textContent='Chưa truy cập được hồ sơ EDOS: '+e.message}
+};
+ async function a52Api(action){
+  let token='';
+  for(const type of ['localStorage','sessionStorage']){
+   try{const st=window[type],u=JSON.parse(st.getItem('user')||'null'),account=String(u?.tenDangNhap||u?.username||u?.userName||'').trim();
+   if(account&&account.toLowerCase()===String(actor?.account||'').toLowerCase()&&validExpiry(st.getItem('hvaSessionExpiresAt'))){token=st.getItem('hvaSessionToken')||'';if(token)break}}catch(_){}
+  }
+  if(!token)throw Error('Vui lòng đăng nhập lại EDOS.');
+  const res=await fetch('https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action,sessionToken:token}),cache:'no-store',redirect:'follow'});
+  if(!res.ok)throw Error('HTTP '+res.status);
+  const data=await res.json();if(data.success!==true||data.ok===false)throw Error(data.message||'Backend chưa hỗ trợ A.5.2.');
+  return data;
+ }
  updateType();refresh();restore();
  window.addEventListener('pageshow',refresh);window.addEventListener('focus',refresh);window.addEventListener('storage',()=>{if(!dirty)refresh()});
 })();
