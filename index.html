@@ -2308,6 +2308,27 @@ if(!attached){
   }
  }
 }
+// Assistant AI02: reuse the authenticated personnel library, only display aggregate team names.
+if(!attached){
+ const q=prompt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[?!.,]+$/g,'').replace(/\s+/g,' ').trim();
+ if(/^(?:(?:(?:truong(?: thpt)?(?: hoa vang)?|nha truong|hoa vang) )?(?:hien nay |hien )?co bao nhieu to chuyen mon|(?:ke ten|liet ke|cho biet) (?:cac )?to chuyen mon(?: cua truong(?: thpt hoa vang)?)?)(?: a)?$/.test(q)){
+  ask.disabled=true;status.textContent='Đang tra cứu cơ cấu tổ chuyên môn EDOS...';
+  try{
+   if(!window.HVAPersonnel?.buildGroups){
+    await new Promise((resolve,reject)=>{const script=document.createElement('script');let timer;const finish=(err)=>{clearTimeout(timer);script.onload=null;script.onerror=null;if(err){script.remove();reject(err)}else resolve()};script.src='./HVA_Personnel.js';script.onload=()=>finish();script.onerror=()=>finish(Error('Không tải được thư viện nhân sự.'));timer=setTimeout(()=>finish(Error('Hết thời gian tải thư viện nhân sự.')),10000);document.head.appendChild(script)});
+   }
+   const groups=await window.HVAPersonnel.buildGroups();
+   const names=new Map();
+   for(const g of groups){if(String(g.kind||'').toUpperCase()!=='TEAM'&&!String(g.groupKey||'').toLowerCase().startsWith('team:'))continue;const name=String(g.tenTo||'').trim();if(!name)continue;const key=window.HVAPersonnel.unitKey(name);if(!key||key==='OFFICE'||/^(van phong|ke toan|y te|thu vien|bao ve|hanh chinh|ban giam hieu|bgh)$/.test(key))continue;names.set(key,name)}
+   if(!names.size)throw Error('Nguồn nhân sự chưa trả nhóm tổ chuyên môn.');
+   const nowToken=String(NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||'').trim();
+   if(nowToken!==token)return;
+   showAnswer('Theo danh mục nhóm tổ trong EDOS (không tính bộ phận Văn phòng), nhà trường có **'+names.size+' tổ chuyên môn được nhận diện**:\n\n'+[...names.values()].map(x=>'- '+x).join('\n')+'\n\nNguồn: Tra cứu nhân sự EDOS — danh mục nhóm hiện hành.');
+   copyBtn.textContent='⧉ Sao chép';copyBtn.classList.remove('copied');status.textContent='Tra cứu trực tiếp EDOS — không sử dụng AI.';
+  }catch(e){showAnswer('Chưa thể xác định số tổ chuyên môn từ dữ liệu EDOS.');status.textContent='Tra cứu nhân sự: '+e.message}
+  finally{ask.disabled=false}return;
+ }
+}
 const fullPrompt=attached?prompt+'\n\nTÀI LIỆU ĐÍNH KÈM ('+attached.name+'):\n'+attached.text:prompt;if(fullPrompt.length>4000){status.textContent='Nội dung vượt giới hạn 4.000 ký tự của Backend. Vui lòng rút ngắn tài liệu.';return}ask.disabled=true;status.textContent='Trợ lý NVS đang xử lý...';try{const res=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'askVirtualAssistant',sessionToken:token,question:fullPrompt,context:contextSelect.value})});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();if(!data||data.success!==true||typeof data.answer!=='string')throw Error(data&&data.message||'Không nhận được kết quả');showAnswer(data.answer);copyBtn.textContent='⧉ Sao chép';copyBtn.classList.remove('copied');status.textContent='Dự thảo AI — cần kiểm tra trước khi sử dụng.'}catch(e){status.textContent='Lỗi: '+e.message}finally{ask.disabled=false}});
 })();</script>
 <style id="nvs-ai-v41-math-style">#nvsAiOutput .katex-display{overflow-x:auto;overflow-y:hidden;padding:9px 0;margin:10px 0}#nvsAiOutput .katex{font-size:1.08em}#nvsAiOutput p{overflow-wrap:anywhere}#nvsAiOutput .katex-html{white-space:normal}#nvsAiOutput .katex-display .katex-html{white-space:nowrap}</style>
