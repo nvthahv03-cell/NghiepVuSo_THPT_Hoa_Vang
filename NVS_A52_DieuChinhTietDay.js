@@ -35,21 +35,27 @@
  const periods=Array.from({length:10},(_,i)=>[String(i+1),'Tiết '+(i+1)+(i<5?' (sáng)':' (chiều)')]);
  selectOptions($('originalPeriod'),periods);selectOptions($('proposedPeriod'),periods);
  function updateType(){
+  const missing=$('type').value==='DAYBU';
+  document.querySelectorAll('[data-schedule]').forEach(el=>{el.hidden=missing;el.querySelectorAll('input,select').forEach(x=>{x.disabled=missing})});
+  $('a52DetailTitle').textContent=missing?'Nội dung tiết thiếu':'Lịch thực hiện đề xuất';
+  $('a52DraftInfo').textContent=missing?'Giáo viên chỉ báo cáo tiết thiếu. TTCM tổng hợp, trình BGH lập lịch dạy bù. Hiện chỉ lưu bản nháp trên thiết bị.':'Lịch đề xuất chưa được xác minh với PCCM/TKB và chưa gửi EDOS.';
   const related=['XINTIET','DOITIET','DAYTHAY'].includes($('type').value);
   $('relatedTeacherLabel').hidden=!related;
   $('relatedTeacher').required=related;
  }
  function snapshot(){
   const obj={};
-  fields.forEach(id=>obj[id]=$(id).value.trim());
+  fields.forEach(id=>obj[id]=$(id).disabled?'':$(id).value.trim());
   return obj;
  }
  function validate(){
-  const required=['className','subject','originalDate','originalPeriod','reason','proposedDate','proposedPeriod','room','content'];
+  const missing=$('type').value==='DAYBU';
+  const required=['className','subject','originalDate','originalPeriod','reason','content'];
+  if(!missing)required.push('proposedDate','proposedPeriod','room');
   if($('relatedTeacher').required)required.push('relatedTeacher');
   if(!actor?.name){note('Chưa xác định người đăng ký. Vui lòng đăng nhập EDOS trước khi lập hồ sơ.','error');return false}
   for(const id of required){if(!$(id).value.trim()){$(id).focus();note('Cần nhập đủ thông tin bắt buộc trước khi xem hoặc lưu bản nháp.','error');return false}}
-  if($('originalDate').value===$('proposedDate').value&&$('originalPeriod').value===$('proposedPeriod').value){
+  if(!missing&&$('type').value!=='DAYTHAY'&&$('originalDate').value===$('proposedDate').value&&$('originalPeriod').value===$('proposedPeriod').value){
    note('Lịch đề xuất trùng hoàn toàn với tiết học gốc. Vui lòng kiểm tra lại.','error');return false;
   }
   // Các quy tắc ngày nghỉ, TKB, phòng, PCCM và quyền duyệt chỉ được xác minh ở Backend.
@@ -57,14 +63,13 @@
  }
  function preview(){
   if(!validate())return;
-  const labels={DAYBU:'Dạy bù',DAYTHAY:'Dạy thay',XINTIET:'Mượn tiết',DOITIET:'Đổi tiết'};
+  const labels={DAYBU:'Báo cáo tiết thiếu',DAYTHAY:'Dạy thay',XINTIET:'Mượn tiết',DOITIET:'Đổi tiết'};
   const a=snapshot(),pairs=[
    ['Người đăng ký',actor.name],['Tổ chuyên môn',actor.team||'—'],
    ['Nghiệp vụ',labels[a.type]],['Lớp / môn',a.className+' / '+a.subject],
    ['Tiết gốc',a.originalDate+' · Tiết '+a.originalPeriod],
-   ['Lý do',a.reason],['Ngày đề xuất',a.proposedDate+' · Tiết '+a.proposedPeriod],
-   ['Hình thức',a.mode==='TRUC_TIEP'?'Trực tiếp':'Trực tuyến (chưa kiểm duyệt)'],
-   ['Địa điểm',a.room],['Nội dung',a.content]];
+   ['Lý do',a.reason],['Nội dung',a.content]];
+  if(a.type!=='DAYBU')pairs.push(['Ngày đề xuất',a.proposedDate+' · Tiết '+a.proposedPeriod],['Hình thức',a.mode==='TRUC_TIEP'?'Trực tiếp':'Trực tuyến (chưa kiểm duyệt)'],['Địa điểm',a.room]);
   if($('relatedTeacher').required)pairs.push(['Giáo viên liên quan',a.relatedTeacher]);
   const box=$('draftPreview');box.replaceChildren();
   const title=document.createElement('strong');title.textContent='XEM TRƯỚC BẢN NHÁP A.5.2';
@@ -97,7 +102,7 @@
  $('reset').addEventListener('click',()=>{
   if(!window.confirm('Xóa toàn bộ nội dung bản nháp A.5.2 trên thiết bị này?'))return;
   const key=draftsKey();if(key)try{localStorage.removeItem(key)}catch(_){}
-  fields.forEach(id=>{$(id).value=id==='type'?'DAYBU':id==='mode'?'TRUC_TIEP':id==='proposedDate'?'2026-12-01':''});
+  fields.forEach(id=>{$(id).value=id==='type'?'DAYBU':id==='mode'?'TRUC_TIEP':''});
   updateType();dirty=false;$('draftPreview').hidden=true;note('Đã xóa bản nháp trên thiết bị. Không có hồ sơ nào được gửi EDOS.');
  });
  updateType();refresh();restore();
