@@ -29,7 +29,25 @@ main .a52-account-card{background:transparent!important;border:0!important;paddi
 .a52-account-card .a52-meta input{flex:0 1 auto;width:17ch;font-size:13px!important;font-weight:500}
 @supports(field-sizing:content){.a52-account-card .a52-person input,.a52-account-card .a52-meta input{field-sizing:content;width:auto}}
 @media(max-width:550px){.a52-account-card .a52-identity{gap:4px;padding:9px 12px!important}.a52-account-card .a52-person{flex-basis:100%}.a52-account-card .a52-meta{flex-basis:100%;padding:0 0 0 28px;border-left:0;gap:6px;flex-wrap:wrap}.a52-account-card .a52-meta input{font-size:12px!important}}
-</style><style id="a52-header-safe-inset">@media screen{body{padding-top:max(12px,env(safe-area-inset-top,0px))!important}main>.hva-report-head{border-radius:12px!important;overflow:visible!important;min-height:76px}main>.hva-report-head:before{border-radius:inherit} }@media(max-width:600px){body{padding-left:8px!important;padding-right:8px!important}main>.hva-report-head{min-height:70px}}</style></head><body><main>
+</style><style id="a52-header-safe-inset">@media screen{body{padding-top:max(12px,env(safe-area-inset-top,0px))!important}main>.hva-report-head{border-radius:12px!important;overflow:visible!important;min-height:76px}main>.hva-report-head:before{border-radius:inherit} }@media(max-width:600px){body{padding-left:8px!important;padding-right:8px!important}main>.hva-report-head{min-height:70px}}</style><style id="a52-color-preview">
+/* A.5.2 only: palette trial, retains shared header and form layout. */
+:root{--a52-blue:#1d65ed;--a52-blue-dark:#1556cb;--a52-page:#f7f8fa;--a52-ink:#252a33;--a52-line:#dce2e9;--a52-white:#fff;color:var(--a52-ink);background:var(--a52-page)}
+body{background:var(--a52-page)!important;color:var(--a52-ink)}
+main>.hva-report-head{background:var(--a52-blue)!important}
+main>.hva-report-head:before{background:none}
+main .hva-report-online:not([data-offline=true]){background:var(--a52-blue-dark)}
+main .a52-identity{background:var(--a52-blue)}
+main .card:not(.a52-account-card){background:var(--a52-white);border-color:var(--a52-line);box-shadow:0 2px 5px #172c4518}
+main h2,main .a52-policy summary{color:var(--a52-blue-dark)}
+main .a52-menu button{background:var(--a52-blue);color:white;border-color:var(--a52-blue);box-shadow:0 2px 4px #172c451a}
+main .a52-menu button[aria-pressed="true"]{background:var(--a52-blue-dark);border-color:#ff9b25;outline:none}
+main button:not(.secondary):not([data-task]){background:var(--a52-blue);color:white}
+main button.secondary{background:#eaf1ff;color:var(--a52-blue-dark)}
+main input:not([readonly]):not([type=hidden]),main select,main textarea{border-color:#c5cdd8!important;color:var(--a52-ink)}
+main input:focus,main select:focus,main textarea:focus{outline-color:var(--a52-blue)!important}
+main .info,main .draft-preview{background:#f1f5fc;color:var(--a52-ink)}
+main .hint{color:#535e6c}
+</style></head><body><main>
 <div class="hva-report-head" role="banner"><nav class="hva-report-nav" aria-label="Điều hướng"><a href="./NghiepVu.html" aria-label="Quay lại"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg></a><a href="./index.html" aria-label="Trang chủ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></a></nav><div class="hva-report-brand">HVA–<b>EDOS</b><small>HỆ THỐNG QUẢN TRỊ GIÁO DỤC – TRƯỜNG THPT HÒA VANG</small></div><span class="hva-report-online">TRỰC TUYẾN</span></div><header class="hva-report-legacy-header hva-a52-head" aria-label="HVA–EDOS · A.5.2">
  <a class="hva-a52-back" href="./NghiepVu.html" aria-label="Quay về Nghiệp vụ" title="Quay lại Nghiệp vụ">←</a>
  <div class="hva-a52-ident">
