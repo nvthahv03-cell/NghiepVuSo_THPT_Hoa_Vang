@@ -4859,9 +4859,19 @@ html body #nvsAiPanel .hva-assistant-news-dropdown .edos-v35-news-window{positio
 </style>
 <script id="hva-home-assistant-prompt-bind">(()=>{const b=document.getElementById('edosHomeAssistantPrompt');if(!b)return;b.addEventListener('click',()=>{document.getElementById('edosAssistantAsk')?.click();requestAnimationFrame(()=>document.getElementById('nvsAiQuestion')?.focus())})})();</script>
 <style id="hva-home-eight-icons-blue">
-html body .nvs-quick .nvs-quick-icon,html body .nvs-quick .nvs-quick-icon i,html body .nvs-quick #nvsOpenRemind .nvs-quick-icon i,html body .nvs-chooser nav.nvs-premium-nav>button>i,html body nav.nvs-premium-nav>button>i,html body nav.nvs-premium-nav>#nvsPasswordAccountButton>i{color:#1d65ed!important}
-html body .nvs-quick .nvs-quick-icon>svg{color:#1d65ed!important;stroke:#1d65ed!important}
-html body .nvs-quick .nvs-quick-card strong,html body .nvs-quick #nvsOpenRemind strong,html body .nvs-chooser nav.nvs-premium-nav>button>span,html body nav.nvs-premium-nav>button>span,html body nav.nvs-premium-nav>#nvsPasswordAccountButton>span{color:#1556cb!important}
+/* Override legacy icon glyph fill, not just inherited text color. */
+html body main.shell .nvs-quick .nvs-quick-icon>i.bi,
+html body main.shell .nvs-quick .nvs-quick-icon>i.bi::before,
+html body main.shell .nvs-quick #nvsOpenRemind .nvs-quick-icon>i.bi,
+html body main.shell .nvs-quick #nvsOpenRemind .nvs-quick-icon>i.bi::before,
+html body main.shell .nvs-chooser nav.nvs-premium-nav>button>i.bi,
+html body main.shell .nvs-chooser nav.nvs-premium-nav>button>i.bi::before,
+html body nav.nvs-premium-nav>button:nth-child(n)>i.bi,
+html body nav.nvs-premium-nav>button:nth-child(n)>i.bi::before,
+html body nav.nvs-premium-nav>#nvsPasswordAccountButton>i.bi,
+html body nav.nvs-premium-nav>#nvsPasswordAccountButton>i.bi::before{color:#1d65ed!important;-webkit-text-fill-color:#1d65ed!important}
+html body main.shell .nvs-quick .nvs-quick-icon>svg{color:#1d65ed!important;stroke:#1d65ed!important}
+html body main.shell .nvs-quick .nvs-quick-card>strong,html body main.shell .nvs-quick #nvsOpenRemind>strong,html body main.shell .nvs-chooser nav.nvs-premium-nav>button>span:not(.hva-chat-unread),html body nav.nvs-premium-nav>#nvsPasswordAccountButton>span{color:#1556cb!important;-webkit-text-fill-color:#1556cb!important}
 </style>
 </body>
 </html>
