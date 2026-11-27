@@ -4834,7 +4834,12 @@ html body>.shell,html body .hva-pro-header,html body .edos-assistant,html body .
 html body .hva-pro-header{margin-top:max(4px,env(safe-area-inset-top,0px))!important}
 html body .hva-pro-header-inner{grid-template-columns:28px 28px minmax(0,1fr) 82px!important;gap:4px!important;padding:6px!important}
 html body .hva-pro-school{font-size:clamp(16px,5.2vw,27px)!important;white-space:nowrap!important;overflow-wrap:normal!important}
-html body .nvs-chooser .nvs-two-gates>.nvs-gate-wrap>.nvs-gate{min-height:145px!important}
+html body .nvs-chooser .nvs-two-gates>.nvs-gate-wrap{min-height:0!important;height:auto!important;padding:0!important}
+html body .nvs-chooser .nvs-two-gates>.nvs-gate-wrap>.nvs-gate{min-height:128px!important;height:128px!important;max-height:none!important;padding:7px 5px!important;gap:5px!important}
+html body .nvs-chooser .nvs-two-gates .nvs-gate-icon{flex-basis:50px!important;width:50px!important;min-width:50px!important;max-width:50px!important;height:50px!important;min-height:50px!important;max-height:50px!important}
+html body .nvs-chooser .nvs-two-gates .nvs-gate-icon>i{font-size:26px!important}
+html body .nvs-chooser .nvs-two-gates .nvs-gate>strong{height:54px!important;min-height:54px!important;max-height:54px!important;flex-basis:54px!important}
+@media(max-width:340px){html body .nvs-chooser .nvs-two-gates>.nvs-gate-wrap>.nvs-gate{height:auto!important;min-height:128px!important}html body .nvs-chooser .nvs-two-gates .nvs-gate>strong{height:auto!important;min-height:54px!important;max-height:none!important;flex-basis:auto!important}}
 html body .nvs-chooser nav.nvs-premium-nav{max-width:100%!important}
 }
 @media(min-width:761px){
