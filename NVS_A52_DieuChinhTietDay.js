@@ -159,10 +159,13 @@
    if(account&&account.toLowerCase()===String(actor?.account||'').toLowerCase()&&validExpiry(st.getItem('hvaSessionExpiresAt'))){token=st.getItem('hvaSessionToken')||'';if(token)break}}catch(_){}
   }
   if(!token)throw Error('Vui lòng đăng nhập lại EDOS.');
-  const res=await fetch('https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action,sessionToken:token}),cache:'no-store',redirect:'follow'});
+  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),20000);
+  try{
+  const res=await fetch('https://script.google.com/macros/s/AKfycbzZBemNxnkqhIT2iz0CdtdFJqhlOu8LgZMzmnNjMxSGZRrz-ULuvEZb7MbKoufelWNY/exec',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action,sessionToken:token}),cache:'no-store',redirect:'follow',signal:controller.signal});
   if(!res.ok)throw Error('HTTP '+res.status);
   const data=await res.json();if(data.success!==true||data.ok===false)throw Error(data.message||'Backend chưa hỗ trợ A.5.2.');
   return data;
+  }catch(e){if(e.name==='AbortError')throw Error('Backend không phản hồi trong 20 giây. Kiểm tra nhật ký thực thi nvA52List.');throw e}finally{clearTimeout(timer)}
  }
  updateType();refresh();restore();
  window.addEventListener('pageshow',refresh);window.addEventListener('focus',refresh);window.addEventListener('storage',()=>{if(!dirty)refresh()});
