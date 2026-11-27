@@ -122,10 +122,11 @@ const groups=[
 {id:'QT6',name:'Tích hợp và hỗ trợ vận hành',description:'Kết nối các phân hệ và xử lý sự cố theo quy trình.',items:[
 ['QT6.1','Kết nối Backend, API và SSO','Kiểm tra cấu hình liên thông EDOS, Studio và các hệ thống độc lập.','planned',''],
 ['QT6.2','Cấu hình thông báo và lịch trình','Kiểm soát các kênh thông báo, lịch tác vụ và trạng thái gửi.','planned',''],
-['QT6.3','Hỗ trợ sự cố và yêu cầu kỹ thuật','Tiếp nhận, phân loại, giao xử lý, nghiệm thu và lưu nhật ký.','planned','']]}
+['QT6.3','Hỗ trợ sự cố và yêu cầu kỹ thuật','Tiếp nhận, phân loại, giao xử lý, nghiệm thu và lưu nhật ký.','planned',''],
+['QT6.4','Bảo trì và nâng cấp hệ thống','Lập lịch, cảnh báo trước 30 phút, gia hạn và kết thúc bảo trì. Chỉ tài khoản được cấp quyền.','staging','./NVS_QT41_BaoTri.html']]}
 ];
-const allowed=new Set(['./NVS_NhanSuTaiKhoan.html','./NVS_PhanQuyenHeThong.html','./NVS_QuanLyNghiepVu.html','./NVS_A22_HopTiepNhan.html','./VanBan_QuyDinh.html','./NVS_NhatKyHeThong.html','./NVS_ThongKeBaoCao.html','./NVS_QuanTri_TraCuu.html']);
-const status={draft:['Mẫu dự thảo','draft'],planned:['Chưa triển khai','planned'],view:['Chỉ xem','view']};
+const allowed=new Set(['./NVS_QT41_BaoTri.html','./NVS_NhanSuTaiKhoan.html','./NVS_PhanQuyenHeThong.html','./NVS_QuanLyNghiepVu.html','./NVS_A22_HopTiepNhan.html','./VanBan_QuyDinh.html','./NVS_NhatKyHeThong.html','./NVS_ThongKeBaoCao.html','./NVS_QuanTri_TraCuu.html']);
+const status={staging:['Thử nghiệm','draft'],draft:['Mẫu dự thảo','draft'],planned:['Chưa triển khai','planned'],view:['Chỉ xem','view']};
 const by=id=>document.getElementById(id),root=by('qtGroups'),search=by('qtSearch');
 const catalog=groups.flatMap(g=>g.items.map(([code,title,description,state,href])=>({group:g.id,code,title,description,state,href})));
 function node(tag,cls,txt){const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=txt;return x}
