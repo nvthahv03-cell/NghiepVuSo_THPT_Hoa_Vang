@@ -2311,19 +2311,20 @@ if(!attached){
 // AI40 R1: authenticated gateway capability check and aggregate-only personnel query.
 if(!attached){
  const q40=prompt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[?!.,]+$/g,'').replace(/\s+/g,' ').trim();
- const diagnostic=/^(?:kiem tra (?:ket noi )?(?:gateway|ai40)|(?:gateway|ai40) (?:co nhung cong cu nao|trang thai)|danh muc cong cu gateway)$/.test(q40);
+ const batch40=/^(?:kiem tra toan bo gateway|kiem tra dong loat gateway|kiem tra 9 cong cu gateway)$/.test(q40);
+ const diagnostic=batch40||/^(?:kiem tra (?:ket noi )?(?:gateway|ai40)|(?:gateway|ai40) (?:co nhung cong cu nao|trang thai)|danh muc cong cu gateway)$/.test(q40);
  const teams=/\bto chuyen mon\b/.test(q40)&&/\b(bao nhieu|ke ten|liet ke|danh sach)\b/.test(q40)&&!/\b(cua toi|nhiem vu|bao cao|giao vien|to truong|to pho|thanh vien)\b/.test(q40);
  if(diagnostic||teams){
   ask.disabled=true;status.textContent='Đang kết nối AI Gateway EDOS...';
   const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),15000);
   try{
-   const res=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(diagnostic?{action:'edosAiCapabilities',sessionToken:token}:{action:'edosAiRead',sessionToken:token,tools:['school_teams']}),signal:ctrl.signal});
+   const res=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(diagnostic?{action:'edosAiCapabilities',sessionToken:token,diagnostic:batch40}:{action:'edosAiRead',sessionToken:token,tools:['school_teams']}),signal:ctrl.signal});
    if(!res.ok)throw Error('HTTP '+res.status);
    const data=await res.json();if(data?.success!==true)throw Error(data?.message||'Gateway chưa phản hồi hợp lệ.');
    if(String(NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||'').trim()!==token)return;
    if(diagnostic){
     if(!Array.isArray(data.tools))throw Error('Danh mục Gateway không hợp lệ.');
-    showAnswer('**AI Gateway '+String(data.version||'')+'**\n\n'+data.tools.map(t=>'- '+t.label+': '+(t.enabled?'Được mở':'Chưa mở / chưa nghiệm thu')).join('\n')+'\n\nNguồn: edosAiCapabilities. Được mở không đồng nghĩa đã kiểm thử thành công.');
+    showAnswer('**AI Gateway '+String(data.version||'')+'**\n\n'+data.tools.map(t=>'- '+t.label+': '+(batch40?({READ_OK:'Đọc nguồn thành công',READ_FAILED:'Đọc nguồn thất bại',LOCKED:'Có handler — chưa duyệt quyền',MISSING_HANDLER:'Thiếu handler',NOT_TESTED:'Chưa kiểm tra'}[t.status]||'Backend chưa hỗ trợ kiểm tra R2'):(t.enabled?'Được mở':'Chưa mở / chưa nghiệm thu'))).join('\n')+'\n\nNguồn: edosAiCapabilities. Được mở không đồng nghĩa đã kiểm thử thành công.');
    }else{
     const item=data.results?.find(x=>x.id==='school_teams');
     if(!item?.ok||!Array.isArray(item.data?.teams)||!Number.isInteger(item.data?.count)||item.data.count!==item.data.teams.length||item.data.count===0)throw Error(item?.message||'Nguồn chưa xác định được cơ cấu tổ.');
