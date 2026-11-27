@@ -2329,6 +2329,38 @@ if(!attached){
   finally{ask.disabled=false}return;
  }
 }
+// AI04: read the exact existing timetable payload without executing fetched HTML.
+if(!attached){
+ const fold=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+ const q=fold(prompt).replace(/[?!.,]+$/g,'').replace(/\s+/g,' ').trim();
+ const dayMap={hai:'Hai',ba:'Ba',tu:'Tư',nam:'Năm',sau:'Sáu',bay:'Bảy','2':'Hai','3':'Ba','4':'Tư','5':'Năm','6':'Sáu','7':'Bảy'};
+ const dm=q.match(/\bthu (hai|ba|tu|nam|sau|bay|[2-7])\b/);
+ const personal=/\b(toi|cua toi|minh)\b/.test(q);
+ const schedule=/\b(tkb|thoi khoa bieu|lich day|day lop nao|day mon gi|day bao nhieu tiet|co bao nhieu tiet|co tiet nao|day tiet nao)\b/.test(q);
+ if(personal&&schedule&&dm&&!/\b(doi|bu|thay|muon|kiem tra|tuan truoc|hom qua|thang)\b/.test(q)){
+  ask.disabled=true;status.textContent='Đang đọc TKB cá nhân từ EDOS...';
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+  try{
+   const r=await fetch('./TKB_TraCuu.html',{cache:'no-cache',signal:controller.signal});if(!r.ok)throw Error('Không tải được TKB.');
+   const source=await r.text();const encoded=source.match(/\b(?:const|let|var)\s+payload\s*=\s*'([A-Za-z0-9+/=]+)'/)?.[1];
+   if(!encoded||typeof DecompressionStream!=='function')throw Error('Không đọc được định dạng TKB hiện hành.');
+   const bytes=Uint8Array.from(atob(encoded),c=>c.charCodeAt(0));
+   const db=JSON.parse(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text());
+   const user=currentUser(),norm=x=>fold(x).replace(/[^a-z0-9]/g,'');
+   const name=String(user.hoTen||user.fullName||'').trim();
+   const teachers=Array.isArray(db.teachers)?db.teachers.filter(t=>name&&norm(t.name)===norm(name)):[];
+   if(teachers.length!==1)throw Error('Chưa xác định duy nhất giáo viên trong TKB. Vui lòng kiểm tra tên ở mục Lịch – TKB.');
+   if(String(NVS_localStore.getItem('hvaSessionToken')||NVS_sessionStore.getItem('hvaSessionToken')||'').trim()!==token)return;
+   const day=dayMap[dm[1]],morning=/\bsang\b/.test(q),afternoon=/\bchieu\b/.test(q);
+   const rows=(teachers[0].lessons||[]).filter(x=>x[0]===day&&(!morning||Number(x[1])<=5)&&(!afternoon||Number(x[1])>5)).sort((a,b)=>Number(a[1])-Number(b[1]));
+   const header='**TKB cá nhân – '+name+' – Thứ '+day+(morning?' (sáng)':afternoon?' (chiều)':'')+'**';
+   const body=rows.length?['Có '+rows.length+' tiết được ghi trong TKB nền.','','| Tiết | Lớp | Môn |','|---|---|---|',...rows.map(x=>'| '+x[1]+' | '+String(x[2]||'—').replace(/\|/g,'/')+' | '+String(x[3]||'—').replace(/\|/g,'/')+' |')].join('\n'):'Không có tiết được ghi trong TKB nền cho buổi/ngày này; không đồng nghĩa với nghỉ.';
+   showAnswer(header+'\n\n'+body+'\n\nNguồn: TKB lần 2, áp dụng từ 02/11/2026, mục Lịch – TKB. Đây là TKB nền theo thứ, chưa đối chiếu điều chỉnh dạy bù, dạy thay, đổi tiết hoặc lịch nghỉ theo ngày; không xác nhận lịch thực tế của tuần tới.');
+   copyBtn.textContent='⧉ Sao chép';copyBtn.classList.remove('copied');status.textContent='Tra cứu trực tiếp EDOS — không sử dụng AI.';
+  }catch(e){showAnswer('Chưa thể tra cứu TKB cá nhân từ nguồn EDOS.');status.textContent='Tra cứu TKB: '+e.message}
+  finally{clearTimeout(timer);ask.disabled=false}return;
+ }
+}
 const fullPrompt=attached?prompt+'\n\nTÀI LIỆU ĐÍNH KÈM ('+attached.name+'):\n'+attached.text:prompt;if(fullPrompt.length>4000){status.textContent='Nội dung vượt giới hạn 4.000 ký tự của Backend. Vui lòng rút ngắn tài liệu.';return}ask.disabled=true;status.textContent='Trợ lý NVS đang xử lý...';try{const res=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'askVirtualAssistant',sessionToken:token,question:fullPrompt,context:contextSelect.value})});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();if(!data||data.success!==true||typeof data.answer!=='string')throw Error(data&&data.message||'Không nhận được kết quả');showAnswer(data.answer);copyBtn.textContent='⧉ Sao chép';copyBtn.classList.remove('copied');status.textContent='Dự thảo AI — cần kiểm tra trước khi sử dụng.'}catch(e){status.textContent='Lỗi: '+e.message}finally{ask.disabled=false}});
 })();</script>
 <style id="nvs-ai-v41-math-style">#nvsAiOutput .katex-display{overflow-x:auto;overflow-y:hidden;padding:9px 0;margin:10px 0}#nvsAiOutput .katex{font-size:1.08em}#nvsAiOutput p{overflow-wrap:anywhere}#nvsAiOutput .katex-html{white-space:normal}#nvsAiOutput .katex-display .katex-html{white-space:nowrap}</style>
