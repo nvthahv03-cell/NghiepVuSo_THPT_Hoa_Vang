@@ -33,6 +33,10 @@ main .a52-account-card{background:transparent!important;border:0!important;paddi
 /* A.5.2 only: palette trial, retains shared header and form layout. */
 :root{--a52-blue:#1d65ed;--a52-blue-dark:#1556cb;--a52-page:#f7f8fa;--a52-ink:#252a33;--a52-line:#dce2e9;--a52-white:#fff;color:var(--a52-ink);background:var(--a52-page)}
 body{background:var(--a52-page)!important;color:var(--a52-ink)}
+/* Header palette trial: same EDOS structure, subtle white network paths. */
+main>.hva-report-head{background:linear-gradient(110deg,#164fc3,#1d65ed)!important}
+main>.hva-report-head:before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 150' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='white' stroke-width='1.4' opacity='.19'%3E%3Cpath d='M0 18L135 18 230 85 405 85 510 0M0 135L110 135 205 65 375 65 480 150M520 0L645 76 785 76 900 15M530 150L650 100 800 100 900 150'/%3E%3C/g%3E%3Cg fill='white' opacity='.32'%3E%3Ccircle cx='135' cy='18' r='3'/%3E%3Ccircle cx='230' cy='85' r='3'/%3E%3Ccircle cx='205' cy='65' r='3'/%3E%3Ccircle cx='645' cy='76' r='3'/%3E%3Ccircle cx='785' cy='76' r='3'/%3E%3Ccircle cx='650' cy='100' r='3'/%3E%3C/g%3E%3C/svg%3E");background-size:100% 100%;background-repeat:no-repeat}
+main .hva-report-online:not([data-offline=true]){background:#164aab}
 main .a52-identity{background:var(--a52-blue)}
 main .card:not(.a52-account-card){background:var(--a52-white);border-color:var(--a52-line);box-shadow:0 2px 5px #172c4518}
 main h2,main .a52-policy summary{color:var(--a52-blue-dark)}
