@@ -13,8 +13,8 @@ BGH mở đợt, đặt hạn, xác định danh sách GV. GV xác nhận không
 - GV tối đa 9 tiết thực dạy/ngày, 4 tiết bù/ngày, 5 tiết thực dạy/buổi; ưu tiên không quá 3 tiết liên tục. Đây là tham số nội bộ, không thay đổi định mức pháp lý; kiểm tra quy định hiện hành khi triển khai.
 - Không xếp được phải báo lý do; không tự nới ràng buộc.
 ## Bốn nghiệp vụ
-Báo cáo tiết thiếu; Đề nghị dạy thay; Đề nghị mượn tiết (thay Xin tiết, theo dõi hoàn trả); Đề nghị đổi tiết. Dạy thay áp dụng tiết chính khóa hoặc lịch bù đã duyệt; GV đề xuất, người dạy thay xác nhận, TTCM rà soát, PHT duyệt, cập nhật lịch và thông báo. Nếu GV tự dạy ngày khác thì đề nghị điều chỉnh lịch bù. Lưu người có tiết thiếu và người thực dạy riêng; chỉ giảm tiết thiếu sau xác nhận thực hiện. Mọi thay đổi phải được PHT phê duyệt trước khi thực hiện.
+Báo cáo tiết thiếu; Đề nghị dạy thay; Đề nghị mượn tiết (thay Xin tiết, theo dõi hoàn trả); Đề nghị đổi tiết. Dạy thay áp dụng tiết chính khóa hoặc lịch bù đã duyệt; GV khai báo kể cả công tác, không chọn người thay. TTCM rà soát, duyệt và phân công, báo cáo BGH và đồng gửi hai GV; GV được phân công tiếp nhận, thực hiện, TTCM xác nhận kết quả. Nếu GV tự dạy ngày khác thì đề nghị điều chỉnh lịch bù. Lưu người có tiết thiếu và người thực dạy riêng; chỉ giảm tiết thiếu sau xác nhận thực hiện. Ngoại trừ dạy thay do TTCM duyệt theo luồng riêng, các điều chỉnh khác phải được PHT phê duyệt trước khi thực hiện.
 ## Chuyển tiếp HKI 2026–2027
-GV linh hoạt lập phương án dạy bù trực tiếp/trực tuyến, TTCM theo dõi, rà soát, báo cáo PHT CM trước thực hiện; minh chứng và Sổ ghi đầu bài đúng thực tế; TTCM tổng hợp kết quả trước 09/01/2027. Không phụ thuộc việc hoàn thiện EDOS.
+GV linh hoạt lập phương án dạy bù trực tiếp/trực tuyến, TTCM chủ động theo dõi, rà soát và phối hợp lịch phòng; tiết thực hành dạy trực tiếp; minh chứng và Sổ ghi đầu bài đúng thực tế; TTCM gửi báo cáo tổng hợp ngày 09/01/2027. Không phụ thuộc việc hoàn thiện EDOS.
 ## Triển khai
 Tách module nghiệp vụ, bảo toàn Core, Router hiện hữu và A1 PASS. Chưa xác minh nguồn TKB đầy đủ, chưa triển khai backend hoặc thuật toán, chưa PASS. Không mở gửi phê duyệt khi chưa kiểm thử.
