@@ -5050,5 +5050,22 @@ html body main.shell .nvs-chooser .nvs-two-gates>.nvs-gate-wrap>.nvs-gate>strong
  -webkit-text-stroke:.35px currentColor;
 }
 </style>
+<script id="qt41-home-notice">
+(()=>{'use strict';
+ let busy=false,box=null,lastPhase='',lastRevision=-1;
+ function fmt(n){return new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',dateStyle:'short',timeStyle:'short'}).format(n)}
+ function render(v){
+  const active=v.phase==='NOTICE'||v.phase==='MAINTENANCE';
+  if(!active){if(box)box.hidden=true;lastPhase=v.phase;lastRevision=v.revision;return}
+  if(!Number.isFinite(v.start)||!Number.isFinite(v.end))return;
+  if(!box){box=document.createElement('aside');box.id='qt41-home-banner';box.setAttribute('role','status');box.style.cssText='position:fixed;bottom:12px;left:12px;right:12px;max-width:760px;margin:auto;z-index:1100;background:#fff8e6;color:#704600;border:1px solid #d9a344;border-radius:12px;padding:14px 44px 14px 16px;box-shadow:0 4px 18px #0002;font:600 14px/1.5 Segoe UI,Arial,sans-serif;';const close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Ẩn thông báo');close.style.cssText='position:absolute;right:8px;top:4px;border:0;background:none;color:inherit;font-size:26px;cursor:pointer';close.onclick=()=>box.hidden=true;const content=document.createElement('div');content.id='qt41-home-text';box.append(close,content);document.body.append(box)}
+  const changed=v.phase!==lastPhase||v.revision!==lastRevision;
+  const content=document.getElementById('qt41-home-text');content.textContent=(v.phase==='MAINTENANCE'?'HỆ THỐNG ĐANG BẢO TRÌ':'THÔNG BÁO BẢO TRÌ HỆ THỐNG')+' · Bắt đầu: '+fmt(v.start)+' · Dự kiến mở lại: '+fmt(v.end)+(v.reason?' · '+v.reason:'')+(v.phase==='NOTICE'?' · Đề nghị lưu công việc trước giờ bảo trì.':' · Chờ quản trị viên xác nhận mở lại.');
+  const phase=v.phase+(v.reminder?'_REMINDER':'');if(changed||phase!==lastPhase)box.hidden=false;lastPhase=phase;lastRevision=v.revision;
+ }
+ async function poll(){if(busy||document.hidden)return;busy=true;const c=new AbortController(),timer=setTimeout(()=>c.abort(),12000);try{const r=await fetch(DTHT_STANDALONE_BACKEND,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'qt41Status'}),signal:c.signal});if(!r.ok)return;const d=await r.json();if(d.success===true&&d.status)render(d.status)}catch(e){}finally{clearTimeout(timer);busy=false}}
+ setTimeout(poll,3500);setInterval(poll,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()});
+})();
+</script>
 </body>
 </html>
