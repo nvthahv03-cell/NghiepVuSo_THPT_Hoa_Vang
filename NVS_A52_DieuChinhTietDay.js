@@ -16,7 +16,7 @@
    }catch(_){}
   }return null;
  }
- const fields=['type','sourceType','className','subject','originalDate','originalPeriod','reason','proposedDate','mode','proposedPeriod','room','content','relatedTeacher'];
+ const fields=['type','reasonCategory','dutyRef','sourceType','className','subject','originalDate','originalPeriod','reason','proposedDate','mode','proposedPeriod','room','content','relatedTeacher'];
  let actor=null,dirty=false,rows=[];
  const draftsKey=()=>actor?.account||actor?.name?'hva-edos-a52-draft-'+encodeURIComponent(actor.account||actor.name):'';
  function note(text,state=''){const el=$('note');el.dataset.state=state;el.textContent=text}
@@ -41,7 +41,13 @@
   document.querySelectorAll('[data-schedule]').forEach(el=>{el.hidden=missing||substitute;el.querySelectorAll('input,select').forEach(x=>{x.disabled=missing||substitute})});
   $('a52DetailTitle').textContent=missing?'Nội dung tiết thiếu':substitute?'Thông tin dạy thay':'Lịch thực hiện đề xuất';
   $('a52DraftInfo').textContent=missing?'Giáo viên chỉ báo cáo tiết thiếu. TTCM tổng hợp, trình BGH lập lịch dạy bù. Hiện chỉ lưu bản nháp trên thiết bị.':'Lịch đề xuất chưa được xác minh với PCCM/TKB và chưa gửi EDOS.';
-  const related=['XINTIET','DOITIET','DAYTHAY'].includes($('type').value);
+  const related=['XINTIET','DOITIET'].includes($('type').value);
+  $('relatedTeacher').disabled=!related;
+  $('reasonCategoryLabel').hidden=!substitute;$('reasonCategory').disabled=!substitute;
+  const duty=substitute&&['CONGTAC','TAPHUAN','NHIEMVU'].includes($('reasonCategory').value);$('dutyRefLabel').hidden=!duty;$('dutyRef').disabled=!duty;
+  $('generalFlow').hidden=substitute;$('generalPolicy').hidden=substitute;$('substituteFlow').hidden=!substitute;
+  $('submitDraft').textContent=substitute?'Gửi TTCM (chưa mở)':'Gửi đề nghị (chưa mở)';
+  if(substitute)$('a52DraftInfo').textContent='GV chỉ khai báo; TTCM duyệt và phân công người dạy thay, báo cáo BGH và đồng gửi hai GV. Hiện chỉ lưu bản nháp.';
   $('relatedTeacherLabel').hidden=!related;
   $('relatedTeacher').required=related;
  }
@@ -55,7 +61,7 @@
   const missing=$('type').value==='DAYBU';
   const required=['className','subject','originalDate','originalPeriod','reason','content'];
   if(!missing&&$('type').value!=='DAYTHAY')required.push('proposedDate','proposedPeriod','room');
-  if($('type').value==='DAYTHAY')required.push('sourceType');
+  if($('type').value==='DAYTHAY')required.push('sourceType','reasonCategory');
   if($('relatedTeacher').required)required.push('relatedTeacher');
   if(!actor?.name){note('Chưa xác định người đăng ký. Vui lòng đăng nhập EDOS trước khi lập hồ sơ.','error');return false}
   if(missing&&!entryOnly){if(!$('reportStatus').value){note('Chọn kết quả rà soát.','error');return false}if($('reportStatus').value==='NONE')return true;if(rows.length&&!required.some(id=>$(id).value.trim()))return true;}
@@ -74,7 +80,7 @@
    ['Nghiệp vụ',labels[a.type]],['Lớp / môn',a.className+' / '+a.subject],
    ['Tiết gốc',a.originalDate+' · Tiết '+a.originalPeriod],
    ['Lý do',a.reason],['Nội dung',a.content]];
-  if(a.type==='DAYTHAY')pairs.push(['Nguồn tiết',a.sourceType==='DAYBU'?'Lịch dạy bù đã phê duyệt':'TKB chính khóa']);
+  if(a.type==='DAYTHAY'){pairs.push(['Nguồn tiết',a.sourceType==='DAYBU'?'Lịch dạy bù đã phê duyệt':'TKB chính khóa'],['Nhóm lý do',$('reasonCategory').selectedOptions[0].textContent]);if(a.dutyRef)pairs.push(['Căn cứ phân công',a.dutyRef]);}
   if(a.type!=='DAYBU'&&a.type!=='DAYTHAY')pairs.push(['Ngày đề xuất',a.proposedDate+' · Tiết '+a.proposedPeriod],['Hình thức',a.mode==='TRUC_TIEP'?'Trực tiếp':'Trực tuyến (chưa kiểm duyệt)'],['Địa điểm',a.room]);
   if($('relatedTeacher').required)pairs.push(['Giáo viên liên quan',a.relatedTeacher]);
   if(a.type==='DAYBU'){pairs.splice(3);pairs.push(['Kết quả',a.reportStatus==='NONE'?'Không thiếu tiết':'Có tiết chưa thực hiện']);if(a.reportStatus==='MISSING'){const all=[...rows];if(a.className)all.push(a);all.forEach((r,i)=>pairs.push(['Tiết '+(i+1),r.className+' · '+r.subject+' · '+r.originalDate+' · Tiết '+r.originalPeriod+' · '+r.content+' · '+r.reason]))}}
@@ -97,7 +103,7 @@
   }catch(e){note('Không khôi phục được bản nháp trên thiết bị.','error')}
  }
  function onChange(){dirty=true;$('draftPreview').hidden=true;note('Đã thay đổi nội dung. Hãy kiểm tra và lưu bản nháp; chưa gửi lên EDOS.')}
- fields.forEach(id=>{const el=$(id);el.addEventListener('input',onChange);el.addEventListener('change',()=>{if(id==='type')updateType();onChange()})});
+ fields.forEach(id=>{const el=$(id);el.addEventListener('input',onChange);el.addEventListener('change',()=>{if(id==='type'||id==='reasonCategory')updateType();onChange()})});
  $('preview').addEventListener('click',preview);
  $('save').addEventListener('click',()=>{
   if(!validate())return;
