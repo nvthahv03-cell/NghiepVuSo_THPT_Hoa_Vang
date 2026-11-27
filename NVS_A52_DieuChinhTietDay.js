@@ -20,10 +20,30 @@
  let actor=null,dirty=false,rows=[];
  const draftsKey=()=>actor?.account||actor?.name?'hva-edos-a52-draft-'+encodeURIComponent(actor.account||actor.name):'';
  function note(text,state=''){const el=$('note');el.dataset.state=state;el.textContent=text}
+ function normTeam(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,' ').trim()}
+ function subjectsForTeam(team){
+  const t=normTeam(team), has=x=>(' '+t+' ').includes(' '+x+' ');
+  const groups=[
+   [['toan','tin'],['Toán','Tin học']],
+   [['ngu van','van'],['Ngữ văn']],
+   [['tieng anh','ngoai ngu','anh'],['Tiếng Anh']],
+   [['lich su','dia li','dia ly','kt pl','ktpl','gdkt pl','gdktpl','su','dia'],['Lịch sử','Địa lí','GDKT&PL']],
+   [['vat li','vat ly','cong nghe','ly','li'],['Vật lí','CNCN','CNNN']],
+   [['hoa hoc','hoa'],['Hóa học']],
+   [['sinh','sinh hoc','gdtc','qpan','gdqp an','gdqp','the duc'],['Sinh học','GDTC','GDQP&AN']]
+  ];
+  const group=groups.find(([keys])=>keys.some(has));
+  return group?[...group[1],'HĐTN, HN','GDĐP']:[];
+ }
+ function refreshSubjects(team){
+  const el=$('subject'),old=el.value,items=subjectsForTeam(team);
+  el.replaceChildren();selectOptions(el,[['',items.length?'Chọn môn học':'Chưa xác định tổ chuyên môn'],...items.map(x=>[x,x])]);
+  if(items.includes(old))el.value=old;
+ }
  function refresh(){
   const old=draftsKey(),next=readIdentity();actor=next;
   $('teacher').value=next?.name||'Chưa xác định phiên đăng nhập EDOS';
-  $('team').value=next?.team||'';$('role').value=next?.role||'';
+  $('team').value=next?.team||'';$('role').value=next?.role||'';refreshSubjects(next?.team);
   if(old!==draftsKey()&&!dirty)restore();
  }
  function selectOptions(el,labels){
