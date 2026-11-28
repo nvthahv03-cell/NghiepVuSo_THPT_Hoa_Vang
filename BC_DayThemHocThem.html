@@ -1128,6 +1128,18 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 <!-- A1–A6 screen-only visual standard; independent of existing workflow. -->
 <script>document.documentElement.classList.add('edos-a16-visual');</script>
 <link rel="stylesheet" href="./HVA_EDOS_A1_A6_Visual_Standard.css?v=20261128-r1" media="screen">
+<style id="dtht-mobile-official-heading-fit">
+/* Screen only: keep the administrative heading in two balanced columns. */
+@media screen and (max-width:720px){
+  #paper{container-type:inline-size}
+  #paper .official-head{display:grid!important;grid-template-columns:minmax(0,46fr) minmax(0,54fr)!important;gap:4px!important;align-items:start!important;-webkit-text-size-adjust:none;text-size-adjust:none}
+  #paper .official-head .agency,#paper .official-head .nation{display:block!important;width:auto!important;min-width:0!important;padding:0!important;text-align:center!important}
+  #paper .official-head .agency-parent,#paper .official-head .agency-unit,#paper .official-head .nation-title,#paper .official-head .nation-motto{white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;line-height:1.25!important;letter-spacing:-.02em!important}
+  #paper .official-head .agency-parent{font-size:min(9.6px,1.85vw)!important;font-size:min(9.6px,2.15cqi)!important}
+  #paper .official-head .nation-title{font-size:min(9.6px,1.85vw)!important;font-size:min(9.6px,2.15cqi)!important}
+  #paper .official-head .agency-unit,#paper .official-head .nation-motto{font-size:min(11px,2.2vw)!important;font-size:min(11px,2.65cqi)!important}
+}
+</style>
 </head>
 <!-- 🔴 CORE PASS — SHELL/HVA PAGE FRAME — LOCK -->
 <body>
