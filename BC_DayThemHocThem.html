@@ -108,7 +108,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 .history{width:100%;border-collapse:collapse;margin-top:14px;font-size:12px}.history th,.history td{border-bottom:1px solid #e4edf4;padding:10px 8px;text-align:left}.history th{background:#f4f9fd;color:#36556e}
 @media(max-width:1080px){.hva-pro-header-inner{grid-template-columns:50px minmax(430px,1fr) auto;padding:11px 16px;gap:13px}.hva-pro-kicker{font-size:11px}.hva-pro-school{font-size:24px}.hva-pro-slogan{font-size:12px}}
 @media(max-width:720px){.hva-pro-header{margin:6px 6px 0;border-radius:13px;min-height:78px}.hva-pro-header-inner{min-height:76px;padding:7px 9px;grid-template-columns:37px minmax(0,1fr) auto;gap:7px}.hva-pro-back{width:36px;height:36px;border-radius:10px}.hva-pro-back i{font-size:18px}.hva-pro-divider{height:42px}.hva-pro-kicker{font-size:7px;letter-spacing:.08em;white-space:normal}.hva-pro-school{font-size:14px;margin-top:3px;white-space:normal}.hva-pro-slogan{font-size:8px;margin-top:4px;white-space:normal}.hva-pro-online{height:31px;padding:0 9px;font-size:9px}.hva-pro-version{font-size:7px;letter-spacing:.08em}.shell{margin-top:10px;padding:0 8px}.hero{align-items:flex-start;flex-direction:column;padding:16px}.hero h1{font-size:19px}.steps{grid-template-columns:1fr 1fr}.grid,.choice{grid-template-columns:1fr}.card{padding:16px}.legal{white-space:normal}.preview .top{gap:10px;font-size:11px}.preview p{font-size:12px}}
-@media print{@page{size:A4 portrait;margin:18mm}body{background:#fff}.hva-pro-header,.hero,.steps,#declareCard,#historyCard,.previewActions{display:none!important}.shell{max-width:none;margin:0;padding:0}.card{border:0;box-shadow:none;padding:0}.preview{max-width:none}.preview p{font-size:14px}}
+@media print{body{background:#fff}.hva-pro-header,.hero,.steps,#declareCard,#historyCard,.previewActions{display:none!important}.shell{max-width:none;margin:0;padding:0}.card{border:0;box-shadow:none;padding:0}.preview{max-width:none}.preview p{font-size:14px}}
 
 .teacher-picker{padding:0 14px}
 .teacher-picker .field label{padding-left:2px}
@@ -164,7 +164,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 .steps.steps-3{grid-template-columns:repeat(3,1fr)!important}
 @media(max-width:720px){.declaration-card{padding:20px 16px}.identity-card{align-items:flex-start}.identity-verified{display:none}.identity-name{font-size:18px}.identity-meta{gap:7px;flex-direction:column}.choice-premium{grid-template-columns:1fr}.official-paper{padding:34px 22px!important;font-size:14px!important}.official-head{grid-template-columns:1fr;gap:18px}.official-sign{width:62%}.preview-toolbar{align-items:flex-start}.steps.steps-3{grid-template-columns:repeat(3,1fr)!important}.steps.steps-3 .step{font-size:10px!important}}
 @media print{
-  @page{size:A4 portrait;margin:0}
+
   html,body{
     margin:0!important;
     padding:0!important;
@@ -634,7 +634,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
   box-sizing: border-box !important;
   max-width: 800px !important;
   margin: 0 auto !important;
-  padding: 25mm 20mm 20mm 25mm !important;
+  padding: 20mm 15mm 20mm 30mm !important;
   line-height: 1.3 !important;
 }
 
@@ -865,7 +865,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 /* ==============================================================================
    5. HIỂN THỊ TRÊN MÀN HÌNH ĐIỆN THOẠI (CHỐNG TRÀN VÀ VỠ BỐ CỤC 100%)
    ============================================================================== */
-@media (max-width: 720px) {
+@media screen and (max-width: 720px) {
   /* Ép khung giấy vừa khít màn hình điện thoại, loại bỏ padding mm */
   .official-paper, #paper {
     width: 100% !important;
@@ -980,7 +980,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
    ============================================================================== */
 @page {
   size: A4 portrait;
-  margin: 20mm 15mm 20mm 25mm;
+  margin: 20mm 15mm 20mm 30mm;
 }
 
 @media print {
@@ -1138,6 +1138,34 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
   #paper .official-head .agency-parent{font-size:min(9.6px,1.85vw)!important;font-size:min(9.6px,2.15cqi)!important}
   #paper .official-head .nation-title{font-size:min(9.6px,1.85vw)!important;font-size:min(9.6px,2.15cqi)!important}
   #paper .official-head .agency-unit,#paper .official-head .nation-motto{font-size:min(11px,2.2vw)!important;font-size:min(11px,2.65cqi)!important}
+}
+</style>
+<style id="dtht-a4-administrative-standard">
+/* HVA-EDOS | A4 dung 210 x 297 mm; le tren/duoi 20, trai 30, phai 15 mm. */
+@media screen and (min-width:900px){
+  #previewCard #paper{width:210mm!important;max-width:100%!important;min-height:297mm!important;height:auto!important;padding:20mm 15mm 20mm 30mm!important;box-sizing:border-box!important}
+  #previewCard #paper .report-body,#previewCard #paper .report-body p,#previewCard #paper .report-body span,#previewCard #paper .report-body b{font-size:14pt!important;line-height:1.5!important}
+}
+@media screen and (min-width:900px), print{
+  #previewCard #paper .official-head{display:grid!important;grid-template-columns:minmax(0,46fr) minmax(0,54fr)!important;gap:2mm!important;align-items:start!important}
+  #previewCard #paper .official-head .agency,#previewCard #paper .official-head .nation{display:block!important;width:auto!important;min-width:0!important;padding:0!important;box-sizing:border-box!important}
+  #previewCard #paper .agency-parent,#previewCard #paper .nation-title{font-size:12pt!important;letter-spacing:-.025em!important;white-space:nowrap!important;line-height:1.25!important}
+  #previewCard #paper .agency-unit,#previewCard #paper .nation-motto{font-size:13pt!important;white-space:nowrap!important;line-height:1.25!important}
+  #previewCard #paper .form-code{font-size:10pt!important;position:static!important}
+}
+@media print{
+  /* Le do @page quan ly, khong cong them padding lan thu hai. */
+  html,body{width:auto!important;max-width:none!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important;background:#fff!important}
+  body:has(#previewCard:not(.hidden))>:not(main.shell){display:none!important}
+  main.shell{display:block!important;position:static!important;width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important}
+  main.shell:has(#previewCard:not(.hidden))>:not(#previewCard){display:none!important}
+  #previewCard{position:static!important;width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important}
+  #previewCard>:not(#paper){display:none!important}
+  #previewCard #paper{position:static!important;inset:auto!important;display:block!important;width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important;font-family:"Times New Roman",Times,serif!important;font-size:14pt!important;line-height:1.5!important}
+  #previewCard #paper .official-head,#previewCard #paper .official-sign{break-inside:avoid!important}
+  #previewCard #paper .official-sign{width:56%!important}
+  #previewCard #paper .report-body p{orphans:3;widows:3}
+  #previewCard #paper .report-body,#previewCard #paper .report-body p,#previewCard #paper .report-body span,#previewCard #paper .report-body b{font-size:14pt!important;line-height:1.5!important}
 }
 </style>
 </head>
