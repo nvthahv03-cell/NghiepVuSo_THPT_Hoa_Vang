@@ -4117,7 +4117,7 @@ html body .hva-pro-header-inner>.hva-pro-tools .hva-pro-online-dot{
 <div id="nvs-pwd-modal" hidden><section id="nvs-pwd-box" role="dialog" aria-modal="true" aria-labelledby="nvs-pwd-heading"><h2 id="nvs-pwd-heading">🔐 Đổi mật khẩu HVA-EDOS</h2><p>Nhập mật khẩu hiện tại và đặt mật khẩu mới.</p>
 <form id="nvs-pwd-form">
 <label for="nvs-pwd-old">Mật khẩu hiện tại</label>
-<div class="nvs-pwd-old-wrap"><div class="edos-pwd-eye-wrap"><input id="nvs-pwd-old" type="password" maxlength="24" autocomplete="current-password" placeholder="4 số ban đầu hoặc mật khẩu đang dùng" required><button type="button" class="edos-pwd-eye" data-pwd-target="nvs-pwd-old" aria-label="Hiện mật khẩu" aria-controls="nvs-pwd-old" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><path class="edos-eye-slash" d="M3 3l18 18" style="display:none"/></svg></button></div></div>
+<div class="nvs-pwd-old-wrap"><div class="edos-pwd-eye-wrap" id="edosPwdOldField"><span id="edosPwdOldPrefix" hidden aria-hidden="true">HVA@</span><input id="nvs-pwd-old" type="password" maxlength="24" autocomplete="current-password" placeholder="4 số ban đầu hoặc mật khẩu đang dùng" required><button type="button" class="edos-pwd-eye" data-pwd-target="nvs-pwd-old" aria-label="Hiện mật khẩu" aria-controls="nvs-pwd-old" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><path class="edos-eye-slash" d="M3 3l18 18" style="display:none"/></svg></button></div></div>
 
 <p class="nvs-pwd-legacy-hint" id="nvs-pwd-mode-hint">Nhập 4 số ban đầu hoặc mật khẩu đang dùng. Không cần nhập thêm tiền tố.</p>
 <label for="nvs-pwd-new">Mật khẩu mới</label><div class="edos-pwd-eye-wrap"><input id="nvs-pwd-new" type="password" autocomplete="new-password" minlength="6" maxlength="24" required><button type="button" class="edos-pwd-eye" data-pwd-target="nvs-pwd-new" aria-label="Hiện mật khẩu" aria-controls="nvs-pwd-new" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><path class="edos-eye-slash" d="M3 3l18 18" style="display:none"/></svg></button></div>
@@ -4133,14 +4133,16 @@ form.querySelectorAll('.edos-pwd-eye').forEach(b=>b.addEventListener('click',()=
 function tk(){return typeof authToken==='function'?authToken():''}
 function u(){try{return JSON.parse(NVS_localStore.getItem('user')||NVS_sessionStore.getItem('user')||'{}')}catch{return {}}}
 function refresh(){const x=u();notice.hidden=!tk()||x.passwordChanged===true||x.mustChangePassword===false||x.daDoiMatKhau===true}
-function open(){if(!tk())return;resetEyes();m.hidden=false;$('nvs-pwd-old').focus()}
+let legacyOld=false;
+function configureOld(){const x=u(),field=$('nvs-pwd-old');legacyOld=x.passwordChanged!==true&&x.daDoiMatKhau!==true&&x.mustChangePassword!==false&&(x.passwordChanged===false||x.mustChangePassword===true);$('edosPwdOldPrefix').hidden=!legacyOld;$('edosPwdOldField').classList.toggle('edos-legacy-old',legacyOld);field.maxLength=legacyOld?4:24;field.inputMode=legacyOld?'numeric':'text';if(legacyOld)field.setAttribute('pattern','[0-9]{4}');else field.removeAttribute('pattern');field.placeholder=legacyOld?'Nhập 4 chữ số':'Nhập mật khẩu hiện tại';$('nvs-pwd-mode-hint').textContent=legacyOld?'HVA@ đã cố định. Thầy/Cô chỉ nhập 4 chữ số được cấp.':'Nhập đầy đủ mật khẩu hiện tại.';}
+function open(){if(!tk())return;resetEyes();configureOld();m.hidden=false;$('nvs-pwd-old').focus()}
 function close(){if(busy)return;m.hidden=true;form.reset();resetEyes();status.textContent=''}
 $('nvs-pwd-now')?.addEventListener('click',open);$('nvs-pwd-close')?.addEventListener('click',close);
 m?.addEventListener('click',e=>{if(e.target===m)close()});
 window.addEventListener('nvs:login-success',refresh);
 form?.addEventListener('submit',async e=>{e.preventDefault();if(busy)return;
-const oldEntered=$('nvs-pwd-old').value,old=/^[0-9]{4}$/.test(oldEntered)?'HVA@'+oldEntered:oldEntered,pwd=$('nvs-pwd-new').value,repeat=$('nvs-pwd-confirm').value;
-if(!/^[0-9]{4}$/.test(oldEntered)&&(oldEntered.length<6||oldEntered.length>24)){status.textContent='Mật khẩu hiện tại không hợp lệ.';return}
+const oldEntered=$('nvs-pwd-old').value,old=legacyOld?'HVA@'+oldEntered:oldEntered,pwd=$('nvs-pwd-new').value,repeat=$('nvs-pwd-confirm').value;
+if(legacyOld?!/^[0-9]{4}$/.test(oldEntered):(oldEntered.length<6||oldEntered.length>24)){status.textContent=legacyOld?'Vui lòng nhập đúng 4 chữ số được cấp.':'Mật khẩu hiện tại không hợp lệ.';return}
 if(!(pwd.length>=6&&pwd.length<=24&&/[A-Z]/.test(pwd)&&/[0-9]/.test(pwd)&&/[@!]/.test(pwd))){status.textContent='Mật khẩu cần từ 6–24 ký tự, có chữ hoa, chữ số và @ hoặc !.';return}
 if(pwd!==repeat){status.textContent='Xác nhận mật khẩu không khớp.';return}
 if(pwd===old){status.textContent='Mật khẩu mới phải khác mật khẩu cũ.';return}
@@ -5056,6 +5058,9 @@ html body main.shell .nvs-chooser .nvs-two-gates>.nvs-gate-wrap>.nvs-gate>strong
 </style>
 <style id="edos-ios-install-and-password-eyes">
 #nvs-pwd-box .edos-pwd-eye-wrap{position:relative;width:100%}
+#nvs-pwd-box #edosPwdOldPrefix[hidden]{display:none!important}
+#nvs-pwd-box #edosPwdOldPrefix{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px;font-weight:800;color:#173651;pointer-events:none;z-index:1}
+html body #nvs-pwd-box #edosPwdOldField.edos-legacy-old #nvs-pwd-old{padding-left:68px!important}
 #nvs-pwd-box .edos-pwd-eye-wrap input{padding-right:52px!important;min-height:46px;font-size:16px}
 #nvs-pwd-box .edos-pwd-eye{position:absolute;right:3px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:44px;background:transparent;border:0;padding:0;color:#1265a4;border-radius:8px;cursor:pointer}
 #nvs-pwd-box .edos-pwd-eye:focus-visible{outline:2px solid #1265a4}
