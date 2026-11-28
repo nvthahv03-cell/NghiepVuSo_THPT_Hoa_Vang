@@ -894,7 +894,7 @@ async function generateMeetingDraftAI() {
   btn.classList.add('opacity-60');
   hvaMeetingAISetStatus('Trợ lý EDOS đang soạn dự thảo cuộc họp...');
   try {
-    const res = await fetch(WEB_APP_URL, {
+    const res = await fetch(HVA_MEETING_QR_API, {
       method: 'POST',
       headers: {'Content-Type': 'text/plain;charset=utf-8'},
       body: JSON.stringify({
@@ -987,7 +987,7 @@ function hvaMeetNewKey(){
 async function hvaMeetCall(action,extra){
  const token=getMeetingSessionToken();
  if(!token)throw Error('Phiên HVA hết hạn. Vui lòng đăng nhập lại.');
- const response=await fetch(WEB_APP_URL,{
+ const response=await fetch(HVA_MEETING_QR_API,{
   method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
   body:JSON.stringify(Object.assign({action,sessionToken:token},extra||{}))
  });
