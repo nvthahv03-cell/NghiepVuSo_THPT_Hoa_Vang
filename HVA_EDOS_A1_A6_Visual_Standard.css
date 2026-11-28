@@ -1,0 +1,57 @@
+/* A1–A6 presentation only. Opt-in via html.edos-a16-visual. Screen only; no changes to form logic, signatures, printing or APIs. */
+@media screen {
+html.edos-a16-visual{background:#f4f6f9!important}
+html.edos-a16-visual body{background:#f4f6f9!important;font-family:"Segoe UI",Arial,sans-serif!important;font-size:16px!important;-webkit-font-smoothing:auto}
+html.edos-a16-visual .hva-report-head{background:linear-gradient(112deg,#174fb7,#1d65ed 55%,#1d65ed)!important;padding:16px max(16px,3vw)!important}
+html.edos-a16-visual .hva-report-brand{font-size:30px!important}
+html.edos-a16-visual .hva-report-brand b{color:#ffa326!important}
+html.edos-a16-visual .hva-report-brand small{font-size:12px!important;font-weight:700!important}
+html.edos-a16-visual .hva-report-nav a{background:#ffffff18!important;border-color:#ffffff60!important}
+html.edos-a16-visual .hva-report-online:not([data-offline=true]):not([data-connected=false]){background:#075985!important}
+html.edos-a16-visual main{width:96%!important;max-width:none!important;margin:16px auto 32px!important;padding-left:0!important;padding-right:0!important;box-sizing:border-box!important}
+html.edos-a16-visual .hva-report-legacy-header.hva-a-header{width:96%!important;max-width:none!important;margin:16px auto 0!important;padding:0!important;box-sizing:border-box!important}
+html.edos-a16-visual .hva-a-header-bottom{margin:0!important;padding:18px 22px!important;border:1px solid #d5deea!important;border-radius:16px!important;background:#fff!important}
+html.edos-a16-visual #a22HeaderCode{font-size:14px!important;color:#1556cb!important;letter-spacing:.025em!important}
+html.edos-a16-visual #a22HeaderTitle{font-size:clamp(24px,2.2vw,32px)!important;color:#1556cb!important;font-weight:800!important;line-height:1.3!important}
+html.edos-a16-visual main>.hero,html.edos-a16-visual main>.panel,html.edos-a16-visual main>.card:not(.preview-shell),html.edos-a16-visual #workspace>.card{background:#fff!important;border-color:#d5deea!important;border-radius:16px!important;box-shadow:0 6px 18px #153f7110!important}
+html.edos-a16-visual main :is(h1,h2,h3):not(:is(.paper,.official-paper,.report,.preview-shell,#paper,#preview) *){color:#1556cb!important;font-weight:750!important;line-height:1.35!important}
+html.edos-a16-visual main h1:not(:is(.paper,.official-paper,.report,.preview-shell,#paper,#preview) *){font-size:clamp(24px,2.2vw,32px)!important}
+html.edos-a16-visual main h2:not(:is(.paper,.official-paper,.report,.preview-shell,#paper,#preview) *){font-size:23px!important}
+html.edos-a16-visual main h3:not(:is(.paper,.official-paper,.report,.preview-shell,#paper,#preview) *){font-size:18px!important}
+html.edos-a16-visual main :is(.eyebrow,.section-kicker,.hva-a-kicker,.hva-a-section-name,.a21-form-title):not(:is(.paper,.official-paper,.report,.preview-shell,#paper,#preview) *){font-size:14px!important;font-weight:750!important;letter-spacing:.025em!important}
+html.edos-a16-visual main :is(.muted,.hint,.a22-hint,.a21-field-help,.hva-a-landing-intro,.hva-a-landing-note,.hero p,.hva-a41-muted,.hva-a-link-field small):not(:is(.paper,.official-paper,.report,.preview-shell,#paper,#preview) *){font-size:15px!important;line-height:1.55!important}
+html.edos-a16-visual main :is(label,summary):not(:is(.paper,.official-paper,.report,.preview-shell,#paper,#preview) *){font-size:16px!important;line-height:1.45!important;font-weight:650!important}
+html.edos-a16-visual main :is(input:not([type=radio]):not([type=checkbox]):not([type=hidden]):not([type=file]),select,textarea):not(:is(.paper,.official-paper,.report,.preview-shell,#paper,#preview) *){font-family:"Segoe UI",Arial,sans-serif!important;font-size:17px!important}
+html.edos-a16-visual main :is(input,textarea)::placeholder{color:#53677d!important;opacity:1!important}
+html.edos-a16-visual main :is(input,select,textarea):focus-visible{outline-color:#1d65ed!important}
+html.edos-a16-visual main button:not(:is(.a21-calendar-toggle,.a21-calendar-days button,.a21-calendar-head button,.cccd-eye,.icon-btn,.remove-row,.paper *,.official-paper *,.report *,.preview-shell *)){font-family:"Segoe UI",Arial,sans-serif!important;font-size:16px!important;font-weight:700!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions button strong,.choice strong,.tile b,.hva-a41-card>strong){font-size:19px!important;line-height:1.4!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions button small,.choice small,.tile small){font-size:14px!important;line-height:1.5!important}
+html.edos-a16-visual main :is(.hva-a-flow span,#a22ConnectionText,.step){font-size:15px!important}
+html.edos-a16-visual main :is(.hva-a-flow b,.step.on>span,.hva-a11-choice-number,.tile .number){background:#1d65ed!important;color:#fff!important}
+html.edos-a16-visual main :is(.hva-a-user-bar,.hva-a41-identity,.hva-a11-compact-account,.identity-card.hva-user-ident .identity-person,.ident,.account){background:#1d65ed!important}
+html.edos-a16-visual main :is(.hva-a-user-bar,.hva-a41-identity,.hva-a11-compact-account,.identity-card.hva-user-ident .identity-person,.ident,.account) :is(strong,small){color:#fff!important}
+html.edos-a16-visual main :is(.hva-a-user-bar,.hva-a41-identity,.hva-a11-compact-account,.ident,.account) strong{font-size:16px!important}
+html.edos-a16-visual main :is(.hva-a-user-bar,.hva-a41-identity,.ident) small{font-size:13px!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-submit-entry,.btn.primary,.btn:not(.secondary):not(.sub):not(.alt):not(.ghost):not(.danger),.a52-menu button):not(:disabled):not([aria-pressed=false]){background:#1d65ed!important;color:#fff!important;border-color:#1556cb!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-submit-entry,.btn.primary,.a52-menu button):not(:disabled):hover{background:#1556cb!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-download,.btn.secondary,.btn.alt,.btn.sub):not(:disabled){background:#fff!important;color:#1556cb!important;border-color:#1d65ed!important}
+html.edos-a16-visual main .hva-a-landing-actions .hva-a-submit-entry :is(strong,small){color:#fff!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-download):not(:disabled) :is(strong,small){color:#1556cb!important}
+html.edos-a16-visual main :is(.choice,.tile):not([aria-pressed=true]):not(:disabled){border-color:#1d65ed!important}
+html.edos-a16-visual main :is(.a11-sign-choice,.hva-sign-choice,.a21-sign-choice,.sign-options label):has(input:checked){background:#1d65ed!important;color:white!important}
+html.edos-a16-visual main :is(.a11-sign-choice,.hva-sign-choice,.a21-sign-choice,.sign-options label):has(input:checked) :is(strong,b){color:white!important}
+html.edos-a16-visual main :is(.tablewrap,.table-wrap,.table-scroll,.a21-preview-scroll){max-width:100%!important;overflow-x:auto}
+html.edos-a16-visual main :is(footer,.hva-a-landing-note){font-size:14px!important;line-height:1.55!important}
+html.edos-a16-visual main button:focus-visible{outline:2px solid #1556cb!important;outline-offset:2px}
+}
+@media screen and (max-width:650px){
+html.edos-a16-visual main,html.edos-a16-visual .hva-report-legacy-header.hva-a-header{width:calc(100% - 22px)!important;margin-top:11px!important}
+html.edos-a16-visual .hva-report-head{padding:10px 9px!important}
+html.edos-a16-visual .hva-report-brand{font-size:23px!important}
+html.edos-a16-visual .hva-report-brand small{font-size:10px!important}
+html.edos-a16-visual main h2:not(:is(.paper,.official-paper,.report,.preview-shell,#paper,#preview) *){font-size:21px!important}
+html.edos-a16-visual main .hva-a-flow span{font-size:12px!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions button strong,.choice strong,.tile b){font-size:17px!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions button small,.choice small,.tile small){font-size:13px!important}
+}
