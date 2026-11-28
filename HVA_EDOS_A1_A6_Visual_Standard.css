@@ -33,10 +33,10 @@ html.edos-a16-visual main :is(.hva-a-user-bar,.hva-a41-identity,.hva-a11-compact
 html.edos-a16-visual main :is(.hva-a-user-bar,.hva-a41-identity,.hva-a11-compact-account,.identity-card.hva-user-ident .identity-person,.ident,.account) :is(strong,small){color:#fff!important}
 html.edos-a16-visual main :is(.hva-a-user-bar,.hva-a41-identity,.hva-a11-compact-account,.ident,.account) strong{font-size:16px!important}
 html.edos-a16-visual main :is(.hva-a-user-bar,.hva-a41-identity,.ident) small{font-size:13px!important}
-html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-submit-entry,.btn.primary,.btn:not(.secondary):not(.sub):not(.alt):not(.ghost):not(.danger),.a52-menu button):not(:disabled):not([aria-pressed=false]){background:#1d65ed!important;color:#fff!important;border-color:#1556cb!important}
-html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-submit-entry,.btn.primary,.a52-menu button):not(:disabled):hover{background:#1556cb!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-submit-entry,.btn.primary,.btn:not(.secondary):not(.sub):not(.alt):not(.ghost):not(.danger):not(.warn):not(.success)):not(:disabled):not([aria-pressed=false]):not(.a21-action-active){background:#1d65ed!important;color:#fff!important;border-color:#1556cb!important}
+html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-submit-entry,.btn.primary):not(:disabled):not(.a21-action-active):hover{background:#1556cb!important}
 html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-download,.btn.secondary,.btn.alt,.btn.sub):not(:disabled){background:#fff!important;color:#1556cb!important;border-color:#1d65ed!important}
-html.edos-a16-visual main .hva-a-landing-actions .hva-a-submit-entry :is(strong,small){color:#fff!important}
+html.edos-a16-visual main .hva-a-landing-actions .hva-a-submit-entry:not(.a21-action-active) :is(strong,small){color:#fff!important}
 html.edos-a16-visual main :is(.hva-a-landing-actions .hva-a-download):not(:disabled) :is(strong,small){color:#1556cb!important}
 html.edos-a16-visual main :is(.choice,.tile):not([aria-pressed=true]):not(:disabled){border-color:#1d65ed!important}
 html.edos-a16-visual main :is(.a11-sign-choice,.hva-sign-choice,.a21-sign-choice,.sign-options label):has(input:checked){background:#1d65ed!important;color:white!important}
@@ -54,4 +54,15 @@ html.edos-a16-visual main h2:not(:is(.paper,.official-paper,.report,.preview-she
 html.edos-a16-visual main .hva-a-flow span{font-size:12px!important}
 html.edos-a16-visual main :is(.hva-a-landing-actions button strong,.choice strong,.tile b){font-size:17px!important}
 html.edos-a16-visual main :is(.hva-a-landing-actions button small,.choice small,.tile small){font-size:13px!important}
+}
+
+/* Keep A.5.2's white/blue/orange selected-state styling and full-width HEAD. */
+@media screen{
+html.edos-a16-visual main:has(>.hva-report-head){width:100%!important;margin-top:0!important}
+html.edos-a16-visual main:has(>.hva-report-head)>:is(.card,#workspace,.hva-a52-head){width:96%!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box!important}
+html.edos-a16-visual main .a52-menu button[aria-pressed=true]{border-color:#ffa326!important}
+html.edos-a16-visual main .hva-a-landing-actions .a21-action-active{background:#ffbf5a!important;color:#083d69!important;border-color:#dc8d19!important}
+}
+@media screen and (max-width:650px){
+html.edos-a16-visual main:has(>.hva-report-head)>:is(.card,#workspace,.hva-a52-head){width:calc(100% - 22px)!important}
 }
