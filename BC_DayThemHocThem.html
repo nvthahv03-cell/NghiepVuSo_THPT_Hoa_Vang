@@ -1197,6 +1197,27 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
   #previewCard #paper .form-code{position:relative!important;top:-7mm!important;right:auto!important}
 }
 </style>
+<style id="hva-bc-body-typography-standard">
+/* BC-HVA: than bao cao chu dung, khong nhan dam tuy tien. */
+#previewCard #paper .report-body p{
+  font-weight:400!important;
+  text-indent:10mm!important;
+  text-align:justify!important;
+  margin:0 0 6pt!important;
+}
+#previewCard #paper .report-body .to-line{
+  text-indent:0!important;
+  text-align:center!important;
+  font-weight:400!important;
+}
+#previewCard #paper .report-body b,#previewCard #paper .report-body strong{
+  font-weight:400!important;
+}
+@media screen and (max-width:720px){
+  #previewCard #paper .report-body p{text-indent:7.5mm!important}
+  #previewCard #paper .report-body .to-line{text-indent:0!important}
+}
+</style>
 </head>
 <!-- 🔴 CORE PASS — SHELL/HVA PAGE FRAME — LOCK -->
 <body>
@@ -1548,24 +1569,24 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 
       <!-- 4. Nội dung báo cáo (Toàn bộ 14pt, Times New Roman) -->
       <div class="report-body">
-        <p class="to-line"><b>Kính gửi:</b> Hiệu trưởng Trường THPT Hòa Vang</p>
+        <p class="to-line">Kính gửi: Hiệu trưởng Trường THPT Hòa Vang.</p>
         
         <p>Họ và tên giáo viên: <span class="teacher-name-val" id="pName" style="font-size:inherit!important;font-weight:normal!important;font-family:inherit!important;"></span></p>
         <p>Môn học được phân công dạy học: <span id="pAssigned" style="font-size:inherit!important;font-weight:normal!important;font-family:inherit!important;"></span></p>
 
         <!-- Khối có tham gia dạy thêm -->
         <div id="previewYesBody">
-          <p>Trân trọng báo cáo với Hiệu trưởng Trường THPT Hòa Vang về việc tham gia dạy thêm ngoài nhà trường của tôi trong năm học <b>2026 - 2027</b> như sau:</p>
-          <p><b>1. Môn học dạy thêm:</b> <span id="pSubject"></span></p>
-          <p><b>2. Thời gian dạy thêm:</b> <span id="pTime"></span></p>
-          <p><b>3. Hình thức dạy thêm:</b> <span id="pForm"></span></p>
-          <p><b>4. Địa điểm dạy thêm:</b> <span id="pPlace"></span></p>
-          <p><b>5. Mối quan hệ với chủ thể đứng tên đăng kí kinh doanh cơ sở dạy thêm:</b> <span id="pRelation"></span></p>
+          <p>Trân trọng báo cáo với Hiệu trưởng Trường THPT Hòa Vang về việc tham gia dạy thêm ngoài nhà trường của tôi trong năm học 2026 - 2027 như sau:</p>
+          <p>1. Môn học dạy thêm: <span id="pSubject"></span></p>
+          <p>2. Thời gian dạy thêm: <span id="pTime"></span></p>
+          <p>3. Hình thức dạy thêm: <span id="pForm"></span></p>
+          <p>4. Địa điểm dạy thêm: <span id="pPlace"></span></p>
+          <p>5. Mối quan hệ với chủ thể đứng tên đăng kí kinh doanh cơ sở dạy thêm: <span id="pRelation"></span></p>
         </div>
 
         <!-- Khối không tham gia dạy thêm -->
         <div id="previewNoBody" class="hidden">
-          <p>Trân trọng báo cáo với Hiệu trưởng Trường THPT Hòa Vang: hiện tại tôi <b>không tham gia dạy thêm ngoài nhà trường</b> trong năm học <b>2026 - 2027</b>.</p>
+          <p>Trân trọng báo cáo với Hiệu trưởng Trường THPT Hòa Vang: hiện tại tôi không tham gia dạy thêm ngoài nhà trường trong năm học 2026 - 2027.</p>
         </div>
 
         <p class="commit-line">Tôi xin chịu trách nhiệm hoàn toàn về những nội dung báo cáo nêu trên.</p>
