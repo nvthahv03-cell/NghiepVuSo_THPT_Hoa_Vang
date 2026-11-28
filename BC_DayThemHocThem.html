@@ -1180,6 +1180,23 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 }
 #previewCard #paper .nation-line{display:none!important}
 </style>
+<style id="hva-bc-form-code-standard">
+/* Ma mau BC-HVA: goc phai, cao hon 2 dong (khoang 7 mm).
+   Duy tri vi tri quoc hieu va than van ban; khong thay doi ma nghiep vu. */
+@media screen and (min-width:721px){
+  #previewCard #paper .form-code{position:relative!important;top:-7mm!important;right:auto!important}
+}
+@media screen and (max-width:720px){
+  #previewCard #paper .form-code{position:relative!important;top:-9px!important;right:auto!important}
+}
+@media print{
+  /* Rieng trang dau: du cho ma mau nam cao hon, than van ban van tai vi tri cu.
+     Cac trang tiep theo giu le tren 20 mm. */
+  @page :first{margin-top:13mm}
+  #previewCard #paper{padding-top:7mm!important}
+  #previewCard #paper .form-code{position:relative!important;top:-7mm!important;right:auto!important}
+}
+</style>
 </head>
 <!-- 🔴 CORE PASS — SHELL/HVA PAGE FRAME — LOCK -->
 <body>
@@ -1507,7 +1524,7 @@ textarea{height:auto;min-height:82px;padding:11px 14px;resize:vertical}
 
     <article class="preview official-paper" id="paper">
       <!-- 1. Mã mẫu: 10pt, nghiêng, căn phải -->
-      <div class="form-code">Mẫu BC-CM10-HVA</div>
+      <div class="form-code">Mẫu BC-HVA-01</div>
 
       <!-- 2. Phần đầu: Cơ quan & Quốc hiệu -->
       <div class="official-head">
